@@ -6,6 +6,8 @@ import Layers from './Layers';
 import Dropzone from 'react-dropzone'
 
 
+
+
 import { useArray } from './hooks/useArray';
 
 const Generator = () => {
@@ -23,6 +25,14 @@ const Generator = () => {
 			prevState[selected].images.push(...file)
 			return [...prevState]
 		})
+	}
+
+	const deleteLayer = i => {
+		setSelected(null);
+		setLayers(prevState => {
+			prevState.splice(i, 1);	
+			return [...prevState]
+		});
 	}
 	
 	const deleteImage = (i) => {
@@ -50,12 +60,13 @@ const Generator = () => {
 							setSelected={setSelected}
 							onChange={onChange} 
 							collectionSize={collectionSize}
+							deleteLayer={deleteLayer}
 						/>
 					</Grid>
 					<Grid xs={6}>
 						{selected !== null ? (
 							<div>
-								Add images to layer {layers[selected].name}
+								Add images to layer {layers[selected]?.name}
 								<Dropzone onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
 									{({getRootProps, getInputProps}) => (
 										<section style={{padding:"24px 64px", background: 'grey', alignItems:'center', justifyContent: 'center'}}>

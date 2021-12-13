@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider } from 'ds/components';
 import { Add as AddIcon } from '@mui/icons-material'
+import { Delete as DeleteIcon } from '@mui/icons-material'
+
 import { useToast } from 'ds/hooks/useToast'
 import JSZip from 'jszip';
 
@@ -8,7 +10,7 @@ import { useArray } from './hooks/useArray';
 import { generateImages } from './scripts/generate';
 
 
-const Layers = ({ layers, addToArray, selected, setSelected, onChange, collectionSize}) => {
+const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChange, collectionSize}) => {
 	const [newLayer, setNewLayer] = useState('');
 	const { addToast } = useToast()
 	const [generatedImage, setGeneratedImage] = useState('');
@@ -35,9 +37,14 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange, collectio
 	}
 
 	const ok = async () => {
-		// currently in b64
-		// turn this into png
-//		setGeneratedImage(newImage);
+		if (collectionSize.value.length < 1) {
+			addToast({
+				severity: 'error',
+				message: 'This value cannot be left empty'
+			})
+			return;
+		}
+
 		setDone(false);
 		let generatedImages = await generateImages(layers, collectionSize.value)
 
@@ -46,12 +53,13 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange, collectio
 		generatedImages.forEach((image, i) => {
 			zip.file(`images/${i}.png`, image);
 		})
-
-//		zip.folder('images').forEach(path => console.log(path))
-	
 		zip.generateAsync({type: 'base64'}).then(content => {
 			setGeneratedZip(content)
 			setDone(true);
+			addToast({
+				severity: 'success',
+				message: 'Finished compiling!'
+			})
 		})
 	}
 
@@ -67,9 +75,14 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange, collectio
 
 				<Stack gap={2}>
 					{layers.map((item, i) => (
-						<Card sx={{p: 2, cursor: 'pointer'}} style={selected == i ? {border: '1px solid blue'} : {}} onClick={() => setSelected(i)}>
+						<Card sx={{p: 2, cursor: 'pointer'}} style={selected == i ? {border: '1px solid blue'} : {}}>
 							<Stack direction="row" alignItems="center">
-								{item.name}
+								<Box sx={{flex: 1}} onClick={() => setSelected(i)}>
+									{item.name}
+								</Box>
+								<IconButton onClick={() => deleteLayer(i)}>
+									<DeleteIcon />
+								</IconButton>
 							</Stack>
 						</Card>
 					))}
