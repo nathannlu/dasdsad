@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider } from 'ds/components';
 import { Add as AddIcon } from '@mui/icons-material'
+import { useToast } from 'ds/hooks/useToast'
 import JSZip from 'jszip';
 
 import { useArray } from './hooks/useArray';
 import { generateImages } from './scripts/generate';
 
 
-const Layers = ({ layers, addToArray, selected, setSelected, onChange }) => {
+const Layers = ({ layers, addToArray, selected, setSelected, onChange, collectionSize}) => {
 	const [newLayer, setNewLayer] = useState('');
+	const { addToast } = useToast()
 	const [generatedImage, setGeneratedImage] = useState('');
 	const [generatedZip, setGeneratedZip] = useState('');
+	const [done, setDone] = useState(false);
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -22,33 +25,34 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange }) => {
 				images: []
 			}
 
-			/*
-			setLayers(prevState => {
-				let newState = [...prevState, obj]
-				return newState;
-			})
-			*/
 			addToArray(obj)
+		} else {
+			addToast({
+				severity: 'error',
+				message: 'Cannot create layer with empty name. Try "background"'
+			})
 		}
 	}
 
 	const ok = async () => {
 		// currently in b64
 		// turn this into png
-		let newImage = await generateImages(layers)	
-		setGeneratedImage(newImage);
-		console.log(newImage)
+//		setGeneratedImage(newImage);
+		setDone(false);
+		let generatedImages = await generateImages(layers, collectionSize.value)
 
-		const zip = new JSZip();
-		
 		// loop over and zip
-			zip.file('image.png', newImage);
-	
-		zip.generateAsync({type: 'base64'}).then(content => {
-			//saveAs(content, "example.zip")
-			setGeneratedZip(content)
+		const zip = new JSZip();
+		generatedImages.forEach((image, i) => {
+			zip.file(`images/${i}.png`, image);
 		})
 
+//		zip.folder('images').forEach(path => console.log(path))
+	
+		zip.generateAsync({type: 'base64'}).then(content => {
+			setGeneratedZip(content)
+			setDone(true);
+		})
 	}
 
 
@@ -56,27 +60,26 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange }) => {
 	return (
 		<Stack gap={2}>
 			<Stack gap={2} sx={{p: 2, background: 'white', borderRadius: 2}}>
-				<Typography variant="h3">
+				<Typography variant="h4">
 					Layers
 				</Typography>
 
 
 				<Stack gap={2}>
 					{layers.map((item, i) => (
-						<Card sx={{p: 2}} onClick={() => setSelected(i)}>
+						<Card sx={{p: 2, cursor: 'pointer'}} style={selected == i ? {border: '1px solid blue'} : {}} onClick={() => setSelected(i)}>
 							<Stack direction="row" alignItems="center">
 								{item.name}
 							</Stack>
 						</Card>
 					))}
+
 					<Card sx={{p: 2}}>
 						<form onSubmit={onSubmit}>
 							<Stack direction="row" alignItems="center">
-
 								<TextField fullWidth placeholder="New layer" onChange={e => setNewLayer(e.target.value)} />
 								<IconButton type="submit">
 									<AddIcon />
-
 								</IconButton>
 							</Stack>
 						</form>
@@ -86,10 +89,7 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange }) => {
 				<Divider />
 
 				<Stack direction="column" gap={2}>
-					<Button variant="outlined">
-						Preview
-					</Button>
-					<Button variant="contained" onClick={() => ok()}>
+					<Button variant="outlined" onClick={() => ok()}>
 						Generate Collection
 					</Button>
 				</Stack>
@@ -97,20 +97,22 @@ const Layers = ({ layers, addToArray, selected, setSelected, onChange }) => {
 
 
 			{selected !== null ? (
-				<Stack gap={2} sx={{p: 2, background: 'white', borderRadius: 2}}>
-					<Box>
-						Layer Name
+				<Stack sx={{p: 2, background: 'white', borderRadius: 2}}>
+						<Typography variant="h6">
+						Edit Layer Name
+						</Typography>
 						<TextField name="name" value={layers[selected]?.name} onChange={onChange} />
-					</Box>
-					<Box>
-						Rarity
-						<TextField type="number" name="rarity" value={layers[selected]?.rarity} onChange={onChange} />
-					</Box>
 				</Stack>
 				) : null}
-			<a href={"data:application/zip;base64,"+generatedZip} >download zip</a>
 
-			{/*generatedImage && (<img src={generatedImage} />)*/}
+			{done && (
+				<a href={"data:application/zip;base64,"+generatedZip} >
+					<Button variant="contained">
+						Download collection
+					</Button>
+				</a>
+			)}
+
 		</Stack>
 	)
 };

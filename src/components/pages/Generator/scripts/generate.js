@@ -17,7 +17,7 @@ const metaData = {};
 
 
 // Layers array expects objects with property 'images'
-export const generateImages = async (layers) => {
+export const generateOneImage = async (layers) => {
 	let toBeMerged = []	
 
 	// pick a random image from every layer
@@ -36,6 +36,38 @@ export const generateImages = async (layers) => {
 	const png = dataURLtoFile(b64, '1.png')
 	return png;
 };
+
+export const generateImages = async (layers, count) => {
+	let images = []
+
+	for(let i = 0; i < count; i++) {
+		const generatedImage = await generateOneImage(layers)	
+		images.push(generatedImage)
+	}
+
+	return images;
+};
+
+/*
+export const generateImages = async (layers, collectionSize) => {
+	const asd = new Promise((resolve, reject) => {
+		let listOfImages = []
+		let iterate = Array.apply(null, Array(5)).map(function () {})
+
+		iterate.forEach(async (_, i) => {
+			let newImage = await generateOneImage(layers)
+			//console.log(newImage)
+
+			listOfImages.push(newImage);
+		})	
+
+		resolve(listOfImages);
+//		return listOfImages;
+	})
+
+	return asd;
+};
+*/
 
 /*
 const generateMetadataObject = (id, images) => {
