@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Stack, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
 import { useSettingsForm } from './hooks/useSettingsForm';
-import { Helmet } from 'react-helmet';
 
 import Layers from './Layers';
 import Dropzone from 'react-dropzone'
@@ -46,11 +45,7 @@ const Generator = () => {
 	
 	return (
 		<>
-		<Helmet>
-			<title>Create your NFT collection with no-code - NFT Art Generator</title>
-			<link rel="canonical" href="https://nftdatagen.com" />
-			<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
-		</Helmet>
+
 		<Fade in>
 			<Box sx={{
 				display: 'flex',
