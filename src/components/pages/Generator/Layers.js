@@ -56,7 +56,6 @@ const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChan
 			severity: 'info',
 			message: 'Generating collection. This will take a minute...'
 		})
-		return;
 		setDone(false);
 		let generatedImages = await generateImages(layers, collectionSize.value)
 
