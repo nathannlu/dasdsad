@@ -4,7 +4,7 @@ const sampleLayer = {
 	name: '',
 	rarity: .5,
 	images: [
-		{name: '', preview: '', rarity: .33},
+		{preview: '', rarity: .33},
 		{preview: '', rarity: .33},
 		{preview: '', rarity: .33} ,
 	]
@@ -12,45 +12,30 @@ const sampleLayer = {
 
 const sampleLayers = [sampleLayer, sampleLayer, sampleLayer]
 
+const metaData = {};
+
+
 
 // Layers array expects objects with property 'images'
 export const generateOneImage = async (layers) => {
-	let toBeMerged = []
-	let metadata = { attributes: []}
+	let toBeMerged = []	
 
 	// pick a random image from every layer
-	layers.forEach((layer, i) => {
-		let pickedImage = pickWeighted(layer.images);
+	layers.forEach(layer => {
+//		console.log(layer)
+		let pickedImage =  layer.images[pickRandom(layer.images)]
+//		console.log(pickedImage)
 		toBeMerged.push(pickedImage.preview)
-
-		metadata.attributes.push({trait_type: layer.name, value: pickedImage.name})	
 	})
 
+
 	// merge all layers together
+//	console.log('tbd', toBeMerged)
 	const b64 = await mergeImages(toBeMerged);
+//	console.log(b64)
 	const png = dataURLtoFile(b64, '1.png')
-
-	return [png, metadata];
+	return png;
 };
-
-/*
-const generateMetadata = () => {
-	const newMetadata = {
-		name: '',
-		description: '',
-		external_url: '',
-		image: '',
-		attributes: [
-			{
-				"trait_type": "Background",
-				value: 'name',
-			}
-		]
-	}
-
-	return newMetadata
-};
-*/
 
 export const generateImages = async (layers, count) => {
 	let images = []
@@ -63,8 +48,48 @@ export const generateImages = async (layers, count) => {
 	return images;
 };
 
+/*
+export const generateImages = async (layers, collectionSize) => {
+	const asd = new Promise((resolve, reject) => {
+		let listOfImages = []
+		let iterate = Array.apply(null, Array(5)).map(function () {})
+
+		iterate.forEach(async (_, i) => {
+			let newImage = await generateOneImage(layers)
+			//console.log(newImage)
+
+			listOfImages.push(newImage);
+		})	
+
+		resolve(listOfImages);
+//		return listOfImages;
+	})
+
+	return asd;
+};
+*/
+
+/*
+const generateMetadataObject = (id, images) => {
+	metaData[id] = {
+		name: config.metaData.name + '#' + id,
+		description: config.metaData.description,
+		image: config.imageUrl + id,
+		attributes: [],
+	}
+
+	images.forEach((image, i) => {
+		let pathArray = images.split('/');
+
+		metaData[id].attributes.push({
+			trait_type: traits[i],
+			value: ''// names[fileToMap]
+		})
 
 
+	})
+};
+*/
 
 // --
 // HELPERS
@@ -84,24 +109,6 @@ function pickRandomAndRemove(array) {
 //PICKS A RANDOM INDEX INSIDE AND ARRAY RETURNS IT
 function pickRandom(array) {
   return randomNumber(0, array.length - 1);
-}
-
-// images = [{preview: '', rarity: .3}, {preview: '', rarity: .1}]
-// [0, .3]
-// [.3, .4]
-// [.4, 1]
-function pickWeighted(array) {
-	let prev = 0;
-	let asd = null;
-	const random = Math.random() // returns e.g. .6
-
-	for(let item of array) {
-		if (random < item.rarity + prev) {
-			return item;
-		} else {
-			prev += item.rarity;
-		}	
-	};
 }
 
 function dataURLtoFile(dataurl, filename) {
