@@ -37,6 +37,13 @@ const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChan
 	}
 
 	const ok = async () => {
+		if (collectionSize.value > 100) {
+			addToast({
+				severity: 'error',
+				message: 'This value must be 100 or under'
+			})
+			return;
+		}
 		if (collectionSize.value.length < 1) {
 			addToast({
 				severity: 'error',
@@ -45,6 +52,11 @@ const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChan
 			return;
 		}
 
+		addToast({
+			severity: 'info',
+			message: 'Generating collection. This will take a minute...'
+		})
+		return;
 		setDone(false);
 		let generatedImages = await generateImages(layers, collectionSize.value)
 
@@ -71,7 +83,9 @@ const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChan
 				<Typography variant="h4">
 					Layers
 				</Typography>
-
+				<Typography variant="body">
+					Add a layer here to get started.
+				</Typography>
 
 				<Stack gap={2}>
 					{layers.map((item, i) => (
@@ -90,7 +104,7 @@ const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChan
 					<Card sx={{p: 2}}>
 						<form onSubmit={onSubmit}>
 							<Stack direction="row" alignItems="center">
-								<TextField fullWidth placeholder="New layer" onChange={e => setNewLayer(e.target.value)} />
+								<TextField fullWidth placeholder="e.g. background" onChange={e => setNewLayer(e.target.value)} />
 								<IconButton type="submit">
 									<AddIcon />
 								</IconButton>
@@ -125,7 +139,6 @@ const Layers = ({ layers, deleteLayer, addToArray, selected, setSelected, onChan
 					</Button>
 				</a>
 			)}
-
 		</Stack>
 	)
 };

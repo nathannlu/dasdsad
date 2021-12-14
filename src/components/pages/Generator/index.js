@@ -81,8 +81,8 @@ const Generator = () => {
 								</Dropzone>
 							</div>
 						) : (
-							<div>
-								select a layer to get started
+							<div style={{textAlign: 'center'}}>
+								Click on a layer in the Layers panel to get started
 							</div>
 						)}
 
@@ -98,7 +98,7 @@ const Generator = () => {
 					<Grid xs={3}>
 						<Stack sx={{p: 2, background: 'white', borderRadius: 2}}>
 							<FormLabel>Collection Size</FormLabel>
-							<TextField {...collectionSize} />
+							<TextField {...collectionSize} placeholder="100"/>
 						</Stack>
 					</Grid>
 				</Grid>
