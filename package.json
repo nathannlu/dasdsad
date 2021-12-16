@@ -39,7 +39,7 @@
   "scripts": {
     "start": "react-scripts start",
     "dev": "webpack serve",
-		"build": "webpack",
+    "build": "webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -70,6 +70,7 @@
     "@babel/preset-env": "^7.16.5",
     "@babel/preset-react": "^7.16.5",
     "@babel/runtime": "^7.16.5",
+    "babel-loader": "^8.2.3",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "css-loader": "^6.5.1",
     "html-webpack-plugin": "^5.5.0",
