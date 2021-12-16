@@ -37,7 +37,8 @@ module.exports = {
 							"@babel/plugin-transform-runtime",
 							"@babel/plugin-syntax-dynamic-import",
 							"@babel/plugin-proposal-class-properties"
-						]
+						],
+						presets: ['@babel/preset-react', '@babel/preset-env'],
 					}
 				}
 			},
