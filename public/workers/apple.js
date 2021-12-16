@@ -1,58 +1,39 @@
-import mergeImages from 'merge-images';
+// jimport  generateImages  from '../scripts/generate.js'
+//const { generateImages } = require('../scripts/generate.js')
 
-const sampleLayer = {
-	name: '',
-	rarity: .5,
-	images: [
-		{name: '', preview: '', rarity: .33},
-		{preview: '', rarity: .33},
-		{preview: '', rarity: .33} ,
-	]
+
+self.onmessage = async (event) => {
+	if (event && event.data && event.data.msg === 'generate') {
+		self.postMessage("Generating...");
+		const generatedImages = await generateImages(event.data.layers, event.data.count);
+		self.postMessage(generatedImages);
+		self.postMessage("Done!");
+	}
 };
-
-const sampleLayers = [sampleLayer, sampleLayer, sampleLayer]
 
 
 // Layers array expects objects with property 'images'
-export const generateOneImage = async (layers) => {
-	let toBeMerged = []
-	let metadata = { attributes: []}
+const generateOneImage = async (layers) => {
+	let toBeMerged = []	
 
 	// pick a random image from every layer
-	layers.forEach((layer, i) => {
-		let pickedImage = pickWeighted(layer.images);
+	layers.forEach(layer => {
+//		console.log(layer)
+		let pickedImage =  layer.images[pickRandom(layer.images)]
+//		console.log(pickedImage)
 		toBeMerged.push(pickedImage.preview)
-
-		metadata.attributes.push({trait_type: layer.name, value: pickedImage.name})	
 	})
 
+
 	// merge all layers together
+//	console.log('tbd', toBeMerged)
 	const b64 = await mergeImages(toBeMerged);
+//	console.log(b64)
 	const png = dataURLtoFile(b64, '1.png')
-
-	return [png, metadata];
+	return png;
 };
 
-/*
-const generateMetadata = () => {
-	const newMetadata = {
-		name: '',
-		description: '',
-		external_url: '',
-		image: '',
-		attributes: [
-			{
-				"trait_type": "Background",
-				value: 'name',
-			}
-		]
-	}
-
-	return newMetadata
-};
-*/
-
-export const generateImages = async (layers, count) => {
+const generateImages = async (layers, count) => {
 	let images = []
 
 	for(let i = 0; i < count; i++) {
@@ -62,9 +43,6 @@ export const generateImages = async (layers, count) => {
 
 	return images;
 };
-
-
-
 
 // --
 // HELPERS
@@ -86,24 +64,6 @@ function pickRandom(array) {
   return randomNumber(0, array.length - 1);
 }
 
-// images = [{preview: '', rarity: .3}, {preview: '', rarity: .1}]
-// [0, .3]
-// [.3, .4]
-// [.4, 1]
-function pickWeighted(array) {
-	let prev = 0;
-	let asd = null;
-	const random = Math.random() // returns e.g. .6
-
-	for(let item of array) {
-		if (random < item.rarity + prev) {
-			return item;
-		} else {
-			prev += item.rarity;
-		}	
-	};
-}
-
 function dataURLtoFile(dataurl, filename) {
 		var arr = dataurl.split(','),
 				mime = arr[0].match(/:(.*?);/)[1],
@@ -117,4 +77,4 @@ function dataURLtoFile(dataurl, filename) {
 		
 		return new File([u8arr], filename, {type:mime});
 }
-	
+
