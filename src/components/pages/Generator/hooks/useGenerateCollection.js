@@ -25,10 +25,10 @@ export const useGenerateCollection = () => {
 		setProgress(null);
 
 		// Runs check
-		if (collectionSize.value > 100) {
+		if (collectionSize.value > 10000) {
 			addToast({
 				severity: 'error',
-				message: 'This value must be 100 or under'
+				message: 'This value must be 10000 or under'
 			})
 			return;
 		}

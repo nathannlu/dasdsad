@@ -83,9 +83,14 @@ const Settings = () => {
 								{selectedImage !== null && (
 									<>
 									<Box>
-										<Typography variant="h6">
-											Edit trait name
-										</Typography>
+										<Stack direction="row">
+											<Typography variant="h6">
+												Edit trait name for
+											</Typography>
+											<Grid xs={1} item>
+												<img src={layers[selected].images[selectedImage].preview} />
+											</Grid>
+										</Stack>
 										<TextField 
 											name="name"
 											value={layers[selected]?.images[selectedImage]?.name}
@@ -115,6 +120,9 @@ const Settings = () => {
 												test
 											</button>
 											*/}
+											<Grid xs={1} item>
+												<img src={image.preview} />
+											</Grid>
 											<Slider
 												name="weight"
 												defaultValue={50}
