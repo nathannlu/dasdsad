@@ -27,6 +27,8 @@ export const generateOneImage = async ({settings, layers, filename}) => {
 	// pick a random image from every layer
 	layers.forEach((layer, i) => {
 		if (includeWeightedLayer(layer)) {
+			console.log(layer.images);
+
 			const pickedImage = pickWeighted(layer.images);
 
 			toBeMerged.push(pickedImage.base64.split(',').pop())

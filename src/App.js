@@ -31,9 +31,6 @@ function App() {
 						If you have any questions, or just want to chat with the developers, join our
 						&nbsp;<a style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">discord</a> or follow us on <a href="https://twitter.com/nftdatagen" style={{color: 'blue'}}>Twitter</a>
 					</Typography>
-					<Typography variant="body">
-						For now, we are limiting collection size to 100. We will be removing this limit end of this week!
-					</Typography>
 				</Stack>
 			
 			</Container>
