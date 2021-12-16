@@ -6,8 +6,7 @@ import { CollectionProvider } from 'libs/collection';
 import { ThemeProvider } from 'ds/hooks/useTheme';
 import { ToastManager } from 'ds/hooks/useToast';
 
-import 'assets/styles/index.css';
-
+import './assets/styles/index.css';
 
 ReactDOM.render(
 	<CollectionProvider>
