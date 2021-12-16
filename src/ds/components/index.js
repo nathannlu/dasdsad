@@ -20,6 +20,7 @@ import {
 	Table, TableBody, TableCell, TableHead, TableRow,
 	Collapse,
 	Select,
+	Slider,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
@@ -50,6 +51,7 @@ export {
 	CardElement,
 	Table, TableBody, TableCell, TableHead, TableRow,
 	Collapse,
+	Slider,
 
 	// Organism
 	Drawer,
