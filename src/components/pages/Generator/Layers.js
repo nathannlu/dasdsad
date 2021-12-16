@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider } from 'ds/components';
+import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider, Slider } from 'ds/components';
+import { Chip } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material'
-import { useLayerManager } from './hooks/useLayerManager';
-
 import { useGenerateCollection } from './hooks/useGenerateCollection';
+import { useLayerManager } from './hooks/useLayerManager';
+import { useTraitsManager } from './hooks/useTraitsManager';
 import { useCollection } from 'libs/collection';
+import { dataURItoBlob } from 'utils/imageData';
 
 
 const Layers = () => {
-	const { layers, selected, setSelected } = useCollection();
+	const { layers, setLayers, selected, setSelected, listOfWeights, setListOfWeights } = useCollection();
 	const {
 		newLayerForm,
 		onSubmit,
 		deleteLayer,
-		onChange
 	} = useLayerManager();
 	const {
 		generateImages,
+		generatedZip,
+		initWorker,
 		done,
-		generatedZip
-	} = useGenerateCollection();
+		progress
+	} = useGenerateCollection()
+
+	useEffect(initWorker, [])
+
 
 	return (
 		<Stack gap={2}>
@@ -33,7 +39,11 @@ const Layers = () => {
 
 				<Stack gap={2}>
 					{layers.map((item, i) => (
-						<Card sx={{p: 2, cursor: 'pointer'}} style={selected == i ? {border: '1px solid blue'} : {}}>
+						<Card 
+							key={i}
+							sx={{p: 2, cursor: 'pointer'}} 
+							style={selected == i ? {border: '1px solid blue'} : {}}
+						>
 							<Stack direction="row" alignItems="center">
 								<Box sx={{flex: 1}} onClick={() => setSelected(i)}>
 									{item.name}
@@ -66,17 +76,7 @@ const Layers = () => {
 				</Stack>
 			</Stack>
 
-
-			{selected !== null ? (
-				<Stack sx={{p: 2, background: 'white', borderRadius: 2}}>
-						<Typography variant="h6">
-						Edit Layer Name
-						</Typography>
-						<TextField name="name" value={layers[selected]?.name} onChange={onChange} />
-				</Stack>
-				) : null}
-
-			{done && (
+			{generatedZip && (
 				<a href={"data:application/zip;base64,"+generatedZip} >
 					<Button variant="contained">
 						Download collection

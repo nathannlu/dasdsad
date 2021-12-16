@@ -16,6 +16,7 @@ export const useLayerManager = () => {
 	const { form: newLayerForm } = useForm({
 		name: {
 			default: '',
+			placeholder: "e.g. background",
 			rules: []
 		}
 	})
@@ -47,7 +48,7 @@ export const useLayerManager = () => {
 		if(newLayerForm.name.value.length > 0) {
 			let obj = {
 				name: newLayerForm.name.value,
-				rarity: 1,
+				weight: 100,
 				images: []
 			}
 

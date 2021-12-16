@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useArray } from 'ds/hooks/useArray';
+import { useForm } from 'ds/hooks/useForm';
 
 export const CollectionContext = React.createContext({});
 export const useCollection = () => useContext(CollectionContext);
@@ -14,17 +15,42 @@ export const CollectionProvider = ({ children }) => {
 		setSelected
 	} = useArray();
 
-	let collectionSize = { value: 10 };
+	const [ selectedImage, setSelectedImage ] = useState(null);
+
+	const { form: settingsForm } = useForm({
+		name: {
+			default: '',
+			placeholder: 'Name of your collection',
+			rules: []
+		},
+		description: {
+			default: '',
+			placeholder: 'Give a brief description of your NFT',
+			rules: []
+		},
+		collectionSize: {
+			default: '',
+			placeholder: '100',
+			rules: []
+		},
+	})
+
+	const [listOfWeights, setListOfWeights] = useState([]);
+
 	
 	return (
 		<CollectionContext.Provider
 			value={{
 				layers,
 				setLayers,
-				collectionSize,
+				settingsForm,
 				addToArray,
 				selected,
-				setSelected
+				setSelected,
+				selectedImage,
+				setSelectedImage,
+				listOfWeights,
+				setListOfWeights
 			}}
 		>
 			{children}

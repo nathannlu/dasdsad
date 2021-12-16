@@ -1,20 +1,26 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const path = require('path');
 
-const { DIR, EXT = 'js' } = process.env;
 
 module.exports = {
   mode: 'development',
   devtool: 'cheap-module-source-map',
-  entry: `./src/index.${EXT}`,
+  entry: `./src/index.js`,
   output: {
-    publicPath: '/',
+		path: path.resolve(__dirname, 'dist'),
+		filename: "assets/js/[name].[contenthash:8].js",
+		publicPath: '/'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: `./public/index.html`,
+      template: path.resolve(__dirname, 'public/index.html'),
+			inject: true
     }),
+		new InterpolateHtmlPlugin({
+    PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
+		})
   ],
 	module: {
 		rules: [
@@ -26,13 +32,22 @@ module.exports = {
 					options: {
 						cacheDirectory: true,
 						cacheCompression: false,
-						plugins: ['@babel/plugin-transform-react-jsx']
+						plugins: [
+							'@babel/plugin-transform-react-jsx',
+							"@babel/plugin-transform-runtime",
+							"@babel/plugin-syntax-dynamic-import",
+							"@babel/plugin-proposal-class-properties"
+						]
 					}
 				}
 			},
       {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.worker\.js$/,
+        use: { loader: "worker-loader" },
       },
 		]
 	},
@@ -43,13 +58,17 @@ module.exports = {
 			'ds': `${__dirname}/src/ds`,
 			'assets': `${__dirname}/src/assets`,
 			'components': `${__dirname}/src/components`,
+			'libs': `${__dirname}/src/libs`,
+			'utils': `${__dirname}/src/utils`,
     },
   },
   devServer: {
     port: process.env.PORT || '3000',
+		/*
     static: {
-      directory: `./public`,
+      directory: `./static`,
     },
+		*/
     historyApiFallback: true,
   },
 };

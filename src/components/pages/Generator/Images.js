@@ -5,7 +5,7 @@ import { useCollection } from 'libs/collection';
 import { useTraitsManager } from './hooks/useTraitsManager';
 
 const Images = () => {
-	const { layers, selected } = useCollection();
+	const { layers, selected, selectedImage, setSelectedImage } = useCollection();
 	const { deleteImage, addToLayers } = useTraitsManager();
 	
 	return (
@@ -32,8 +32,14 @@ const Images = () => {
 
 		<Stack direction="row">
 			{layers[selected]?.images?.map((image, i) => (
-				<Grid xs={2}>
-					<img src={image.preview} />
+				<Grid xs={2} item key={i}>
+					<Box>
+						<img
+							src={image.preview} 
+							onClick={() => setSelectedImage(i)}
+							style={selectedImage == i ? {border: '1px solid blue'} : {}}
+						/>
+					</Box>
 					<button onClick={() => deleteImage(i)}>Remove image</button>
 				</Grid>
 			))}

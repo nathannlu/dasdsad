@@ -1,21 +1,30 @@
-
+import FileSaver from 'file-saver';
 import JSZip from 'jszip';
+
+import Worker from "../workers/generator.worker.js";
+const worker = new Worker();
+
 import { useCollection } from 'libs/collection';
 import { useState } from 'react';
 import { useToast } from 'ds/hooks/useToast';
-
 import { generateOneImage } from '../scripts/generate';
 
 
 export const useGenerateCollection = () => {
-	const { layers, collectionSize } = useCollection();
+	const { layers, settingsForm } = useCollection();
+	const { name, description, collectionSize } = settingsForm;
+
 	const { addToast } = useToast()
+	const [progress, setProgress] = useState();
 	const [generatedZip, setGeneratedZip] = useState('');
 	const [done, setDone] = useState(false);
 
 	// This will need to talk to web worker
 	const generateImages = async () => {
 		setDone(false);
+		setProgress(null);
+
+		// Runs check
 		if (collectionSize.value > 100) {
 			addToast({
 				severity: 'error',
@@ -32,33 +41,45 @@ export const useGenerateCollection = () => {
 		}
 		addToast({
 			severity: 'info',
-			message: 'Generating collection. This will take a minute...'
+			message: 'Generating collection. This will take a some time...'
 		})
 
-		const zip = new JSZip();
+		// Worker
+		worker.postMessage({
+			message:'generate',
+			settings: {
+				name: name.value,
+				description: description.value
+			},
+			layers: [...layers],
+			count: collectionSize.value
+		})	
 
-		for(let i = 0; i < collectionSize.value; i++) {
-			const image = await generateOneImage(layers)	
-			zip.file(`images/${i}.png`, image);
-			console.log(i);
-		}
-
-		zip.generateAsync({type: 'base64'}).then(content => {
-			setGeneratedZip(content)
-			setDone(true);
-			addToast({
-				severity: 'success',
-				message: 'Finished compiling!'
-			})
-		})
-
-		setDone(true);
 	};
 
+	const initWorker = () => {
+		worker.onmessage = (message) => {
+			if (message.data.message == 'output') {
+				setGeneratedZip(message.data.content);
+				//console.log(message.data.content);
+
+				FileSaver.saveAs(message.data.content, 'sample.zip')
+				setDone(true);
+			}
+			if (message.data.message == 'progress') {
+				setProgress(message.data.progress)
+			}
+		}
+	}
+	
 
 	return {
 		generateImages,
 		generatedZip,
-		done
+		setGeneratedZip,
+		initWorker,
+		worker,
+		done,
+		progress
 	}
 }
