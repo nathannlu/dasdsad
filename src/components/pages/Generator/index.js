@@ -16,8 +16,6 @@ const Generator = () => {
 		<Fade in>
 			<Stack sx={{
 				display: 'flex',
-				bgcolor: 'grey.200',
-				minHeight: '100vh',
 				p: 2
 			}}>
 				<Grid container>

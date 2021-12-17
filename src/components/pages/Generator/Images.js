@@ -1,6 +1,7 @@
 import React from 'react';
 import Dropzone from 'react-dropzone'
 import { Stack, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
+import { Chip } from '@mui/material';
 import { useCollection } from 'libs/collection';
 import { useTraitsManager } from './hooks/useTraitsManager';
 
@@ -12,10 +13,32 @@ const Images = () => {
 
 	
 	return (
-	<Box sx={{px: 2}} >
+	<Stack gap={2} sx={{px: 2}} >
+		<Box sx={{mt: 2}}>
+			<Chip sx={{opacity: .8, mb: 1}} label={"Step 2"} />
+			<Box>
+				Add images to layer <Chip color="success" label={layers[selected]?.name} />
+			</Box>
+		</Box>
+
+		<Stack direction="row">
+			{layers[selected]?.images?.map((image, i) => (
+				<Grid xs={2} item key={i}>
+					<Box>
+						<img
+							src={image.preview} 
+							onClick={() => setSelectedImage(i)}
+							style={selectedImage == i ? {border: '1px solid blue'} : {}}
+						/>
+					</Box>
+					<button onClick={() => deleteImage(i)}>Remove image</button>
+				</Grid>
+			))}
+		</Stack>
+
+
 		{selected !== null ? (
 			<div>
-				Add images to layer {layers[selected]?.name}
 				<Dropzone onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
 					{({getRootProps, getInputProps}) => (
 
@@ -33,34 +56,21 @@ const Images = () => {
 							<div {...getRootProps()}>
 								<input {...getInputProps()} />
 								<p style={{opacity: .5, textAlign: 'center'}}>Drag 'n' drop some files here, or click to select files</p>
+
 							</div>
 
 						</Box>
 
 					)}
 				</Dropzone>
+
 			</div>
 		) : (
 			<div style={{textAlign: 'center'}}>
-				Click on a layer in the Layers panel to get started
+				Select a layer in the left panel to get started
 			</div>
 		)}
-
-		<Stack direction="row">
-			{layers[selected]?.images?.map((image, i) => (
-				<Grid xs={2} item key={i}>
-					<Box>
-						<img
-							src={image.preview} 
-							onClick={() => setSelectedImage(i)}
-							style={selectedImage == i ? {border: '1px solid blue'} : {}}
-						/>
-					</Box>
-					<button onClick={() => deleteImage(i)}>Remove image</button>
-				</Grid>
-			))}
-		</Stack>
-	</Box>
+	</Stack>
 	)
 };
 

@@ -43,7 +43,6 @@ export const useLayerManager = () => {
 	// Creates new layer - adds to layers array
 	const onSubmit = e => {
 		e.preventDefault();
-		console.log(newLayerForm.name)
 
 		if(newLayerForm.name.value.length > 0) {
 			let obj = {
@@ -53,6 +52,7 @@ export const useLayerManager = () => {
 			}
 
 			addToArray(obj)
+
 		} else {
 			addToast({
 				severity: 'error',
@@ -61,12 +61,37 @@ export const useLayerManager = () => {
 		}
 	}
 
+	// a little function to help us with reordering the result
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		setSelected(endIndex)
+
+		return result;
+	};
+
+
+	// Layer drag & drop handler
+	const onDragEnd = result => {
+		if (!result.destination) {
+			return;
+		}
+
+		const items = reorder([...layers], result.source.index, result.destination.index);
+		setLayers(items)
+
+	}
+
 
 	return {
 		newLayerForm,
 		deleteLayer,
 		onChange,
-		onSubmit
+		onSubmit,
+		reorder,
+		onDragEnd
 	}
 }
 

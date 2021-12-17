@@ -22,6 +22,7 @@ const Settings = () => {
 		<Stack gap={2}>
 			<Stack gap={2} sx={{p: 2, background: 'white', borderRadius: 2}}>
 				<Box>
+					<Chip sx={{opacity: .8, mb: 1}} label={"Step 3"} />
 					<Typography variant="h5">
 						Settings
 					</Typography>

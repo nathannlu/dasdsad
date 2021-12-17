@@ -9,6 +9,15 @@ import { useTraitsManager } from './hooks/useTraitsManager';
 import { useCollection } from 'libs/collection';
 import { dataURItoBlob } from 'utils/imageData';
 
+const layerStyle = {
+	border:  '1px solid rgba(255, 255, 255, 1)',
+	borderRadius: 2,
+	py:1,
+	px:2,
+	cursor: 'pointer',
+	background: 'rgba(255,255,255,.33)',
+	backdropFilter: 'blur(6px)',
+}
 
 
 const Layers = () => {
@@ -17,6 +26,8 @@ const Layers = () => {
 		newLayerForm,
 		onSubmit,
 		deleteLayer,
+		reorder,
+		onDragEnd
 	} = useLayerManager();
 	const {
 		generateImages,
@@ -30,46 +41,28 @@ const Layers = () => {
 
 
 
-	// a little function to help us with reordering the result
-	const reorder = (list, startIndex, endIndex) => {
-		const result = Array.from(list);
-
-		const [removed] = result.splice(startIndex, 1);
-		result.splice(endIndex, 0, removed);
-		setSelected(endIndex)
-
-		return result;
-	};
-
-
-	const onDragEnd = result => {
-		if (!result.destination) {
-			return;
-		}
-
-		const items = reorder([...layers], result.source.index, result.destination.index);
-		setLayers(items)
-
-	}
-
 
 	return (
 		<Stack gap={2}>
 			<Stack gap={2} sx={{p: 2, background: 'white', borderRadius: 2}}>
-				<Typography variant="h4">
-					Layers
-				</Typography>
-				<Typography variant="body">
-					Add a layer here to get started.
-				</Typography>
+				<Box>
+					<Chip sx={{opacity: .8, mb: 1}} label={"Step 1"} />
+					<Typography variant="h5">
+						Layers
+					</Typography>
+					<Typography variant="body">
+						Add a layer here to get started.
+					</Typography>
+				</Box>
 
 				<Stack gap={2}>
 					<DragDropContext onDragEnd={onDragEnd}>
 						<Droppable droppableId="droppable">
 							{(provided, snapshot) => (
-							<div
+							<Stack
 								{...provided.droppableProp}
 								ref={provided.innerRef}
+								gap={2}
 							>
 							{layers.map((item, i) => (
 								<Draggable
@@ -82,10 +75,10 @@ const Layers = () => {
 										{...provided.draggableProps}
 										{...provided.dragHandleProps}
 										ref={provided.innerRef}
-										sx={selected == i ? {border: '1px solid blue', p:2, cursor: 'pointer'} : {p: 2, cursor: 'pointer'}} 
+										sx={{...layerStyle, boxShadow: selected == i ? '0 0 10px rgba(0,0,0,.25)' : '0 0 10px rgba(0,0,0,.1)'}}
 										style={{...provided.draggableProps.style}}
 									>
-										<Stack direction="row" alignItems="center">
+										<Stack direction="row" sx={{opacity: .8}} alignItems="center">
 											<Box sx={{flex: 1}} onClick={() => setSelected(i)}>
 												{item.name}
 											</Box>
@@ -98,17 +91,17 @@ const Layers = () => {
 								</Draggable>
 							))}
 								{provided.placeholder}
-							</div>
+							</Stack>
 
 								
 							)}
 						</Droppable>
 					</DragDropContext>
 
-					<Card sx={{p: 2, borderRadius: 2, boxShadow: '0 0 10px rgba(0,0,0,.25)'}}>
+					<Card sx={layerStyle} style={{boxShadow: '0 0 10px rgba(0,0,0,.1)'}}>
 						<form onSubmit={onSubmit}>
-							<Stack direction="row" alignItems="center">
-								<TextField {...newLayerForm.name} fullWidth />
+							<Stack sx={{opacity: .8}} direction="row" alignItems="center">
+								<TextField size="small" variant="standard" {...newLayerForm.name} fullWidth />
 								<IconButton type="submit">
 									<AddIcon />
 								</IconButton>
