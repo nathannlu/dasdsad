@@ -37,6 +37,16 @@ export const CollectionProvider = ({ children }) => {
 
 	const [listOfWeights, setListOfWeights] = useState([]);
 
+	let newLayer = { 
+		name: "Background",
+		weight: 100,
+		images: []
+	}
+	useState(() => {
+		setLayers([newLayer])
+		setSelected(0);
+	}, []);
+
 	
 	return (
 		<CollectionContext.Provider

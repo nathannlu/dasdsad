@@ -9,7 +9,7 @@ import { useGenerateCollection } from './hooks/useGenerateCollection';
 const Generator = () => {
 	const { done, progress } = useGenerateCollection();	
 
-	useEffect(() => console.log(progress), [progress]);
+//	useEffect(() => console.log(progress), [progress]);
 
 	return (
 		<>
@@ -18,7 +18,7 @@ const Generator = () => {
 				display: 'flex',
 				bgcolor: 'grey.200',
 				minHeight: '100vh',
-				paddingTop: '64px'
+				p: 2
 			}}>
 				<Grid container>
 					<Grid xs={3} item>
