@@ -37,6 +37,7 @@ export const CollectionProvider = ({ children }) => {
 
 	const [listOfWeights, setListOfWeights] = useState([]);
 
+	// Init
 	let newLayer = { 
 		name: "Background",
 		weight: 100,

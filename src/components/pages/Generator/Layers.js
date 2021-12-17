@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider, Slider } from 'ds/components';
+import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider, Slider, FormLabel } from 'ds/components';
 import { Chip } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material'
-import { useGenerateCollection } from './hooks/useGenerateCollection';
 import { useLayerManager } from './hooks/useLayerManager';
-import { useTraitsManager } from './hooks/useTraitsManager';
 import { useCollection } from 'libs/collection';
-import { dataURItoBlob } from 'utils/imageData';
 
 const layerStyle = {
 	border:  '1px solid rgba(255, 255, 255, 1)',
@@ -27,28 +24,18 @@ const Layers = () => {
 		onSubmit,
 		deleteLayer,
 		reorder,
-		onDragEnd
+		onDragEnd,
 	} = useLayerManager();
-	const {
-		generateImages,
-		generatedZip,
-		initWorker,
-		done,
-		progress
-	} = useGenerateCollection()
-
-	useEffect(initWorker, [])
-
-
 
 
 	return (
 		<Stack gap={2}>
+
 			<Stack gap={2} sx={{p: 2, background: 'white', borderRadius: 2}}>
 				<Box>
 					<Chip sx={{opacity: .8, mb: 1}} label={"Step 1"} />
 					<Typography variant="h5">
-						Layers
+						Create layers
 					</Typography>
 					<Typography variant="body">
 						Add a layer here to get started.
@@ -109,24 +96,7 @@ const Layers = () => {
 						</form>
 					</Card>
 				</Stack>
-
-
-				<Divider />
-
-				<Stack direction="column" gap={2}>
-					<Button variant="outlined" onClick={() => generateImages()}>
-						Generate Collection
-					</Button>
-				</Stack>
 			</Stack>
-
-			{generatedZip && (
-				<a href={"data:application/zip;base64,"+generatedZip} >
-					<Button variant="contained">
-						Download collection
-					</Button>
-				</a>
-			)}
 		</Stack>
 	)
 };

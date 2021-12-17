@@ -3,6 +3,7 @@ import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/com
 import LinearProgress from '@mui/material/LinearProgress';
 import Layers from './Layers';
 import Images from './Images';
+import Rarity from './Rarity';
 import Settings from './Settings';
 import { useGenerateCollection } from './hooks/useGenerateCollection';
 
@@ -14,10 +15,11 @@ const Generator = () => {
 	return (
 		<>
 		<Fade in>
-			<Stack sx={{
+			<Stack gap={5} sx={{
 				display: 'flex',
 				p: 2
 			}}>
+				<Settings />
 				<Grid container>
 					<Grid xs={3} item>
 						<Layers />
@@ -26,7 +28,7 @@ const Generator = () => {
 						<Images />
 					</Grid>
 					<Grid xs={3} item>
-						<Settings />
+						<Rarity />
 					</Grid>
 				</Grid>
 			</Stack>

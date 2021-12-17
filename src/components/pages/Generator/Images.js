@@ -1,9 +1,10 @@
 import React from 'react';
 import Dropzone from 'react-dropzone'
-import { Stack, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
+import { Stack, Box, Grid, Fade, TextField, FormLabel, IconButton } from 'ds/components';
 import { Chip } from '@mui/material';
 import { useCollection } from 'libs/collection';
 import { useTraitsManager } from './hooks/useTraitsManager';
+import { CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
 
 
 const Images = () => {
@@ -16,28 +17,49 @@ const Images = () => {
 	<Stack gap={2} sx={{px: 2}} >
 		<Box sx={{mt: 2}}>
 			<Chip sx={{opacity: .8, mb: 1}} label={"Step 2"} />
-			<Box>
-				Add images to layer <Chip color="success" label={layers[selected]?.name} />
-			</Box>
+			{selected !== null ? (
+				<Box>
+					Add images to layer <Chip color="success" label={layers[selected]?.name} />
+				</Box>
+			) : (
+				<Box>
+					Select a layer in the left panel to get started
+				</Box>
+			)}
 		</Box>
 
 		<Stack direction="row">
 			{layers[selected]?.images?.map((image, i) => (
-				<Grid xs={2} item key={i}>
-					<Box>
+				<Grid xs={3} item key={i} sx={{position: 'relative'}}>
+					<Box sx={{border: selectedImage == i && '2px solid darkgrey', borderRadius: '6px', padding: '4px'}}>
 						<img
 							src={image.preview} 
 							onClick={() => setSelectedImage(i)}
-							style={selectedImage == i ? {border: '1px solid blue'} : {}}
+							style={{borderRadius: '4px'}}
 						/>
 					</Box>
-					<button onClick={() => deleteImage(i)}>Remove image</button>
+					<IconButton 
+						sx={{
+							position: 'absolute',
+							top: 0,
+							right: 0,
+							transform: 'translate(35%, -35%)',
+							background: '#eee',
+							padding: '1px',
+							'&:hover': {
+								background: '#eee',
+							}
+						}}
+						onClick={() => deleteImage(i)}
+					>
+						<CancelOutlinedIcon />
+					</IconButton>
 				</Grid>
 			))}
 		</Stack>
 
 
-		{selected !== null ? (
+		{selected !== null && (
 			<div>
 				<Dropzone onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
 					{({getRootProps, getInputProps}) => (
@@ -56,18 +78,12 @@ const Images = () => {
 							<div {...getRootProps()}>
 								<input {...getInputProps()} />
 								<p style={{opacity: .5, textAlign: 'center'}}>Drag 'n' drop some files here, or click to select files</p>
-
 							</div>
-
 						</Box>
 
 					)}
 				</Dropzone>
 
-			</div>
-		) : (
-			<div style={{textAlign: 'center'}}>
-				Select a layer in the left panel to get started
 			</div>
 		)}
 	</Stack>
