@@ -135,13 +135,6 @@ const Settings = () => {
 						Generate Collection
 					</Button>
 				</Box>
-				{generatedZip && (
-					<a href={"data:application/zip;base64,"+generatedZip} >
-						<Button variant="contained">
-							Download collection
-						</Button>
-					</a>
-				)}
 
 		</Stack>
 	)
