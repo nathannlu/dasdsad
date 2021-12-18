@@ -8,9 +8,15 @@ import { Helmet } from 'react-helmet';
 
 import { Twitter as TwitterIcon  } from '@mui/icons-material';
 
+import posthog from 'posthog-js';
+
+
+
 function App() {
 	ReactGA.initialize('G-X392J39GCK');
 	ReactGA.pageview(window.location.pathname + window.location.search);
+	posthog.init("phc_Y320pMWnNVcSMIAIW1bbh35FXjgqjZULkZrl5OhaIAf", {api_host: 'https://app.posthog.com'});
+
 
   return (
 		<Box sx={{minHeight: '100vh',bgcolor: 'grey.200', position: 'relative'}}>
