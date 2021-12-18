@@ -1,7 +1,8 @@
 import React from 'react';
 import Generator from 'components/pages/Generator';
 import { Container, Box, Typography, Stack } from 'ds/components';
-import { Chip } from '@mui/material';
+import { Toolbar, Chip, Avatar } from '@mui/material';
+import { Comment as CommentIcon } from '@mui/icons-material';
 import ReactGA from 'react-ga';
 import { Helmet } from 'react-helmet';
 
@@ -12,31 +13,28 @@ function App() {
 	ReactGA.pageview(window.location.pathname + window.location.search);
 
   return (
-		<>
+		<Box sx={{minHeight: '100vh',bgcolor: 'grey.200', position: 'relative'}}>
 			<Helmet>
 				<title>Create your NFT collection with no-code - NFT Art Generator</title>
 				<link rel="canonical" href="https://nftdatagen.com" />
 				<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 			</Helmet>
-			<Container sx={{py: 3}}>
-				<Chip label="Early beta" />
-				<Typography variant="h5">
-					No Code NFT Collection Generator
-				</Typography>
-				<Stack>
-					<Typography variant="body">
-						Generate your 10,000 NFT Collection from an intuitive UI. We support images, gifs and videos generative art!
-					</Typography>
-					<Typography variant="body">
-						If you have any questions, or just want to chat with the developers, join our
-						&nbsp;<a style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">discord</a> or follow us on <a href="https://twitter.com/nftdatagen" style={{color: 'blue'}}>Twitter</a>
-					</Typography>
-				</Stack>
-			
-			</Container>
 
+			<Toolbar sx={{background: 'rgba(0, 0, 0, 0.9)'}}>
+			<div className="container mx-auto">
+				<Typography variant="body" sx={{color: 'white'}}>
+					Web3
+				</Typography>
+			</div>
+			</Toolbar>
 			<Generator />
-		</>
+
+			<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'absolute', right: 20, bottom: 20}}>
+				<Avatar sx={{ background: '#738ADB', width: 64, height: 64, cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,.2)'}}>
+					<CommentIcon />
+				</Avatar>
+			</a>
+		</Box>
   );
 }
 

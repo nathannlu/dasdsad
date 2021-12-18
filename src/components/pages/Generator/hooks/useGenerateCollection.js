@@ -28,14 +28,14 @@ export const useGenerateCollection = () => {
 		if (collectionSize.value > 10000) {
 			addToast({
 				severity: 'error',
-				message: 'This value must be 10000 or under'
+				message: 'Collection Size value must be 10000 or under'
 			})
 			return;
 		}
 		if (collectionSize.value.length < 1) {
 			addToast({
 				severity: 'error',
-				message: 'This value cannot be left empty'
+				message: 'Collection Size value cannot be left empty'
 			})
 			return;
 		}

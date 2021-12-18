@@ -23,7 +23,7 @@ export const useTraitsManager = () => {
 		const newFile = {
 			preview: URL.createObjectURL(acceptedFiles[0]),
 			rarity: .5,
-			weight: 50,
+			weight: 30,
 			base64: await toBase64(acceptedFiles[0]),
 			file: acceptedFiles[0]
 		}
