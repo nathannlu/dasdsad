@@ -25,6 +25,7 @@
     "logrocket": "^2.1.2",
     "merge-base64": "^1.0.3",
     "merge-images": "^2.0.0",
+    "posthog-js": "^1.16.7",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^16.13.1",
