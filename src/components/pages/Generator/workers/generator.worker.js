@@ -33,7 +33,10 @@ self.onmessage = async (event) => {
 		zip.file(`metadata/metadata.json`, JSON.stringify(collectionMetadata, null, 2));
 
 		// Compile whole zip and forward to client
-		zip.generateAsync({type: 'blob'}).then(content => {
+		zip.generateAsync({type: 'blob'}, (x) => {
+			self.postMessage({message: 'zip_progress', zipProgress: x.percent});
+		})
+		.then(content => {
 			self.postMessage({message: 'output', content});
 		})
 	}

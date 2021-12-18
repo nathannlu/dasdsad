@@ -6,11 +6,15 @@ import Images from './Images';
 import Rarity from './Rarity';
 import Settings from './Settings';
 import { useGenerateCollection } from './hooks/useGenerateCollection';
+import { useCollection } from 'libs/collection';
+import CheckoutModal from './CheckoutModal';
 
 const Generator = () => {
 	const { done, progress } = useGenerateCollection();	
+	const { isModalOpen, setIsModalOpen } = useCollection();
 
 //	useEffect(() => console.log(progress), [progress]);
+	
 
 	return (
 		<>
@@ -31,26 +35,19 @@ const Generator = () => {
 						<Rarity />
 					</Grid>
 				</Grid>
+
+				<CheckoutModal
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					progress={progress}
+				/>
 			</Stack>
 		</Fade>
 		</>
 	)
 };
 
-function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
-}
+
 
 
 export default Generator;

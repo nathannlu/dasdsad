@@ -22,8 +22,8 @@ export function pickRandom(array) {
 
 // images = [{preview: '', weight: 30}, {preview: '', weight: 10}]
 // takes in layer images
-export function pickWeighted(array) {
-	const totalWeights = array.reduce((acc, a) => acc + a.weight, 0)
+export async function pickWeighted(array) {
+	const totalWeights = await array.reduce((acc, a) => acc + a.weight, 0)
 	const random = randomNumber(1, totalWeights)
 
 	//console.log("total w",totalWeights)
@@ -31,9 +31,9 @@ export function pickWeighted(array) {
 
 	let prev = 0;
 	for(let item of array) {
-		//console.log('w', item.weight)
+		//console.log('pick w', item)
 
-		if (random < item.weight + prev) {
+		if (random <= item.weight + prev) {
 			//console.log('bucket', prev, item.weight + prev)
 			return item;
 		} else {
@@ -44,7 +44,7 @@ export function pickWeighted(array) {
 
 export const includeWeightedLayer  = (layer) => {
 	const random = randomNumber(1, 100)
-	if (random < layer.weight) {
+	if (random <= layer.weight) {
 		return true;
 	}
 	return false;

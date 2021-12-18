@@ -65,17 +65,17 @@ const Images = () => {
 					{({getRootProps, getInputProps}) => (
 
 						<Box sx={{
-							padding:"64px",
 							alignItems:'center', 
 							justifyContent: 'center',
 							borderRadius: '4px',
 							background: '#F8F8F8',
 							border: '1px solid #C4C4C4',
 							cursor: 'pointer',
-							boxShadow: '0 0 10px rgba(0,0,0,.15)'
+							boxShadow: '0 0 10px rgba(0,0,0,.15)',
+							position: 'relative',
 						}}>
 
-							<div {...getRootProps()}>
+							<div style={{padding: '64px'}} {...getRootProps()}>
 								<input {...getInputProps()} />
 								<p style={{opacity: .5, textAlign: 'center'}}>Drag 'n' drop some files here, or click to select files</p>
 							</div>

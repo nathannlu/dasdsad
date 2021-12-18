@@ -25,20 +25,18 @@ export const generateOneImage = async ({settings, layers, filename}) => {
 	}
 
 	// pick a random image from every layer
-	layers.forEach((layer, i) => {
-		if (includeWeightedLayer(layer)) {
-			console.log(layer.images);
+	for(let i = 0; i < layers.length; i++) {
+		if (includeWeightedLayer(layers[i])) {
 
-			const pickedImage = pickWeighted(layer.images);
+			const pickedImage = await pickWeighted(layers[i].images);
 
-			toBeMerged.push(pickedImage.base64.split(',').pop())
+			toBeMerged.push(pickedImage.base64.split(',').pop())		// errors our sometimes, reading undefined of 'base64'
 			metadata.attributes.push({
-				trait_type: layer.name,
+				trait_type: layers[i].name,
 				value: pickedImage.name
 			})	
-
 		}
-	})
+	}
 
 	// merge all layers together
 //	if (toBeMerged.length > 1) {
