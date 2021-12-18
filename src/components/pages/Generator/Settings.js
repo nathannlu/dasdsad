@@ -9,7 +9,7 @@ const Settings = () => {
 
 	return (
 		<Grid container sx={{p: 2, background: 'white', borderRadius: 2, opacity: .8}}>
-			<Grid xs={3} item>
+			<Grid md={3} item>
 				<Chip sx={{opacity: .8, mb: 1}} label={"Step 0"} />
 				<Typography variant="h5">
 					Metadata & collection
@@ -19,17 +19,17 @@ const Settings = () => {
 				</Typography>
 			</Grid>
 
-			<Grid xs={3} p={1} item>
+			<Grid md={3} p={1} item>
 				<FormLabel>Name</FormLabel>
 				<TextField {...settingsForm.name} fullWidth />
 			</Grid>
 
-			<Grid xs={3} p={1}  item>
+			<Grid md={3} p={1}  item>
 				<FormLabel>Description</FormLabel>
 				<TextField  {...settingsForm.description} fullWidth/>
 			</Grid>
 
-			<Grid xs={3} p={1} item>
+			<Grid md={3} p={1} item>
 				<FormLabel>Collection Size*</FormLabel>
 				<TextField {...settingsForm.collectionSize} fullWidth />
 			</Grid>

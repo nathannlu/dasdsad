@@ -25,13 +25,13 @@ const Generator = () => {
 			}}>
 				<Settings />
 				<Grid container>
-					<Grid xs={3} item>
+					<Grid md={3} item>
 						<Layers />
 					</Grid>
-					<Grid xs={6} item>
+					<Grid md={6} item>
 						<Images />
 					</Grid>
-					<Grid xs={3} item>
+					<Grid md={3} item>
 						<Rarity />
 					</Grid>
 				</Grid>
