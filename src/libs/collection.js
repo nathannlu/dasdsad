@@ -16,6 +16,9 @@ export const CollectionProvider = ({ children }) => {
 	} = useArray();
 
 	const [ selectedImage, setSelectedImage ] = useState(null);
+	const [ progress, setProgress ] = useState(null);
+	const [ isModalOpen, setIsModalOpen] = useState(false);
+	const [generatedZip, setGeneratedZip] = useState('');
 
 	const { form: settingsForm } = useForm({
 		name: {
@@ -61,7 +64,13 @@ export const CollectionProvider = ({ children }) => {
 				selectedImage,
 				setSelectedImage,
 				listOfWeights,
-				setListOfWeights
+				setListOfWeights,
+				progress,
+				setProgress,
+				isModalOpen,
+				setIsModalOpen,
+				generatedZip,
+				setGeneratedZip
 			}}
 		>
 			{children}

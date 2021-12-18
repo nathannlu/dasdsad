@@ -22,8 +22,8 @@ export function pickRandom(array) {
 
 // images = [{preview: '', weight: 30}, {preview: '', weight: 10}]
 // takes in layer images
-export function pickWeighted(array) {
-	const totalWeights = array.reduce((acc, a) => acc + a.weight, 0)
+export async function pickWeighted(array) {
+	const totalWeights = await array.reduce((acc, a) => acc + a.weight, 0)
 	const random = randomNumber(1, totalWeights)
 
 	//console.log("total w",totalWeights)

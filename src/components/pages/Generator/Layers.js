@@ -75,11 +75,9 @@ const Layers = () => {
 									)}
 								</Draggable>
 							))}
-								{provided.placeholder}
+							{provided.placeholder}
 
 							</Stack>
-
-								
 							)}
 						</Droppable>
 					</DragDropContext>

@@ -11,18 +11,25 @@ import { generateOneImage } from '../scripts/generate';
 
 
 export const useGenerateCollection = () => {
-	const { layers, settingsForm } = useCollection();
+	const { 
+		layers, 
+		settingsForm, 
+		progress, 
+		setProgress,
+		isModalOpen,
+		setIsModalOpen,
+		generatedZip, setGeneratedZip
+	} = useCollection();
 	const { name, description, collectionSize } = settingsForm;
 
 	const { addToast } = useToast()
-	const [progress, setProgress] = useState();
-	const [generatedZip, setGeneratedZip] = useState('');
 	const [done, setDone] = useState(false);
 
 	// This will need to talk to web worker
 	const generateImages = async () => {
 		setDone(false);
 		setProgress(null);
+		setIsModalOpen(false)
 
 		// Runs check
 		if (collectionSize.value > 10000) {
@@ -55,7 +62,14 @@ export const useGenerateCollection = () => {
 			count: collectionSize.value
 		})	
 
+		setIsModalOpen(true);
 	};
+
+	const save = () => {
+		FileSaver.saveAs(generatedZip, 'sample.zip')
+	}
+
+
 
 	const initWorker = () => {
 		worker.onmessage = (message) => {
@@ -63,7 +77,11 @@ export const useGenerateCollection = () => {
 				setGeneratedZip(message.data.content);
 				//console.log(message.data.content);
 
-				FileSaver.saveAs(message.data.content, 'sample.zip')
+
+				addToast({
+					severity: 'success',
+					message: 'Finished generation!'
+				})
 				setDone(true);
 			}
 			if (message.data.message == 'progress') {
@@ -80,6 +98,9 @@ export const useGenerateCollection = () => {
 		initWorker,
 		worker,
 		done,
-		progress
+		progress,
+		isModalOpen,
+		setIsModalOpen,
+		save
 	}
 }

@@ -23,7 +23,7 @@ function App() {
 			<Toolbar sx={{background: 'rgba(0, 0, 0, 0.9)'}}>
 			<div className="container mx-auto">
 				<Typography variant="body" sx={{color: 'white'}}>
-					Web3
+					Datagen
 				</Typography>
 			</div>
 			</Toolbar>
