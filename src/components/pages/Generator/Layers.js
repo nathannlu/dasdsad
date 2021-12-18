@@ -16,7 +16,6 @@ const layerStyle = {
 	backdropFilter: 'blur(6px)',
 }
 
-
 const Layers = () => {
 	const { layers, setLayers, selected, setSelected, listOfWeights, setListOfWeights } = useCollection();
 	const {
@@ -26,8 +25,7 @@ const Layers = () => {
 		reorder,
 		onDragEnd,
 	} = useLayerManager();
-
-
+	
 	return (
 		<Stack gap={2}>
 
@@ -78,6 +76,7 @@ const Layers = () => {
 								</Draggable>
 							))}
 								{provided.placeholder}
+
 							</Stack>
 
 								

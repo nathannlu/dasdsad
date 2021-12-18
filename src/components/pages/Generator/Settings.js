@@ -34,6 +34,7 @@ const Settings = () => {
 				<TextField {...settingsForm.collectionSize} fullWidth />
 			</Grid>
 		</Grid>
+
 	)
 };
 

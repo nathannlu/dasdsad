@@ -27,7 +27,6 @@ function App() {
 				</Typography>
 			</div>
 			</Toolbar>
-
 			<Generator />
 
 			<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'absolute', right: 20, bottom: 20}}>

@@ -44,6 +44,7 @@ export const useLayerManager = () => {
 	const onSubmit = e => {
 		e.preventDefault();
 
+
 		if(newLayerForm.name.value.length > 0) {
 			let obj = {
 				name: newLayerForm.name.value,
@@ -83,6 +84,7 @@ export const useLayerManager = () => {
 		setLayers(items)
 
 	}
+
 
 
 	return {

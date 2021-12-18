@@ -87,6 +87,7 @@ const Images = () => {
 			</div>
 		)}
 	</Stack>
+
 	)
 };
 
