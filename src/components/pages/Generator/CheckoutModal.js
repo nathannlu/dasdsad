@@ -8,14 +8,14 @@ import { useCollection } from 'libs/collection';
 
 const CheckoutModal = () => {
 	const { save } = useGenerateCollection();	
-	const { isModalOpen, setIsModalOpen, progress, settingsForm: { collectionSize } } = useCollection();
+	const { isModalOpen, setIsModalOpen, done, progress, zipProgress, settingsForm: { collectionSize } } = useCollection();
 	const [percentage, setPercentage] = useState()
 
-	let done = true
 
 	useEffect(() => {
 		let p = progress;
-		setPercentage(100 * ((++p)/collectionSize.value))
+		let penis = 100 * ((++p)/collectionSize.value)
+		setPercentage(penis);
 	}, [progress])
 
 	return (
@@ -40,9 +40,15 @@ const CheckoutModal = () => {
 					{progress !== null && (
 						<LinearProgressWithLabel value={percentage} />
 					)}
+					{zipProgress !== null && (
+						<>
+							Zipping... {Math.round(zipProgress)}%
+						</>
+					)}
+
 
 					<Stack direction="row">
-						<Button onClick={save} variant="contained" disabled={percentage !== 100}>
+						<Button onClick={save} variant="contained" disabled={!done}>
 							Download collection
 						</Button>
 						<Button onClick={() => setIsModalOpen(false)}>

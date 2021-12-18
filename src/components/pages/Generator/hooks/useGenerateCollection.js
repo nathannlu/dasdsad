@@ -16,19 +16,22 @@ export const useGenerateCollection = () => {
 		settingsForm, 
 		progress, 
 		setProgress,
+		zipProgress,
+		setZipProgress,
 		isModalOpen,
 		setIsModalOpen,
-		generatedZip, setGeneratedZip
+		generatedZip, setGeneratedZip,
+		done, setDone,
 	} = useCollection();
 	const { name, description, collectionSize } = settingsForm;
 
 	const { addToast } = useToast()
-	const [done, setDone] = useState(false);
 
 	// This will need to talk to web worker
 	const generateImages = async () => {
 		setDone(false);
 		setProgress(null);
+		setZipProgress(null);
 		setIsModalOpen(false)
 
 		// Runs check
@@ -84,8 +87,12 @@ export const useGenerateCollection = () => {
 				})
 				setDone(true);
 			}
+
 			if (message.data.message == 'progress') {
 				setProgress(message.data.progress)
+			}
+			if (message.data.message == 'zip_progress') {
+				setZipProgress(message.data.zipProgress)
 			}
 		}
 	}

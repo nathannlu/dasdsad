@@ -31,9 +31,9 @@ export async function pickWeighted(array) {
 
 	let prev = 0;
 	for(let item of array) {
-		//console.log('w', item.weight)
+		//console.log('pick w', item)
 
-		if (random < item.weight + prev) {
+		if (random <= item.weight + prev) {
 			//console.log('bucket', prev, item.weight + prev)
 			return item;
 		} else {
@@ -44,7 +44,7 @@ export async function pickWeighted(array) {
 
 export const includeWeightedLayer  = (layer) => {
 	const random = randomNumber(1, 100)
-	if (random < layer.weight) {
+	if (random <= layer.weight) {
 		return true;
 	}
 	return false;

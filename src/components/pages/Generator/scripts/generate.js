@@ -30,15 +30,12 @@ export const generateOneImage = async ({settings, layers, filename}) => {
 
 			const pickedImage = await pickWeighted(layers[i].images);
 
-			console.log(pickedImage)
-
 			toBeMerged.push(pickedImage.base64.split(',').pop())		// errors our sometimes, reading undefined of 'base64'
 			metadata.attributes.push({
 				trait_type: layers[i].name,
 				value: pickedImage.name
 			})	
 		}
-
 	}
 
 	// merge all layers together
