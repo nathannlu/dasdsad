@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Typography, Button, Stack, Box, Grid, Fade, TextField, FormLabel, IconButton, Divider, Slider } from 'ds/components';
 import { Chip } from '@mui/material';
 import { useCollection } from 'libs/collection';
@@ -131,9 +132,16 @@ const Settings = () => {
 				</>
 				)}
 				<Box p={2} sx={{background: 'white'}}>
+					{/*
 					<Button fullWidth variant="outlined" onClick={() => generateImages()}>
 						Generate Collection
 					</Button>
+					*/}
+					<Link to="/payment">
+					<Button  fullWidth variant="outlined">
+						Generate Collection	
+					</Button>
+					</Link>
 				</Box>
 
 		</Stack>
