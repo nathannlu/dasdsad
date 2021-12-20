@@ -61,7 +61,7 @@ const Images = () => {
 
 		{selected !== null && (
 			<div>
-				<Dropzone onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
+				<Dropzone multiple onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
 					{({getRootProps, getInputProps}) => (
 
 						<Box sx={{

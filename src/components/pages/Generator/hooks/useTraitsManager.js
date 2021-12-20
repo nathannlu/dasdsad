@@ -20,16 +20,23 @@ export const useTraitsManager = () => {
 
 	// adds image to layer
 	const addToLayers = async (acceptedFiles) => {
-		const newFile = {
-			preview: URL.createObjectURL(acceptedFiles[0]),
-			rarity: .5,
-			weight: 30,
-			base64: await toBase64(acceptedFiles[0]),
-			file: acceptedFiles[0]
+		let newFiles = []
+
+		for (let i = 0; i < acceptedFiles.length; i++) {
+			const newFile = {
+				preview: URL.createObjectURL(acceptedFiles[i]),
+				rarity: .5,
+				weight: 30,
+				base64: await toBase64(acceptedFiles[i]),
+				file: acceptedFiles[i]
+			}
+			
+			newFiles.push(newFile);
 		}
 
 		setLayers(prevState => {
-			prevState[selected].images.push(newFile)
+			prevState[selected].images.push(...newFiles)
+
 			return [...prevState]
 		})
 
