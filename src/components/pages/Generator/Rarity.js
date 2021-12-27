@@ -141,7 +141,8 @@ const Settings = ({ setIsCheckoutModalOpen}) => {
 
 					<Button onClick={() => {
 						if(validateForm()) {
-							setIsCheckoutModalOpen(true)
+							generateImages();
+		//					setIsCheckoutModalOpen(true)
 						}
 					}} fullWidth variant="outlined">
 						Generate Collection

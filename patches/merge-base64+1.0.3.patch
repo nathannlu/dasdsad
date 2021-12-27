@@ -1,0 +1,40 @@
+diff --git a/node_modules/merge-base64/index.js b/node_modules/merge-base64/index.js
+index 5cda666..064b77d 100644
+--- a/node_modules/merge-base64/index.js
++++ b/node_modules/merge-base64/index.js
+@@ -25,6 +25,7 @@ module.exports = function mergeImages(
+     return Jimp.read(imgBuffer).then(imgObj => ({ img: imgObj }));
+   };
+ 
++
+   return Promise.all(images.map(processImg)).then(imgs => {
+     let totalX = 0;
+     let totalY = 0;
+@@ -100,11 +101,15 @@ module.exports = function mergeImages(
+               offsetY
+             }) => height + offsetY
+           )
++
+         );
+ 
++		// Canvas where all images will be merged
+     const baseImage = new Jimp(
+-      totalWidth + marginRightLeft,
+-      totalHeight + marginTopBottom,
++			imgs[0].img.bitmap.width,
++			imgs[0].img.bitmap.height,
++//      totalWidth + marginRightLeft,
++//      totalHeight + marginTopBottom,
+       color
+     );
+ 
+@@ -122,7 +127,8 @@ module.exports = function mergeImages(
+             alignImage(totalHeight, height, align) + offsetY
+           ];
+ 
+-      baseImage.composite(img, px + left, py + top);
++//      baseImage.composite(img, px + left, py + top);
++      baseImage.composite(img, left, top);
+     }
+ 
+     return baseImage.getBase64Async(Jimp.MIME_JPEG);

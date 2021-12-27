@@ -1,3 +1,4 @@
+//import mergeImages from 'merge-images';
 import mergeImages from 'merge-base64';
 import { pickRandom, pickWeighted, includeWeightedLayer } from './helpers';
 import { urltoFile } from 'utils/imageData';
@@ -40,13 +41,16 @@ export const generateOneImage = async ({settings, layers, filename}) => {
 
 	// merge all layers together
 //	if (toBeMerged.length > 1) {
-		b64 = await mergeImages(toBeMerged);
+//	b64 = await mergeImages(toBeMerged);
 //	} else {
 //		b64 = ''
 //	}
 
+	b64 = await mergeImages(toBeMerged)
 	const png = await urltoFile(b64, `${filename}.png`);
 	const json = JSON.stringify(metadata, null, 2)			// stringify with whitespace
 	return [png, json];
 };
+
+
 
