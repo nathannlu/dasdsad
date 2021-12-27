@@ -7,7 +7,7 @@ import { useLayerManager } from './hooks/useLayerManager';
 import { useTraitsManager } from './hooks/useTraitsManager';
 import { useGenerateCollection } from './hooks/useGenerateCollection';
 
-const Settings = () => {
+const Settings = ({ setIsCheckoutModalOpen}) => {
 	const {
 		layers,
 		selected,
@@ -23,7 +23,8 @@ const Settings = () => {
 		generatedZip,
 		initWorker,
 		done,
-		progress
+		progress,
+		validateForm,
 	} = useGenerateCollection()
 	useEffect(initWorker, [])
 
@@ -137,11 +138,14 @@ const Settings = () => {
 						Generate Collection
 					</Button>
 					*/}
-					<Link to="/payment">
-					<Button  fullWidth variant="outlined">
-						Generate Collection	
+
+					<Button onClick={() => {
+						if(validateForm()) {
+							setIsCheckoutModalOpen(true)
+						}
+					}} fullWidth variant="outlined">
+						Generate Collection
 					</Button>
-					</Link>
 				</Box>
 
 		</Stack>

@@ -61,6 +61,8 @@ module.exports = {
 			'components': `${__dirname}/src/components`,
 			'libs': `${__dirname}/src/libs`,
 			'utils': `${__dirname}/src/utils`,
+			'config': `${__dirname}/src/config`,
+			'gql': `${__dirname}/src/gql`,
     },
   },
   devServer: {

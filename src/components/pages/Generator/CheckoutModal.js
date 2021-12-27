@@ -35,6 +35,9 @@ const CheckoutModal = () => {
 				<Typography gutterBottom variant="body">
 					In the meanwhile, checkout our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and <a style={{color: 'blue'}} href="https://twitter.com/nftdatagen" target="_blank">Twitter</a>
 				</Typography>
+				<Typography gutterBottom variant="body">
+					DO NOT CLOSE THIS PAGE
+				</Typography>
 
 				<Stack pt={2} gap={2}>
 					{progress !== null && (
@@ -50,9 +53,6 @@ const CheckoutModal = () => {
 					<Stack direction="row">
 						<Button onClick={save} variant="contained" disabled={!done}>
 							Download collection
-						</Button>
-						<Button onClick={() => setIsModalOpen(false)}>
-							Cancel
 						</Button>
 					</Stack>
 				</Stack>

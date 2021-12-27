@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
 import LinearProgress from '@mui/material/LinearProgress';
 import Layers from './Layers';
@@ -9,9 +9,19 @@ import { useGenerateCollection } from './hooks/useGenerateCollection';
 import { useCollection } from 'libs/collection';
 import CheckoutModal from './CheckoutModal';
 
+import { Elements } from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+import PaymentModal from './PaymentModal';
+
+import config from 'config';
+const stripePromise = loadStripe(config.stripe.publicKey);
+
+
+
 const Generator = () => {
 	const { done, progress } = useGenerateCollection();	
 	const { isModalOpen, setIsModalOpen } = useCollection();
+	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 
 //	useEffect(() => console.log(progress), [progress]);
 	
@@ -32,7 +42,9 @@ const Generator = () => {
 						<Images />
 					</Grid>
 					<Grid md={3} item>
-						<Rarity />
+						<Rarity
+							setIsCheckoutModalOpen={setIsCheckoutModalOpen}
+						/>
 					</Grid>
 				</Grid>
 
@@ -41,6 +53,15 @@ const Generator = () => {
 					setIsModalOpen={setIsModalOpen}
 					progress={progress}
 				/>
+
+
+				<Elements stripe={stripePromise}>
+					<PaymentModal
+						setIsGeneratingModalOpen={setIsModalOpen}
+						isModalOpen={isCheckoutModalOpen}
+						setIsModalOpen={setIsCheckoutModalOpen}
+					/>
+				</Elements>
 			</Stack>
 		</Fade>
 		</>

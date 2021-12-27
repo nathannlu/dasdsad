@@ -35,6 +35,7 @@ export const useGenerateCollection = () => {
 		setIsModalOpen(false)
 
 		// Runs check
+		/*
 		if (collectionSize.value > 10000) {
 			addToast({
 				severity: 'error',
@@ -42,6 +43,7 @@ export const useGenerateCollection = () => {
 			})
 			return;
 		}
+		*/
 		if (collectionSize.value.length < 1) {
 			addToast({
 				severity: 'error',
@@ -70,6 +72,29 @@ export const useGenerateCollection = () => {
 
 	const save = () => {
 		FileSaver.saveAs(generatedZip, 'sample.zip')
+	}
+
+	const validateForm = () => {
+		// check images
+
+		/*
+		if (collectionSize.value > 10000) {
+			addToast({
+				severity: 'error',
+				message: 'Collection Size value must be 10000 or under'
+			})
+			return;
+		}
+		*/
+		if (collectionSize.value.length < 1) {
+			addToast({
+				severity: 'error',
+				message: 'Collection Size value cannot be left empty'
+			})
+			return false;
+		}
+
+		return true;
 	}
 
 
@@ -108,6 +133,7 @@ export const useGenerateCollection = () => {
 		progress,
 		isModalOpen,
 		setIsModalOpen,
-		save
+		save,
+		validateForm,
 	}
 }
