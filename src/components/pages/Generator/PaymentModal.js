@@ -161,7 +161,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingMod
 									</Typography>
 									<Divider />
 									<Typography variant="body1">
-										Total due today ${0.10 * settingsForm.collectionSize.value - .01} USD
+										Total due today ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD
 									</Typography>
 
 									<Divider />
@@ -173,7 +173,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingMod
 										variant="contained" 
 										fullWidth
 									>
-										Pay ${0.10 * settingsForm.collectionSize.value - .01} USD now
+										Pay ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD now
 									</LoadingButton>
 								</Stack>
 							</Card>

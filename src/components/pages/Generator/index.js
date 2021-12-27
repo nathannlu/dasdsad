@@ -8,6 +8,7 @@ import Settings from './Settings';
 import { useGenerateCollection } from './hooks/useGenerateCollection';
 import { useCollection } from 'libs/collection';
 import CheckoutModal from './CheckoutModal';
+import HelpIcon from '@mui/icons-material/Help';
 
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
@@ -62,6 +63,13 @@ const Generator = () => {
 						setIsModalOpen={setIsCheckoutModalOpen}
 					/>
 				</Elements>
+
+				<Stack direction="row" justifyContent="center" sx={{opacity: '.5'}}>
+					<HelpIcon />
+					<Typography sx={{ml: 1}} variant="h6">
+						Need help? Watch this tutorial <a style={{color: 'blue'}} target="_blank" href="https://www.youtube.com/watch?v=El9ZnfTGh0s">here</a>
+					</Typography>
+				</Stack>
 			</Stack>
 		</Fade>
 		</>

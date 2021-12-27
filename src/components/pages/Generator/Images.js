@@ -1,6 +1,6 @@
 import React from 'react';
 import Dropzone from 'react-dropzone'
-import { Stack, Box, Grid, Fade, TextField, FormLabel, IconButton } from 'ds/components';
+import { Typography, Stack, Box, Grid, Fade, TextField, FormLabel, IconButton } from 'ds/components';
 import { Chip } from '@mui/material';
 import { useCollection } from 'libs/collection';
 import { useTraitsManager } from './hooks/useTraitsManager';
@@ -15,6 +15,7 @@ const Images = () => {
 	
 	return (
 	<Stack gap={2} sx={{px: 2}} >
+
 		<Box sx={{mt: 2}}>
 			<Chip sx={{opacity: .8, mb: 1}} label={"Step 2"} />
 			{selected !== null ? (

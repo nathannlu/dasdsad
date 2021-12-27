@@ -86,12 +86,23 @@ export const useGenerateCollection = () => {
 			return;
 		}
 		*/
+
 		if (collectionSize.value.length < 1) {
 			addToast({
 				severity: 'error',
 				message: 'Collection Size value cannot be left empty'
 			})
 			return false;
+		}
+
+		for(let i = 0; i < layers.length; i++) {
+			if(layers[i].images.length == 0) {
+				addToast({
+					severity: 'error',
+					message: `Layer '${layers[i].name}' cannot have 0 traits. Please add a trait or remove the layer`
+				});
+				return false;
+			}
 		}
 
 		return true;
