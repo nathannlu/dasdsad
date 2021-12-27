@@ -22,7 +22,6 @@ const CheckoutModal = () => {
 		<Modal
 			open={isModalOpen}
 //			closeOnOuterClick={true}
-			onClose={() => setIsModalOpen(false)}
 			sx={{overflow: 'auto', alignItems: 'center', display: 'flex'}}
 		>
 			<Grid item xs={5} p={3} sx={{margin: '0 auto', bgcolor: 'white', borderRadius: 2}}>
