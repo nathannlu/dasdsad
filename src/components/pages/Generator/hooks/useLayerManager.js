@@ -13,7 +13,9 @@ export const useLayerManager = () => {
 		selected,
 		setSelected
 	} = useCollection();
-	const { form: newLayerForm } = useForm({
+
+
+	const { form: newLayerForm, setFormState: setNewLayerForm } = useForm({
 		name: {
 			default: '',
 			placeholder: "e.g. background",
@@ -53,6 +55,13 @@ export const useLayerManager = () => {
 			}
 
 			addToArray(obj)
+
+			setNewLayerForm(prevState => {
+				prevState.name.value = ''
+				
+				return {...prevState}
+			});
+
 
 		} else {
 			addToast({

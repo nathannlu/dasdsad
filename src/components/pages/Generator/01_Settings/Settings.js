@@ -8,33 +8,32 @@ const Settings = () => {
 	const { layers, setLayers, selected, setSelected, listOfWeights, setListOfWeights, settingsForm } = useCollection();
 
 	return (
-		<Grid container sx={{p: 2, background: 'white', borderRadius: 2, opacity: .8}}>
-			<Grid md={3} item>
-				<Chip sx={{opacity: .8, mb: 1}} label={"Step 0"} />
+		<Stack sx={{backgroundColor: 'white', borderRadius: 3, p: 2, height: '100%'}}>
+			<Box md={3} item>
+				<Chip sx={{opacity: .8, mb: 1}} label="Step 1/4" />
 				<Typography variant="h5">
 					Metadata & collection
 				</Typography>
 				<Typography variant="body">
 					Edit fields below to configure your metadata
 				</Typography>
-			</Grid>
+			</Box>
 
-			<Grid md={3} p={1} item>
+			<Box>
 				<FormLabel>Name</FormLabel>
 				<TextField {...settingsForm.name} fullWidth />
-			</Grid>
+			</Box>
 
-			<Grid md={3} p={1}  item>
+			<Box>
 				<FormLabel>Description</FormLabel>
 				<TextField  {...settingsForm.description} fullWidth/>
-			</Grid>
+			</Box>
 
-			<Grid md={3} p={1} item>
+			<Box>
 				<FormLabel>Collection Size*</FormLabel>
 				<TextField {...settingsForm.collectionSize} fullWidth />
-			</Grid>
-		</Grid>
-
+			</Box>
+		</Stack>
 	)
 };
 

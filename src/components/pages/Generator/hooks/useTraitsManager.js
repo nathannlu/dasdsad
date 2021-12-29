@@ -22,9 +22,12 @@ export const useTraitsManager = () => {
 	const addToLayers = async (acceptedFiles) => {
 		let newFiles = []
 
+		console.log(acceptedFiles)
+
 		for (let i = 0; i < acceptedFiles.length; i++) {
 			const newFile = {
 				preview: URL.createObjectURL(acceptedFiles[i]),
+				name: acceptedFiles[i].name.substring(0, acceptedFiles[i].name.indexOf('.')),
 				rarity: .5,
 				weight: 30,
 				base64: await toBase64(acceptedFiles[i]),
@@ -50,7 +53,6 @@ export const useTraitsManager = () => {
 	// deletes image from layer
 	// remove trait
 	const deleteImage = (i) => {
-		setSelectedImage(null);
 		setLayers(prevState => {
 			prevState[selected].images.splice(i, 1)
 			return [...prevState]

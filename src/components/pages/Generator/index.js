@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
-import LinearProgress from '@mui/material/LinearProgress';
-import Layers from './Layers';
-import Images from './Images';
-import Rarity from './Rarity';
-import Settings from './Settings';
-import { useGenerateCollection } from './hooks/useGenerateCollection';
-import { useCollection } from 'libs/collection';
-import CheckoutModal from './CheckoutModal';
+
+import Settings from './01_Settings';
+import Layers from './02_Layers';
+import Traits from './03_Traits';
+import Rarity from './04_Rarity';
+import Payment from './05_Payment';
+import Generating from './06_Generating';
+import StepWizard from 'react-step-wizard';
+import Model from './Model';
 import HelpIcon from '@mui/icons-material/Help';
 
-import { Elements } from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
 import PaymentModal from './PaymentModal';
+import CheckoutModal from './CheckoutModal';
+import { useGenerateCollection } from './hooks/useGenerateCollection';
+import { useCollection } from 'libs/collection';
+import LinearProgress from '@mui/material/LinearProgress';
 
-import config from 'config';
-const stripePromise = loadStripe(config.stripe.publicKey);
+
+
 
 
 
@@ -23,29 +26,29 @@ const Generator = () => {
 	const { done, progress } = useGenerateCollection();	
 	const { isModalOpen, setIsModalOpen } = useCollection();
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
+	const [activeStep, setActiveStep] = useState(1);
 
 //	useEffect(() => console.log(progress), [progress]);
-	
 
 	return (
 		<>
 		<Fade in>
-			<Stack gap={5} sx={{
-				display: 'flex',
-				p: 2
-			}}>
-				<Settings />
+			<Box>
 				<Grid container>
-					<Grid md={3} item>
-						<Layers />
+					<Grid xs={6} item>
+						<Stack gap={2} sx={{backgroundColor: 'white', borderRadius: 3, p: 2, height: '100vh', paddingTop: '120px'}}>
+							<StepWizard onStepChange={s => setActiveStep(s.activeStep)}>
+								<Settings />
+								<Layers />
+								<Traits />
+								<Rarity />
+								<Payment />
+								<Generating />
+							</StepWizard>
+						</Stack>
 					</Grid>
-					<Grid md={6} item>
-						<Images />
-					</Grid>
-					<Grid md={3} item>
-						<Rarity
-							setIsCheckoutModalOpen={setIsCheckoutModalOpen}
-						/>
+					<Grid alignItems="center" justifyItems="center" xs={6} item>
+						<Model activeStep={activeStep} />
 					</Grid>
 				</Grid>
 
@@ -56,6 +59,7 @@ const Generator = () => {
 				/>
 
 
+				{/*
 				<Elements stripe={stripePromise}>
 					<PaymentModal
 						setIsGeneratingModalOpen={setIsModalOpen}
@@ -70,7 +74,8 @@ const Generator = () => {
 						Need help? Watch this tutorial <a style={{color: 'blue'}} target="_blank" href="https://www.youtube.com/watch?v=El9ZnfTGh0s">here</a>
 					</Typography>
 				</Stack>
-			</Stack>
+				*/}
+			</Box>
 		</Fade>
 		</>
 	)

@@ -35,7 +35,7 @@ export const generateOneImage = async ({settings, layers, filename}) => {
 			metadata.attributes.push({
 				trait_type: layers[i].name,
 				value: pickedImage.name
-			})	
+			})
 		}
 	}
 

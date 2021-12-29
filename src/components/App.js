@@ -24,13 +24,14 @@ function App() {
   return (
 
 		<Router>
-		<Box sx={{minHeight: '100vh',bgcolor: 'grey.200', position: 'relative'}}>
+		<Box sx={{minHeight: '100vh',bgcolor: '#191A24', position: 'relative'}}>
 			<Helmet>
 				<title>Create your NFT collection with no-code - NFT Art Generator</title>
 				<link rel="canonical" href="https://nftdatagen.com" />
 				<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 			</Helmet>
 
+			{/*
 			<Toolbar sx={{background: 'rgba(0, 0, 0, 0.9)'}}>
 			<div className="container mx-auto">
 				<Link to="/">
@@ -40,6 +41,7 @@ function App() {
 				</Link>
 			</div>
 			</Toolbar>
+			*/}
 
 			<Routes />
 

@@ -51,6 +51,7 @@ export const CollectionProvider = ({ children }) => {
 	useState(() => {
 		setLayers([newLayer])
 		setSelected(0);
+		setSelectedImage(0);
 	}, []);
 
 	
