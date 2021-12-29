@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion"
 import { useCollection } from 'libs/collection';
 import Layer from './Layer';
 
-import { Gradient } from '../scripts/gradient';
+import GradientBackground from './GradientBackground';
 
 const Model = ({activeStep, isLastStep}) => {
 	const { layers, selected } = useCollection();
@@ -25,19 +25,6 @@ const Model = ({activeStep, isLastStep}) => {
 	}, [isLastStep])
 
 
-
-	useEffect(() => {
-		var gradient = new Gradient();
-		gradient.initGradient("#gradient-canvas");
-		if(isLastStep) {
-			gradient.play();
-		} else {
-			gradient.pause();
-		}
-	}, [isLastStep])
-
-
-
 	return (
 		<Stack alignItems="center" sx={{height: '100%', paddingTop: '250px', position: 'relative', background: '#191A24', transition: 'all .5s'}}>
 
@@ -49,7 +36,7 @@ const Model = ({activeStep, isLastStep}) => {
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 					>
-						<canvas id="gradient-canvas" data-js-darken-top data-transition-in style={{position:'absolute',zIndex: 0, top: 0, left: 0, background: '#191A24'}}></canvas>
+						<GradientBackground />
 					</motion.div>
 				):null}
 			</AnimatePresence>

@@ -33,7 +33,7 @@ const Payment = props => {
 
 	useEffect(() => {
 		if(props.isActive) {
-			setTimeout(() => setFadeIn(true), 1800)
+			setTimeout(() => setFadeIn(true), 1700)
 		} else {
 			setFadeIn(false)
 		}
