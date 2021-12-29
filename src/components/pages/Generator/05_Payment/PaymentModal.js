@@ -1,15 +1,14 @@
 import React from 'react';
-import { usePaymentForm } from './hooks/usePaymentForm';
-import { useCollection } from 'libs/collection';
-import { useSubscribePlan, useCharge } from 'gql/hooks/billing.hook';
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
-import { useGenerateCollection } from './hooks/useGenerateCollection';
-
+import { useCollection } from 'libs/collection';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon } from '@mui/icons-material';
+import { useSubscribePlan, useCharge } from 'gql/hooks/billing.hook';
+import { usePaymentForm } from '../hooks/usePaymentForm';
+import { useGenerateCollection } from '../hooks/useGenerateCollection';
 
 
-const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingModalOpen }) => {
+const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
   const elements = useElements();
 	const { settingsForm  } = useCollection();
@@ -21,16 +20,12 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingMod
 		onPaymentError,
 	} = usePaymentForm();
 	const {
-		generateImages,
-		generatedZip,
-		initWorker,
-		done,
-		progress
+		generateImages
 	} = useGenerateCollection()
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
 			setIsModalOpen(false);
-			setIsGeneratingModalOpen(true);
+//			setIsGeneratingModalOpen(true);
 			generateImages();
 		},
 		onError: onPaymentError
@@ -38,6 +33,9 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingMod
 
 	const onSubmit = async e => {
 		e.preventDefault();
+		setIsModalOpen(false)
+		nextStep();
+		/*
 		const { error, paymentMethod } = await createPaymentMethod();
 		const card = elements.getElement(CardElement);
 
@@ -51,7 +49,9 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingMod
 				amount: 10 * settingsForm.collectionSize.value,
 			}})
 		}
+		*/
 	}
+	
 
 
 	return (
@@ -110,38 +110,11 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, setIsGeneratingMod
 									</Box>
 									<Box>
 										<FormLabel>
-											Address Line 1:
+											Email
 										</FormLabel>
-										<TextField size="small" fullWidth {...addressLine1} />
+										<TextField size="small" fullWidth  />
 									</Box>
-									<Box>
-										<FormLabel>
-											Address Line 2:
-										</FormLabel>
-										<TextField size="small" fullWidth {...addressLine2} />
-									</Box>
-									<Stack gap={2} direction="row">
-										<Box sx={{flex: 1}}>
-											<FormLabel>
-												City
-											</FormLabel>
-											<TextField size="small" fullWidth {...city} />
-										</Box>
-										<Box sx={{flex: 1}}>
-											<FormLabel>
-												State
-											</FormLabel>
-											<TextField size="small" fullWidth {...state} />
-										</Box>
-									</Stack>
-									<Box>
-										<FormLabel>
-											Country
-										</FormLabel>
-										<Select fullWidth size="small" {...country}>
-											<MenuItem value="CA">Canada</MenuItem>
-										</Select>
-									</Box>
+
 								</Stack>
 							</Card>
 						</Stack>

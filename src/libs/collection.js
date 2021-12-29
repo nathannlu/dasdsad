@@ -35,7 +35,7 @@ export const CollectionProvider = ({ children }) => {
 		},
 		collectionSize: {
 			default: '',
-			placeholder: '100',
+			placeholder: '10000',
 			rules: []
 		},
 	})

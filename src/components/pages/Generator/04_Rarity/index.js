@@ -37,9 +37,8 @@ const Rarity = props => {
 						setExpanded(i)
 						setSelected(i);
 					}}>
-
 						<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>
-							<Stack gap={1} direction="row">
+							<Stack gap={1} direction="row" sx={{opacity: .8}} alignItems="center">
 								<LayersIcon />
 								<Typography variant="h6">
 									{layer.name}

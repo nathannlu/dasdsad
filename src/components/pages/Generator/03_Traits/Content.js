@@ -12,7 +12,7 @@ export function Content({index}) {
 	const { addToLayers } = useTraitsManager();
 
   return (
-		<>
+		<Stack gap={2}>
 			<TraitsDisplay index={index} />
 			<Dropzone multiple onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
 				{({getRootProps, getInputProps}) => (
@@ -33,7 +33,7 @@ export function Content({index}) {
 					</Box>
 				)}
 			</Dropzone>
-		</>
+		</Stack>
   );
 }
 

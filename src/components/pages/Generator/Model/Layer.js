@@ -27,7 +27,7 @@ const Layer = ({activeStep, index}) => {
 	return (
 		<Box sx={{
 			'&:not(:first-of-type)': {
-				marginTop: activeStep !== 5 ? '-300px' : '-250px'
+				marginTop: '-250px'
 			},
 			transition: 'all .5s',
 		}}>

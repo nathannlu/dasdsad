@@ -8,7 +8,7 @@ const Settings = props => {
 	const { layers, setLayers, selected, setSelected, listOfWeights, setListOfWeights, settingsForm } = useCollection();
 
 	return (
-		<Stack gap={2} sx={{ p: 2, height: '100%'}}>
+		<Stack gap={2} sx={{ height: '100%'}}>
 			<Box md={3} item>
 				<Chip sx={{opacity: .8, mb: 1}} label="Step 1/4" />
 				<Typography variant="h2">

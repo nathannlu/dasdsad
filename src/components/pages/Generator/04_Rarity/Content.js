@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Slider } from 'ds/components';
+import { Box, Stack, Slider } from 'ds/components';
 import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 import { useTraitsManager } from '../hooks/useTraitsManager'
@@ -24,7 +24,9 @@ const Content = ({ layer }) => {
 					<TableRow>
 						<TableCell>
 							<img style={{width: '50px', height: '50px', border: '1px solid rgba(0,0,0,.5)', borderRadius: '5px'}} src={image.preview} />
-							{image.name}
+							<Box>
+								{image.name}
+							</Box>
 						</TableCell>
 
 						<TableCell>

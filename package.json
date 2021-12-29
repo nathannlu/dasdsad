@@ -33,6 +33,7 @@
     "posthog-js": "^1.16.7",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.1.0",
+    "react-canvas-confetti": "^1.2.1",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.4.2",
     "react-ga": "^3.3.0",

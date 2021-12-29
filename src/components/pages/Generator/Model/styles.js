@@ -18,7 +18,7 @@ export const selectedCss = isSelectedLayer => ({
 	border: isSelectedLayer ? 'solid 3px #006aff' : 'solid 2px white',
 });
 export const compiledImgCss = {
-	transform: '',
+	transform: 'scale(1.1)',
 	background: '',
 	border: 'none',
 	backdropFilter: 'blur(0px)',
