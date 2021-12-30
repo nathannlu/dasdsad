@@ -1,29 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
-import { useCollection } from 'libs/collection';
+import React from 'react';
+import { Stack, FormLabel, TextField, Modal,  Box, Typography, Button } from 'ds/components';
+import { useLayerManager } from 'core/manager';
+import { useTrait } from 'core/traits';
+import { useNewTraitNameForm } from '../hooks/useNewTraitNameForm';
 
 
 const ChangeTraitNameModal = ({isModalOpen, setIsModalOpen, editTrait}) => {
-	const { layers, setLayers, selected } = useCollection();
-	const [newTraitName, setNewTraitName] = useState();
+	const { query: { layers, selected }} = useLayerManager();
+	const { updateTrait } = useTrait();
+	const {
+		newTraitNameForm,
+		onSubmit
+	} = useNewTraitNameForm({
+		editTrait,
+		isModalOpen,
+		setIsModalOpen
+	});
 
-	const onSubmit = e => {
-		e.preventDefault();
-
-		setLayers(prevState => {
-			prevState[selected].images[editTrait].name = newTraitName;
-			return [...prevState]
-		})
-
-		setIsModalOpen(false)
-	}
-
-	useEffect(() => {
-		if(isModalOpen) {
-			setNewTraitName(layers[selected]?.images[editTrait]?.name)	
-		}
-	}, [isModalOpen])
-	
 	return (
 		<Modal
 			open={isModalOpen}
@@ -54,7 +47,7 @@ const ChangeTraitNameModal = ({isModalOpen, setIsModalOpen, editTrait}) => {
 						</FormLabel>
 
 						<Stack direction="row">
-							<TextField fullWidth size="small" value={newTraitName} onChange={e => setNewTraitName(e.target.value)} />
+							<TextField fullWidth size="small" {...newTraitNameForm.name} />
 							<Button type="submit" variant="contained" size="small">
 								Done
 							</Button>

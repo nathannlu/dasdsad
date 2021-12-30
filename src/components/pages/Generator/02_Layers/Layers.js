@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Stack, Box, Button, Grid, Card, Typography, TextField, IconButton, Divider, Slider, FormLabel } from 'ds/components';
+import { Stack, Box, Button, Card, Typography, TextField, IconButton  } from 'ds/components';
 import { Chip } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material'
-import { useLayerManager } from '../hooks/useLayerManager';
-import { useCollection } from 'libs/collection';
+import { Add as AddIcon, Delete as DeleteIcon, Layers as LayersIcon } from '@mui/icons-material'
 
-import LayersIcon from '@mui/icons-material/Layers';
+import { useLayerManager } from 'core/manager';
+import { useNewLayerForm } from '../hooks/useNewLayerForm';
+
 
 const layerStyle = {
 	border:  '1px solid rgba(255, 255, 255, 1)',
@@ -20,14 +20,13 @@ const layerStyle = {
 }
 
 const Layers = () => {
-	const { layers, setLayers, selected, setSelected, listOfWeights, setListOfWeights } = useCollection();
 	const {
-		newLayerForm,
-		onSubmit,
-		deleteLayer,
-		reorder,
-		onDragEnd,
+		actions,
+		query: { layers },
+		actions: { deleteLayer, reorder, onDragEnd }
 	} = useLayerManager();
+	const { newLayerForm, onSubmit } = useNewLayerForm();
+
 	
 	return (
 		<Stack gap={2}>

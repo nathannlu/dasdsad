@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box, Stack, Slider } from 'ds/components';
 import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-
-import { useTraitsManager } from '../hooks/useTraitsManager'
+import { useTrait } from 'core/traits';
 
 const Content = ({ layer }) => {
-	const { onChange: onImageRarityChange } = useTraitsManager();
+	const { updateTraitRarity } = useTrait();
 	
 	return (
 		<Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -40,7 +39,7 @@ const Content = ({ layer }) => {
 									step={10}
 									marks
 									value={image.weight}
-									onChange={e => onImageRarityChange(e, i)}
+									onChange={e => updateTraitRarity(i, e.target.value)}
 								/>
 								<Chip label="Common" />
 							</Stack>

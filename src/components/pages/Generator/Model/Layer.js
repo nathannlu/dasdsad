@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import { Box } from 'ds/components';
-import { useCollection } from 'libs/collection';
+import { useLayerManager } from 'core/manager';
+import { useTrait } from 'core/traits'
+
 import { defaultCss, baseCss, selectedCss, compiledImgCss } from './styles';
 
 const Layer = ({activeStep, index}) => {
-	const [cycleInterval, setCycleInterval] = useState(0);
-	const {
-		layers,
-		selected,
-		selectedImage
-	} = useCollection();
+	const {query: { layers, selected }} = useLayerManager();
+
+	const { selectedImage } = useTrait();
 
 	const isSelectedLayer = selected == index;
 	const cssByStep = {
@@ -21,7 +20,6 @@ const Layer = ({activeStep, index}) => {
 		5: compiledImgCss,
 		6: compiledImgCss
 	}[activeStep]
-
 
 
 	return (
@@ -48,7 +46,8 @@ const Layer = ({activeStep, index}) => {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							src={layers[index]?.images[selectedImage]?.preview} 
+							src={layers[index]?.images[selectedImage]?.preview}
+							style={{width: '100%', height: '100%', objectFit: 'cover'}}
 						/>
 					</AnimatePresence>
 				</Box>

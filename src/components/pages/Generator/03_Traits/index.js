@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Stack, Button, Box, Typography } from 'ds/components';
 import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { Layers as LayersIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { useCollection } from 'libs/collection';
+import { useLayerManager } from 'core/manager';
 
 import { Content } from './Content';
 
 const Traits = props => {
-	const { layers, setSelected } = useCollection();
-	const [expanded, setExpanded] = useState(0);
-	
+	const {
+		query: { layers, selected },
+		actions: { setSelected }
+	} = useLayerManager();
+
 	return (
 		<Stack gap={2}>
 			<Box>
@@ -26,10 +28,9 @@ const Traits = props => {
 				{layers.map((layer, i) => (
 					<Accordion 
 						key={i}
-						expanded={expanded == i} 
+						expanded={selected == i} 
 						onChange={e => { 
 							setSelected(i)
-							setExpanded(i)
 						}}
 					>
 						<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>

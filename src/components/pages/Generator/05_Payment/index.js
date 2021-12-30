@@ -1,35 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import config from 'config';
+import { useMetadata } from 'core/metadata';
 import { Fade, Box, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip } from '@mui/material'
-import { useCollection } from 'libs/collection';
+import { Lock as LockIcon } from '@mui/icons-material';
 
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
-import config from 'config';
 const stripePromise = loadStripe(config.stripe.publicKey);
+
 import PaymentModal from './PaymentModal';
 
-
-
-import { useGenerateCollection } from '../hooks/useGenerateCollection';
-
-import { Lock as LockIcon } from '@mui/icons-material';
 
 
 const Payment = props => {
 	const [fadeIn, setFadeIn] = useState(false);
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
-
-	const { layers, settingsForm } = useCollection();
-	const {
-		generateImages,
-		generatedZip,
-		initWorker,
-		done,
-		progress,
-		validateForm,
-	} = useGenerateCollection()
-	useEffect(initWorker, [])
+	const { settingsForm } = useMetadata();
 
 	useEffect(() => {
 		if(props.isActive) {

@@ -1,42 +1,45 @@
 import React from 'react';
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
-import { useCollection } from 'libs/collection';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon } from '@mui/icons-material';
-import { useSubscribePlan, useCharge } from 'gql/hooks/billing.hook';
+import { useCharge } from 'gql/hooks/billing.hook';
 import { usePaymentForm } from '../hooks/usePaymentForm';
-import { useGenerateCollection } from '../hooks/useGenerateCollection';
+
+import { useGenerator } from 'core/generator';
+import { useMetadata } from 'core/metadata';
 
 
 const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
   const elements = useElements();
-	const { settingsForm  } = useCollection();
+	const { settingsForm  } = useMetadata();
+	const { generateImages } = useGenerator();
 
 	const {
 		paymentForm: { nameOnCard, addressLine1, addressLine2, city, state, country },
-		createPaymentMethod,
 		onPaymentSuccess,
 		onPaymentError,
 	} = usePaymentForm();
-	const {
-		generateImages
-	} = useGenerateCollection()
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
 			setIsModalOpen(false);
-//			setIsGeneratingModalOpen(true);
 			generateImages();
+			setPaidCookie();
 		},
 		onError: onPaymentError
 	});
 
+	const setPaidCookie = () => {
+		
+		
+	}
+
 	const onSubmit = async e => {
 		e.preventDefault();
+		generateImages();
 		setIsModalOpen(false)
 		nextStep();
 		/*
-		const { error, paymentMethod } = await createPaymentMethod();
 		const card = elements.getElement(CardElement);
 
     const result = await stripe.createToken(card);
@@ -44,7 +47,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 
 		if(!error) {
 			charge({variables: {
-				paymentMethodId: paymentMethod.id,
 				token: result.token.id,
 				amount: 10 * settingsForm.collectionSize.value,
 			}})

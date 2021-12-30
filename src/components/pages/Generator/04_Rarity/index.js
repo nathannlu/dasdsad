@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Stack, Button, Typography, Slider } from 'ds/components';
 import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { ExpandMore as ExpandMoreIcon, Layers as LayersIcon } from '@mui/icons-material';
+import { useLayerManager } from 'core/manager';
+
 import Content from './Content';
 
-import { useCollection } from 'libs/collection';
-import { useTraitsManager } from '../hooks/useTraitsManager'
-
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LayersIcon from '@mui/icons-material/Layers';
 
 const Rarity = props => {
 	const {
-		layers,
-		setSelected,
-	} = useCollection();
-	const { onChange: onImageRarityChange } = useTraitsManager();
-	const [expanded, setExpanded] = useState(0)
+		query: { layers, selected },
+		actions: { setSelected }
+	} = useLayerManager();
 
 	
 	return (
@@ -33,8 +29,7 @@ const Rarity = props => {
 
 			<Box>
 				{layers.map((layer, i) => (
-					<Accordion expanded={expanded == i} onChange={e => { 
-						setExpanded(i)
+					<Accordion expanded={selected == i} onChange={e => { 
 						setSelected(i);
 					}}>
 						<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>

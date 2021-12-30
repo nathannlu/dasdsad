@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Stack, Typography, Box } from 'ds/components';
 import { AnimatePresence } from "framer-motion"
-import { useCollection } from 'libs/collection';
-import Layer from './Layer';
+import { useLayerManager } from 'core/manager';
 
+import Layer from './Layer';
 import GradientBackground from './GradientBackground';
 
 const Model = ({activeStep, isLastStep}) => {
-	const { layers, selected } = useCollection();
+	const { query: {layers, selected}} = useLayerManager();
 
 	const controls = useAnimation();
 	useEffect(() => {

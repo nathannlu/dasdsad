@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { Typography, Stack, Box, Grid, IconButton } from 'ds/components';
-import { useCollection } from 'libs/collection';
-import { useTraitsManager } from '../hooks/useTraitsManager';
-
-import { CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Edit as EditIcon, CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
+import { useLayerManager } from 'core/manager';
+import { useTrait } from 'core/traits';
 
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
 
 const TraitsDisplay = ({index}) => {
-	const { layers, setLayers, selected, selectedImage, setSelectedImage } = useCollection();
-	const { deleteImage } = useTraitsManager();
+	const { query: {layers, selected}} = useLayerManager();
+	const { deleteTrait } = useTrait();
+
+	// @TODO tidy up
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editTrait, setEditTrait] = useState(null);
+
 
 	return (
 		<Stack gap={2} direction="row">
@@ -23,7 +24,7 @@ const TraitsDisplay = ({index}) => {
 						<img
 							src={image.preview} 
 							onClick={() => setSelectedImage(i)}
-							style={{borderRadius: '4px'}}
+							style={{borderRadius: '4px', width: '100%'}}
 						/>
 
 						<Stack justifyContent="space-between" alignItems="center" direction="row">
@@ -64,7 +65,7 @@ const TraitsDisplay = ({index}) => {
 								background: '#fff',
 							}
 						}}
-						onClick={() => deleteImage(i)}
+						onClick={() => deleteTrait(i)}
 					>
 						<CancelOutlinedIcon />
 					</IconButton>

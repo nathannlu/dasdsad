@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Fade, Box, FormLabel, TextField, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip, CircularProgress } from '@mui/material'
-import { useCollection } from 'libs/collection';
-
+import { useGenerator } from 'core/generator';
 
 
 const Generating = () => {
+	const { save, done, progress, zipProgress, listenToWorker } = useGenerator();
+	useEffect(listenToWorker,[])
+
+
 	return (
 		<Stack gap={10}>
 			<Box>
@@ -19,7 +22,7 @@ const Generating = () => {
 			</Box>
 
 			<Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
-				<CircularProgress variant="determinate" value={60} size={100} />
+				<CircularProgress variant="determinate" value={progress} size={100} />
 				<Box
 					sx={{
 						top: 0,
@@ -33,9 +36,14 @@ const Generating = () => {
 					}}
 				>
 					<Typography variant="h6" component="div" color="text.secondary">
-						{`${Math.round(60)}%`}
+						{`${Math.round(progress)}%`}
 					</Typography>
 				</Box>
+				{zipProgress !== null && (
+					<>
+						Zipping... {Math.round(zipProgress)}%
+					</>
+				)}
 			</Stack>
 
 
@@ -63,9 +71,12 @@ const Generating = () => {
 			*/}
 
 			<Stack gap={2}>
-				<Button fullWidth variant="contained">
+				<Button onClick={save} variant="contained" disabled={!done}>
 					Download collection
 				</Button>
+				<Typography gutterBottom variant="body">
+					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/nftdatagen" target="_blank">Twitter</a>
+				</Typography>
 			</Stack>
 		</Stack>
 	)

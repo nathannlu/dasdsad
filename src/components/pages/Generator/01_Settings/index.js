@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Grid, Box,Button, Typography, TextField, FormLabel } from 'ds/components';
 import { Chip } from '@mui/material';
-import { useCollection } from 'libs/collection';
+import { useMetadata } from 'core/metadata';
 
 
 const Settings = props => {
-	const { layers, setLayers, selected, setSelected, listOfWeights, setListOfWeights, settingsForm } = useCollection();
+	const { settingsForm } = useMetadata();
 
 	return (
 		<Stack gap={2} sx={{ height: '100%'}}>

@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone'
 import { Stack, Box } from 'ds/components';
-import { useCollection } from 'libs/collection';
-import { useTraitsManager } from '../hooks/useTraitsManager';
-
 import TraitsDisplay from './TraitsDisplay';
-
+import { useTrait } from 'core/traits';
 
 export function Content({index}) {
-	const { layers, setLayers, selected, selectedImage, setSelectedImage } = useCollection();
-	const { addToLayers } = useTraitsManager();
+	const { addTrait } = useTrait();
 
   return (
 		<Stack gap={2}>
 			<TraitsDisplay index={index} />
-			<Dropzone multiple onDrop={acceptedFiles => addToLayers(acceptedFiles)}>
+			<Dropzone multiple onDrop={acceptedFiles => addTrait(acceptedFiles)}>
 				{({getRootProps, getInputProps}) => (
 					<Box sx={{
 						alignItems:'center', 
