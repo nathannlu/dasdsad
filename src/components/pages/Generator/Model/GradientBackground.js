@@ -23,7 +23,7 @@ const GradientBackground = () => {
 					variant="h1" 
 					sx={{
 						position: 'absolute', 
-						bottom: '20%',
+						bottom: '10%',
 						width: '100%',
 						textAlign: 'center',
 						fontFamily: 'serif',
@@ -32,7 +32,7 @@ const GradientBackground = () => {
 						left: 0
 					}}
 				>
-					Build the next Bored Ape
+					Be the next BAYC
 				</Typography>
 			</motion.div>
 		</>

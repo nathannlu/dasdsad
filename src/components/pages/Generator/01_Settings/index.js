@@ -8,31 +8,33 @@ const Settings = props => {
 	const { settingsForm } = useMetadata();
 
 	return (
-		<Stack gap={2} sx={{ height: '100%'}}>
-			<Box md={3} item>
-				<Chip sx={{opacity: .8, mb: 1}} label="Step 1/4" />
-				<Typography variant="h2">
-					Metadata & collection
-				</Typography>
-				<Typography variant="body">
-					Edit fields below to configure your metadata
-				</Typography>
-			</Box>
+		<Stack justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
+			<Stack gap={2}>
+				<Box md={3} item>
+					<Chip sx={{opacity: .8, mb: 1}} label="Step 1/4" />
+					<Typography variant="h2">
+						Metadata & collection
+					</Typography>
+					<Typography variant="body">
+						Edit fields below to configure your metadata
+					</Typography>
+				</Box>
 
-			<Box>
-				<FormLabel>Name</FormLabel>
-				<TextField {...settingsForm.name} fullWidth />
-			</Box>
+				<Box>
+					<FormLabel>Name</FormLabel>
+					<TextField {...settingsForm.name} fullWidth />
+				</Box>
 
-			<Box>
-				<FormLabel>Description</FormLabel>
-				<TextField  {...settingsForm.description} fullWidth/>
-			</Box>
+				<Box>
+					<FormLabel>Description</FormLabel>
+					<TextField  {...settingsForm.description} fullWidth/>
+				</Box>
 
-			<Box>
-				<FormLabel>Collection Size*</FormLabel>
-				<TextField {...settingsForm.collectionSize} fullWidth />
-			</Box>
+				<Box>
+					<FormLabel>Collection Size*</FormLabel>
+					<TextField {...settingsForm.collectionSize} fullWidth />
+				</Box>
+			</Stack>
 
 			<Box sx={{alignSelf: 'flex-end', justifySelf: 'flex-end'}} >
 				<Button onClick={() => props.nextStep()}>

@@ -5,10 +5,10 @@ import L from './Layers';
 const Layers = props => {
 	
 	return (
-		<Stack>
+		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 			<L />
 
-			<Stack direction="row">
+			<Stack justifyContent="space-between" direction="row">
 				<Button onClick={() => props.previousStep()}>
 					Prev
 				</Button>

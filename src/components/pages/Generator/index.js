@@ -18,16 +18,20 @@ const Generator = () => {
 
 	return (
 		<Fade in>
-			<Grid container>
-				<Grid xs={!isLastStep ? 6 : 4} item sx={{transition: 'all .5s'}}>
+			<Grid 
+				container
+				sx={{
+					minHeight: '100vh',
+					overflow: 'hidden'
+				}}
+			>
+				<Grid md={!isLastStep ? 6 : 4} item sx={{transition: 'all .5s'}}>
 					<Stack
 						p={4}
 						gap={2}
 						sx={{
 							backgroundColor: 'white',
-							borderRadius: 3,
-							height: '100vh',
-							paddingTop: '120px'
+							height: '100%',
 						}}
 					>
 						<StepWizard transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
@@ -40,10 +44,19 @@ const Generator = () => {
 						</StepWizard>
 					</Stack>
 				</Grid>
-
-				<Grid xs={!isLastStep ? 6 : 8} alignItems="center" justifyItems="center" item sx={{transition: 'all .5s'}}>
+				<Grid 
+					md={!isLastStep ? 6 : 8} 
+					alignItems="center" 
+					justifyItems="center" 
+					item 
+					sx={{
+						transition: 'all .5s',
+						height: '100%',
+					}}
+				>
 					<Model activeStep={activeStep} isLastStep={isLastStep} />
 				</Grid>
+
 			</Grid>
 		</Fade>
 	)

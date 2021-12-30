@@ -9,6 +9,7 @@ export const defaultCss = {
 	backdropFilter: 'blur(3px)',
 	transition: 'all .5s',	
 };
+
 export const baseCss = {
 	transform: 'rotateX(45deg) rotateZ(45deg)',
 };
@@ -18,7 +19,7 @@ export const selectedCss = isSelectedLayer => ({
 	border: isSelectedLayer ? 'solid 3px #006aff' : 'solid 2px white',
 });
 export const compiledImgCss = {
-	transform: 'scale(1.1)',
+	transform: '',
 	background: '',
 	border: 'none',
 	backdropFilter: 'blur(0px)',

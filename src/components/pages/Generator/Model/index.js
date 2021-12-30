@@ -26,8 +26,11 @@ const Model = ({activeStep, isLastStep}) => {
 
 
 	return (
-		<Stack alignItems="center" sx={{height: '100%', paddingTop: '250px', position: 'relative', background: '#191A24', transition: 'all .5s'}}>
-
+		<Stack
+			alignItems="center"
+			justifyContent="center"
+			sx={{minHeight: '100vh', position: 'relative', background: '#191A24', transition: 'all .5s'}}
+		>
 			<AnimatePresence>
 				{isLastStep ? (
 					<motion.div
@@ -41,73 +44,75 @@ const Model = ({activeStep, isLastStep}) => {
 				):null}
 			</AnimatePresence>
 
-			<Stack gap={50} alignItems="center" direction="row" sx={{zIndex: 10}}>
-				<motion.div 
-					custom={1}
-					initial={{opacity: 0}} 
-					animate={controls}
-					style={{
-						background: 'white',
-						borderRadius: '7px',
-					}}
-				>
-					<img
+			<Box sx={{position: 'fixed'}}>
+				<Stack gap={50} alignItems="center" direction="row" sx={{zIndex: 10}}>
+					<motion.div 
+						custom={1}
+						initial={{opacity: 0}} 
+						animate={controls}
 						style={{
-							width: '200px',
-							height: '200px',
-							borderRadius: '7px'
+							background: 'white',
+							borderRadius: '7px',
 						}}
-						src="https://www.larvalabs.com/cryptopunks/cryptopunk3100.png"
-					/>
-					<Stack alignItems="center" p={1} gap={1} direction="row">
-						<img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
-						<Typography sx={{fontWeight: 'bold'}} variant="h5">
-							78
-						</Typography>
-						<Typography sx={{opacity: .7}} variant="body">
-							($297,223.68)
-						</Typography>
-					</Stack>
-				</motion.div>
+					>
+						<img
+							style={{
+								width: '200px',
+								height: '200px',
+								borderRadius: '7px'
+							}}
+							src="https://www.larvalabs.com/cryptopunks/cryptopunk3100.png"
+						/>
+						<Stack alignItems="center" p={1} gap={1} direction="row">
+							<img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
+							<Typography sx={{fontWeight: 'bold'}} variant="h5">
+								78
+							</Typography>
+							<Typography sx={{opacity: .7}} variant="body">
+								($297,223.68)
+							</Typography>
+						</Stack>
+					</motion.div>
 
-				<motion.div 
-					custom={2}
-					initial={{opacity: 0}} 
-					animate={controls}
-					style={{
-						background: 'white',
-						borderRadius: '7px',
-					}}
-				>
-					<img
+					<motion.div 
+						custom={2}
+						initial={{opacity: 0}} 
+						animate={controls}
 						style={{
-							width: '200px',
-							height: '200px',
-							borderRadius: '7px'
+							background: 'white',
+							borderRadius: '7px',
 						}}
-						src="https://www.thestreet.com/.image/t_share/MTgyMDU5NDcwMTc4NzU1NzE1/boredape1.jpg"
-					/>
-					<Stack alignItems="center" p={1} gap={1} direction="row">
-						<img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
-						<Typography sx={{fontWeight: 'bold'}} variant="h5">
-							68	
-						</Typography>
-						<Typography sx={{opacity: .7}} variant="body">
-							($197,223.68)
-						</Typography>
-					</Stack>
-				</motion.div>
-			</Stack>
+					>
+						<img
+							style={{
+								width: '200px',
+								height: '200px',
+								borderRadius: '7px'
+							}}
+							src="https://www.thestreet.com/.image/t_share/MTgyMDU5NDcwMTc4NzU1NzE1/boredape1.jpg"
+						/>
+						<Stack alignItems="center" p={1} gap={1} direction="row">
+							<img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
+							<Typography sx={{fontWeight: 'bold'}} variant="h5">
+								68	
+							</Typography>
+							<Typography sx={{opacity: .7}} variant="body">
+								($197,223.68)
+							</Typography>
+						</Stack>
+					</motion.div>
+				</Stack>
 
-			<AnimatePresence>
-				{layers.map((layer, i) => (
-					<Layer
-						activeStep={activeStep}
-						index={i}
-						key={i}
-					/>
-				))}
-			</AnimatePresence>
+				<AnimatePresence>
+					{layers.map((layer, i) => (
+						<Layer
+							activeStep={activeStep}
+							index={i}
+							key={i}
+						/>
+					))}
+				</AnimatePresence>
+			</Box>
 		</Stack>
 	)
 };

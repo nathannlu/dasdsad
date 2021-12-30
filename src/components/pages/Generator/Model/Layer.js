@@ -19,7 +19,7 @@ const Layer = ({activeStep, index}) => {
 		4: selectedCss(isSelectedLayer),
 		5: compiledImgCss,
 		6: compiledImgCss
-	}[activeStep]
+	}//[activeStep]
 
 
 	return (
@@ -35,10 +35,16 @@ const Layer = ({activeStep, index}) => {
 				animate={{ y: 0, opacity: 1 }}
 				exit={{ y: 50, opacity: 0 }}
 			>
-				<Box sx={{
-					...defaultCss,
-					...cssByStep
-				}}>
+				<motion.div 
+					transition={{ duration: .2 }}
+					animate={activeStep.toString()}
+					variants={cssByStep}
+					style={{
+						margin: '0 auto',
+						...defaultCss,
+//						...cssByStep
+					}}
+				>
 					<AnimatePresence>
 						<motion.img
 							key={index}
@@ -50,7 +56,7 @@ const Layer = ({activeStep, index}) => {
 							style={{width: '100%', height: '100%', objectFit: 'cover'}}
 						/>
 					</AnimatePresence>
-				</Box>
+				</motion.div>
 			</motion.div>
 		</Box>
 	)
