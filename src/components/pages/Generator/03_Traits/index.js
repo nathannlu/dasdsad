@@ -3,6 +3,7 @@ import { Stack, Button, Box, Typography } from 'ds/components';
 import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { Layers as LayersIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useLayerManager } from 'core/manager';
+import { useValidateForm } from '../hooks/useValidateForm'
 
 import { Content } from './Content';
 
@@ -11,6 +12,7 @@ const Traits = props => {
 		query: { layers, selected },
 		actions: { setSelected }
 	} = useLayerManager();
+	const { validateLayerTraits } = useValidateForm();
 
 	return (
 		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
@@ -55,7 +57,7 @@ const Traits = props => {
 				<Button onClick={() => props.previousStep()}>
 					Prev
 				</Button>
-				<Button onClick={() => props.nextStep()}>
+				<Button onClick={() => validateLayerTraits() && props.nextStep()}>
 					Next
 				</Button>
 			</Stack>

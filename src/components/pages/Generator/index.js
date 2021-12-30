@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
 import StepWizard from 'react-step-wizard';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Settings from './01_Settings';
 import Layers from './02_Layers';
@@ -15,6 +16,8 @@ const Generator = () => {
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const [activeStep, setActiveStep] = useState(1);
 	const isLastStep = activeStep == 5 || activeStep == 6;
+
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
 	return (
 		<Fade in>
@@ -44,19 +47,20 @@ const Generator = () => {
 						</StepWizard>
 					</Stack>
 				</Grid>
-				<Grid 
-					md={!isLastStep ? 6 : 8} 
-					alignItems="center" 
-					justifyItems="center" 
-					item 
-					sx={{
-						transition: 'all .5s',
-						height: '100%',
-					}}
-				>
-					<Model activeStep={activeStep} isLastStep={isLastStep} />
-				</Grid>
-
+				{!smallerThanTablet ? (
+					<Grid 
+						md={!isLastStep ? 6 : 8} 
+						alignItems="center" 
+						justifyItems="center" 
+						item 
+						sx={{
+							transition: 'all .5s',
+							height: '100%',
+						}}
+					>
+						<Model activeStep={activeStep} isLastStep={isLastStep} />
+					</Grid>
+				): null}
 			</Grid>
 		</Fade>
 	)

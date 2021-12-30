@@ -26,7 +26,6 @@ const GradientBackground = () => {
 						bottom: '10%',
 						width: '100%',
 						textAlign: 'center',
-						fontFamily: 'serif',
 						mixBlendMode: 'color-burn',
 						color: '#2b044d',
 						left: 0

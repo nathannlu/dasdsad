@@ -16,42 +16,30 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const { generateImages } = useGenerator();
 
 	const {
-		paymentForm: { nameOnCard, addressLine1, addressLine2, city, state, country },
+		paymentForm: { nameOnCard, email },
 		onPaymentSuccess,
 		onPaymentError,
 	} = usePaymentForm();
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
+			onPaymentSuccess();
 			setIsModalOpen(false);
 			generateImages();
-			setPaidCookie();
+			nextStep();
 		},
 		onError: onPaymentError
 	});
 
-	const setPaidCookie = () => {
-		
-		
-	}
-
 	const onSubmit = async e => {
 		e.preventDefault();
-		generateImages();
-		setIsModalOpen(false)
-		nextStep();
-		/*
+
 		const card = elements.getElement(CardElement);
-
     const result = await stripe.createToken(card);
-		console.log(result)
 
-		if(!error) {
-			charge({variables: {
-				token: result.token.id,
-				amount: 10 * settingsForm.collectionSize.value,
-			}})
-		}
-		*/
+		charge({variables: {
+			token: result.token.id,
+			amount: 10 * settingsForm.collectionSize.value,
+		}})
 	}
 	
 
@@ -114,7 +102,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 										<FormLabel>
 											Email
 										</FormLabel>
-										<TextField size="small" fullWidth  />
+										<TextField size="small" fullWidth {...email}  />
 									</Box>
 
 								</Stack>

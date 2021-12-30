@@ -7,7 +7,7 @@ const configs = {
 };
 
 // Enviornment variable is set in react-scripts
-const exportedConfig = dev //configs[process.env.REACT_APP_CONFIG];
+const exportedConfig = prod //configs[process.env.REACT_APP_CONFIG];
 
 export default exportedConfig;
 

@@ -3,12 +3,14 @@ import { motion, useAnimation } from 'framer-motion';
 import { Stack, Typography, Box } from 'ds/components';
 import { AnimatePresence } from "framer-motion"
 import { useLayerManager } from 'core/manager';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Layer from './Layer';
 import GradientBackground from './GradientBackground';
 
 const Model = ({activeStep, isLastStep}) => {
 	const { query: {layers, selected}} = useLayerManager();
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
 	const controls = useAnimation();
 	useEffect(() => {
@@ -44,7 +46,7 @@ const Model = ({activeStep, isLastStep}) => {
 				):null}
 			</AnimatePresence>
 
-			<Box sx={{position: 'fixed'}}>
+			<Box sx={{position: smallerThanTablet ? 'static' : 'fixed'}}>
 				<Stack gap={50} alignItems="center" direction="row" sx={{zIndex: 10}}>
 					<motion.div 
 						custom={1}
