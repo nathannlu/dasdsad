@@ -22,7 +22,7 @@ module.exports = {
 		new InterpolateHtmlPlugin({
     PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
 		}),
-		new BundleAnalyzerPlugin
+//		new BundleAnalyzerPlugin
   ],
 	module: {
 		rules: [
