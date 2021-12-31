@@ -22,7 +22,18 @@ const Content = ({ layer }) => {
 				{layer.images?.map((image,i) => (
 					<TableRow>
 						<TableCell>
-							<img style={{width: '50px', height: '50px', border: '1px solid rgba(0,0,0,.5)', borderRadius: '5px'}} src={image.preview} />
+							{image.type == 'image/png' ? (
+								<img 
+									style={{width: '50px', height: '50px', border: '1px solid rgba(0,0,0,.5)', borderRadius: '4px'}} 
+									src={image.preview}
+								/>
+							): null}
+							{image.type == 'video/mp4' ? (
+								<video width="50px" height="50px" loop autoPlay muted>
+									<source src={image.preview} type="video/mp4" />
+										Sorry, your browser doesn't support embedded videos.
+								</video>
+							): null}
 							<Box>
 								{image.name}
 							</Box>

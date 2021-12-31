@@ -25,15 +25,24 @@ self.onmessage = async (event) => {
 				const png = generatedImage[0];
 				const video = generatedImage[1]
 
-				console.log(video, png)
+				// Metadata
+				let json = JSON.parse(generatedImage[2]);
+				json.properites = {
+					category: 'video',
+					files: [
+						{uri: `${filename}.mp4`, type: 'video/mp4'}
+					],
+					creators: [],
+				};
+				collectionMetadata.collection.push(json);
+				const jsonStr = JSON.stringify(json, null, 2)			// stringify with whitespace
+
 
 				const data = await mergeImageVideo(video, png)
-
 				const mp4 = new File([data[0].data], filename, {type:'video/mp4'});
-				collectionMetadata.collection.push(JSON.parse(generatedImage[2]));
-
 				zip.file(`assets/${filename}.mp4`, mp4);
-				zip.file(`metadata/${filename}.json`, generatedImage[2]);
+				zip.file(`metadata/${filename}.json`,jsonStr);
+
 			} else {
 
 				const png = generatedImage[0];
@@ -61,9 +70,6 @@ self.onmessage = async (event) => {
 };
 
 
-function print(text) {
-	console.log({ type: "stdout", data: text });
-}
 const mergeImageVideo = async (video, png) => {
 	const file1 = {
 		name: 'input.mp4',
@@ -85,8 +91,6 @@ const mergeImageVideo = async (video, png) => {
 		totalMemory: 1073741824
 	}
 	const Module = {
-		print: print,
-		printErr: print,
 		files: message.files || [],
 		arguments: message.arguments || [],
 		TOTAL_MEMORY: message.totalMemory || 33554432

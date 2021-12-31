@@ -6,9 +6,7 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 
 import Worker from "components/pages/Generator/workers/generator.worker.js";
-import VideoWorker from 'components/pages/Generator/workers/video.worker.js';
 const worker = new Worker();
-const videoWorker = new VideoWorker();
 
 
 export const useGenerator = () => {
@@ -31,8 +29,6 @@ export const useGenerator = () => {
 
 		// Runs check
 		if(validateForm()) {
-//			connectWorkers();
-
 			worker.postMessage({
 				message:'generate',
 				settings: {
@@ -49,16 +45,6 @@ export const useGenerator = () => {
 			})
 		}
 	};
-
-	const connectWorkers = () => {
-		const channel = new MessageChannel();
-		worker.postMessage({
-			command: 'connect'
-		}, [channel.port1])
-		videoWorker.postMessage({
-			command: 'connect'
-		}, [channel.port2])
-	}
 
 	const save = () => {
 		FileSaver.saveAs(generatedZip, 'sample.zip')
@@ -85,68 +71,7 @@ export const useGenerator = () => {
 	}
 
 
-
-	// @TODO Refactor
-	const readFileAsBufferArray = file => {
-    return new Promise((resolve, reject) => {
-      let fileReader = new FileReader();
-      fileReader.onload = function() {
-        resolve(this.result);
-      };
-      fileReader.onerror = function() {
-        reject(this.error);
-      };
-      fileReader.readAsArrayBuffer(file);
-    });
-  };
-	const mergeImageVideo = async (totalMemory = 33554432) => {
-		const raw1 = layers[0].images[0].file;
-		const raw2 = layers[1].images[0].file
-		const file1 = {
-			name: 'input.mp4',
-			data: new Uint8Array(await readFileAsBufferArray(raw1))
-		}
-		const file2 = {
-			name: 'image.png',
-			data: new Uint8Array(await readFileAsBufferArray(raw2))
-		}
-
-		videoWorker.postMessage({
-			type: 'command',
-			files: [file1, file2],
-			arguments: [
-//				'-y',
-				'-i', 'input.mp4',
-				'-i', 'image.png',
-				'-filter_complex',"overlay=25:25:enable='between(t,0,20)'",
-				'-pix_fmt','yuv420p','-c:a','copy',
-				'output.mp4'
-			],
-			totalMemory: 1073741824
-		})
-		
-	}
-
 	const listenToWorker = () => {
-		videoWorker.onmessage = function (event) {
-			var message = event.data;
-			if (message.type == "ready") {
-				console.log('loaded')
-
-			} else if (message.type == "stdout") {
-				console.log('output', message.data)
-			} else if (message.type == "done") {
-				console.log(message.data)
-
-				var blob = new Blob([message.data[0].data])
-				const src = window.URL.createObjectURL(blob)
-				setDownloadSrc(src)
-
-
-			} else if (message.type == "start") {
-				console.log("Worker has received command")
-			}
-		};
 		worker.onmessage = (message) => {
 			if (message.data.message == 'output') {
 				setGeneratedZip(message.data.content);
