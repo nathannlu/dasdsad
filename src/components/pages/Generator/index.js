@@ -1,78 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
-import LinearProgress from '@mui/material/LinearProgress';
-import Layers from './Layers';
-import Images from './Images';
-import Rarity from './Rarity';
-import Settings from './Settings';
-import { useGenerateCollection } from './hooks/useGenerateCollection';
-import { useCollection } from 'libs/collection';
-import CheckoutModal from './CheckoutModal';
-import HelpIcon from '@mui/icons-material/Help';
+import StepWizard from 'react-step-wizard';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Elements } from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
-import PaymentModal from './PaymentModal';
-
-import config from 'config';
-const stripePromise = loadStripe(config.stripe.publicKey);
-
+import Settings from './01_Settings';
+import Layers from './02_Layers';
+import Traits from './03_Traits';
+import Rarity from './04_Rarity';
+import Payment from './05_Payment';
+import Generating from './06_Generating';
+import Model from './Model';
 
 
 const Generator = () => {
-	const { done, progress } = useGenerateCollection();	
-	const { isModalOpen, setIsModalOpen } = useCollection();
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
+	const [activeStep, setActiveStep] = useState(1);
+	const isLastStep = activeStep == 5 || activeStep == 6;
 
-//	useEffect(() => console.log(progress), [progress]);
-	
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
 	return (
-		<>
 		<Fade in>
-			<Stack gap={5} sx={{
-				display: 'flex',
-				p: 2
-			}}>
-				<Settings />
-				<Grid container>
-					<Grid md={3} item>
-						<Layers />
-					</Grid>
-					<Grid md={6} item>
-						<Images />
-					</Grid>
-					<Grid md={3} item>
-						<Rarity
-							setIsCheckoutModalOpen={setIsCheckoutModalOpen}
-						/>
-					</Grid>
+			<Grid 
+				container
+				sx={{
+					minHeight: '100vh',
+					overflow: 'hidden'
+				}}
+			>
+				<Grid md={!isLastStep ? 6 : 4} item sx={{transition: 'all .5s'}}>
+					<Stack
+						p={4}
+						gap={2}
+						sx={{
+							backgroundColor: 'white',
+							height: '100%',
+						}}
+					>
+						<StepWizard transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
+							<Settings />
+							<Layers />
+							<Traits />
+							<Rarity />
+							<Payment setIsCheckoutModalOpen={setIsCheckoutModalOpen} />
+							<Generating />
+						</StepWizard>
+					</Stack>
 				</Grid>
-
-				<CheckoutModal
-					isModalOpen={isModalOpen}
-					setIsModalOpen={setIsModalOpen}
-					progress={progress}
-				/>
-
-
-				<Elements stripe={stripePromise}>
-					<PaymentModal
-						setIsGeneratingModalOpen={setIsModalOpen}
-						isModalOpen={isCheckoutModalOpen}
-						setIsModalOpen={setIsCheckoutModalOpen}
-					/>
-				</Elements>
-
-				<Stack direction="row" justifyContent="center" sx={{opacity: '.5'}}>
-					<HelpIcon />
-					<Typography sx={{ml: 1}} variant="h6">
-						Need help? Watch this tutorial <a style={{color: 'blue'}} target="_blank" href="https://www.youtube.com/watch?v=El9ZnfTGh0s">here</a>
-					</Typography>
-				</Stack>
-			</Stack>
+				{!smallerThanTablet ? (
+					<Grid 
+						md={!isLastStep ? 6 : 8} 
+						alignItems="center" 
+						justifyItems="center" 
+						item 
+						sx={{
+							transition: 'all .5s',
+							height: '100%',
+						}}
+					>
+						<Model activeStep={activeStep} isLastStep={isLastStep} />
+					</Grid>
+				): null}
+			</Grid>
 		</Fade>
-		</>
 	)
 };
 

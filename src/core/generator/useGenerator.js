@@ -1,95 +1,60 @@
+import { useState } from 'react';
+import { useToast } from 'ds/hooks/useToast';
+import { useMetadata } from 'core/metadata';
+import { useLayerManager } from 'core/manager';
 import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 
-import Worker from "../workers/generator.worker.js";
-import VideoWorker from '../workers/video.worker.js';
+import Worker from "components/pages/Generator/workers/generator.worker.js";
+import VideoWorkerWorker from "components/pages/Generator/workers/generator.worker.js";
+import VideoWorker from 'components/pages/Generator/workers/video.worker.js';
 const worker = new Worker();
 const videoWorker = new VideoWorker();
 
-import { useCollection } from 'libs/collection';
-import { useState } from 'react';
-import { useToast } from 'ds/hooks/useToast';
-import { generateOneImage } from '../scripts/generate';
 
-
-export const useGenerateCollection = () => {
-	const { 
-		layers, 
-		settingsForm, 
-		progress, 
-		setProgress,
-		zipProgress,
-		setZipProgress,
-		isModalOpen,
-		setIsModalOpen,
-		generatedZip, setGeneratedZip,
-		done, setDone,
-	} = useCollection();
+export const useGenerator = () => {
+	const { settingsForm } = useMetadata();
+	const { query: { layers }} = useLayerManager();
 	const { name, description, collectionSize } = settingsForm;
-	const [downloadSrc, setDownloadSrc] = useState('');
-
 	const { addToast } = useToast()
+
+	const [done, setDone] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const [zipProgress, setZipProgress] = useState(null);
+	const [generatedZip, setGeneratedZip] = useState('');
+
 
 	// This will need to talk to web worker
 	const generateImages = async () => {
 		setDone(false);
 		setProgress(null);
 		setZipProgress(null);
-		setIsModalOpen(false)
 
 		// Runs check
-		/*
-		if (collectionSize.value > 10000) {
-			addToast({
-				severity: 'error',
-				message: 'Collection Size value must be 10000 or under'
+		if(validateForm()) {
+			worker.postMessage({
+				message:'generate',
+				settings: {
+					name: name.value,
+					description: description.value
+				},
+				layers: [...layers],
+				count: collectionSize.value
 			})
-			return;
-		}
-		*/
-		if (collectionSize.value.length < 1) {
+
 			addToast({
-				severity: 'error',
-				message: 'Collection Size value cannot be left empty'
+				severity: 'info',
+				message: 'Generating collection. This will take a some time...'
 			})
-			return;
 		}
-		addToast({
-			severity: 'info',
-			message: 'Generating collection. This will take a some time...'
-		})
-
-		// Worker
-		worker.postMessage({
-			message:'generate',
-			settings: {
-				name: name.value,
-				description: description.value
-			},
-			layers: [...layers],
-			count: collectionSize.value
-		})	
-
-		setIsModalOpen(true);
 	};
 
 	const save = () => {
 		FileSaver.saveAs(generatedZip, 'sample.zip')
 	}
 
+
 	const validateForm = () => {
-		// check images
-
-		/*
-		if (collectionSize.value > 10000) {
-			addToast({
-				severity: 'error',
-				message: 'Collection Size value must be 10000 or under'
-			})
-			return;
-		}
-		*/
-
 		if (collectionSize.value.length < 1) {
 			addToast({
 				severity: 'error',
@@ -97,7 +62,6 @@ export const useGenerateCollection = () => {
 			})
 			return false;
 		}
-
 		for(let i = 0; i < layers.length; i++) {
 			if(layers[i].images.length == 0) {
 				addToast({
@@ -107,12 +71,12 @@ export const useGenerateCollection = () => {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
 
 
+	// @TODO Refactor
 	const readFileAsBufferArray = file => {
     return new Promise((resolve, reject) => {
       let fileReader = new FileReader();
@@ -125,8 +89,6 @@ export const useGenerateCollection = () => {
       fileReader.readAsArrayBuffer(file);
     });
   };
-
-
 	const mergeImageVideo = async (totalMemory = 33554432) => {
 		const raw1 = layers[0].images[0].file;
 		const raw2 = layers[1].images[0].file
@@ -155,18 +117,12 @@ export const useGenerateCollection = () => {
 		
 	}
 
-	const initWorker = () => {
+	const listenToWorker = () => {
 		videoWorker.onmessage = function (event) {
 			var message = event.data;
 			if (message.type == "ready") {
 				console.log('loaded')
-				/*
-				videoWorker.postMessage({
-					type: 'command',
-//					arguments: ['-help']
-					arguments: [`-filter_complex "[0:v][1:v] overlay=25:25:enable='between(t,0,20)'`]
-				})
-				*/
+
 			} else if (message.type == "stdout") {
 				console.log('output', message.data)
 			} else if (message.type == "done") {
@@ -181,12 +137,9 @@ export const useGenerateCollection = () => {
 				console.log("Worker has received command")
 			}
 		};
-
 		worker.onmessage = (message) => {
 			if (message.data.message == 'output') {
 				setGeneratedZip(message.data.content);
-				//console.log(message.data.content);
-
 
 				addToast({
 					severity: 'success',
@@ -194,7 +147,7 @@ export const useGenerateCollection = () => {
 				})
 				setDone(true);
 			}
-
+			
 			if (message.data.message == 'progress') {
 				setProgress(message.data.progress)
 			}
@@ -205,19 +158,14 @@ export const useGenerateCollection = () => {
 	}
 	
 
+
 	return {
-		generateImages,
-		generatedZip,
-		setGeneratedZip,
-		initWorker,
-		worker,
-		done,
-		progress,
-		isModalOpen,
-		setIsModalOpen,
+		listenToWorker,
 		save,
 		validateForm,
-		mergeImageVideo,
-		downloadSrc
+		generateImages,
+		done,
+		progress,
+		zipProgress
 	}
 }
