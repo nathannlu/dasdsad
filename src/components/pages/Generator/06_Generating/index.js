@@ -5,7 +5,7 @@ import { useGenerator } from 'core/generator';
 
 
 const Generating = () => {
-	const { save, done, progress, zipProgress, listenToWorker } = useGenerator();
+	const { save, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
 	useEffect(listenToWorker,[])
 
 
@@ -20,6 +20,9 @@ const Generating = () => {
 					Create an account to download your collection when it is done generating
 				</Typography>
 			</Box>
+			<button onClick={generateImages}>
+				click me
+			</button>
 
 			<Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
 				<CircularProgress variant="determinate" value={progress} size={100} />

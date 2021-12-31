@@ -20,10 +20,13 @@ export const useTrait = () => {
 				rarity: .5,
 				weight: 30,
 				base64: await toBase64(acceptedFiles[i]),
+				type: acceptedFiles[i].type,
 				file: acceptedFiles[i]
 			}
 			newFiles.push(newFile);
+			console.log(newFile)
 		}
+
 		setLayers(prevState => {
 			prevState[selected].images.push(...newFiles)
 			return [...prevState]

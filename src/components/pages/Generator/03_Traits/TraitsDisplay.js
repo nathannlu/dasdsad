@@ -21,11 +21,20 @@ const TraitsDisplay = ({index}) => {
 			{layers[index]?.images?.map((image, i) => (
 				<Grid xs={2} item key={i} sx={{position: 'relative'}}>
 					<Box sx={{border: '1px solid rgba(0,0,0,.5)', borderRadius: '6px', padding: '4px'}}>
-						<img
-							src={image.preview} 
-							onClick={() => setSelectedImage(i)}
-							style={{borderRadius: '4px', width: '100%'}}
-						/>
+						{image.type == 'image/png' ? (
+							<img
+								src={image.preview} 
+								onClick={() => setSelectedImage(i)}
+								style={{borderRadius: '4px', width: '100%'}}
+							/>
+						): null}
+						{image.type == 'video/mp4' ? (
+							<video width="100%" loop autoPlay muted>
+								<source src={image.preview} type="video/mp4" />
+									Sorry, your browser doesn't support embedded videos.
+							</video>
+						): null}
+
 
 						<Stack justifyContent="space-between" alignItems="center" direction="row">
 							<Stack direction="column">

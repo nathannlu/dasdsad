@@ -1,5 +1,5 @@
 diff --git a/node_modules/merge-base64/index.js b/node_modules/merge-base64/index.js
-index 5cda666..064b77d 100644
+index 5cda666..2fa46c4 100644
 --- a/node_modules/merge-base64/index.js
 +++ b/node_modules/merge-base64/index.js
 @@ -25,6 +25,7 @@ module.exports = function mergeImages(
@@ -28,7 +28,7 @@ index 5cda666..064b77d 100644
        color
      );
  
-@@ -122,7 +127,8 @@ module.exports = function mergeImages(
+@@ -122,10 +127,11 @@ module.exports = function mergeImages(
              alignImage(totalHeight, height, align) + offsetY
            ];
  
@@ -37,4 +37,8 @@ index 5cda666..064b77d 100644
 +      baseImage.composite(img, left, top);
      }
  
-     return baseImage.getBase64Async(Jimp.MIME_JPEG);
+-    return baseImage.getBase64Async(Jimp.MIME_JPEG);
++    return baseImage.getBase64Async(Jimp.MIME_PNG);
+     // return baseImage;
+   });
+ };

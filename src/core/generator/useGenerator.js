@@ -6,7 +6,6 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 
 import Worker from "components/pages/Generator/workers/generator.worker.js";
-import VideoWorkerWorker from "components/pages/Generator/workers/generator.worker.js";
 import VideoWorker from 'components/pages/Generator/workers/video.worker.js';
 const worker = new Worker();
 const videoWorker = new VideoWorker();
@@ -32,6 +31,8 @@ export const useGenerator = () => {
 
 		// Runs check
 		if(validateForm()) {
+//			connectWorkers();
+
 			worker.postMessage({
 				message:'generate',
 				settings: {
@@ -49,10 +50,19 @@ export const useGenerator = () => {
 		}
 	};
 
+	const connectWorkers = () => {
+		const channel = new MessageChannel();
+		worker.postMessage({
+			command: 'connect'
+		}, [channel.port1])
+		videoWorker.postMessage({
+			command: 'connect'
+		}, [channel.port2])
+	}
+
 	const save = () => {
 		FileSaver.saveAs(generatedZip, 'sample.zip')
 	}
-
 
 	const validateForm = () => {
 		if (collectionSize.value.length < 1) {

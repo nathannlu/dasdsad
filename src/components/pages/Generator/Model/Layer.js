@@ -46,15 +46,26 @@ const Layer = ({activeStep, index}) => {
 					}}
 				>
 					<AnimatePresence>
-						<motion.img
+						<motion.div
 							key={index}
 							transition={{ duration: .2 }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							src={layers[index]?.images[selectedImage]?.preview}
-							style={{width: '100%', height: '100%', objectFit: 'cover'}}
-						/>
+						>
+							{{
+								'image/png': (<img
+									src={layers[index]?.images[selectedImage]?.preview}
+									style={{width: '100%', height: '100%', objectFit: 'cover'}}
+								/>),
+								'video/mp4': (
+									<video width="100%" loop autoPlay muted>
+										<source src={layers[index]?.images[selectedImage]?.preview} type="video/mp4" />
+											Sorry, your browser doesn't support embedded videos.
+									</video>
+								)
+							}[layers[index]?.images[selectedImage]?.type]}
+						</motion.div>
 					</AnimatePresence>
 				</motion.div>
 			</motion.div>
