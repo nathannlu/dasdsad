@@ -25,6 +25,8 @@ const Settings = ({ setIsCheckoutModalOpen}) => {
 		done,
 		progress,
 		validateForm,
+		mergeImageVideo,
+		downloadSrc,
 	} = useGenerateCollection()
 	useEffect(initWorker, [])
 
@@ -132,6 +134,12 @@ const Settings = ({ setIsCheckoutModalOpen}) => {
 					</Box>
 				</>
 				)}
+			<button onClick={async() => await mergeImageVideo()}>
+					Click me!
+				</button>
+				<a href={downloadSrc} download="sample.mp4">
+					Download me!
+				</a>
 				<Box p={2} sx={{background: 'white'}}>
 					{/*
 					<Button fullWidth variant="outlined" onClick={() => generateImages()}>
