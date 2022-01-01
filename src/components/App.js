@@ -14,7 +14,9 @@ function App() {
 	ReactGA.initialize('G-X392J39GCK');
 	ReactGA.pageview(window.location.pathname + window.location.search);
 
-	//posthog.init("phc_Y320pMWnNVcSMIAIW1bbh35FXjgqjZULkZrl5OhaIAf", {api_host: 'https://app.posthog.com'});
+	if (!window.location.href.includes('localhost')) {
+		posthog.init("phc_Y320pMWnNVcSMIAIW1bbh35FXjgqjZULkZrl5OhaIAf", {api_host: 'https://app.posthog.com'});
+	}
 
 
   return (

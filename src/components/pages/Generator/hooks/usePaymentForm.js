@@ -2,10 +2,13 @@ import { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import posthog from 'posthog-js';
+import { useMetadata } from 'core/metadata';
 
 export const usePaymentForm = (planId) => {
 	const stripe = useStripe();
 	const elements = useElements();
+	const { settingsForm: { collectionSize }} = useMetadata();
 
 	const { addToast } = useToast();
 	const { form: paymentForm } = useForm({
@@ -49,11 +52,20 @@ export const usePaymentForm = (planId) => {
 		return { error, paymentMethod }
 	}
 
-	const onPaymentSuccess = () => {
+	const onPaymentSuccess = data => {
 		addToast({
 			severity: 'success',
-			message: 'Success! You are now subscribed'
+			message: 'Success!'
 		});
+		posthog.capture(
+			'User paid for NFT generation', {
+				$set: {
+					paidForNFTGeneration: true,
+					collectionSize: collectionSize.value,
+					stripeChargeId: data.charge
+				}
+		});
+
 		setPaidCookie();
 	}
 
