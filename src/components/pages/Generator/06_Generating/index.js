@@ -10,13 +10,6 @@ const Generating = () => {
 	const { save, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
 	useEffect(listenToWorker,[])
 
-	useEffect(() => {
-		console.log(progress)
-		console.log((progress / collectionSize.value) * 100)
-		
-	}, [progress])
-
-
 	return (
 		<Stack gap={10}>
 			<Box>
@@ -28,12 +21,9 @@ const Generating = () => {
 					Generating your collection. This will take some time.
 				</Typography>
 			</Box>
-			<button onClick={generateImages}>
-				click me
-			</button>
 
 			<Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
-				<CircularProgress variant="determinate" value={progress} size={100} />
+				<CircularProgress variant="determinate" value={Math.round((progress / collectionSize.value) * 100)} size={100} />
 				<Box
 					sx={{
 						top: 0,
