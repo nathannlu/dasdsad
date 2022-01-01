@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 module.exports = {
@@ -22,6 +23,9 @@ module.exports = {
 		new InterpolateHtmlPlugin({
     PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
 		}),
+		new CopyWebpackPlugin([
+			{ from: 'public/assets/js', to: 'assets/js' }
+		]),
 //		new BundleAnalyzerPlugin
   ],
 	module: {
