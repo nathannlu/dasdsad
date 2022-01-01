@@ -20,7 +20,7 @@ const GradientBackground = () => {
 				animate={{ opacity: 1 }}
 			>
 				<Typography 
-					variant="h1" 
+					variant="h5" 
 					sx={{
 						position: 'absolute', 
 						bottom: '10%',

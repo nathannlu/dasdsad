@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLayerManager } from 'core/manager';
 import { toBase64 } from 'utils/imageData';
+import { useToast } from 'ds/hooks/useToast';
 
 export const useTrait = () => {
 	const {
@@ -8,6 +9,7 @@ export const useTrait = () => {
 		actions: { setLayers }
 	} = useLayerManager()
 	const [selectedImage, setSelectedImage] = useState(0);
+	const { addToast } = useToast();
 
 
 	const addTrait = async (acceptedFiles) => {
@@ -24,7 +26,13 @@ export const useTrait = () => {
 				file: acceptedFiles[i]
 			}
 			newFiles.push(newFile);
-			console.log(newFile)
+
+			if(newFile.type == 'video/mp4') {
+				addToast({
+					severity: 'success',
+					message: 'Added video! Just a heads up having a video will take longer to generate your collection.'
+				});
+			}
 		}
 
 		setLayers(prevState => {

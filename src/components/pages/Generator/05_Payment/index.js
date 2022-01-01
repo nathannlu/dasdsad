@@ -66,7 +66,7 @@ const Payment = props => {
 
 
 					<Stack direction="row">
-						<Button fullWidth variant="contained" onClick={() => props.nextStep()/*setIsCheckoutModalOpen(true)*/}>
+						<Button fullWidth variant="contained" onClick={() => setIsCheckoutModalOpen(true)}>
 							Generate collection
 						</Button>
 					</Stack>

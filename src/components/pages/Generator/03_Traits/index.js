@@ -23,7 +23,7 @@ const Traits = props => {
 						Add traits
 					</Typography>
 					<Typography variant="body">
-						Give your NFT collection unique characteristics
+						Give your NFT collection unique characteristics. Please make sure all your images have the same dimensions.
 					</Typography>
 				</Box>
 

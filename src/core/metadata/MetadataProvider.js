@@ -16,7 +16,7 @@ export const MetadataProvider = ({children}) => {
 			rules: []
 		},
 		collectionSize: {
-			default: '',
+			default: 10000,
 			placeholder: '10000',
 			rules: []
 		},

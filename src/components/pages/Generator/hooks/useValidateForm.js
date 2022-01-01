@@ -14,6 +14,12 @@ export const useValidateForm = () => {
 				message: 'Collection Size value cannot be left empty'
 			})
 			return false;
+		} else if (settingsForm.collectionSize.value < 10) {
+			addToast({
+				severity: 'error',
+				message: 'Collection Size value cannot be less than 10'
+			})
+			return false;
 		} else {
 			return true
 		}
@@ -32,6 +38,7 @@ export const useValidateForm = () => {
 	}
 
 	const validateLayerTraits = () => {
+		let videoCount = 0;
 		for(let i = 0; i < layers.length; i++) {
 			if(layers[i].images.length == 0) {
 				addToast({
@@ -40,6 +47,17 @@ export const useValidateForm = () => {
 				});
 				return false;
 			}
+			if(layers[i].images.includes(file => file.type =='video/mp4')) {
+				videoCount++;
+			}
+		}
+
+		if(videoCount > 1) {
+			addToast({
+				severity: 'error',
+				message: `Video can exist in one layer only! You have videos in ${2} layers.`
+			});
+			return false;
 		}
 
 		return true;

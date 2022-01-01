@@ -2,11 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Fade, Box, FormLabel, TextField, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip, CircularProgress } from '@mui/material'
 import { useGenerator } from 'core/generator';
+import { useMetadata } from 'core/metadata';
 
 
 const Generating = () => {
+	const { settingsForm: { collectionSize } } = useMetadata();
 	const { save, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
 	useEffect(listenToWorker,[])
+
+	useEffect(() => {
+		console.log(progress)
+		console.log((progress / collectionSize.value) * 100)
+		
+	}, [progress])
 
 
 	return (
@@ -17,7 +25,7 @@ const Generating = () => {
 					Growing the next mutant apes
 				</Typography>
 				<Typography variant="body">
-					Create an account to download your collection when it is done generating
+					Generating your collection. This will take some time.
 				</Typography>
 			</Box>
 			<button onClick={generateImages}>
@@ -39,7 +47,7 @@ const Generating = () => {
 					}}
 				>
 					<Typography variant="h6" component="div" color="text.secondary">
-						{`${Math.round(progress)}%`}
+						{`${Math.round((progress / collectionSize.value) * 100)}%`}
 					</Typography>
 				</Box>
 				{zipProgress !== null && (

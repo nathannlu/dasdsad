@@ -84,7 +84,7 @@ export const useGenerator = () => {
 			}
 			
 			if (message.data.message == 'progress') {
-				setProgress(message.data.progress)
+				setProgress(++message.data.progress)
 			}
 			if (message.data.message == 'zip_progress') {
 				setZipProgress(message.data.zipProgress)

@@ -7,7 +7,7 @@ const Content = ({ layer }) => {
 	const { updateTraitRarity } = useTrait();
 	
 	return (
-		<Table sx={{ minWidth: 650 }} aria-label="simple table">
+		<Table aria-label="simple table">
 			<TableHead>
 				<TableRow>
 					<TableCell sx={{fontWeight: 'bold'}}>
