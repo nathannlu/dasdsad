@@ -4,6 +4,7 @@ import { useMetadata } from 'core/metadata';
 import { useLayerManager } from 'core/manager';
 import FileSaver from 'file-saver';
 import JSZip from 'jszip';
+import posthog from 'posthog-js';
 
 import Worker from "components/pages/Generator/workers/generator.worker.js";
 const worker = new Worker();
@@ -48,6 +49,7 @@ export const useGenerator = () => {
 
 	const save = () => {
 		FileSaver.saveAs(generatedZip, 'sample.zip')
+		posthog.capture('User downloaded collection');
 	}
 
 	const validateForm = () => {
