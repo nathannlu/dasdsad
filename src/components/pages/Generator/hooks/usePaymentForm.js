@@ -11,29 +11,17 @@ export const usePaymentForm = (planId) => {
 	const { form: paymentForm } = useForm({
 		nameOnCard: {
 			default: '',
+			placeholder: 'John Doe',
 			rules: [],
 		},
-		addressLine1: {
+		email: {
 			default: '',
+			placeholder: 'gmjohndoe@gmail.com',
 			rules: [],
-		},
-		addressLine2: {
-			default: '',
-			rules: [],
-		},
-		city: {
-			default: '',
-			rules: [],
-		},
-		state: {
-			default: '',
-			rules: [],
-		},
-		country: {
-			default: 'CA',
-			rules: []
 		}
 	})
+
+
 
 	const createPaymentMethod = async () => {
 		const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -66,6 +54,7 @@ export const usePaymentForm = (planId) => {
 			severity: 'success',
 			message: 'Success! You are now subscribed'
 		});
+		setPaidCookie();
 	}
 
 	const onPaymentError = err => {
@@ -74,6 +63,13 @@ export const usePaymentForm = (planId) => {
 			message: err.message
 		});
 		console.log(err.message)
+	}
+
+	const setPaidCookie = () => {
+		
+		// store email as a cookie in browser
+
+		// store a hashed stripe transaction id
 	}
 
 	return {

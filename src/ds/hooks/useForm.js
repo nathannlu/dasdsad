@@ -53,5 +53,6 @@ export const useForm = (config) => {
 	return {
 		form,
 		formState,
+		setFormState,
 	}
 }

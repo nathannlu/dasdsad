@@ -2,6 +2,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const path = require('path');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
 module.exports = {
@@ -20,7 +21,8 @@ module.exports = {
     }),
 		new InterpolateHtmlPlugin({
     PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
-		})
+		}),
+//		new BundleAnalyzerPlugin
   ],
 	module: {
 		rules: [
@@ -62,6 +64,7 @@ module.exports = {
 			'libs': `${__dirname}/src/libs`,
 			'utils': `${__dirname}/src/utils`,
 			'config': `${__dirname}/src/config`,
+			'core': `${__dirname}/src/core`,
 			'gql': `${__dirname}/src/gql`,
     },
   },

@@ -311,6 +311,19 @@ textarea:focus {
 	animation: dash 1.5s ease-in-out infinite;
 }
 
+.fadeIn {
+	animation: fadeIn .5s;
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0	
+	}
+	to {
+		opacity: 1	
+	}
+}
+
+
 @keyframes rotate {
   100% {
     transform: rotate(360deg);

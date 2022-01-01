@@ -58,3 +58,16 @@ export const toBase64 = file => new Promise((resolve, reject) => {
 	reader.onload = () => resolve(reader.result);
 	reader.onerror = error => reject(error);
 });
+
+export const readFileAsBufferArray = file => {
+	return new Promise((resolve, reject) => {
+		let fileReader = new FileReader();
+		fileReader.onload = function() {
+			resolve(this.result);
+		};
+		fileReader.onerror = function() {
+			reject(this.error);
+		};
+		fileReader.readAsArrayBuffer(file);
+	});
+};

@@ -12,6 +12,7 @@
     "@mui/icons-material": "^5.0.0",
     "@mui/lab": "^5.0.0-alpha.47",
     "@mui/material": "^5.0.0",
+    "@mui/styles": "^5.2.3",
     "@shopify/react-web-worker": "^4.0.1",
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.22.0",
@@ -22,8 +23,11 @@
     "apollo-link-context": "^1.0.20",
     "canvas": "^2.8.0",
     "file-saver": "^2.0.5",
+    "framer-motion": "^5.5.5",
     "graphql": "^16.2.0",
     "image-data-uri": "^2.0.1",
+    "jss": "^10.9.0",
+    "jss-plugin-default-unit": "^10.9.0",
     "jszip": "^3.7.1",
     "logrocket": "^2.1.2",
     "merge-base64": "^1.0.3",
@@ -32,6 +36,7 @@
     "posthog-js": "^1.16.7",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.1.0",
+    "react-canvas-confetti": "^1.2.1",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.4.2",
     "react-ga": "^3.3.0",
@@ -39,6 +44,7 @@
     "react-hooks-worker": "^1.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "react-step-wizard": "^5.3.11",
     "react-uuid": "^1.0.2",
     "styled-components": "^5.1.1"
   },
@@ -46,9 +52,10 @@
     "start": "react-scripts start",
     "dev": "webpack serve",
     "build": "webpack --mode production",
+    "build:analyze": "npm run build --env.addons=bundleanalyzer",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-		"postinstall": "patch-package"
+    "postinstall": "patch-package"
   },
   "eslintConfig": {
     "extends": [
@@ -84,6 +91,7 @@
     "interpolate-html-plugin": "^4.0.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.65.0",
+    "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.6.0",
     "worker-loader": "^3.0.8"
