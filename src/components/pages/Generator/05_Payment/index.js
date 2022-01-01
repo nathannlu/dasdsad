@@ -8,6 +8,7 @@ import { Lock as LockIcon } from '@mui/icons-material';
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
+import posthog from 'posthog-js';
 
 import PaymentModal from './PaymentModal';
 
@@ -66,7 +67,10 @@ const Payment = props => {
 
 
 					<Stack direction="row">
-						<Button fullWidth variant="contained" onClick={() => setIsCheckoutModalOpen(true)}>
+						<Button fullWidth variant="contained" onClick={() => {
+							setIsCheckoutModalOpen(true)
+							posthog.capture('User clicked on "Generate collection" button');
+						}}>
 							Generate collection
 						</Button>
 					</Stack>
