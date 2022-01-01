@@ -22,7 +22,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	} = usePaymentForm();
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
-			onPaymentSuccess();
+			onPaymentSuccess(data);
 			setIsModalOpen(false);
 			generateImages();
 			nextStep();
