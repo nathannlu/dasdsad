@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from 'ds/hooks/useToast';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
 import StepWizard from 'react-step-wizard';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -18,6 +19,7 @@ const Generator = () => {
 	const isLastStep = activeStep == 5 || activeStep == 6;
 
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
+
 
 	return (
 		<Fade in>

@@ -9,6 +9,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
 import posthog from 'posthog-js';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import PaymentModal from './PaymentModal';
 
@@ -18,19 +19,25 @@ const Payment = props => {
 	const [fadeIn, setFadeIn] = useState(false);
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const { settingsForm } = useMetadata();
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
+
 
 	useEffect(() => {
-		if(props.isActive) {
-			setTimeout(() => setFadeIn(true), 1700)
+		if(!smallerThanTablet) {
+			if(props.isActive) {
+				setTimeout(() => setFadeIn(true), 1700)
+			} else {
+				setFadeIn(false)
+			}
 		} else {
-			setFadeIn(false)
+			setFadeIn(true)
 		}
+
 	}, [props.isActive])
 
 	
 	return (
 		<Fade in={fadeIn}>
-
 			<Stack justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 				<Stack gap={2}>
 					<Box>
