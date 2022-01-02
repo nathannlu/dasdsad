@@ -64,6 +64,8 @@ export const useTrait = () => {
 			prevState[selected].images[index].weight = weight
 			return [...prevState]
 		})
+
+		posthog.capture('User updated trait rarity');
 	}
 
 	return {
