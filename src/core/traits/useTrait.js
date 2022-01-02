@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLayerManager } from 'core/manager';
 import { toBase64 } from 'utils/imageData';
 import { useToast } from 'ds/hooks/useToast';
+import posthog from 'posthog-js';
 
 export const useTrait = () => {
 	const {
@@ -39,6 +40,8 @@ export const useTrait = () => {
 			prevState[selected].images.push(...newFiles)
 			return [...prevState]
 		})
+
+		posthog.capture('User added trait(s) to their collection');
 	}
 
 	const deleteTrait = (index) => {
