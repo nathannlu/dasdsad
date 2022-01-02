@@ -20,6 +20,11 @@ export const MetadataProvider = ({children}) => {
 			placeholder: '10000',
 			rules: []
 		},
+		coupon: {
+			default: '',
+			placeholder: 'Promo code here',
+			rules: []
+		},
 	})
 
 	const value = { settingsForm }

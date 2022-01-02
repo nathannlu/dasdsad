@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from 'ds/hooks/useToast';
 import { LayerManagerContext } from './LayerManagerContext';
 import posthog from 'posthog-js';
 
@@ -13,6 +14,7 @@ const initialLayersState = [
 export const LayerManagerProvider = ({children}) => {
 	const [layers, setLayers] = useState(initialLayersState);
 	const [selected, setSelected] = useState(0);
+	const { addToast } = useToast();
 
 	const addLayer = (newLayer) => {
 		setLayers(prevState => {
@@ -40,9 +42,19 @@ export const LayerManagerProvider = ({children}) => {
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
+
+
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
 		setSelected(endIndex)
+		if (result.some(layer => layer.name == 'Background')) {
+			if(result.findIndex(layer => layer.name == 'Background') !== 0) {
+				addToast({
+					severity: 'warning',
+					message: 'Your Background layer is no longer the last layer. Any images covered by the Background layer will not appear in your generated collection.'
+				});
+			}
+		};
 		return result;
 	};
 

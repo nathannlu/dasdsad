@@ -35,13 +35,20 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const onSubmit = async e => {
 		e.preventDefault();
 
-		const card = elements.getElement(CardElement);
-    const result = await stripe.createToken(card);
+		if(settingsForm.coupon.value == 'ch_3KD9JpJUIYorshTC0byzp3BZ') {
+			setIsModalOpen(false);
+			generateImages();
+			nextStep();
 
-		charge({variables: {
-			token: result.token.id,
-			amount: 10 * settingsForm.collectionSize.value,
-		}})
+		} else {
+			const card = elements.getElement(CardElement);
+			const result = await stripe.createToken(card);
+
+			charge({variables: {
+				token: result.token.id,
+				amount: 10 * settingsForm.collectionSize.value,
+			}})
+		}
 	}
 	
 
@@ -145,6 +152,8 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 									>
 										Pay ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD now
 									</LoadingButton>
+
+									<TextField {...settingsForm.coupon} fullWidth />
 								</Stack>
 							</Card>
 						</Stack>

@@ -13,15 +13,16 @@ import './assets/styles/index.css';
 
 ReactDOM.render(
 	<AuthorizedApolloProvider>
-		<MetadataProvider>
-			<LayerManagerProvider>
 				<ThemeProvider>
 					<ToastManager>
+
+		<MetadataProvider>
+			<LayerManagerProvider>
 						<App />
-					</ToastManager>
-				</ThemeProvider>
 			</LayerManagerProvider>
 		</MetadataProvider>
+					</ToastManager>
+				</ThemeProvider>
 	</AuthorizedApolloProvider>,
   document.getElementById('root')
 );
