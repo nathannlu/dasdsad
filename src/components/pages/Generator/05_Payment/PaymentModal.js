@@ -1,12 +1,13 @@
 import React from 'react';
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
-import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
-import { Lock as LockIcon } from '@mui/icons-material';
+import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, IconButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
+import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useCharge } from 'gql/hooks/billing.hook';
 import { usePaymentForm } from '../hooks/usePaymentForm';
 
 import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
@@ -29,6 +30,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		},
 		onError: onPaymentError
 	});
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
 	const onSubmit = async e => {
 		e.preventDefault();
@@ -56,19 +58,24 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 				style={{
 					width: '1200px',
 					margin: '0 auto',
+					height: smallerThanTablet ? '100%' : '',
 				}}
 			>
-				<Box sx={{bgcolor: 'white', borderBottom: 1, borderColor: 'grey.300', p: 4}}>
+				<Stack direction="row" sx={{bgcolor: 'white', borderBottom: 1, borderColor: 'grey.300', p: 4}}>
 					<Typography variant="h4">
 						Checkout
 					</Typography>
-				</Box>
-				<Stack
+
+					<IconButton sx={{marginLeft: 'auto'}} onClick={() => setIsModalOpen(false)}>
+						<CloseIcon />
+					</IconButton>
+				</Stack>
+				<Grid
+					container
 					sx={{ bgcolor: 'grey.100', p: 4 }}
-					direction="row" 
 					gap={4}
 				>
-					<Grid item xs={7}>
+					<Grid item md={6}>
 						<Stack gap={2}>
 							<Typography variant="h5">
 								Payment info <LockIcon />
@@ -79,7 +86,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 										<FormLabel>
 											Credit Card:
 										</FormLabel>
-
 										<CardElement
 											options={{
 												style: {
@@ -107,9 +113,10 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 
 								</Stack>
 							</Card>
+
 						</Stack>
 					</Grid>
-					<Grid item xs={5}>
+					<Grid item md={5}>
 						<Stack gap={2}>
 							<Typography variant="h6">
 								Order summary
@@ -142,7 +149,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 							</Card>
 						</Stack>
 					</Grid>
-				</Stack>
+				</Grid>
 			</form>
 		</Modal>
 	)

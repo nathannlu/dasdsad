@@ -2,9 +2,11 @@ import React from 'react';
 import { Box, Stack, Slider } from 'ds/components';
 import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useTrait } from 'core/traits';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Content = ({ layer }) => {
 	const { updateTraitRarity } = useTrait();
+	const smallerThanMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
 	
 	return (
 		<Table aria-label="simple table">
@@ -21,7 +23,9 @@ const Content = ({ layer }) => {
 			<TableBody>
 				{layer.images?.map((image,i) => (
 					<TableRow>
-						<TableCell>
+						<TableCell 
+							sx={smallerThanMobile ? {width:'50px'}: {}}
+						>
 							{image.type == 'image/png' ? (
 								<img 
 									style={{width: '50px', height: '50px', border: '1px solid rgba(0,0,0,.5)', borderRadius: '4px'}} 
@@ -34,14 +38,19 @@ const Content = ({ layer }) => {
 										Sorry, your browser doesn't support embedded videos.
 								</video>
 							): null}
-							<Box>
+							<Box
+								sx={smallerThanMobile ? {fontSize:'10px'}: {}}
+							>
 								{image.name}
 							</Box>
 						</TableCell>
 
 						<TableCell>
 							<Stack alignItems="center" direction="row">
-								<Chip label="Rare" />
+								<Chip 
+									sx={smallerThanMobile ? {fontSize:'10px'}: {}}
+									label="Rare" 
+								/>
 								<Slider
 									name="weight"
 									defaultValue={30}
@@ -52,7 +61,10 @@ const Content = ({ layer }) => {
 									value={image.weight}
 									onChange={e => updateTraitRarity(i, e.target.value)}
 								/>
-								<Chip label="Common" />
+								<Chip
+									sx={smallerThanMobile ? {fontSize:'10px'}: {}}
+									label="Common" 
+								/>
 							</Stack>
 						</TableCell>
 					</TableRow>

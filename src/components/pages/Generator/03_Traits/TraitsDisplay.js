@@ -17,7 +17,7 @@ const TraitsDisplay = ({index}) => {
 
 
 	return (
-		<Stack gap={2} direction="row">
+		<Stack gap={2} direction="row" sx={{flexWrap: 'wrap'}}>
 			{layers[index]?.images?.map((image, i) => (
 				<Grid xs={2} item key={i} sx={{position: 'relative'}}>
 					<Box sx={{border: '1px solid rgba(0,0,0,.5)', borderRadius: '6px', padding: '4px'}}>
