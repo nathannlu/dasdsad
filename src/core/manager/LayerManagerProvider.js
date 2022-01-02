@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LayerManagerContext } from './LayerManagerContext';
+import posthog from 'posthog-js';
 
 const initialLayersState = [
 	{
@@ -18,6 +19,8 @@ export const LayerManagerProvider = ({children}) => {
 			prevState.push(newLayer)
 			return [...prevState];
 		})
+
+		posthog.capture('User added layer to their collection');
 	}
 
 	const deleteLayer = (index) => {
