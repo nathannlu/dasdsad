@@ -21,9 +21,12 @@
     "@testing-library/user-event": "^7.1.2",
     "@uploadcare/react-widget": "^1.3.8",
     "apollo-link-context": "^1.0.20",
+    "axios": "^0.24.0",
+    "base-path-converter": "^1.0.2",
     "canvas": "^2.8.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^5.5.5",
+    "fs": "0.0.1-security",
     "graphql": "^16.2.0",
     "image-data-uri": "^2.0.1",
     "jss": "^10.9.0",
@@ -46,7 +49,9 @@
     "react-scripts": "3.4.1",
     "react-step-wizard": "^5.3.11",
     "react-uuid": "^1.0.2",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "truffle": "^5.4.26",
+    "web3": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",

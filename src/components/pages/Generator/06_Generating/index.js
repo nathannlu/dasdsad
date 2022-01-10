@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Fade, Box, FormLabel, TextField, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
+import { Link, Fade, Box, FormLabel, TextField, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip, CircularProgress } from '@mui/material'
 import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
 
 const Generating = () => {
@@ -70,6 +71,8 @@ const Generating = () => {
 				</Button>
 			</Stack>
 			*/}
+			
+
 
 			<Stack gap={2}>
 				<Button onClick={save} variant="contained" disabled={!done}>
@@ -79,6 +82,36 @@ const Generating = () => {
 					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/nftdatagen" target="_blank">Twitter</a>
 				</Typography>
 			</Stack>
+
+			{done && (
+			<Link to="/upload" style={{textDecoration: 'none', color: 'inherit'}}>
+				<Stack gap={2} p={2} sx={{background: '#eee', borderRadius: 3, cursor: 'pointer'}}>
+					<Box>
+						<Stack alignItems="center" direction="row" gap={1}>
+							<AutoGraphIcon sx={{color: '#006aff'}} />
+							<Typography variant="body" sx={{color: '#006aff', fontWeight:'bold'}}>
+								Growth opportunity
+							</Typography>
+							<Chip color="success" label="New" size="small"/>
+							<Chip color="primary" label="No code" size="small"/>
+						</Stack>
+						<Typography variant="h6">
+							Deploy to a blockchain
+						</Typography>
+						<Typography variant="body">
+							Deploy your collection to the blockchain now!
+						</Typography>
+					</Box>
+					<Box>
+						<Button variant="contained">
+							Deploy
+						</Button>
+					</Box>
+				</Stack>
+			</Link>
+			)}
+
+
 		</Stack>
 	)
 };

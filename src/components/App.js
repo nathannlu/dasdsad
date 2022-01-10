@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import ReactGA from 'react-ga';
 import posthog from 'posthog-js';
 import { Helmet } from 'react-helmet';
@@ -6,8 +7,11 @@ import { Avatar } from '@mui/material';
 import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Container, Box, Typography, Stack } from 'ds/components';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Generator from 'components/pages/Generator';
 import { useToast } from 'ds/hooks/useToast';
+
+import Generator from 'components/pages/Generator';
+import Upload from 'components/pages/Upload';
+import Main from 'components/pages/Main';
 
 
 function App() {
@@ -31,14 +35,21 @@ function App() {
 
 
   return (
-		<Box sx={{minHeight: '100vh',bgcolor: '#191A24', position: 'relative'}}>
+		<Box sx={{minHeight: '100vh'}}>
 			<Helmet>
 				<title>Create your NFT collection with no-code - NFT Art Generator</title>
 				<link rel="canonical" href="https://nftdatagen.com" />
 				<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 			</Helmet>
 
-			<Generator />
+
+
+			<Router>
+				<Route path="/generator" exact component={Generator} />
+				<Route path="/upload" exact component={Upload} />
+				<Route path="/" exact component={Main} />
+			</Router>
+
 
 			{!smallerThanTablet ? (
 				<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'absolute', right: 20, bottom: 20}}>

@@ -27,7 +27,7 @@ self.onmessage = async (event) => {
 
 				// Metadata
 				let json = JSON.parse(generatedImage[2]);
-				json.properites = {
+				json.properties = {
 					category: 'video',
 					files: [
 						{uri: `${filename}.mp4`, type: 'video/mp4'}
