@@ -70,6 +70,7 @@ module.exports = {
 			'config': `${__dirname}/src/config`,
 			'core': `${__dirname}/src/core`,
 			'gql': `${__dirname}/src/gql`,
+			'ethereum': `${__dirname}/src/ethereum`,
     },
   },
   devServer: {

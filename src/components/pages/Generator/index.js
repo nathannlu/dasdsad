@@ -27,7 +27,8 @@ const Generator = () => {
 				container
 				sx={{
 					minHeight: '100vh',
-					overflow: 'hidden'
+					overflow: 'hidden',
+					bgcolor: '#191A24', position: 'relative'
 				}}
 			>
 				<Grid md={!isLastStep ? 6 : 4} item sx={{transition: 'all .5s'}}>

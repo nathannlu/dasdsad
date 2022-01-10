@@ -52,7 +52,7 @@ const generateMetadata = (settings, filename) => {
 		name: `#${filename}`,
 		description: settings.description,
 		attributes: [],
-		properites: {
+		properties: {
 			category: 'png',
 			files: [
 				{
