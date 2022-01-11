@@ -7,10 +7,10 @@ export const SettingsPanel = props => {
 	const { isDrawerOpen, handleClose, setIsDrawerOpen, openComponentSettings } = useViewport()
 
 	const { selected, connectors: {select} } = useEditor((state, query) => {
-		const currentNodeId = state.events.selected;
+		const [currentNodeId] = state.events.selected.values();
 		let selected;
 
-		if (currentNodeId) {
+		if (currentNodeId && state.nodes[currentNodeId]) {
 			selected = {
 				id: currentNodeId,
 				name: state.nodes[currentNodeId].data.name,
@@ -20,6 +20,7 @@ export const SettingsPanel = props => {
 
 		return { selected };
 	})
+
 
 	return selected ? (
 		<Drawer anchor="right" open={isDrawerOpen} onClose={handleClose}>

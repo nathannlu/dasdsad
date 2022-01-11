@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import { Helmet } from 'react-helmet';
 import { Avatar, Box } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 import { useAnalytics } from 'libs/analytics';
+
 import Routes from './routes';
 
 import { useGetCurrentUser } from 'gql/hooks/users.hook';
@@ -12,15 +15,17 @@ import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-mater
 
 
 function App() {
-	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	const { addToast } = useToast();
 	const { initGA, initPosthog } = useAnalytics();
-	useGetCurrentUser();
+	const history =  createBrowserHistory();
 
-	useEffect(() => {
-		initGA()
-		initPosthog()
-	}, []);
+
+	useGetCurrentUser();
+	initGA()
+	initPosthog()
+
+
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	useEffect(() => {
 		if(smallerThanTablet) {
 			addToast({
@@ -41,7 +46,10 @@ function App() {
 			</Helmet>
 
 
-			<Routes />
+			<Router history={history}>
+				<Routes />
+			</Router>
+
 
 
 			{!smallerThanTablet ? (

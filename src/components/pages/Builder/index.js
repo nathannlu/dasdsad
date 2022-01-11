@@ -8,6 +8,8 @@ import templates from 'components/blocks/main';
 import Viewport from './Viewport';
 import { RenderNode } from './RenderNode';
 
+import './styles.css';
+
 
 const App = props => {
 	const [websiteData, setWebsiteData] = useState('');			// Website data to load

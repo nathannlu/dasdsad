@@ -191,7 +191,7 @@ export const RenderNode = ({ render }) => {
 										<IconButton
 											ref={ref=>select(ref, id)}
 											size="small"
-											onMouseDown={(e: React.MouseEvent) => {
+											onMouseDown={(e) => {
 												e.stopPropagation();
 												actions.delete(id);
 											}}

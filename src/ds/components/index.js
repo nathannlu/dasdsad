@@ -29,6 +29,7 @@ import { LoadingButton } from '@mui/lab';
 import Link from './Link/Link';
 import CardElement from './CardElement/CardElement';
 import CircularProgress from './CircularProgress/CircularProgress';
+import Navbar from './Navbar/Navbar';
 
 export {
 	// Atoms
@@ -58,6 +59,7 @@ export {
 	// Organism
 	Drawer,
 	List, ListItemButton, ListItemText, ListItemIcon,
+	Navbar,
 	
 	// Layouts
 	Box,
