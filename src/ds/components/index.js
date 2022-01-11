@@ -22,6 +22,8 @@ import {
 	Collapse,
 	Select,
 	Slider,
+	Tab,
+	Tabs,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
@@ -46,6 +48,8 @@ export {
 	Link,
 	Select,
 	Avatar,
+	Tab,
+	Tabs,
 
 	// Molecules
 	Card,

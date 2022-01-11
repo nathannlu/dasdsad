@@ -5,10 +5,13 @@ import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
+import Login from 'components/pages/Auth/Login';
+
 
 const Generating = () => {
 	const { settingsForm: { collectionSize } } = useMetadata();
 	const { save, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
+	const [displayAuth, setDisplayAuth] = useState(false)
 	useEffect(listenToWorker,[])
 
 	return (
@@ -75,15 +78,15 @@ const Generating = () => {
 
 
 			<Stack gap={2}>
-				<Button onClick={save} variant="contained" disabled={!done}>
-					Download collection
+				<Button onClick={() => setDisplayAuth(true)} variant="contained">
+					Log in to download
 				</Button>
 				<Typography gutterBottom variant="body">
 					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/nftdatagen" target="_blank">Twitter</a>
 				</Typography>
 			</Stack>
 
-			{done && (
+			{/*done && (
 			<Link to="/upload" style={{textDecoration: 'none', color: 'inherit'}}>
 				<Stack gap={2} p={2} sx={{background: '#eee', borderRadius: 3, cursor: 'pointer'}}>
 					<Box>
@@ -109,7 +112,9 @@ const Generating = () => {
 					</Box>
 				</Stack>
 			</Link>
-			)}
+			)*/}
+
+			<Login in={displayAuth} setDisplayAuth={setDisplayAuth} />
 
 
 		</Stack>

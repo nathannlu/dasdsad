@@ -1,8 +1,9 @@
 export const NavAProps = {
-	logo: {
+	image: {
 		_type: 'image',
 		value: 'https://via.placeholder.com/50'
 	},
+
 	/*
 	links: {
 		_type: 'array',

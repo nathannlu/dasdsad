@@ -9,7 +9,7 @@ const Template = props => {
 			<header class="text-gray-600 body-font" style={{background: props.background.value}}>
 				<div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
 					<a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-						<img src={props.logo.value} />
+						<img style={{width: '50px'}} src={props.image.value} />
 					</a>
 					<nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
 						{props.links?.value.map((item, i) => (

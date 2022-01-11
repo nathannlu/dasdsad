@@ -1,26 +1,52 @@
 import React, { useState } from 'react';
-import { useWebsite } from 'libs/website';
-import { Fade, Button, Box, Drawer, Typography, List, ListItemButton, ListItemText, ListItemIcon } from 'ds/components';
+import { Stack, Container, Fade, Button, Box, Typography, List, Tab, Tabs } from 'ds/components';
 import { ImageSearch as ImageSearchIcon, Settings as SettingsIcon, Web as WebIcon } from '@mui/icons-material';
 
 // Pages
+import Collections from './Collections';
 import Generator from '../Generator';
 import Pages from './Pages';
 import Settings from './Settings';
-import Upload from 'components/pages/Upload';
+import Upload from './Upload';
+
 
 const Dashboard = () => {
-	const { website } = useWebsite();
-	const [selectedPage, setSelectedPage] = useState('upload');
+	const [selectedPage, setSelectedPage] = useState('collections');
 
 	return (
 		<Fade in>
-			<Box sx={{
+			<Stack sx={{
 				display: 'flex',
-				bgcolor: 'grey.200',
+				backgroundColor: 'white',
+				transition: '.2s all',
+				marginTop: '65px',
 				minHeight: '100vh',
-				paddingTop: '64px'
 			}}>
+				<Box sx={{ borderBottom: 1, borderColor: 'divider', position: 'fixed', background: 'white', zIndex: 10, width: '100%' }}>
+					<Container>
+					<Tabs value={selectedPage} onChange={(_, newValue) => setSelectedPage(newValue)} aria-label="basic tabs example">
+						<Tab label="Collections" value="collections" />
+						<Tab label="Blockchain" value="upload" />
+						<Tab label="Website" value="pages" />
+					</Tabs>
+					</Container>
+				</Box>
+
+				<Container sx={{marginTop: '45px'}}>
+					{{
+						'collections': <Collections />,
+						'pages': <Pages />,
+	//					'settings': <Settings />,
+						'upload': <Upload />
+					}[selectedPage]}
+				</Container>
+			</Stack>
+		</Fade>
+	)
+};
+
+export default Dashboard;
+/*
 				<Drawer 
 					sx={{
 						width: '240px',
@@ -65,15 +91,4 @@ const Dashboard = () => {
 
 					</List>
 				</Drawer>
-				{{
-					'generator': <Generator />,
-					'pages': <Pages />,
-//					'settings': <Settings />,
-					'upload': <Upload />
-				}[selectedPage]}
-			</Box>
-		</Fade>
-	)
-};
-
-export default Dashboard;
+			*/

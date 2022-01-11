@@ -3,7 +3,6 @@ import { useToast } from 'ds/hooks/useToast';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
 import StepWizard from 'react-step-wizard';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import Settings from './01_Settings';
 import Layers from './02_Layers';
 import Traits from './03_Traits';
@@ -40,7 +39,7 @@ const Generator = () => {
 							height: '100%',
 						}}
 					>
-						<StepWizard initialStep={6} transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
+						<StepWizard  transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
 							<Settings />
 							<Layers />
 							<Traits />

@@ -1,5 +1,5 @@
 export const FooterAProps = {
-	logo: {
+	image: {
 		_type: 'image',
 		value: 'https://via.placeholder.com/50'
 	},

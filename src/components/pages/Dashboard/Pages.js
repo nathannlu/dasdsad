@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Box, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
+import { Button, Divider, Box, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
 import { useForm } from 'ds/hooks/useForm';
 import { Link } from 'react-router-dom';
 import { useWebsite } from 'libs/website';
 import { useCreateWebsite } from 'gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 
-import { Edit as EditIcon } from '@mui/icons-material'
+import { Edit as EditIcon, School as SchoolIcon, PlayCircleOutline as PlayIcon } from '@mui/icons-material'
 
 const Pages = () => {
 	const { website } = useWebsite();
@@ -27,19 +27,18 @@ const Pages = () => {
 				sx={{
 					flexGrow: 1,
 					height: '100%',
-					p: 2
+					maxHeight: '100vh',
 				}}
 			>
-				<Grid container className="mt-16">
-					<Box>
-						<Typography gutterBottom variant="h4">
-							Page Manager
-						</Typography>
-					</Box>
-				</Grid>
-
-				{Object.keys(website).length > 0 ? (
+				{/*Object.keys(website).length > 0*/ false ? (
 					<Grid container gap={2}>
+						<Box>
+							<Typography gutterBottom variant="h4">
+								Page Manager
+							</Typography>
+						</Box>
+
+
 						{website.pages == null ? (
 							<Box> loading </Box>
 						) : website.pages.map((page) => (
@@ -74,12 +73,57 @@ const Pages = () => {
 						))}
 					</Grid>
 				) : (
-					<Box>
+					<Grid container mt={4}>
+						<Grid item xs={3} mt={4}>
+							<Stack direction="column" justifyContent="space-between" sx={{height: '80vh'}}>
+								<Box>
+									<Stack gap={1} mb={1} direction="row" alignItems="center">
+										<img 
+											style={{height: '50px'}}
+											src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac51faa89e1bad8184d_minting-website-icon.png" 
+										/>
+										<Typography variant="body" sx={{fontWeight: 'bold', opacity: .8}}>
+											Website Builder
+										</Typography>
+									</Stack>
+									<Typography gutterBottom variant="h3">
+										Choose how you want to start.
+									</Typography>
+								</Box>
+								<Stack gap={3}>
+									<Divider />
+									<Typography variant="body">
+										Easy-to-follow hands-on tutorials:
+									</Typography>
+									<Stack direction="row" gap={1} alignItems="center">
+										<PlayIcon />
+										<a href="https://youtu.be/El9ZnfTGh0s" target="_blank">
+											Watch video tutorial here
+										</a>
+									</Stack>
+									<Stack direction="row" gap={1} alignItems="center">
+										<SchoolIcon />
+										<a href="https://ambition.so/blog" target="_blank">
+											Explore Ambition University
+										</a>
+									</Stack>
+									<Divider />
+								</Stack>
+							</Stack>
+						</Grid>
+						<Grid item xs={8} sx={{ml: 'auto'}}>
+							<Box p={4} sx={{background: 'white', height: '100vh', borderRadius: 4, boxShadow: '0 8px 30px rgba(0,0,0,.2)'}}>
+								asd
+
+							</Box>
+						</Grid>
+						{/*
 						<Button variant="contained" onClick={createWebsite}>
 							Create your new website
 						</Button>
 						<TextField onChange={e => setTitle(e.target.value)} />
-					</Box>
+						*/}
+					</Grid>
 				)}
 
 			</Box>

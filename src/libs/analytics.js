@@ -1,5 +1,7 @@
 import ReactGA from 'react-ga';
 import posthog from 'posthog-js';
+import LogRocket from 'logrocket';
+
 
 export const useAnalytics = () => {
 	const initGA = () => {
@@ -13,9 +15,16 @@ export const useAnalytics = () => {
 		}
 	}
 
+	const initLogRocket = () => {
+		if (!window.location.href.includes('localhost')) {
+			LogRocket.init('tbhvh1/web3')
+		}
+	}
+
 
 	return {
 		initGA,
-		initPosthog
+		initPosthog,
+		initLogRocket
 	}
 }

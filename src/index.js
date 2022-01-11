@@ -10,6 +10,7 @@ import { ThemeProvider } from 'ds/hooks/useTheme';
 import { ToastManager } from 'ds/hooks/useToast';
 import { MetadataProvider } from 'core/metadata';
 import { LayerManagerProvider} from 'core/manager';
+import { GeneratorProvider } from 'core/generator';
 
 
 
@@ -24,9 +25,11 @@ ReactDOM.render(
 						<Web3Provider>
 							<MetadataProvider>
 								<LayerManagerProvider>
-									<WebsiteProvider>
-										<App />
-									</WebsiteProvider>
+									<GeneratorProvider>
+										<WebsiteProvider>
+											<App />
+										</WebsiteProvider>
+									</GeneratorProvider>
 								</LayerManagerProvider>
 							</MetadataProvider>
 						</Web3Provider>

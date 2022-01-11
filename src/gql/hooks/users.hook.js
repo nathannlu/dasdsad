@@ -3,7 +3,7 @@ import { useAuth } from 'libs/auth';
 import { useWebsite } from 'libs/website';
 
 import { useQuery, useMutation } from '@apollo/client';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { GET_NONCE, VERIFY_SIGNATURE, REAUTHENTICATE } from '../users.gql'
 
 
@@ -20,14 +20,19 @@ export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
 
 export const useVerifySignature = ({ onCompleted, onError }) => {
 	const { onLoginSuccess } = useAuth()
+	let history = useHistory();
 
 	const [verifySignature, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE, {
 		onCompleted: data => {
 //			console.log(data)
 
 			onLoginSuccess(data.verifySignature)
+			history.push('/dashboard');
 
-//			onCompleted && onCompleted()
+
+			if(onCompleted) {
+				onCompleted(data)
+			}
 		},
 		onError
 	})
@@ -54,9 +59,6 @@ export const useGetCurrentUser = () => {
 			// Check if website exists
 			if (hasWebsite) {
 				setWebsite(user.websites[0])
-			} else {
-//				history.push('/dashboard/welcome');
-				return <Redirect to="/dashboard/welcome" />
 			}
 		},
 //		onError: onReauthenticationError

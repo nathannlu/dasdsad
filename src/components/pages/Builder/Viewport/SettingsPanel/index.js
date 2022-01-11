@@ -1,3 +1,7 @@
+//
+// Rendering algorithm for settings inputs
+//
+
 import React, { useState, useEffect } from "react";
 import { useNode } from '@craftjs/core';
 import { useToast } from 'ds/hooks/useToast';
@@ -57,11 +61,17 @@ const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, s
 					</Button>
 				),
 				'image': (
+					<>
 					<Widget 
 						publicKey='dfeba611508a6f7760ca'
 						id={key}
 						onChange={info => setImage([parentKey], info.cdnUrl)}
-				/>),
+					/>
+						<Button>
+							delete {props[key].value}
+						</Button>
+					</>
+				),
 				'array': props[key]._type == 'array' &&
 					props[key].value.map((item, i) => (
 						<Box key={i} sx={{background: '#f0f2f5', p: 2, mb: 2, boxShadow: 1, borderRadius: 2}}>
