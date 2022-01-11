@@ -1,4 +1,5 @@
 import {
+	Avatar,
 	Box,
 	Button,
 	IconButton,
@@ -43,6 +44,7 @@ export {
 	FormLabel,
 	Link,
 	Select,
+	Avatar,
 
 	// Molecules
 	Card,

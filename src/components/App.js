@@ -1,29 +1,26 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import ReactGA from 'react-ga';
-import posthog from 'posthog-js';
 import { Helmet } from 'react-helmet';
-import { Avatar } from '@mui/material';
-import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Container, Box, Typography, Stack } from 'ds/components';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { Avatar, Box } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
+import { useAnalytics } from 'libs/analytics';
+import Routes from './routes';
 
-import Generator from 'components/pages/Generator';
-import Upload from 'components/pages/Upload';
-import Main from 'components/pages/Main';
+import { useGetCurrentUser } from 'gql/hooks/users.hook';
+
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 
 
 function App() {
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	const { addToast } = useToast();
+	const { initGA, initPosthog } = useAnalytics();
+	useGetCurrentUser();
 
-	ReactGA.initialize('G-X392J39GCK');
-	ReactGA.pageview(window.location.pathname + window.location.search);
-	if (!window.location.href.includes('localhost')) {
-		posthog.init("phc_Y320pMWnNVcSMIAIW1bbh35FXjgqjZULkZrl5OhaIAf", {api_host: 'https://app.posthog.com'});
-	}
-
+	useEffect(() => {
+		initGA()
+		initPosthog()
+	}, []);
 	useEffect(() => {
 		if(smallerThanTablet) {
 			addToast({
@@ -32,6 +29,7 @@ function App() {
 			})
 		}
 	}, [smallerThanTablet])
+
 
 
   return (
@@ -43,12 +41,7 @@ function App() {
 			</Helmet>
 
 
-
-			<Router>
-				<Route path="/generator" exact component={Generator} />
-				<Route path="/upload" exact component={Upload} />
-				<Route path="/" exact component={Main} />
-			</Router>
+			<Routes />
 
 
 			{!smallerThanTablet ? (
