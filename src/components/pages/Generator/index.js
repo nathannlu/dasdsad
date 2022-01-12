@@ -39,7 +39,7 @@ const Generator = () => {
 							height: '100%',
 						}}
 					>
-						<StepWizard  transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
+						<StepWizard transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
 							<Settings />
 							<Layers />
 							<Traits />
