@@ -12,6 +12,7 @@ import { useGetCurrentUser } from 'gql/hooks/users.hook';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { LinearProgress } from '@mui/material';
 import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
+import posthog from 'posthog-js';
 
 import Routes from './routes';
 
@@ -29,6 +30,19 @@ function App() {
 	initGA()
 	initPosthog()
 	initLogRocket()
+
+	useEffect(() => {
+		if (posthog.isFeatureEnabled('deploy_smart_contract_test')) {
+				// run your activation code here
+			posthog.capture(
+				'Viewing deploy_smart_contract_test version', {
+					$set: {
+						appVersion: 'deploy_smart_contract_test'
+					}
+			});
+		}
+	});
+
 
 
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));

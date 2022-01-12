@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Link, Divider, Box, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
 import { Edit as EditIcon, School as SchoolIcon, PlayCircleOutline as PlayIcon } from '@mui/icons-material'
+import posthog from 'posthog-js';
 
 const Collections = () => {
 	
@@ -8,9 +9,8 @@ const Collections = () => {
 		<Fade in>
 			<Grid container mt={4}>
 				<Grid item xs={8}>
-					<Box p={4} sx={{background: '#111111', height: '100vh', borderRadius: 4, boxShadow: '0 8px 30px rgba(0,0,0,.2)'}}>
-						asd
-
+					<Box p={4} sx={{height: '100vh'}}>
+						<img src="https://www.thegatewaydigital.com/wp-content/uploads/2020/07/Smart-Contract.png" />
 					</Box>
 				</Grid>
 
@@ -29,7 +29,13 @@ const Collections = () => {
 							<Typography gutterBottom variant="h3">
 								Deploy your NFT with no code
 							</Typography>
-							<Link to="/upload">
+							<Link 
+								onClick={() => {
+									console.log('hi')
+									posthog.capture('User clicked on deploy');
+								}}
+								to="/upload"
+							>
 								<Button variant="contained">
 									Deploy Collection
 								</Button>

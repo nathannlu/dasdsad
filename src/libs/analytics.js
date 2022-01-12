@@ -10,9 +10,9 @@ export const useAnalytics = () => {
 	}
 
 	const initPosthog = () => {
-		if (!window.location.href.includes('localhost')) {
+//		if (!window.location.href.includes('localhost')) {
 			posthog.init("phc_Y320pMWnNVcSMIAIW1bbh35FXjgqjZULkZrl5OhaIAf", {api_host: 'https://app.posthog.com'});
-		}
+//		}
 	}
 
 	const initLogRocket = () => {

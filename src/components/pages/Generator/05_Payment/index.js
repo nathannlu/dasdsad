@@ -7,6 +7,7 @@ import { Lock as LockIcon } from '@mui/icons-material';
 
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
+import { useGenerator } from 'core/generator';
 const stripePromise = loadStripe(config.stripe.publicKey);
 import posthog from 'posthog-js';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -18,6 +19,7 @@ import PaymentModal from './PaymentModal';
 const Payment = props => {
 	const [fadeIn, setFadeIn] = useState(false);
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
+	const { generateImages } = useGenerator();
 	const { settingsForm } = useMetadata();
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
@@ -51,35 +53,45 @@ const Payment = props => {
 					</Box>
 
 
-					<Stack gap={2}>
-						<Typography variant="h6">
-							Order summary
-						</Typography>
-						<Card sx={{p: 2}}>
-							<Stack gap={2}>
-								<Typography variant="body1">
-									Amount of NFTs Plan: {settingsForm.collectionSize.value}
-								</Typography>
-								<Typography variant="body1">
-									Price per NFT generated: $0.10 USD
-								</Typography>
-								<Divider />
-								<Typography variant="body1">
-									Total due today ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD
-								</Typography>
-							</Stack>
-						</Card>
-					</Stack>
-
-
+					{!posthog.isFeatureEnabled('deploy_smart_contract_test') ? (
+						<Stack gap={2}>
+							<Typography variant="h6">
+								Order summary
+							</Typography>
+							<Card sx={{p: 2}}>
+								<Stack gap={2}>
+									<Typography variant="body1">
+										Amount of NFTs Plan: {settingsForm.collectionSize.value}
+									</Typography>
+									<Typography variant="body1">
+										Price per NFT generated: $0.10 USD
+									</Typography>
+									<Divider />
+									<Typography variant="body1">
+										Total due today ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD
+									</Typography>
+								</Stack>
+							</Card>
+						</Stack>
+					) : null}
 
 					<Stack direction="row">
-						<Button fullWidth variant="contained" onClick={() => {
-							setIsCheckoutModalOpen(true)
-							posthog.capture('User clicked on "Generate collection" button');
-						}}>
-							Generate collection
-						</Button>
+						{posthog.isFeatureEnabled('deploy_smart_contract_test') ? (
+							<Button fullWidth variant="contained" onClick={() => {
+								generateImages();
+								props.nextStep()
+								posthog.capture('User clicked on "Generate collection" button');
+							}}>
+								Generate collection
+							</Button>
+						) : (
+							<Button fullWidth variant="contained" onClick={() => {
+								setIsCheckoutModalOpen(true)
+								posthog.capture('User clicked on "Generate collection" button');
+							}}>
+								Generate collection
+							</Button>
+						)}
 					</Stack>
 				</Stack>
 

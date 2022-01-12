@@ -36,12 +36,14 @@ export const Web3Provider = ({ children }) => {
 	
 	// Load account and load smart contracts
 	const loadBlockchainData = async (_contract) => {
-		//const Contract = _contract
-		const web3 = window.web3
+		if (window.ethereum) {
+			//const Contract = _contract
+			const web3 = window.web3
 
-		// Load account
-		const accounts = await web3.eth.getAccounts()
-		setAccount(accounts[0])
+			// Load account
+			const accounts = await web3.eth.getAccounts()
+			setAccount(accounts[0])
+		}
 	};
 
 

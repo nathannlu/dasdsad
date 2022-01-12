@@ -6,6 +6,7 @@ import { useLayerManager } from 'core/manager';
 import { useMetadata } from 'core/metadata';
 import { useAuth } from 'libs/auth';
 import { useCreateCollection } from 'gql/hooks/collection.hook';
+import posthog from 'posthog-js';
 
 import { Close as CloseIcon, Email as EmailIcon } from '@mui/icons-material';
 
@@ -21,17 +22,21 @@ const Login = (props) => {
 		}
 	});
 
-
 	const [getNonceByAddress] = useGetNonceByAddress({
 		address: account
 	})
 	const [verifySignature] = useVerifySignature({
 		onCompleted: async data => {
+			posthog.capture(
+				'User logged in with metamask', {
+					$set: {
+						publicAddress: account
+					}
+			});
 			// On successful log in, save layers to person
-			
 //			if(user.collection?.length == 0) {
 				
-
+			/*
 				let _layers = [...layers]
 				_layers.forEach(layer => {
 					layer.images.map(trait => {
@@ -51,15 +56,17 @@ const Login = (props) => {
 					description: settingsForm.description.value,
 					collectionSize: settingsForm.collectionSize.value
 				};
-				console.log(obj)
 
 				await createCollection({variables: {collection: obj}})
 
 //			}
+				*/
 		}
 	});
 
 	const onClick = async () => {
+		await loadWeb3();
+		await loadBlockchainData();
 
 		// Check if address has nonce
 		const res = await getNonceByAddress()
@@ -69,7 +76,6 @@ const Login = (props) => {
 		const { address, signature } = await signNonce({ address: account, nonce });
 		await verifySignature({variables: {address, signature}})
 
-
 	}
 
 
@@ -78,7 +84,7 @@ const Login = (props) => {
 			await loadWeb3();
 			await loadBlockchainData();
 		})()
-	})
+	}, [])
 
 	return (
 		<Fade in={typeof props.in !== 'undefined' ? props.in : true}>

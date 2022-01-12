@@ -44,12 +44,11 @@ const GlobalRoutes = () => {
 		// Builder routes
 		{ path: '/builder/:title/:pageName', component: BuilderRoutes, private: true },
 
+		{ path: '/', component: () => <Redirect to="/generator" />, exact: true},
 		// Dashboard routes
 		{ path: '/', component: AppRoutes, private: true },
 
 
-
-		{ path: '/', component: () => <Redirect to="/dashboard" /> },
 	]
 
 	return <RouteBuilder routes={routes} />

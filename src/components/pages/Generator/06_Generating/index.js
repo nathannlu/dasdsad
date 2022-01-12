@@ -5,6 +5,7 @@ import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
+import posthog from 'posthog-js';
 import Login from 'components/pages/Auth/Login';
 
 
@@ -78,9 +79,18 @@ const Generating = () => {
 
 
 			<Stack gap={2}>
-				<Button onClick={() => setDisplayAuth(true)} variant="contained">
-					Log in to download
-				</Button>
+				{posthog.isFeatureEnabled('deploy_smart_contract_test') ? (
+					<Button onClick={() => setDisplayAuth(true)} variant="contained">
+						Log in to download
+					</Button>
+				) : (
+					<Button onClick={save} disabled={!done} variant="contained">
+						Download collection
+					</Button>
+				)}
+					
+
+
 				<Typography gutterBottom variant="body">
 					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/nftdatagen" target="_blank">Twitter</a>
 				</Typography>

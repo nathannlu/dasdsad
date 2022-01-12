@@ -4,6 +4,7 @@ import { useWeb3 } from 'libs/web3';
 import { useToast } from 'ds/hooks/useToast';
 //import { useSetContractAddress } from 'gql/hooks/website.hook';
 
+import posthog from 'posthog-js';
 import NFTCollectible from 'ethereum/abis/NFTCollectible.json';
 
 export const useDeployContract = ({
@@ -58,6 +59,9 @@ export const useDeployContract = ({
 					severity: 'success',
 					message:'Contract deployed under:' + receipt.contractAddress
 				})
+
+				posthog.capture('User deployed smart contract');
+
 				setLoading(false)
 			})
 	};
