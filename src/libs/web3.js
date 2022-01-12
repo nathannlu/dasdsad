@@ -36,13 +36,29 @@ export const Web3Provider = ({ children }) => {
 	
 	// Load account and load smart contracts
 	const loadBlockchainData = async (_contract) => {
-		const Contract = _contract
+		if (window.ethereum) {
+			//const Contract = _contract
+			const web3 = window.web3
+
+			// Load account
+			const accounts = await web3.eth.getAccounts()
+			setAccount(accounts[0])
+		}
+	};
+
+
+	const signNonce = async ({address, nonce}) => {
 		const web3 = window.web3
 
-		// Load account
-		const accounts = await web3.eth.getAccounts()
-		setAccount(accounts[0])
-	};
+		const signature = await web3.eth.personal.sign(
+			web3.utils.fromUtf8(`I am signing my one-time nonce: ${nonce}`),
+			address,
+		)
+		console.log(address, signature)
+
+		return ({address, signature})
+	}
+
 
 	// Mint NFT
 	const mint = async () => {
@@ -141,7 +157,8 @@ export const Web3Provider = ({ children }) => {
 				mint,
 				withdraw,
 				getBalance,
-				account
+				account,
+				signNonce
 			}}
 		>
 			{ children }

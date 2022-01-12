@@ -19,6 +19,7 @@ const GradientBackground = () => {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 			>
+				{/*
 				<Typography 
 					variant="h5" 
 					sx={{
@@ -33,6 +34,7 @@ const GradientBackground = () => {
 				>
 					Be the next BAYC
 				</Typography>
+				*/}
 			</motion.div>
 		</>
 	)

@@ -1,29 +1,51 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import ReactGA from 'react-ga';
-import posthog from 'posthog-js';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import { Helmet } from 'react-helmet';
-import { Avatar } from '@mui/material';
-import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
-import { Container, Box, Typography, Stack } from 'ds/components';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { Avatar, Box, Typography } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
+import { useAnalytics } from 'libs/analytics';
+import { useGenerator }  from 'core/generator';
+import { useMetadata} from 'core/metadata';
+import { useGetCurrentUser } from 'gql/hooks/users.hook';
 
-import Generator from 'components/pages/Generator';
-import Upload from 'components/pages/Upload';
-import Main from 'components/pages/Main';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { LinearProgress } from '@mui/material';
+import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
+import posthog from 'posthog-js';
+
+import Routes from './routes';
 
 
 function App() {
-	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	const { addToast } = useToast();
+	const { initGA, initPosthog, initLogRocket } = useAnalytics();
+	const history = createBrowserHistory();
 
-	ReactGA.initialize('G-X392J39GCK');
-	ReactGA.pageview(window.location.pathname + window.location.search);
-	if (!window.location.href.includes('localhost')) {
-		posthog.init("phc_Y320pMWnNVcSMIAIW1bbh35FXjgqjZULkZrl5OhaIAf", {api_host: 'https://app.posthog.com'});
-	}
+	const { start, progress } = useGenerator();
+	const { settingsForm: {collectionSize}} = useMetadata();
 
+
+	useGetCurrentUser();
+	initGA()
+	initPosthog()
+	initLogRocket()
+
+	useEffect(() => {
+		if (posthog.isFeatureEnabled('deploy_smart_contract_test')) {
+				// run your activation code here
+			posthog.capture(
+				'Viewing deploy_smart_contract_test version', {
+					$set: {
+						appVersion: 'deploy_smart_contract_test'
+					}
+			});
+		}
+	});
+
+
+
+	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	useEffect(() => {
 		if(smallerThanTablet) {
 			addToast({
@@ -34,25 +56,46 @@ function App() {
 	}, [smallerThanTablet])
 
 
+
   return (
 		<Box sx={{minHeight: '100vh'}}>
 			<Helmet>
 				<title>Create your NFT collection with no-code - NFT Art Generator</title>
-				<link rel="canonical" href="https://nftdatagen.com" />
+				<link rel="canonical" href="https://app.nftdatagen.com" />
 				<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 			</Helmet>
 
 
-
-			<Router>
-				<Route path="/generator" exact component={Generator} />
-				<Route path="/upload" exact component={Upload} />
-				<Route path="/" exact component={Main} />
+			<Router history={history}>
+				<Routes />
 			</Router>
+
+			{start ? (
+				<Box
+					sx={{
+						position: 'fixed',
+						width: '100%',
+						bottom: 0,
+						background: 'white',
+						boxShadow: '0 -4px 8px rgba(0,0,0,.1)',
+						p:3
+					}}
+				>
+					<Box mb={1}>
+						<Typography variant="body">
+							Collection is generating...
+						</Typography>
+					</Box>
+					<LinearProgress 
+						value={Math.round((progress / collectionSize.value) * 100)}
+						variant="determinate" 
+					/>
+				</Box>
+			):null}
 
 
 			{!smallerThanTablet ? (
-				<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'absolute', right: 20, bottom: 20}}>
+				<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'fixed', right: 20, bottom: 50}}>
 					<Avatar sx={{ background: '#738ADB', width: 64, height: 64, cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,.2)'}}>
 						<CommentIcon />
 					</Avatar>

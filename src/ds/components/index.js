@@ -1,4 +1,5 @@
 import {
+	Avatar,
 	Box,
 	Button,
 	IconButton,
@@ -21,6 +22,8 @@ import {
 	Collapse,
 	Select,
 	Slider,
+	Tab,
+	Tabs,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
@@ -28,6 +31,7 @@ import { LoadingButton } from '@mui/lab';
 import Link from './Link/Link';
 import CardElement from './CardElement/CardElement';
 import CircularProgress from './CircularProgress/CircularProgress';
+import Navbar from './Navbar/Navbar';
 
 export {
 	// Atoms
@@ -43,6 +47,9 @@ export {
 	FormLabel,
 	Link,
 	Select,
+	Avatar,
+	Tab,
+	Tabs,
 
 	// Molecules
 	Card,
@@ -56,6 +63,7 @@ export {
 	// Organism
 	Drawer,
 	List, ListItemButton, ListItemText, ListItemIcon,
+	Navbar,
 	
 	// Layouts
 	Box,

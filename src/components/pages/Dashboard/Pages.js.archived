@@ -1,0 +1,213 @@
+import React, { useState } from 'react';
+import { Button, Box, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
+import { useForm } from 'ds/hooks/useForm';
+import { Link } from 'react-router-dom';
+import { useWebsite } from 'libs/website';
+import { useBuildWebsite, useAddPage, useDeletePage } from 'gql/hooks/website.hook';
+import { useToast } from 'ds/hooks/useToast';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
+
+const Pages = () => {
+	const { website } = useWebsite();
+	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+	const [deletePageSettings, setDeletePageSettings] = useState({
+		pageUid: null,
+		isModalOpen: false,
+	})
+	const { addToast } = useToast();
+	const { form: newPageForm } = useForm({
+		pageName: {
+			default: '',
+			rules: [],
+		},
+	});
+	const [addPage] = useAddPage({
+		pageName: newPageForm.pageName.value,
+		pageData: '',
+		onCompleted: data => {
+			addToast({
+				severity: 'success',
+				message: 'Successfully created new page'
+			})
+		},
+		onError: err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		}
+	})
+	const [deletePage] = useDeletePage({
+		onCompleted: data => {
+			addToast({
+				severity: 'success',
+				message: 'Successfully deleted page'
+			})
+		},
+		onError: err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		}
+	});
+
+//	useBuildWebsite({ title: website.title})
+
+
+
+	return (
+		<Fade in>
+			<Box 
+				component="main"
+				sx={{
+					flexGrow: 1,
+					height: '100%',
+					p: 2
+				}}
+			>
+				<Grid container className="mt-16">
+					<Box>
+						<Typography gutterBottom variant="h4">
+							Page Manager
+						</Typography>
+					</Box>
+					<Stack gap={2} direction="row" className="ml-auto">
+						<Button color="primary" variant="outlined" onClick={() => setIsAddModalOpen(true)}>
+							Add page
+						</Button>
+						{/*
+						<Button color="primary" variant="contained" onClick={()=>console.log("build website")}>
+							Publish website	
+						</Button>
+						*/}
+					</Stack>
+				</Grid>
+				<Grid container gap={2}>
+					{website.pages == null ? (
+						<Box> loading </Box>
+					) : website.pages.map((page) => (
+						<Fade in>
+							<Grid item xs={3}>
+								<Card variant="outlined">
+										<Box sx={{ bgcolor: 'grey.300'}}>
+										<img src="https://uni-pages-screenshots.s3.amazonaws.com/empty_thumbnail.jpg" />
+									</Box>
+									<Box sx={{
+										bgcolor: 'white',
+										p: 2
+									}}>
+										<Typography gutterBottom variant="h6">
+											{page.pageName}
+										</Typography>
+
+										<Stack direction="row" gap={2}>
+											<Button 
+												startIcon={<EditIcon />}
+												size="small" 
+												variant="contained"
+												href={`/builder/${website.title}/${page.pageName}`} 
+											>
+												Edit page
+											</Button>
+
+											<Button
+												size="small"
+												variant="outlined"
+												onClick={() => setDeletePageSettings({pageUid: page.uid, isModalOpen: true})}
+											>
+												<DeleteIcon />
+											</Button>
+										</Stack>
+									</Box>
+								</Card>
+							</Grid>
+						</Fade>
+					))}
+				</Grid>
+
+				<Modal 
+					open={deletePageSettings.isModalOpen}
+					closeOnOuterClick={true}
+					onClose={()=>setDeletePageSettings({isModalOpen: false})}
+					sx={{
+						display: 'flex',
+						alignItems:'center',
+						justifyContent: 'center'
+					}}
+				>
+					<Box sx={{
+						bgcolor: 'white',
+						width: '700px',
+						p: 4,
+					}}>
+						<Stack gap={2}>
+							<Box>
+								<Typography variant="h5">
+									Delete page
+								</Typography>
+								<Typography variant="body">
+									Are you sure you want to delete this page?	
+								</Typography>
+							</Box>
+							<Box>
+								<Button 
+									color="error"
+									variant="outlined"
+									onClick={() => {
+										deletePage({variables: { uid: deletePageSettings.pageUid, websiteTitle: website.title }})
+										setDeletePageSettings({isModalOpen: false})
+									}}
+								>
+									Yes, delete
+								</Button>
+							</Box>
+						</Stack>
+					</Box>
+				</Modal>
+
+				<Modal
+					open={isAddModalOpen}
+					closeOnOuterClick={true}
+					onClose={()=>setIsAddModalOpen(false)}
+					sx={{
+						display: 'flex',
+						alignItems:'center',
+						justifyContent: 'center'
+					}}
+				>
+					<Box sx={{
+						bgcolor: 'white',
+						width: '700px',
+						p: 4,
+					}}>
+						<Stack gap={2}>
+							<Typography variant="h5">
+								Create new page
+							</Typography>
+
+							<Typography variant="body1">
+								Enter the page URL
+							</Typography>
+
+							<form onSubmit={e => {
+								e.preventDefault();
+								addPage();
+								setIsAddModalOpen(false);
+							}}>
+								<Stack direction="row">
+									<TextField fullWidth {...newPageForm.pageName} />
+									<Button type="submit" color="primary" variant="contained">
+										Create
+									</Button>
+								</Stack>
+							</form>
+						</Stack>
+					</Box>
+				</Modal>
+			</Box>
+		</Fade>
+	)
+};
+
+export default Pages;

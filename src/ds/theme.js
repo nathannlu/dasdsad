@@ -14,6 +14,9 @@ const theme = createTheme({
 		grey: {
 			main: '#f5f5f5',
 		},
+		black: {
+			main: '#000000',
+		},
 		text: {
 			primary: 'rgba(0,0,0,.87)',
 		}

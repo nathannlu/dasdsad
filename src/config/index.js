@@ -1,13 +1,15 @@
-import dev from './dev';
-import prod from './prod';
+import development from './dev';
+import production from './prod';
 
 const configs = {
-	dev,
-	prod
+	development,
+	production
 };
 
 // Enviornment variable is set in react-scripts
-const exportedConfig = prod //configs[process.env.REACT_APP_CONFIG];
+const exportedConfig = configs[process.env.NODE_ENV];
+console.log("Loaded", process.env.NODE_ENV, "config")
+
 
 export default exportedConfig;
 
