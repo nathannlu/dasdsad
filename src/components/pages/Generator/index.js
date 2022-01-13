@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from 'ds/hooks/useToast';
 import { Stack, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
+import { BrowserRouter as Router, Prompt } from 'react-router-dom';
 import StepWizard from 'react-step-wizard';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Settings from './01_Settings';
@@ -49,6 +50,8 @@ const Generator = () => {
 						</StepWizard>
 					</Stack>
 				</Grid>
+
+
 				{!smallerThanTablet ? (
 					<Grid 
 						md={!isLastStep ? 6 : 8} 

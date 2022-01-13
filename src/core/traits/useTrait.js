@@ -26,8 +26,16 @@ export const useTrait = () => {
 				type: acceptedFiles[i].type,
 				file: acceptedFiles[i]
 			}
-			newFiles.push(newFile);
 
+			if(newFile.type !== 'image/png' || newFile.type !== 'video/mp4') {
+				addToast({
+					severity: 'error',
+					message: 'We only support .png and .mp4 files'
+				});
+			}
+			if(newFile.type == 'image/png' || newFile.type == 'video/mp4') {
+				newFiles.push(newFile);
+			}
 			if(newFile.type == 'video/mp4') {
 				addToast({
 					severity: 'success',

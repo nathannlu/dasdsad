@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Prompt } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { Helmet } from 'react-helmet';
 import { Avatar, Box, Typography } from 'ds/components';
@@ -24,6 +24,32 @@ function App() {
 
 	const { start, progress } = useGenerator();
 	const { settingsForm: {collectionSize}} = useMetadata();
+
+	const initBeforeUnLoad = (showExitPrompt) => {
+		console.log(showExitPrompt)
+
+		window.onbeforeunload = (event) => {
+			// Show prompt based on state
+			if (showExitPrompt) {
+				const e = event || window.event;
+				e.preventDefault();
+				if (e) {
+					e.returnValue = ''
+				}
+				return '';
+			}
+		};
+	};
+
+
+  window.onload = function() {
+    initBeforeUnLoad(start);
+  };
+	useEffect(() => {
+    initBeforeUnLoad(start);
+	}, [start]);
+
+
 
 
 	useGetCurrentUser();
@@ -66,9 +92,18 @@ function App() {
 			</Helmet>
 
 
-			<Router history={history}>
+			<Router 
+				getUserConfirmation={(message, callback) => {
+					const allowTransition = window.confirm(message);
+					console.log(message)
+					callback(allowTransition);	
+				}}
+				history={history}
+			>
 				<Routes />
+
 			</Router>
+
 
 			{start ? (
 				<Box
