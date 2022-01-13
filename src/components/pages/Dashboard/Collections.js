@@ -12,7 +12,7 @@ const Collections = () => {
 	return (
 		<Fade in>
 			<Box sx={{mt: 10}}>
-				{start ? (
+				{true ? (
 					<Box>
 						<Box>
 							<Typography gutterBottom variant="h4">
@@ -60,7 +60,7 @@ const Collections = () => {
 										src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6d6d8ca05462d87fd_nft-generator-traits-icon.png" 
 									/>
 									<Typography variant="body" sx={{fontWeight: 'bold', opacity: .8}}>
-										Smart contracts
+										NFT collection
 									</Typography>
 								</Stack>
 								<Typography gutterBottom variant="h6" sx={{fontWeight: 'bold'}}>
