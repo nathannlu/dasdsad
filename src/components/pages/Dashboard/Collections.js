@@ -44,7 +44,6 @@ const Collections = () => {
 												size="small"
 												variant="contained"
 												disabled={!done}
-												onClick={save}
 											>
 												Download collection
 											</Button>
