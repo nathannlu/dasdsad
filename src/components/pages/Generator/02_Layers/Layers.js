@@ -29,17 +29,6 @@ const Layers = () => {
 
 	
 	return (
-		<Stack gap={2}>
-			<Box>
-				<Chip sx={{opacity: .8, mb: 1}} label={"Step 2/4"} />
-				<Typography variant="h2">
-					Create layers
-				</Typography>
-				<Typography variant="body">
-					Add a layer here to get started.
-				</Typography>
-			</Box>
-
 			<Stack gap={2}>
 				<DragDropContext onDragEnd={onDragEnd}>
 					<Droppable droppableId="droppable">
@@ -92,7 +81,6 @@ const Layers = () => {
 						</Stack>
 					</form>
 			</Stack>
-		</Stack>
 	)
 };
 

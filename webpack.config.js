@@ -74,6 +74,7 @@ module.exports = env => {
 				'core': `${__dirname}/src/core`,
 				'gql': `${__dirname}/src/gql`,
 				'ethereum': `${__dirname}/src/ethereum`,
+				'hooks': `${__dirname}/src/hooks`,
 			},
 		},
 		devServer: {

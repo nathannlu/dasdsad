@@ -1,18 +1,20 @@
 import React from 'react';
 import { Button, Link, Box, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
 import AddIcon from '@mui/icons-material/Add';
+import { useLayerManager } from 'core/manager';
 import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
 
 const Collections = () => {
 
+	const { query: {layers} } = useLayerManager();
 	const { settingsForm: { name }} = useMetadata();
 	const { start, progress, save, done } = useGenerator();
 	
 	return (
 		<Fade in>
 			<Box sx={{mt: 10}}>
-				{true ? (
+				{layers[0].images.length > 0 ? (
 					<Box>
 						<Box>
 							<Typography gutterBottom variant="h4">
@@ -21,33 +23,34 @@ const Collections = () => {
 						</Box>
 
 						<Grid item xs={4}>
-							<Card variant="outlined">
-								<Box sx={{ bgcolor: 'grey.300', p:5}}>
-									<img 
-										style={{width: '100%'}}
-										src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6d6d8ca05462d87fd_nft-generator-traits-icon.png" 
-									/>
-								</Box>
-								<Box sx={{
-									bgcolor: 'white',
-									p: 2
-								}}>
-									<Typography gutterBottom variant="h6">
-										{name.value}
-									</Typography>
+							<Link to="/collection/uid">
+								<Card variant="outlined">
+									<Box sx={{ bgcolor: 'grey.300', p:5}}>
+										<img 
+											style={{width: '100%'}}
+											src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6d6d8ca05462d87fd_nft-generator-traits-icon.png" 
+										/>
+									</Box>
+									<Box sx={{
+										bgcolor: 'white',
+										p: 2
+									}}>
+										<Typography gutterBottom variant="h6">
+											{name.value}
+										</Typography>
 
-									<Stack direction="row" gap={2}>
-										<Button
-											size="small"
-											variant="contained"
-											disabled={!done}
-											onClick={save}
-										>
-											Download collection
-										</Button>
-									</Stack>
-								</Box>
-							</Card>
+										<Stack direction="row" gap={2}>
+											<Button
+												size="small"
+												variant="contained"
+												disabled={!done}
+											>
+												Download collection
+											</Button>
+										</Stack>
+									</Box>
+								</Card>
+							</Link>
 						</Grid>
 					</Box>
 				) : (

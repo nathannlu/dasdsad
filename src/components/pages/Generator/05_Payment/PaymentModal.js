@@ -14,7 +14,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
   const elements = useElements();
 	const { settingsForm  } = useMetadata();
-	const { generateImages } = useGenerator();
+	const { generateImages, save } = useGenerator();
 
 	const {
 		paymentForm: { nameOnCard, email },
@@ -25,8 +25,11 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		onCompleted: data => {
 			onPaymentSuccess(data);
 			setIsModalOpen(false);
-			generateImages();
-			nextStep();
+			save();
+			// save image
+			
+//		generateImages();
+//		nextStep();
 		},
 		onError: onPaymentError
 	});
@@ -117,10 +120,8 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 										</FormLabel>
 										<TextField size="small" fullWidth {...email}  />
 									</Box>
-
 								</Stack>
 							</Card>
-
 						</Stack>
 					</Grid>
 					<Grid item md={5}>
@@ -152,7 +153,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 									>
 										Pay ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD now
 									</LoadingButton>
-
 									<TextField {...settingsForm.coupon} fullWidth />
 								</Stack>
 							</Card>

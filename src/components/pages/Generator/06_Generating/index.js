@@ -79,20 +79,13 @@ const Generating = () => {
 
 
 			<Stack gap={2}>
-				{posthog.isFeatureEnabled('deploy_smart_contract_test') ? (
 					<Button onClick={() => setDisplayAuth(true)} variant="contained">
 						Log in to download
 					</Button>
-				) : (
-					<Button onClick={save} disabled={!done} variant="contained">
-						Download collection
-					</Button>
-				)}
-					
 
 
 				<Typography gutterBottom variant="body">
-					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/nftdatagen" target="_blank">Twitter</a>
+					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/ambition_so" target="_blank">Twitter</a>
 				</Typography>
 			</Stack>
 

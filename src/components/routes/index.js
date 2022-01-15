@@ -17,6 +17,7 @@ import AppRoutes from './AppRoutes';
 import BuilderRoutes from './BuilderRoutes';
 import Generator from 'components/pages/Generator';
 import Upload from 'components/pages/Upload';
+import Collection from 'components/pages/Dashboard/Collection';
 
 // Published Website Route
 import Published from 'components/Published'; 
@@ -38,6 +39,9 @@ const GlobalRoutes = () => {
 		{ path: '/upload', component: Upload, private: true },
 
 
+		{ path: '/collection/:uid', component:Collection, private: true },
+
+
 		// Published routes
 		{ path: '/published/:title/:pageName', component: Published },
 
@@ -47,8 +51,6 @@ const GlobalRoutes = () => {
 		{ path: '/', component: () => <Redirect to="/generator" />, exact: true},
 		// Dashboard routes
 		{ path: '/', component: AppRoutes, private: true },
-
-
 	]
 
 	return <RouteBuilder routes={routes} />

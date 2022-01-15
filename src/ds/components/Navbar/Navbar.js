@@ -13,9 +13,9 @@ const Navbar = ({ pageName }) => {
 		<AppBar position="fixed" sx={{background: 'black', py: 2}}>
 			<Container>
 				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Box>
+					<Link to="/dashboard">
 						<img style={{width: '125px'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png" />
-					</Box>
+					</Link>
 					<Box className="ml-auto">
 						<div 
 							id="account-button"

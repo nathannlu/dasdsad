@@ -5,3 +5,9 @@ export const CREATE_COLLECTION = gql`
 		createCollection(collection: $collection)
 	}
 `
+
+export const SINGLE_UPLOAD = gql`
+	mutation SingleUpload($files: [Upload!]!) {
+		singleUpload(files: $files)
+	}
+`

@@ -53,45 +53,15 @@ const Payment = props => {
 					</Box>
 
 
-					{!posthog.isFeatureEnabled('deploy_smart_contract_test') ? (
-						<Stack gap={2}>
-							<Typography variant="h6">
-								Order summary
-							</Typography>
-							<Card sx={{p: 2}}>
-								<Stack gap={2}>
-									<Typography variant="body1">
-										Amount of NFTs Plan: {settingsForm.collectionSize.value}
-									</Typography>
-									<Typography variant="body1">
-										Price per NFT generated: $0.10 USD
-									</Typography>
-									<Divider />
-									<Typography variant="body1">
-										Total due today ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD
-									</Typography>
-								</Stack>
-							</Card>
-						</Stack>
-					) : null}
 
 					<Stack direction="row">
-						{posthog.isFeatureEnabled('deploy_smart_contract_test') ? (
-							<Button fullWidth variant="contained" onClick={() => {
-								generateImages();
-								props.nextStep()
-								posthog.capture('User clicked on "Generate collection" button');
-							}}>
-								Generate collection
-							</Button>
-						) : (
-							<Button fullWidth variant="contained" onClick={() => {
-								setIsCheckoutModalOpen(true)
-								posthog.capture('User clicked on "Generate collection" button');
-							}}>
-								Generate collection
-							</Button>
-						)}
+						<Button fullWidth variant="contained" onClick={() => {
+							generateImages();
+							props.nextStep()
+							posthog.capture('User clicked on "Generate collection" button');
+						}}>
+							Generate collection
+						</Button>
 					</Stack>
 				</Stack>
 

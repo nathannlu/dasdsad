@@ -33,34 +33,30 @@ const Login = (props) => {
 						publicAddress: account
 					}
 			});
+
 			// On successful log in, save layers to person
-//			if(user.collection?.length == 0) {
-				
-			/*
-				let _layers = [...layers]
-				_layers.forEach(layer => {
-					layer.images.map(trait => {
-						trait.url = trait.base64	
-						delete trait.base64
-						delete trait.file
-						delete trait.rarity
-						delete trait.preview
-						delete trait.type
-					})
-				});
+			let _layers = [...layers]
+			_layers.forEach(layer => {
+				layer.images.map(trait => {
+					trait.url = trait.base64	
+					delete trait.base64
+					delete trait.rarity
+					delete trait.preview
+					delete trait.type
+					delete trait.url
+				})
+			});
 
 
-				let obj = {
-					layers: _layers,
-					name: settingsForm.name.value,
-					description: settingsForm.description.value,
-					collectionSize: settingsForm.collectionSize.value
-				};
+			let obj = {
+				layers: _layers,
+				name: settingsForm.name.value,
+				description: settingsForm.description.value,
+				collectionSize: settingsForm.collectionSize.value
+			};
 
-				await createCollection({variables: {collection: obj}})
+			await createCollection({variables: {collection: obj}})
 
-//			}
-				*/
 		}
 	});
 

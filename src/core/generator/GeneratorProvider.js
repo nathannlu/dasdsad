@@ -7,10 +7,10 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 import posthog from 'posthog-js';
 
+import { useS3 } from 'hooks/useS3';
+
 import Worker from "components/pages/Generator/workers/generator.worker.js";
 const worker = new Worker();
-
-
 
 
 export const GeneratorProvider = ({children}) => {
@@ -18,6 +18,7 @@ export const GeneratorProvider = ({children}) => {
 	const { query: { layers }} = useLayerManager();
 	const { name, description, collectionSize } = settingsForm;
 	const { addToast } = useToast()
+	const { uploadImages } = useS3();
 
 	const [start,setStart] = useState(false);
 	const [done, setDone] = useState(false);
@@ -90,19 +91,6 @@ export const GeneratorProvider = ({children}) => {
 				})
 				setDone(true);
 				setStart(false);
-
-				
-				/*
-				window.onbeforeunload = (event) => {
-					const e = event || window.event;
-					// Cancel the event
-					e.preventDefault();
-					if (e) {
-						e.returnValue = ''; // Legacy method for cross browser support
-					}
-					return ''; // Legacy method for cross browser support
-				};
-				*/
 			}
 			
 			if (message.data.message == 'progress') {
