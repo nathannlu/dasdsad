@@ -7,7 +7,7 @@ import { useTrait } from 'core/traits';
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
 
-const TraitsDisplay = ({index}) => {
+const TraitsDisplay = ({index, editing}) => {
 	const { query: {layers, selected}} = useLayerManager();
 	const { deleteTrait } = useTrait();
 
@@ -47,6 +47,7 @@ const TraitsDisplay = ({index}) => {
 								</Typography>
 							</Stack>
 
+							{editing ? (
 							<IconButton
 								sx={{
 									padding: '3px',
@@ -60,8 +61,10 @@ const TraitsDisplay = ({index}) => {
 							>
 								<EditIcon />
 							</IconButton>
+							):null}
 						</Stack>
 					</Box>
+					{editing ? (
 					<IconButton
 						sx={{
 							position: 'absolute',
@@ -78,6 +81,7 @@ const TraitsDisplay = ({index}) => {
 					>
 						<CancelOutlinedIcon />
 					</IconButton>
+					):null}
 				</Grid>
 			))}
 		

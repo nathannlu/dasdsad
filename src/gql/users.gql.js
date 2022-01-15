@@ -46,6 +46,21 @@ export const REAUTHENTICATE = gql`
 					pageData
 				}
 			}
+			collections {
+				uid
+				name
+				description
+				collectionSize
+				layers {
+					name
+					weight
+					images {
+						name
+						weight
+						url
+					}
+				}
+			}
 		}
 	}
 `

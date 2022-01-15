@@ -14,6 +14,8 @@ self.onmessage = async (event) => {
 			description: '',
 			collection: []
 		};
+		let pngArr = [];
+		let jsonArr;
 
 		// Loop over count and compile
 		for(let i = 0; i < count; i++) {
@@ -40,6 +42,7 @@ self.onmessage = async (event) => {
 
 				const data = await mergeImageVideo(video, png)
 				const mp4 = new File([data[0].data], filename, {type:'video/mp4'});
+//				pngArr.push(mp4)
 				zip.file(`assets/${filename}.mp4`, mp4);
 				zip.file(`metadata/${filename}.json`,jsonStr);
 
@@ -47,6 +50,7 @@ self.onmessage = async (event) => {
 
 				const png = generatedImage[0];
 				collectionMetadata.collection.push(JSON.parse(generatedImage[1]));
+//				pngArr.push(png)
 
 				zip.file(`assets/${filename}.png`, png);
 				zip.file(`metadata/${filename}.json`, generatedImage[1]);
@@ -55,6 +59,8 @@ self.onmessage = async (event) => {
 			// Update client on progress
 			self.postMessage({message: 'progress', progress: i});
 		}
+
+//		self.postMessage({message: 'output', content: pngArr});
 
 		// After done looping over, build final metadata
 		zip.file(`metadata/metadata.json`, JSON.stringify(collectionMetadata, null, 2));

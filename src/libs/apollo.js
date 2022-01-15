@@ -1,5 +1,6 @@
 import React from 'react';
 import { setContext } from "apollo-link-context"
+import { createUploadLink } from "apollo-upload-client";
 import { useAuth } from 'libs/auth';
 import {
     ApolloClient,
@@ -15,6 +16,10 @@ export const AuthorizedApolloProvider = ({ children }) => {
 	const httpLink = createHttpLink({
 		uri: config.serverUrl + '/graphql',
 	});
+	const uploadLink = createUploadLink({
+		uri: config.serverUrl + '/graphql',
+	})
+
 
 
 	const authLink = setContext((_, { headers }) => {
@@ -31,7 +36,7 @@ export const AuthorizedApolloProvider = ({ children }) => {
 	});
 	
 	const apolloClient = new ApolloClient({
-		link: authLink.concat(httpLink),
+		link: authLink.concat(uploadLink),
 		cache: new InMemoryCache()
 	});
 

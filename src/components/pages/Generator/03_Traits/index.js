@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Stack, Button, Box, Typography } from 'ds/components';
-import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { Layers as LayersIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
-import { useLayerManager } from 'core/manager';
 import { useValidateForm } from '../hooks/useValidateForm'
+import { Chip } from '@mui/material';
+import T from './Traits';
 
-import { Content } from './Content';
 
 const Traits = props => {
+	/*
 	const {
 		query: { layers, selected },
 		actions: { setSelected }
 	} = useLayerManager();
+	*/
 	const { validateLayerTraits } = useValidateForm();
 
 	return (
@@ -27,6 +27,7 @@ const Traits = props => {
 					</Typography>
 				</Box>
 
+				{/*
 				<Box>
 					{layers.map((layer, i) => (
 						<Accordion 
@@ -51,6 +52,8 @@ const Traits = props => {
 						</Accordion>
 					))}
 				</Box>
+				*/}
+				<T editing={true} />
 			</Stack>
 
 			<Stack justifyContent="space-between" direction="row">

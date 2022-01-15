@@ -4,7 +4,7 @@ import { useForm } from 'ds/hooks/useForm';
 
 
 export const MetadataProvider = ({children}) => {
-	const { form: settingsForm } = useForm({
+	const { form: settingsForm, setFormState: updateSettingsForm } = useForm({
 		name: {
 			default: '',
 			placeholder: 'Name of your collection',
@@ -16,7 +16,7 @@ export const MetadataProvider = ({children}) => {
 			rules: []
 		},
 		collectionSize: {
-			default: 10000,
+			default: 100,
 			placeholder: '10000',
 			rules: []
 		},
@@ -27,7 +27,7 @@ export const MetadataProvider = ({children}) => {
 		},
 	})
 
-	const value = { settingsForm }
+	const value = { settingsForm, updateSettingsForm }
 
 	return (
 		<MetadataContext.Provider value={value}>

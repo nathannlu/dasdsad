@@ -1,3 +1,4 @@
+import axios from 'axios';
 // --
 // functions that help convert image data to different forms
 // --
@@ -71,3 +72,25 @@ export const readFileAsBufferArray = file => {
 		fileReader.readAsArrayBuffer(file);
 	});
 };
+
+/*
+export const toDataURL = async url => {
+	axios.get(url).then(res => {
+		console.log('asd', res)
+	})
+};
+*/
+
+var myHeaders = new Headers();
+myHeaders.append('pragma', 'no-cache');
+myHeaders.append('cache-control', 'no-cache');
+
+export const toDataURL = async url => fetch(url, {method: 'GET', headers: myHeaders})
+  .then(response => response.blob())
+  .then(blob => new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  }))
+
