@@ -3,10 +3,10 @@ import { Redirect } from 'react-router-dom';
 import { RouteBuilder } from './RouteBuilder';
 
 // Authenticate Routes
-//import Signup from 'components/pages/Auth/Signup';
+import Signup from 'components/pages/Auth/Signup';
 import Login from 'components/pages/Auth/Login';
-//import ForgotPassword from 'components/pages/Auth/ForgotPassword';
-//import Reset from 'components/pages/Auth/Reset';
+import ForgotPassword from 'components/pages/Auth/ForgotPassword';
+import Reset from 'components/pages/Auth/Reset';
 
 
 
@@ -27,10 +27,10 @@ const GlobalRoutes = () => {
 	const routes = [
 
 		// Auth routes
-//		{ path: '/login/forgot', component: ForgotPassword },
-//		{ path: '/login/reset', component: Reset },
+		{ path: '/login/forgot', component: ForgotPassword },
+		{ path: '/login/reset', component: Reset },
 		{ path: '/login', component: Login },
-//		{ path: '/signup', component: Signup },
+		{ path: '/signup', component: Signup },
 
 		// Generator
 		{ path: '/generator', component: Generator },
