@@ -27,8 +27,8 @@ module.exports = env => {
 			PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
 			}),
 			new CopyWebpackPlugin([
-				{ from: 'public/assets/js', to: 'assets/js' } // Copies webworkers
-				{ from: 'public/_redirects', to: '_redirects' } // Copies webworkers
+				{ from: 'public/assets/js', to: 'assets/js' }, // Copies webworkers
+				{ from: 'public/_redirects', to: '_redirects' }
 			]),
 	//		new BundleAnalyzerPlugin
 		],
