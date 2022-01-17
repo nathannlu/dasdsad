@@ -7,9 +7,44 @@ import { useTraits } from 'core/traits';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';
-import { GET_NONCE, VERIFY_SIGNATURE, REAUTHENTICATE } from '../users.gql'
+import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE } from '../users.gql'
 
 import { toDataURL } from 'utils/imageData';
+
+
+// Sends password reset email
+export const useForgotPassword = ({ email, onCompleted, onError }) => {
+	const [sendPasswordResetEmail, { ...queryResult }] = useLazyQuery(FORGOT_PASSWORD, {
+		fetchPolicy: 'network-only',
+		variables: { email },
+		onCompleted,
+		onError
+	});
+
+	return [sendPasswordResetEmail, { ...queryResult }]
+};
+
+// Reset password logic query
+export const useResetPassword = ({ token, password, onCompleted, onError }) => {
+	const [resetPassword, { ...mutationResult }] = useMutation(RESET_PASSWORD, {
+		variables: { token, password },
+		onCompleted,
+		onError
+	})
+
+	return [resetPassword, { ...mutationResult }]
+};
+
+// Used to validate token in reset password link
+export const useValidateToken = ({ token, onCompleted, onError }) => {
+	const { ...queryResult } = useQuery(VALIDATE_TOKEN, {
+		variables: { token },
+		onCompleted,
+		onError
+	});
+
+	return { ...queryResult }
+};
 
 
 export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
@@ -113,3 +148,39 @@ export const useGetCurrentUser = async () => {
 
 	return { ...queryResult }
 }
+
+
+// Email login
+export const useRegister = ({ name, email, password, onCompleted, onError }) => {
+	const [register, { ...mutationResult }] = useMutation(REGISTER, {
+		variables: { name, email, password },
+		onCompleted,
+		onError
+	})
+
+	return [ register, { ...mutationResult }];
+};
+
+export const useLogin = ({ email, password, onError, onCompleted }) => {
+	const { onLoginSuccess } = useAuth();
+	const [login, { ...mutationResult }] = useMutation(LOGIN, {
+		variables: { email, password},
+		onCompleted: data => {
+			if (data?.login) {
+				if (onLoginSuccess) {
+					onLoginSuccess(data.login);
+				}
+
+				// If function has parameter onCompleted, run the function
+				if (onCompleted) {
+					onCompleted(data?.login);
+				}
+			}
+		},
+		onError
+	})
+
+	return [login, { ...mutationResult }];
+}
+
+

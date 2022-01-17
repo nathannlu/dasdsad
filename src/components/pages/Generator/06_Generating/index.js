@@ -6,7 +6,7 @@ import { useMetadata } from 'core/metadata';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
 import posthog from 'posthog-js';
-import Login from 'components/pages/Auth/Login';
+//import Login from 'components/pages/Auth/LoginModal';
 
 
 const Generating = () => {
@@ -79,9 +79,11 @@ const Generating = () => {
 
 
 			<Stack gap={2}>
-					<Button onClick={() => setDisplayAuth(true)} variant="contained">
+				<Link to="/login">
+					<Button variant="contained">
 						Log in to download
 					</Button>
+				</Link>
 
 
 				<Typography gutterBottom variant="body">
@@ -115,9 +117,10 @@ const Generating = () => {
 					</Box>
 				</Stack>
 			</Link>
-			)*/}
-
+			)
 			<Login in={displayAuth} setDisplayAuth={setDisplayAuth} />
+*/}
+
 
 
 		</Stack>
