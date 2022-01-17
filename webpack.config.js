@@ -28,6 +28,7 @@ module.exports = env => {
 			}),
 			new CopyWebpackPlugin([
 				{ from: 'public/assets/js', to: 'assets/js' } // Copies webworkers
+				{ from: 'public/_redirects', to: '_redirects' } // Copies webworkers
 			]),
 	//		new BundleAnalyzerPlugin
 		],
