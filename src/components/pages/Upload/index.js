@@ -233,7 +233,7 @@ const Upload = () => {
 										Once you're ready, deploy the contract. Ethereum charges a small gas fee for deploying to the blockchain. Double check to confirm all your information is correct, smart contracts are immutable after deployment.
 									</Typography>
 									<LoadingButton
-										onClick={deployContract}
+										onClick={() => window.alert('Something went wrong. Please contact support for help')}
 										loading={loading}
 										variant="contained"
 //										disabled={website.contractAddress}
