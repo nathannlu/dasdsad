@@ -91,6 +91,38 @@ export const Web3Provider = ({ children }) => {
 			})
 		})
 	}
+	
+	// Update base URI
+	const updateBaseUri = async (baseUri) => {
+		const contract = await retrieveContract()
+
+
+		contract.methods.setBaseURI(baseUri).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.on("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: 'Successfully updated baseUri.'
+			})
+		})
+	}
 
 	const withdraw = async () => {
 		const contract = await retrieveContract()
@@ -137,14 +169,13 @@ export const Web3Provider = ({ children }) => {
 
 	const retrieveContract = async () => {
 		const web3 = window.web3;
+		let contractAddress = '0x8493aa28d7021869E604ce877FBD8910B94354DC'
 
-		/*
-		if (website?.contractAddress) {
-			const contract = new web3.eth.Contract(NFTCollectible.abi, website.contractAddress);
+		if (true) {
+			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
 
 			return contract;
 		}
-		*/
 	}
 
 
@@ -155,6 +186,7 @@ export const Web3Provider = ({ children }) => {
 				loadWeb3,
 				loadBlockchainData,
 				mint,
+				updateBaseUri,
 				withdraw,
 				getBalance,
 				account,

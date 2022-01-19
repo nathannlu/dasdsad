@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Stack, Container, Fade, Button, Box, Typography, List, Tab, Tabs } from 'ds/components';
 import { ImageSearch as ImageSearchIcon, Settings as SettingsIcon, Web as WebIcon } from '@mui/icons-material';
 
+import { useGetCollections } from 'gql/hooks/collection.hook';
+import { useGetContracts } from 'gql/hooks/contract.hook';
+
 // Pages
 import Collections from './Collections';
 import Generator from '../Generator';
@@ -12,6 +15,9 @@ import Upload from './Upload';
 
 const Dashboard = () => {
 	const [selectedPage, setSelectedPage] = useState('collections');
+
+	useGetCollections()
+	useGetContracts()
 
 	return (
 		<Fade in>

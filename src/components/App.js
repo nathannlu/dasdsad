@@ -23,7 +23,7 @@ function App() {
 	const history = createBrowserHistory();
 
 	const { start, progress } = useGenerator();
-	const { settingsForm: {collectionSize}} = useMetadata();
+	const { settingsForm: {size}} = useMetadata();
 
 	const initBeforeUnLoad = (showExitPrompt) => {
 		console.log(showExitPrompt)
@@ -122,7 +122,7 @@ function App() {
 						</Typography>
 					</Box>
 					<LinearProgress 
-						value={Math.round((progress / collectionSize.value) * 100)}
+						value={Math.round((progress / size.value) * 100)}
 						variant="determinate" 
 					/>
 				</Box>

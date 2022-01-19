@@ -7,8 +7,6 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 import posthog from 'posthog-js';
 
-import { useS3 } from 'hooks/useS3';
-
 import Worker from "components/pages/Generator/workers/generator.worker.js";
 const worker = new Worker();
 
@@ -16,9 +14,8 @@ const worker = new Worker();
 export const GeneratorProvider = ({children}) => {
 	const { settingsForm } = useMetadata();
 	const { query: { layers }} = useLayerManager();
-	const { name, description, collectionSize } = settingsForm;
+	const { name, description, size } = settingsForm;
 	const { addToast } = useToast()
-	const { uploadImages } = useS3();
 
 	const [start,setStart] = useState(false);
 	const [done, setDone] = useState(false);
@@ -42,7 +39,7 @@ export const GeneratorProvider = ({children}) => {
 					description: description.value
 				},
 				layers: [...layers],
-				count: collectionSize.value
+				count: size.value
 			})
 
 			setStart(true);
@@ -60,7 +57,7 @@ export const GeneratorProvider = ({children}) => {
 	}
 
 	const validateForm = () => {
-		if (collectionSize.value.length < 1) {
+		if (size.value.length < 1) {
 			addToast({
 				severity: 'error',
 				message: 'Collection Size value cannot be left empty'

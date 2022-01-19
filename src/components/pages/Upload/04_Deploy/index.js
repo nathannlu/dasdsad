@@ -4,23 +4,40 @@ import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade,
 import { useDeployContractForm } from '../hooks/useDeployContractForm';
 import { useDeployContract } from '../hooks/useDeployContract';
 
+import { useCreateContract } from 'gql/hooks/contract.hook';
 
 
 const Deploy = (props) => {
-	const [selectInput, setSelectInput] = useState('Ethereum');
+	const [selectInput, setSelectInput] = useState('ethereum');
 	const { account, loadWeb3, loadBlockchainData, withdraw, getBalance } = useWeb3();
+
 	const {
-		deployContractForm: { baseURI, priceInEth, maxSupply},
+		deployContractForm: { 
+			royaltyPercentage,
+			priceInEth,
+			maxSupply
+		},
 		onDeploy,
-		onCompleted,
 		onError
 	} = useDeployContractForm();
+	const [createContract] = useCreateContract({});
 	const [deployContract, { loading }] = useDeployContract({
-		baseURI: baseURI.value,
 		priceInEth: priceInEth.value,
 		maxSupply: maxSupply.value,
 		onDeploy,
-		onCompleted,
+		onCompleted: async (data) => {
+			const ContractInput = {
+				address: data.contractAddress,
+				blockchain: selectInput,
+				nftCollection: {
+					price: parseFloat(priceInEth.value),
+					currency: 'eth',
+					size: parseInt(maxSupply.value),
+					royalty: parseInt(royaltyPercentage.value),
+				}
+			}
+			await createContract({ variables: { contract: ContractInput} });
+		},
 		onError
 	});
 
@@ -29,7 +46,6 @@ const Deploy = (props) => {
 		(async () => {
 			await loadWeb3()
 			await loadBlockchainData()
-//			setBalance(await getBalance())
 		})()
 	}, [])
 
@@ -53,22 +69,12 @@ const Deploy = (props) => {
 						<Stack gap={2} direction="row">
 							<Stack sx={{flex: 1}}>
 								<FormLabel sx={{fontWeight:'bold'}}>
-									Base NFT URL
-								</FormLabel>
-								<Typography gutterBottom variant="body2">
-									Set the URL of your IPFS folder in the input below. Make sure the URL is correct because you won't be able to change it after deploying the NFT smart contract.
-								</Typography>
-
-								<TextField {...baseURI} fullWidth />
-							</Stack>
-							<Stack sx={{flex: 1}}>
-								<FormLabel sx={{fontWeight:'bold'}}>
 									Royalty percentage
 								</FormLabel>
 								<Typography gutterBottom variant="body2">
 									Take a percentage of sales when your NFT is traded	
 								</Typography>
-								<TextField placeholder="5%" fullWidth />
+								<TextField {...royaltyPercentage} fullWidth />
 							</Stack>
 						</Stack>
 
@@ -107,7 +113,7 @@ const Deploy = (props) => {
 									Polygon
 								</MenuItem>
 								*/}
-								<MenuItem value="Ethereum">
+								<MenuItem value="ethereum">
 									Ethereum
 								</MenuItem>
 
@@ -125,7 +131,6 @@ const Deploy = (props) => {
 								onClick={deployContract}
 								loading={loading}
 								variant="contained"
-//										disabled={website.contractAddress}
 								fullWidth
 							>
 								Deploy

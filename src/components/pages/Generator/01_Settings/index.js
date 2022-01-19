@@ -35,7 +35,7 @@ const Settings = props => {
 
 				<Box>
 					<FormLabel>Collection Size*</FormLabel>
-					<TextField {...settingsForm.collectionSize} fullWidth />
+					<TextField {...settingsForm.size} fullWidth />
 				</Box>
 			</Stack>
 

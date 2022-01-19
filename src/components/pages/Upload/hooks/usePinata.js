@@ -5,6 +5,9 @@ import basePathConverter from 'base-path-converter';
 import { useToast } from 'ds/hooks/useToast';
 
 export const usePinata = ({ipfsUrl, setIpfsUrl}) => {
+	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [uploadedJson, setUploadedJson] = useState([]);
+
 	const [imagesUrl, setImagesUrl] = useState('')//useState('Qmc7JZD4zFjtneccdbK7a5Pf7dsG3KJ898mTuDKr6okNjE')
 	const [metadataUrl, setMetadataUrl] = useState('')
 	const { addToast } = useToast();
@@ -149,6 +152,10 @@ export const usePinata = ({ipfsUrl, setIpfsUrl}) => {
 	}
 	
 	return {
+		uploadedFiles,
+		setUploadedFiles,
+		uploadedJson,
+		setUploadedJson,
 		pinFolderToIPFS,
 		updateMetadata,
 		pinMetadataToIPFS

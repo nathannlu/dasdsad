@@ -3,13 +3,13 @@ import { useToast } from 'ds/hooks/useToast';
 
 export const useDeployContractForm = () => {
 	const { form: deployContractForm } = useForm({
-		baseURI: {
-			default: '',
-			placeholder: 'Enter deployed metadata IPFS url here'
-		},
 		priceInEth: {
 			default: '',
 			placeholder: '0.05'
+		},
+		royaltyPercentage: {
+			default: '',
+			placeholder: 5
 		},
 		maxSupply: {
 			default: '',

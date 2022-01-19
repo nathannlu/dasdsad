@@ -2,8 +2,10 @@ import React from 'react';
 import StepWizard from 'react-step-wizard';
 import App from './app';
 
-import Deploy from './01_Deploy';
-import Connect from './02_Connect';
+import Settings from './01_Settings';
+import Traits from './02_Traits';
+import Metadata from './03_Metadata';
+import Deploy from './04_Deploy';
 
 const Upload = () => {
 	return (
@@ -11,8 +13,10 @@ const Upload = () => {
 			transitions={{}} 
 		//	onStepChange={s => setActiveStep(s.activeStep)}
 		>
+			<Settings />
+			<Traits />
+			<Metadata />
 			<Deploy />
-			<Connect />
 		</StepWizard>
 	)
 };
