@@ -40,8 +40,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 
 		if(settingsForm.coupon.value == 'ch_3KD9JpJUIYorshTC0byzp3BZ') {
 			setIsModalOpen(false);
-			generateImages();
-			nextStep();
+			save();
 
 		} else {
 			const card = elements.getElement(CardElement);
