@@ -10,7 +10,7 @@ import Collections from './Collections';
 import Generator from '../Generator';
 import Pages from './Pages';
 import Settings from './Settings';
-import Upload from './Upload';
+import Uploads from './Uploads';
 
 
 const Dashboard = () => {
@@ -32,7 +32,7 @@ const Dashboard = () => {
 					<Container>
 					<Tabs value={selectedPage} onChange={(_, newValue) => setSelectedPage(newValue)} aria-label="basic tabs example">
 						<Tab label="Collections" value="collections" />
-						<Tab label="Blockchain" value="upload" />
+						<Tab label="Blockchain" value="uploads" />
 						<Tab label="Website" value="pages" />
 					</Tabs>
 					</Container>
@@ -43,7 +43,7 @@ const Dashboard = () => {
 						'collections': <Collections />,
 						'pages': <Pages />,
 	//					'settings': <Settings />,
-						'upload': <Upload />
+						'uploads': <Uploads />
 					}[selectedPage]}
 				</Container>
 			</Stack>

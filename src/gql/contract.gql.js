@@ -12,6 +12,7 @@ export const GET_CONTRACTS = gql`
 	query GetContracts {
 		getContracts {
 			id
+			author
 			blockchain
 			address
 			nftCollection {

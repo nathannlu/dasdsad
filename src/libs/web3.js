@@ -124,8 +124,8 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-	const withdraw = async () => {
-		const contract = await retrieveContract()
+	const withdraw = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
 		contract.methods.withdraw().send({ from: account, value: 0 }, err => {
 			if (err) {
 				addToast({
@@ -154,22 +154,19 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-	const getBalance = async () => {
+	const getBalance = async (contractAddress) => {
 		const web3 = window.web3
 
-		/*
-		if (website?.contractAddress) {
-			const balance = await web3.eth.getBalance(website.contractAddress)
+		if (contractAddress) {
+			const balance = await web3.eth.getBalance(contractAddress)
 			const balanceInEth = web3.utils.fromWei(balance)
 
 			return balanceInEth
 		}
-		*/
 	}
 
-	const retrieveContract = async () => {
+	const retrieveContract = async (contractAddress) => {
 		const web3 = window.web3;
-		let contractAddress = '0x8493aa28d7021869E604ce877FBD8910B94354DC'
 
 		if (true) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
@@ -177,6 +174,19 @@ export const Web3Provider = ({ children }) => {
 			return contract;
 		}
 	}
+
+	const getTotalMinted = async (contractAddress) => {
+		const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+
+
+		return contract.methods.totalSupply()
+	}
+
+	const estimateDeploymentGas = async (contractAddress) => {
+		
+	}
+
 
 
 
@@ -187,8 +197,10 @@ export const Web3Provider = ({ children }) => {
 				loadBlockchainData,
 				mint,
 				updateBaseUri,
+				retrieveContract,
 				withdraw,
 				getBalance,
+				getTotalMinted,
 				account,
 				signNonce
 			}}

@@ -6,20 +6,20 @@ import Metadata from 'components/pages/Generator/01_Settings';
 import Layers from 'components/pages/Generator/02_Layers/Layers';
 import Traits from 'components/pages/Generator/03_Traits/Traits';
 import Rarity from 'components/pages/Generator/04_Rarity';
-
 import config from 'config'
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
-
 import { useGenerator } from 'core/generator';
-
 import PaymentModal from 'components/pages/Generator/05_Payment/PaymentModal';
 
 
 const Collection = () => {
 	const [settings, setSettings] = useState('layers')
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
+
+
+
 
 	const { save, start, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
 

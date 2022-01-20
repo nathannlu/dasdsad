@@ -18,7 +18,6 @@ export const useDeployContractForm = () => {
 	});
 	const { addToast } = useToast();
 
-
 	const onDeploy = () => {
 		addToast({
 			severity: 'info',
