@@ -6,7 +6,7 @@ import { Stepper, Step, StepLabel } from '@mui/material';
 
 const Deploy = (props) => {
 	const { account, loadWeb3, loadBlockchainData } = useWeb3();
-	const { deployContract, start, activeStep } = useDeploy();
+	const { deployContract } = useDeploy();
 
 	useEffect(() => {
 		(async () => {
@@ -47,7 +47,7 @@ const Deploy = (props) => {
 							</Typography>
 							<LoadingButton
 								onClick={deployContract}
-								loading={start}
+//								loading={start}
 								variant="contained"
 								fullWidth
 							>
@@ -56,6 +56,8 @@ const Deploy = (props) => {
 						</Stack>
 					</Stack>
 				</Card>
+
+				{/*
 
 				{start && (
 				<Stack>
@@ -74,6 +76,7 @@ const Deploy = (props) => {
 					</Stepper>
 				</Stack>
 				)}
+				*/}
 
 
 				<Stack justifyContent="space-between" direction="row">
