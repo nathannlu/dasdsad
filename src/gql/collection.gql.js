@@ -6,8 +6,23 @@ export const CREATE_COLLECTION = gql`
 	}
 `
 
-export const SINGLE_UPLOAD = gql`
-	mutation SingleUpload($files: [Upload!]!) {
-		singleUpload(files: $files)
+export const GET_COLLECTIONS = gql`
+	query GetCollections {
+		getCollections {
+			id
+			name
+			description
+			size
+			author
+			layers {
+				name
+				weight
+				images {
+					name
+					weight
+					url
+				}
+			}
+		}
 	}
 `

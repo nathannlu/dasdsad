@@ -39,6 +39,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		e.preventDefault();
 
 		if(settingsForm.coupon.value == 'ch_3KD9JpJUIYorshTC0byzp3BZ') {
+			onPaymentSuccess(data);
 			setIsModalOpen(false);
 			save();
 
@@ -48,7 +49,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 
 			charge({variables: {
 				token: result.token.id,
-				amount: 10 * settingsForm.collectionSize.value,
+				amount: 10 * settingsForm.size.value,
 			}})
 		}
 	}
@@ -131,14 +132,14 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 							<Card sx={{p: 2}}>
 								<Stack gap={2}>
 									<Typography variant="body1">
-										Amount of NFTs Plan: {settingsForm.collectionSize.value}
+										Amount of NFTs Plan: {settingsForm.size.value}
 									</Typography>
 									<Typography variant="body1">
 										Price per NFT generated: $0.10 USD
 									</Typography>
 									<Divider />
 									<Typography variant="body1">
-										Total due today ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD
+										Total due today ${(0.10 * settingsForm.size.value - .01).toFixed(2)} USD
 									</Typography>
 
 									<Divider />
@@ -150,7 +151,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 										variant="contained" 
 										fullWidth
 									>
-										Pay ${(0.10 * settingsForm.collectionSize.value - .01).toFixed(2)} USD now
+										Pay ${(0.10 * settingsForm.size.value - .01).toFixed(2)} USD now
 									</LoadingButton>
 									<TextField {...settingsForm.coupon} fullWidth />
 								</Stack>

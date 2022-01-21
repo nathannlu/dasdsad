@@ -47,11 +47,11 @@ export const AuthProvider = ({ children }) => {
 	// @TODO
 	// This function currently runs three times
 	// also user keeps getting set if there is no check
-	const onReauthenticationSuccess = ({uid, address, email, name, stripeCustomerId}) => {
+	const onReauthenticationSuccess = ({id, address, email, name, stripeCustomerId}) => {
 
 		if(!user) {
 			setUser({
-				uid,
+				id,
 				address,
 				email,
 				name,

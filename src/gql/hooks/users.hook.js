@@ -1,15 +1,11 @@
 import React from 'react';
 import { useAuth } from 'libs/auth';
 import { useWebsite } from 'libs/website';
-import { useLayerManager } from 'core/manager';
-import { useMetadata } from 'core/metadata'
-import { useTraits } from 'core/traits';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';
 import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE } from '../users.gql'
 
-import { toDataURL } from 'utils/imageData';
 
 
 // Sends password reset email
@@ -60,14 +56,14 @@ export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
 
 export const useVerifySignature = ({ onCompleted, onError }) => {
 	const { onLoginSuccess } = useAuth()
-	let history = useHistory();
+//	let history = useHistory();
 
 	const [verifySignature, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE, {
 		onCompleted: data => {
 //			console.log(data)
 
 			onLoginSuccess(data.verifySignature)
-			history.push('/dashboard');
+//			history.push('/dashboard');
 
 
 			if(onCompleted) {
@@ -84,10 +80,9 @@ export const useVerifySignature = ({ onCompleted, onError }) => {
 
 export const useGetCurrentUser = async () => {
 	const { onReauthenticationSuccess, onReauthenticationError } = useAuth();
-	const { setWebsite } = useWebsite();
-	const { actions: { setLayers }} = useLayerManager();
-
-	const { updateSettingsForm  } = useMetadata();
+//	const { setWebsite } = useWebsite();
+//k	const { actions: { setLayers }} = useLayerManager();
+//	const { updateSettingsForm  } = useMetadata();
 
 
   const { ...queryResult } = useQuery(REAUTHENTICATE, {
@@ -101,14 +96,7 @@ export const useGetCurrentUser = async () => {
 
 			onReauthenticationSuccess(user);
 
-
-
-
-			// Check if website exists
-			if (hasWebsite) {
-				setWebsite(user.websites[0])
-			}
-
+			/*
 			// Update layer maanger, traits manager
 			if (hasCollection) {
 				let layers = [...collections[0].layers]
@@ -141,9 +129,10 @@ export const useGetCurrentUser = async () => {
 				console.log(clonedLayers)
 				setLayers(clonedLayers)
 			}
+			*/
 
 		},
-//		onError: onReauthenticationError
+		onError: onReauthenticationError
 	});
 
 	return { ...queryResult }

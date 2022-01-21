@@ -15,7 +15,7 @@ export const MetadataProvider = ({children}) => {
 			placeholder: 'Give a brief description of your NFT',
 			rules: []
 		},
-		collectionSize: {
+		size: {
 			default: 100,
 			placeholder: '10000',
 			rules: []

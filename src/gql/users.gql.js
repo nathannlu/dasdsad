@@ -5,7 +5,7 @@ import { gql } from '@apollo/client';
 export const REGISTER = gql`
 	mutation Register($name: String!, $email: String!, $password: String!) {
 		register(name: $name, email: $email, password: $password) {
-			uid
+			id
 			name
 			email
 		}
@@ -16,23 +16,11 @@ export const LOGIN = gql`
 	mutation Login($email: String!, $password: String!) {
 		login(email: $email, password: $password) {
 			user {
-				uid
+				id
+				address
 				name
 				email
 				stripeCustomerId
-				websites {
-					title
-					isPublished
-					isCustomDomainActive
-					customDomain
-					contractAddress
-					priceInEth
-					author
-					pages {
-						pageName
-						pageData
-					}
-				}
 			}
 			token
 		}
@@ -51,7 +39,7 @@ export const VERIFY_SIGNATURE = gql`
 		verifySignature(address: $address, signature: $signature) {
 			token
 			user {
-				uid
+				id
 				address
 				name
 				email
@@ -65,41 +53,12 @@ export const VERIFY_SIGNATURE = gql`
 export const REAUTHENTICATE = gql`
 	query Reauthenticate {
 		getCurrentUser {
-			uid
+			id
 			address
 			name
 			email
 			password
 			stripeCustomerId
-			websites {
-				author
-				title
-				isPublished
-				isCustomDomainActive
-				customDomain
-				contractAddress
-				priceInEth
-				pages {
-					uid
-					pageName
-					pageData
-				}
-			}
-			collections {
-				uid
-				name
-				description
-				collectionSize
-				layers {
-					name
-					weight
-					images {
-						name
-						weight
-						url
-					}
-				}
-			}
 		}
 	}
 `

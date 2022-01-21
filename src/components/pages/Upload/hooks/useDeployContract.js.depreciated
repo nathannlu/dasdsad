@@ -16,6 +16,7 @@ export const useDeployContract = ({
 	onError
 }) => {
 	const [loading, setLoading] = useState(false)
+	const { addToast } = useToast()
 	const { account } = useWeb3()
 //	const { website } = useWebsite();
 
@@ -27,7 +28,7 @@ export const useDeployContract = ({
 
 		const options = {
 			data: NFTCollectible.bytecode,
-			arguments: [baseURI, priceInWei, maxSupply]
+			arguments: ['', priceInWei, maxSupply]
 		}
 		const senderInfo = {
 			from: account
@@ -36,6 +37,7 @@ export const useDeployContract = ({
 		contract
 			.deploy(options)
 			.send(senderInfo, (err, txnHash) => {
+				console.log('deploying contract...')
 				if(err) {
 					onError(err)
 				} else {
@@ -48,6 +50,9 @@ export const useDeployContract = ({
 				setLoading(false)
 			})
 			.on('confirmation', (confirmationNumber, receipt) => {
+				console.log('deployed')
+				onCompleted(receipt);
+
 				/*
 				setContractAddress({ variables: {
 					title: website.title,

@@ -61,9 +61,9 @@ export const Web3Provider = ({ children }) => {
 
 
 	// Mint NFT
-	const mint = async () => {
-		const contract = await retrieveContract()
-		const priceInWei = Web3.utils.toWei(0.05);
+	const mint = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
+		const priceInWei = Web3.utils.toWei('0.05');
 
 		contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
 			if (err) {
@@ -92,8 +92,46 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-	const withdraw = async () => {
+	const checkOwner = async (id, contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
+		const owner = await contract.methods.ownerOf(id).call();
+		return owner
+	}
+	
+	// Update base URI
+	const updateBaseUri = async (baseUri) => {
 		const contract = await retrieveContract()
+
+
+		contract.methods.setBaseURI(baseUri).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.on("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: 'Successfully updated baseUri.'
+			})
+		})
+	}
+
+	const withdraw = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
 		contract.methods.withdraw().send({ from: account, value: 0 }, err => {
 			if (err) {
 				addToast({
@@ -122,30 +160,39 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-	const getBalance = async () => {
+	const getBalance = async (contractAddress) => {
 		const web3 = window.web3
 
-		/*
-		if (website?.contractAddress) {
-			const balance = await web3.eth.getBalance(website.contractAddress)
+		if (contractAddress) {
+			const balance = await web3.eth.getBalance(contractAddress)
 			const balanceInEth = web3.utils.fromWei(balance)
 
 			return balanceInEth
 		}
-		*/
 	}
 
-	const retrieveContract = async () => {
+	const retrieveContract = async (contractAddress) => {
 		const web3 = window.web3;
 
-		/*
-		if (website?.contractAddress) {
-			const contract = new web3.eth.Contract(NFTCollectible.abi, website.contractAddress);
+		if (true) {
+			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
 
 			return contract;
 		}
-		*/
 	}
+
+	const getTotalMinted = async (contractAddress) => {
+		const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+
+
+		return contract.methods.totalSupply().call()
+	}
+
+	const estimateDeploymentGas = async (contractAddress) => {
+		
+	}
+
 
 
 
@@ -155,10 +202,14 @@ export const Web3Provider = ({ children }) => {
 				loadWeb3,
 				loadBlockchainData,
 				mint,
+				updateBaseUri,
+				retrieveContract,
 				withdraw,
 				getBalance,
+				getTotalMinted,
 				account,
-				signNonce
+				signNonce,
+				checkOwner,
 			}}
 		>
 			{ children }

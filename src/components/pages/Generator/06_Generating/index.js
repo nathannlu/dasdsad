@@ -10,7 +10,7 @@ import posthog from 'posthog-js';
 
 
 const Generating = () => {
-	const { settingsForm: { collectionSize } } = useMetadata();
+	const { settingsForm: { size } } = useMetadata();
 	const { save, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
 	const [displayAuth, setDisplayAuth] = useState(false)
 	useEffect(listenToWorker,[])
@@ -28,7 +28,7 @@ const Generating = () => {
 			</Box>
 
 			<Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
-				<CircularProgress variant="determinate" value={Math.round((progress / collectionSize.value) * 100)} size={100} />
+				<CircularProgress variant="determinate" value={Math.round((progress / size.value) * 100)} size={100} />
 				<Box
 					sx={{
 						top: 0,
@@ -42,7 +42,7 @@ const Generating = () => {
 					}}
 				>
 					<Typography variant="h6" component="div" color="text.secondary">
-						{`${Math.round((progress / collectionSize.value) * 100)}%`}
+						{`${Math.round((progress / size.value) * 100)}%`}
 					</Typography>
 				</Box>
 				{zipProgress !== null && (

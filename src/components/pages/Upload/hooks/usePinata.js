@@ -4,9 +4,22 @@ import config from 'config';
 import basePathConverter from 'base-path-converter';
 import { useToast } from 'ds/hooks/useToast';
 
-export const usePinata = ({ipfsUrl, setIpfsUrl}) => {
-	const [imagesUrl, setImagesUrl] = useState('')//useState('Qmc7JZD4zFjtneccdbK7a5Pf7dsG3KJ898mTuDKr6okNjE')
-	const [metadataUrl, setMetadataUrl] = useState('')
+import { useDeploy } from 'libs/deploy';
+
+export const usePinata = () => {
+	const { 
+		uploadedFiles, 
+		setUploadedFiless,
+		uploadedJson,
+		setUploadedJson,
+		imagesUrl,
+		setImagesUrl,
+		metadataUrl,
+		setMetadataUrl,
+		ipfsUrl,
+		setIpfsUrl
+	} = useDeploy();
+
 	const { addToast } = useToast();
 //	const [updatedMetadata, setUpdatedMetadata] = useState([]);
 
@@ -18,7 +31,6 @@ export const usePinata = ({ipfsUrl, setIpfsUrl}) => {
 		for (let i = 0; i < folder.length; i++) {
 			data.append('file', folder[i], basePathConverter(src, folder[i].path))
 		}
-
 
     //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
     //metadata is optional
@@ -57,7 +69,6 @@ export const usePinata = ({ipfsUrl, setIpfsUrl}) => {
 
 	// Updates metadata with base image url
 	const updateMetadata = async (folder) => {
-
 		for (let i = 0; i < folder.length; i++) {
 			const fileReader = new FileReader();
 			fileReader.onload = function ( evt ) { 
@@ -71,8 +82,6 @@ export const usePinata = ({ipfsUrl, setIpfsUrl}) => {
 			};
 			await fileReader.readAsText(folder[i]);
 		}
-
-		console.log(updatedMetadata)
 	}
 
 

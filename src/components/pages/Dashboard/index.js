@@ -2,16 +2,22 @@ import React, { useState } from 'react';
 import { Stack, Container, Fade, Button, Box, Typography, List, Tab, Tabs } from 'ds/components';
 import { ImageSearch as ImageSearchIcon, Settings as SettingsIcon, Web as WebIcon } from '@mui/icons-material';
 
+import { useGetCollections } from 'gql/hooks/collection.hook';
+import { useGetContracts } from 'gql/hooks/contract.hook';
+
 // Pages
 import Collections from './Collections';
 import Generator from '../Generator';
 import Pages from './Pages';
 import Settings from './Settings';
-import Upload from './Upload';
+import Uploads from './Uploads';
 
 
 const Dashboard = () => {
 	const [selectedPage, setSelectedPage] = useState('collections');
+
+	useGetCollections()
+	useGetContracts()
 
 	return (
 		<Fade in>
@@ -26,7 +32,7 @@ const Dashboard = () => {
 					<Container>
 					<Tabs value={selectedPage} onChange={(_, newValue) => setSelectedPage(newValue)} aria-label="basic tabs example">
 						<Tab label="Collections" value="collections" />
-						<Tab label="Blockchain" value="upload" />
+						<Tab label="Blockchain" value="uploads" />
 						<Tab label="Website" value="pages" />
 					</Tabs>
 					</Container>
@@ -37,7 +43,7 @@ const Dashboard = () => {
 						'collections': <Collections />,
 						'pages': <Pages />,
 	//					'settings': <Settings />,
-						'upload': <Upload />
+						'uploads': <Uploads />
 					}[selectedPage]}
 				</Container>
 			</Stack>

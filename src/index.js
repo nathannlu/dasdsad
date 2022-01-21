@@ -8,10 +8,12 @@ import { WebsiteProvider } from 'libs/website';
 import { AuthProvider } from 'libs/auth';
 import { ThemeProvider } from 'ds/hooks/useTheme';
 import { ToastManager } from 'ds/hooks/useToast';
+
 import { MetadataProvider } from 'core/metadata';
 import { LayerManagerProvider} from 'core/manager';
 import { GeneratorProvider } from 'core/generator';
 
+import { DeployProvider } from 'libs/deploy';
 
 
 
@@ -26,9 +28,11 @@ ReactDOM.render(
 							<MetadataProvider>
 								<LayerManagerProvider>
 									<GeneratorProvider>
-										<WebsiteProvider>
-											<App />
-										</WebsiteProvider>
+										<DeployProvider>
+											<WebsiteProvider>
+												<App />
+											</WebsiteProvider>
+										</DeployProvider>
 									</GeneratorProvider>
 								</LayerManagerProvider>
 							</MetadataProvider>

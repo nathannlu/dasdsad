@@ -16,8 +16,9 @@ import Reset from 'components/pages/Auth/Reset';
 import AppRoutes from './AppRoutes';
 import BuilderRoutes from './BuilderRoutes';
 import Generator from 'components/pages/Generator';
-import Upload from 'components/pages/Upload';
 import Collection from 'components/pages/Dashboard/Collection';
+import Upload from 'components/pages/Upload';
+import Uploads from 'components/pages/Dashboard/Upload';
 
 // Published Website Route
 import Published from 'components/Published'; 
@@ -39,7 +40,8 @@ const GlobalRoutes = () => {
 		{ path: '/upload', component: Upload, private: true },
 
 
-		{ path: '/collection/:uid', component:Collection, private: true },
+		{ path: '/collection/:id', component:Collection, private: true },
+		{ path: '/contract/:id', component: Uploads, private: true },
 
 
 		// Published routes
