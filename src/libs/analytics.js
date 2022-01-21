@@ -17,7 +17,7 @@ export const useAnalytics = () => {
 
 	const initLogRocket = () => {
 		if (!window.location.href.includes('localhost')) {
-			LogRocket.init('tbhvh1/web3')
+			LogRocket.init('sdihjw/ambition')
 		}
 	}
 
