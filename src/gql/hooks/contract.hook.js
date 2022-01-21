@@ -5,6 +5,7 @@ import { useDeploy } from 'libs/deploy';
 
 export const useCreateContract = ({ onCompleted, onError }) => {
 	const [createContract, { ...mutationResult }] = useMutation(CREATE_CONTRACT, {
+
 		onCompleted,
 		onError
 	})

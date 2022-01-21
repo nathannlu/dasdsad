@@ -22,6 +22,7 @@ const Upload = () => {
 				<Deploy />
 			</StepWizard>
 		</Box>
+
 	)
 };
 
