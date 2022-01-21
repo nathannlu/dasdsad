@@ -56,7 +56,7 @@ export const useDeployContractForm = () => {
 		}
 	}
 	const verifyStep2 = (files) => {
-		if(files.length !== deployContractForm.maxSupply.value) {
+		if(files.length !== parseInt(deployContractForm.maxSupply.value)) {
 			addToast({
 				severity: 'warning',
 				message: 'Are you sure you added the correct amount of files?'
@@ -71,7 +71,7 @@ export const useDeployContractForm = () => {
 		}
 	}
 	const verifyStep3 = (files) => {
-		if(files.length !== deployContractForm.maxSupply.value + 1) {
+		if(files.length !== parseInt(deployContractForm.maxSupply.value) + 1) {
 			addToast({
 				severity: 'warning',
 				message: 'Are you sure you added the correct amount of files?'
