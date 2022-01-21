@@ -5,6 +5,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+/*
+import "./@rarible/royalties/contracts/impl/RoyaltiesV2Impl.sol";
+import "./@rarible/royalties/contracts/LibPart.sol";
+import "./@rarible/royalties/contracts/LibRoyaltiesV2.sol";
+*/
+
 
 contract NFTCollectible is ERC721Enumerable, Ownable {
 	using SafeMath for uint256;
@@ -118,4 +124,19 @@ contract NFTCollectible is ERC721Enumerable, Ownable {
 		);
 	}
 
+	/*
+	function setRoyalties(uint _tokenId, address payable _royaltiesRecipientAddress, uint96 _percentageBasisPoints) public onlyOwner {
+		LibPart.Part[] memory _royalties = new LibPart.Part[](1);
+		_royalties[0].value = _percentageBasisPoints;
+		_royalties[0].account = _royaltiesRecipientAddress;
+		_saveRoyalties(_tokenId, _royalties);
+	}
+
+	function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721) returns (bool) {
+		if(interfaceId == LibRoyaltiesV2._INTERFACE_ID_ROYALTIES) {
+			return true;
+		}
+		return super.supportsInterface(interfaceId);
+	}
+	*/
 }

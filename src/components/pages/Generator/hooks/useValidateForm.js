@@ -8,13 +8,13 @@ export const useValidateForm = () => {
 	const { query: { layers } } = useLayerManager();
 
 	const validateCollectionSize = () => {
-		if (settingsForm.collectionSize.value.length < 1) {
+		if (settingsForm.size.value.length < 1) {
 			addToast({
 				severity: 'error',
 				message: 'Collection Size value cannot be left empty'
 			})
 			return false;
-		} else if (settingsForm.collectionSize.value < 10) {
+		} else if (settingsForm.size.value < 10) {
 			addToast({
 				severity: 'error',
 				message: 'Collection Size value cannot be less than 10'

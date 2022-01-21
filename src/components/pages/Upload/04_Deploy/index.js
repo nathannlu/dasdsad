@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { useDeploy } from 'libs/deploy';
+import { Stepper, Step, StepLabel } from '@mui/material';
 
 const Deploy = (props) => {
 	const { account, loadWeb3, loadBlockchainData } = useWeb3();
-	const { deployContract } = useDeploy();
+	const { deployContract, start, activeStep } = useDeploy();
 
 	useEffect(() => {
 		(async () => {
@@ -13,6 +14,12 @@ const Deploy = (props) => {
 			await loadBlockchainData()
 		})()
 	}, [])
+
+	const steps = [
+		{ label: 'Uploading images to IPFS'},
+		{ label: 'Uploading metadata to IPFS'},
+		{ label: 'Deploy smart contract'}
+	]
 
 	return (
 		<Box>
@@ -40,7 +47,7 @@ const Deploy = (props) => {
 							</Typography>
 							<LoadingButton
 								onClick={deployContract}
-								loading={false}
+								loading={start}
 								variant="contained"
 								fullWidth
 							>
@@ -49,6 +56,25 @@ const Deploy = (props) => {
 						</Stack>
 					</Stack>
 				</Card>
+
+				{start && (
+				<Stack>
+					<Typography variant="h5">
+						Progress
+					</Typography>
+
+					<Stepper activeStep={activeStep} orientation="vertical">
+						{steps.map((step, index) => (
+							<Step key={step.label}>
+								<StepLabel>
+									{step.label}
+								</StepLabel>
+							</Step>
+						))}
+					</Stepper>
+				</Stack>
+				)}
+
 
 				<Stack justifyContent="space-between" direction="row">
 					<Button onClick={() => props.previousStep()}>

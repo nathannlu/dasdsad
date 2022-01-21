@@ -3,6 +3,7 @@ import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, 
 import Dropzone from 'react-dropzone'
 import { usePinata } from '../hooks/usePinata';
 import { useDeploy } from 'libs/deploy';
+import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
@@ -10,6 +11,7 @@ import Folder from '@mui/icons-material/FolderOpenTwoTone';
 const Connect = (props) => {
 	const { uploadedJson, setUploadedJson, ipfsUrl } = useDeploy()
 	const { pinMetadataToIPFS } = usePinata();
+	const { verifyStep3 } = useDeployContractForm();
 
 	const handleJsonUpload = (acceptedFiles) => {
 		setUploadedJson([...uploadedJson, ...acceptedFiles]);
@@ -69,7 +71,7 @@ const Connect = (props) => {
 						<Button onClick={() => props.previousStep()}>
 							Prev
 						</Button>
-						<Button onClick={() => props.nextStep()}>
+						<Button onClick={() => verifyStep3(uploadedJson) && props.nextStep()}>
 							Next
 						</Button>
 					</Stack>

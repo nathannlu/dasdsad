@@ -21,6 +21,8 @@ export const DeployProvider = ({ children }) => {
 	const { addToast } = useToast()
 	const { account } = useWeb3()
 	const { user } = useAuth();
+	const [activeStep, setActiveStep] = useState(null);
+	const [start, setStart] = useState(false);
 
 
 	const [contracts, setContracts] = useState([]);
@@ -52,7 +54,8 @@ export const DeployProvider = ({ children }) => {
 
 	const deployContract = async () => {
 		try {
-			setLoading(true);
+			setStart(true);
+
 			await pinFolderToIPFS(uploadedFiles);
 			await pinMetadataToIPFS(uploadedJson)
 
@@ -72,6 +75,7 @@ export const DeployProvider = ({ children }) => {
 				.deploy(options)
 				.send(senderInfo, (err, txnHash) => {
 					console.log('deploying contract...')
+					setActiveStep(2);
 					if(err) {
 						addToast({
 							severity: 'error',
@@ -123,9 +127,11 @@ export const DeployProvider = ({ children }) => {
 			}
 		}
 		await createContract({ variables: { contract: ContractInput} });
+		setStart(false);
 	}
 
 	const pinFolderToIPFS = async (folder) => {
+		setActiveStep(0);
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     const src = `./images`;
 
@@ -193,6 +199,7 @@ export const DeployProvider = ({ children }) => {
 		})
 	}
 	const pinMetadataToIPFS = async (folder) => {
+		setActiveStep(1);
     let data = new FormData();
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
@@ -257,7 +264,10 @@ export const DeployProvider = ({ children }) => {
 				setContracts,
 
 				selectInput,
-				setSelectInput
+				setSelectInput,
+
+				activeStep,
+				start
 			}}
 		>
 			{children}

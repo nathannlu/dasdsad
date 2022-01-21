@@ -6,6 +6,7 @@ import { useGetContracts } from 'gql/hooks/contract.hook';
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
+	const [owners, setOwners] = useState([]);
 	const [soldCount, setSoldCount] = useState(null)
 	const [contract, setContract] = useState({});
 	const { id } = useParams();
@@ -18,6 +19,9 @@ const Upload = (props) => {
 		loadBlockchainData,
 		withdraw,
 		getBalance,
+		mint,
+		checkOwner,
+		getTotalMinted
 	} = useWeb3()
 
 	useGetContracts()
@@ -32,12 +36,11 @@ const Upload = (props) => {
 			(async () => {
 				const c = contracts.find(c => c.id == id)
 				setContract(c)
-				console.log(c)
 
 				const b = await getBalance(c.address)
 				setBalance(b);
 
-				const nftsSold = c.nftCollection.price / b
+				const nftsSold = b / c.nftCollection.price
 
 				if(b == 0) {
 					setSoldCount(0)
@@ -45,10 +48,21 @@ const Upload = (props) => {
 					setSoldCount(nftsSold)
 				}
 
+				let list = [];
+				for (let i = 0; i < nftsSold; i++) {
+					const o = await checkOwner(i, c.address)
+					setOwners(prevState => {
+						prevState.push(o)
+						return [...prevState]
+					})
+				}
 			})()
 		}
 	},[contracts])
 
+	const mintNow = async () => {
+		await mint(contract.address)
+	}
 
 	return (
 		<div>
@@ -69,8 +83,23 @@ const Upload = (props) => {
 				{contract?.nftCollection ? contract?.nftCollection?.size : null}
 			</div>
 
+
 			<button onClick={() => withdraw(contract.address)}>
 				Withdraw
+			</button>
+			<div>
+				Addresses who own your NFT
+			</div>
+			<div>
+				{owners.map(addr => (
+					<div key={addr}>
+						{addr}
+					</div>
+				))}
+			</div>
+
+			<button onClick={() => mintNow()}>
+				Mint
 			</button>
 		</div>
 	)

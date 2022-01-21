@@ -1,7 +1,9 @@
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
+import { useDeploy } from 'libs/deploy'
 
 export const useDeployContractForm = () => {
+	/*
 	const { form: deployContractForm } = useForm({
 		priceInEth: {
 			default: '',
@@ -16,7 +18,9 @@ export const useDeployContractForm = () => {
 			placeholder: '3333'	
 		}
 	});
+	*/
 	const { addToast } = useToast();
+	const { deployContractForm } = useDeploy();
 
 
 	const onDeploy = () => {
@@ -40,10 +44,53 @@ export const useDeployContractForm = () => {
 		})
 	}
 	
+	const verifyStep1 = () => {
+		if(deployContractForm.priceInEth.value.length < 1 || deployContractForm.maxSupply.value.length < 1) {
+			addToast({
+				severity: 'error',
+				message: 'All fields must be filled in'
+			})
+			return false 
+		} else {
+			return true
+		}
+	}
+	const verifyStep2 = (files) => {
+		if(files.length !== deployContractForm.maxSupply.value) {
+			addToast({
+				severity: 'warning',
+				message: 'Are you sure you added the correct amount of files?'
+			})
+			return false;
+		} else {
+			addToast({
+				severity: 'success',
+				message: 'Files imported successfully'
+			})
+			return true;
+		}
+	}
+	const verifyStep3 = (files) => {
+		if(files.length !== deployContractForm.maxSupply.value + 1) {
+			addToast({
+				severity: 'warning',
+				message: 'Are you sure you added the correct amount of files?'
+			})
+			return false;
+		} else {
+			addToast({
+				severity: 'success',
+				message: 'Files imported successfully'
+			})
+			return true;
+		}
+	}
+	
 	return {
 		deployContractForm,
 		onDeploy,
 		onCompleted,
 		onError,
+		verifyStep1, verifyStep2, verifyStep3
 	}
 }

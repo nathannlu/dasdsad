@@ -61,9 +61,9 @@ export const Web3Provider = ({ children }) => {
 
 
 	// Mint NFT
-	const mint = async () => {
-		const contract = await retrieveContract()
-		const priceInWei = Web3.utils.toWei(0.05);
+	const mint = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
+		const priceInWei = Web3.utils.toWei('0.05');
 
 		contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
 			if (err) {
@@ -90,6 +90,12 @@ export const Web3Provider = ({ children }) => {
 				message: 'Purchase complete.'
 			})
 		})
+	}
+
+	const checkOwner = async (id, contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
+		const owner = await contract.methods.ownerOf(id).call();
+		return owner
 	}
 	
 	// Update base URI
@@ -180,7 +186,7 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
 
 
-		return contract.methods.totalSupply()
+		return contract.methods.totalSupply().call()
 	}
 
 	const estimateDeploymentGas = async (contractAddress) => {
@@ -202,7 +208,8 @@ export const Web3Provider = ({ children }) => {
 				getBalance,
 				getTotalMinted,
 				account,
-				signNonce
+				signNonce,
+				checkOwner,
 			}}
 		>
 			{ children }

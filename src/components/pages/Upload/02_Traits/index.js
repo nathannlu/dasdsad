@@ -4,6 +4,7 @@ import Dropzone from 'react-dropzone'
 import { usePinata } from '../hooks/usePinata';
 import { useDeploy } from 'libs/deploy';
 import { useToast } from 'ds/hooks/useToast';
+import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
@@ -11,6 +12,7 @@ import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
 const ConnectTraits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useDeploy()
+	const { verifyStep2 } = useDeployContractForm();
 
 	const { addToast } = useToast();
 
@@ -76,7 +78,7 @@ const ConnectTraits = (props) => {
 						<Button onClick={() => props.previousStep()}>
 							Prev
 						</Button>
-						<Button onClick={() => props.nextStep()}>
+						<Button onClick={() => verifyStep2(uploadedFiles) && props.nextStep()}>
 							Next
 						</Button>
 					</Stack>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { useDeploy } from 'libs/deploy';
+import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
@@ -16,6 +17,7 @@ const Deploy = (props) => {
 		selectInput,
 		setSelectInput
 	} = useDeploy();
+	const { verifyStep1 } = useDeployContractForm();
 
 	return (
 		<Fade in>
@@ -32,6 +34,7 @@ const Deploy = (props) => {
 								</Typography>
 							</Stack>
 
+							{/*
 							<Stack gap={2} direction="row">
 								<Stack sx={{flex: 1}}>
 									<FormLabel sx={{fontWeight:'bold'}}>
@@ -43,6 +46,7 @@ const Deploy = (props) => {
 									<TextField {...royaltyPercentage} fullWidth />
 								</Stack>
 							</Stack>
+							*/}
 
 							<Stack gap={2} direction="row">
 								<Stack sx={{flex: 1}}>
@@ -91,7 +95,7 @@ const Deploy = (props) => {
 						<Button onClick={() => props.previousStep()}>
 							Prev
 						</Button>
-						<Button onClick={() => props.nextStep()}>
+						<Button onClick={() => verifyStep1() && props.nextStep()}>
 							Next
 						</Button>
 					</Stack>
