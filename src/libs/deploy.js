@@ -48,6 +48,9 @@ export const DeployProvider = ({ children }) => {
 		maxSupply: {
 			default: '',
 			placeholder: '3333'
+		},
+		ipfsLink: {
+			default: '',
 		}
 	});
 	const [createContract] = useCreateContract({});
@@ -56,16 +59,31 @@ export const DeployProvider = ({ children }) => {
 		try {
 			setStart(true);
 
-			await pinFolderToIPFS(uploadedFiles);
-			await pinMetadataToIPFS(uploadedJson)
+			if(deployContractForm.ipfsLink.value.length < 1) {
+				await pinFolderToIPFS(uploadedFiles);
+				await pinMetadataToIPFS(uploadedJson)
+			}
 
 			const web3 = window.web3
 			const contract = new web3.eth.Contract(NFTCollectible.abi)
 			const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
 
-			const options = {
-				data: NFTCollectible.bytecode,
-				arguments: [ipfsUrl, priceInWei, deployContractForm.maxSupply.value]
+			let options;
+			if(deployContractForm.ipfsLink.value.length < 1) {
+				options = {
+					data: NFTCollectible.bytecode,
+					arguments: [ipfsUrl, priceInWei, deployContractForm.maxSupply.value]
+				}
+			}
+			if(deployContractForm.ipfsLink.value.length > 0) {
+				addToast({
+					severity: 'info',
+					message: "Deploying with IPFS link: " +deployContractForm.ipfsLink.value
+				});
+				options = {
+					data: NFTCollectible.bytecode,
+					arguments: [deployContractForm.ipfsLink.value, priceInWei, deployContractForm.maxSupply.value]
+				}
 			}
 			const senderInfo = {
 				from: account
