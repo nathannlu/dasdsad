@@ -36,12 +36,6 @@ const Website = () => {
 				message: 'Subdomain cannot be left blank',
 			});
 		}
-		else if(selectInput !== null) {
-			addToast({
-				severity: 'error',
-				message: 'Contract address cannot be left blank',
-			});
-		}
 		else {
 			createWebsite()
 		}
