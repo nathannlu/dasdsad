@@ -7,7 +7,7 @@ import { useSubscribePlan } from 'gql/hooks/billing.hook';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, Card, Typography, Divider, CardElement, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon } from '@mui/icons-material';
 
-const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
+const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, callback }) => {
 	const { user } = useAuth();
 	const { productPrices, selectedPlan, setSelectedPlan } = useGetPlanSettings(planId);
 	const {
@@ -22,6 +22,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
 		customerId: user.stripeCustomerId,
 		onCompleted: data => {
 			onPaymentSuccess(data)
+			callback(data)
 			setIsModalOpen(false);
 		},
 		onError: onPaymentError
@@ -75,14 +76,11 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
 										}}
 									>
 										<Stack gap={3}>
-											<Typography variant="h6">
-												{price.frequency}
-											</Typography>
 											<Typography variant="h4">
-												${price.unit_amount}<sub>/{price.frequency}</sub>
+												${price.unit_amount/100}<sub>/{price.frequency}</sub>
 											</Typography>
 											<Typography variant="small">
-												${price.unit_amount} billed once a {price.frequency} 
+												${price.unit_amount/100} billed once a {price.frequency} 
 											</Typography>
 										</Stack>
 									</Card>
@@ -117,6 +115,8 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
 										</FormLabel>
 										<TextField size="small" fullWidth {...nameOnCard} />
 									</Box>
+
+									{/*
 									<Box>
 										<FormLabel>
 											Address Line 1:
@@ -147,10 +147,17 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
 										<FormLabel>
 											Country
 										</FormLabel>
+										<TextField size="small" fullWidth {...country} />
+									</Box>
+									<Box>
+										<FormLabel>
+											Country
+										</FormLabel>
 										<Select fullWidth size="small" {...country}>
 											<MenuItem value="CA">Canada</MenuItem>
 										</Select>
 									</Box>
+									*/}
 								</Stack>
 							</Card>
 						</Stack>
@@ -162,12 +169,14 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
 							</Typography>
 							<Card sx={{p: 2}}>
 								<Stack gap={2}>
+									{/*
 										<Typography variant="body1">
-											{selectedPlan?.frequency} Account Plan: Agent ${selectedPlan?.unit_amount}
+											Account Plan: ${selectedPlan?.unit_amount/100}
 										</Typography>
 										<Divider />
+										*/}
 										<Typography variant="body1">
-											Total due today ${selectedPlan?.unit_amount} CAD
+											Total due today ${selectedPlan?.unit_amount/100} USD
 										</Typography>
 										<Divider />
 										
@@ -178,7 +187,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId }) => {
 										variant="contained" 
 										fullWidth
 									>
-										Pay $99.00 CAD now
+										Pay ${selectedPlan?.unit_amount/100} USD now
 									</LoadingButton>
 								</Stack>
 							</Card>

@@ -71,18 +71,6 @@ const Deploy = (props) => {
 								</Stack>
 							</Stack>
 
-							<Stack gap={2} direction="row">
-								<Stack sx={{flex: 1}}>
-									<FormLabel sx={{fontWeight:'bold'}}>
-										IPFS link
-									</FormLabel>
-									<Typography gutterBottom variant="body2">
-										If you have your own IPFS link. Leave this empty if you want to upload to IPFS now
-									</Typography>
-									<TextField {...ipfsLink} fullWidth />
-								</Stack>
-							</Stack>
-
 							<Stack>
 								<FormLabel sx={{fontWeight:'bold'}}>
 									Select your Blockchain

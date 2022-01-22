@@ -30,7 +30,7 @@ const Pages = () => {
 					marginTop: '65px'
 				}}
 			>
-				{Object.keys(website).length > 0 ? (
+				{website && Object.keys(website).length > 0 ? (
 					<Stack>
 							<Box>
 							<Typography gutterBottom variant="h4">
@@ -90,6 +90,13 @@ const Pages = () => {
 									<Typography gutterBottom variant="h3">
 										Build a no-code minting website
 									</Typography>
+									<Link 
+										to="/website"
+									>
+										<Button variant="contained">
+											Build a website
+										</Button>
+									</Link>
 								</Box>
 								<Stack gap={3}>
 									<Divider />

@@ -47,7 +47,7 @@ const Preview = props => {
 								Ethereum charge 1.3eth gas fees to deploy your contract
 							</li>
 							<li>
-								Ambition charge $0.50/gb every month for hosting on our IPFS storage node
+								Ambition charge $19.99/mo for hosting on our decentralized file storage node
 							</li>
 						</ol>
 					</Stack>

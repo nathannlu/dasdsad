@@ -3,10 +3,17 @@ import { useWeb3 } from 'libs/web3';
 import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { useDeploy } from 'libs/deploy';
 import { Stepper, Step, StepLabel } from '@mui/material';
+import CheckoutModal from 'components/pages/Payments/CheckoutModal';
+
+import { Elements } from '@stripe/react-stripe-js';
+import config from 'config';
+import {loadStripe} from '@stripe/stripe-js';
+const stripePromise = loadStripe(config.stripe.publicKey);
 
 const Deploy = (props) => {
 	const { account, loadWeb3, loadBlockchainData } = useWeb3();
-	const { deployContract } = useDeploy();
+	const { deployContract, start, activeStep } = useDeploy();
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	useEffect(() => {
 		(async () => {
@@ -20,6 +27,10 @@ const Deploy = (props) => {
 		{ label: 'Uploading metadata to IPFS'},
 		{ label: 'Deploy smart contract'}
 	]
+
+	const callback = () => {
+		deployContract();
+	}
 
 	return (
 		<Box>
@@ -46,8 +57,8 @@ const Deploy = (props) => {
 								Once you're ready, deploy the contract. Ethereum charges a small gas fee for deploying to the blockchain. Double check to confirm all your information is correct, smart contracts are immutable after deployment.
 							</Typography>
 							<LoadingButton
-								onClick={deployContract}
-//								loading={start}
+								onClick={() => setIsModalOpen(true)}
+								loading={start}
 								variant="contained"
 								fullWidth
 							>
@@ -56,8 +67,6 @@ const Deploy = (props) => {
 						</Stack>
 					</Stack>
 				</Card>
-
-				{/*
 
 				{start && (
 				<Stack>
@@ -76,16 +85,22 @@ const Deploy = (props) => {
 					</Stepper>
 				</Stack>
 				)}
-				*/}
-
 
 				<Stack justifyContent="space-between" direction="row">
 					<Button onClick={() => props.previousStep()}>
 						Prev
 					</Button>
-					<div />
 				</Stack>
 			</Stack>
+
+				<Elements stripe={stripePromise}>
+				<CheckoutModal 
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+					planId={config.stripe.products.contract}
+					callback={callback}
+				/>
+				</Elements>
 		</Box>
 	)
 };

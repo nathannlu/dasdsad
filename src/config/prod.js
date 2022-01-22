@@ -2,6 +2,9 @@ export default {
 	serverUrl: 'https://api.ambition.so',
 	stripe: {
 		publicKey: "pk_live_51IwVBBJUIYorshTCsEs4rhnpUiekirehz1xmykzFV6vMzJQdSbfHtSPO3u6OCVPTb63XFrIemVHIFUiYLgN2jlc900n94oHzbG",
+		products: {
+			contract: 'prod_L0hlfe2EeLafmO'
+		}
 	},
 	pinata: {
 		key: '909f40b05b1344f8e789',

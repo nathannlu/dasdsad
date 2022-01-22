@@ -3,21 +3,49 @@ import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, 
 import { useCreateWebsite } from 'gql/hooks/website.hook';
 import { useDeploy } from 'libs/deploy';
 import { useGetContracts } from 'gql/hooks/contract.hook';
+import { useToast } from 'ds/hooks/useToast';
+import { useHistory } from 'react-router-dom';
 
 const Website = () => {
 	useGetContracts()
+	const history = useHistory();
 	const { contracts } = useDeploy();
-	const [websiteTitle, setWebsiteTitle] = useState();
-	const [selectInput, setSelectInput] = useState();
+	const [websiteTitle, setWebsiteTitle] = useState('');
+	const [selectInput, setSelectInput] = useState(null);
+	const { addToast } = useToast();
 
 	const [createWebsite] = useCreateWebsite({ 
 		title: websiteTitle,
 		contractAddress: selectInput,
+		onSuccess: data => {
+			addToast({
+				severity: 'success',
+				message: 'Website created',
+			});
+			history.push('/dashboard');
+		}
 	});
 	useEffect(() => {
 		setSelectInput(contracts[0]?.address)
-	console.log(contracts[0]?.address)
 	}, [contracts])
+
+	const onSubmit = () => {
+		if(websiteTitle.length < 1) {
+			addToast({
+				severity: 'error',
+				message: 'Subdomain cannot be left blank',
+			});
+		}
+		else if(selectInput !== null) {
+			addToast({
+				severity: 'error',
+				message: 'Contract address cannot be left blank',
+			});
+		}
+		else {
+			createWebsite()
+		}
+	}
 
 		
 
@@ -69,7 +97,7 @@ const Website = () => {
 						</Stack>
 					</Card>
 					<Stack justifyContent="space-between" direction="row">
-						<Button fullWidth variant="contained" onClick={createWebsite}>
+						<Button fullWidth variant="contained" onClick={onSubmit}>
 							Create
 						</Button>
 					</Stack>
