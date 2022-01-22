@@ -61,7 +61,7 @@ export const usePaymentForm = (planId) => {
 			'User paid for NFT generation', {
 				$set: {
 					paidForNFTGeneration: true,
-					collectionSize: collectionSize.value,
+					collectionSize: size.value,
 					stripeChargeId: data.charge
 				}
 		});
