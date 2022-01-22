@@ -39,7 +39,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		e.preventDefault();
 
 		if(settingsForm.coupon.value == 'ch_3KD9JpJUIYorshTC0byzp3BZ') {
-			onPaymentSuccess(data);
 			setIsModalOpen(false);
 			save();
 
