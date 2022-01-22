@@ -16,7 +16,7 @@ export const CREATE_WEBSITE = gql`
 				isActive	
 			}
 			settings {
-				connectedContractId	
+				connectedContractAddress
 			}
 		}
 	}
@@ -38,7 +38,28 @@ export const GET_WEBSITES = gql`
 				isActive	
 			}
 			settings {
-				connectedContractId
+				connectedContractAddress
+			}
+		}
+	}
+`
+export const GET_PUBLISHED = gql`
+	query GetPublished($title: String!) {
+		getPublished(title: $title) {
+			author
+			title
+			isPublished
+			isSubscribed
+			pages {
+				name
+				data
+			}
+			domains {
+				domain
+				isActive	
+			}
+			settings {
+				connectedContractAddress
 			}
 		}
 	}

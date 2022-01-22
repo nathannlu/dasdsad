@@ -19,10 +19,8 @@ const App = props => {
 	useGetWebsites()
 	const { website } = useWebsite();
 
-
 	// Used to query DB for page data
-	const { title, pageName } = props.match.params;
-	const { getWebsitePage, saveToDatabase } = useWebsite();	
+	const { pageName } = props.match.params;
 
 	
 

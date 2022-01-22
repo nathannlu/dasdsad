@@ -3,9 +3,11 @@ import { Editor, Frame } from '@craftjs/core';
 import lz from 'lzutf8';
 
 import AllTemplates from '../blocks/main';
-import { useGetWebsite } from 'gql/hooks/website.hook';
+import { useGetPublished } from 'gql/hooks/website.hook';
 import { useWeb3 } from 'libs/web3';
-import { useWebsites } from 'libs/website';
+import { useWebsite } from 'libs/website';
+
+import './styles.css';
 
 const Published = props => {
 	const [json, setJson] = useState('');
@@ -15,19 +17,18 @@ const Published = props => {
 //	const pageName = 'home';
 
 	const { loadWeb3 } = useWeb3();
-	const { setWebsite } = useWebsite();
+//	const { website } = useWebsite();
 
 
-	useGetWebsites({
+	useGetPublished({
 		title,
 		onCompleted: (data) => {
-			const website = data.getWebsite
-			setWebsite(website)
-
-			const page = website.pages.filter(page => page.pageName === pageName)
+			console.log(data)
+			const website = data.getPublished;
+			const page = website?.pages.filter(page => page.name === pageName)
 
 			// Decode website data;
-			const base64 = page[0].pageData;
+			const base64 = page[0].data;
 			const uint8array = lz.decodeBase64(base64);
 			const json = lz.decompress(uint8array);
 			setJson(json);
@@ -35,13 +36,6 @@ const Published = props => {
 			setEnabled(true);
 		}
 	})
-
-	/*
-	useEffect(async () => {
-		await loadWeb3();	
-	}, [])
-	*/
-
 
 	return (
 		<Editor 

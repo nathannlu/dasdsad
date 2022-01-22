@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useEditor } from '@craftjs/core';
 import lz from 'lzutf8';
 
@@ -6,6 +6,7 @@ import { Fade, Button, IconButton, Stack, Box } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 import { useWebsite } from 'libs/website';
 import { useUpdatePageData } from 'gql/hooks/website.hook';
+import { useGetWebsites } from 'gql/hooks/website.hook';
 
 import {
 	Save as SaveIcon,
@@ -36,9 +37,20 @@ const Navbar = () => {
 		})
 	})
 	const { addToast } = useToast();
+	const [pageName, setPageName] = useState();
+	const [websiteId, setWebsiteId] = useState();
 
-	const { getWebsitePage } = useWebsite();
-	const { uid } = getWebsitePage(window.location.pathname.split("/").slice(-1).pop())
+
+
+	useGetWebsites()
+	const { website } = useWebsite();
+
+	// Load website data on load
+	useEffect(() => {
+		setPageName(window.location.pathname.split("/").slice(-1).pop())
+		setWebsiteId(window.location.pathname.split("/").slice(-2)[0])
+	}, [website]);
+
 
 
 	return (
@@ -62,14 +74,22 @@ const Navbar = () => {
 							</IconButton>
 						</Box>
 
+						<a style={{display: 'flex'}} href={`https://${websiteId}.ambition.so/home`} target="_blank">
+						<Button size="small">
+							View live
+						</Button>
+						</a>
 
 						<Button
 							size="small"
 							onClick={() => {
 								const json = query.serialize();
 								const pageData = (lz.encodeBase64(lz.compress(json)))
-								//console.log(pageData)
-								updatePageData({ variables: { uid, pageData}})
+								updatePageData({ variables: { 
+									websiteId,
+									pageName,
+									pageData
+								}})
 							}}
 							disabled={!canUndo}
 						>

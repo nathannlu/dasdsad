@@ -1,7 +1,7 @@
 import { useAuth } from '../../libs/auth';
 import { useWebsite } from '../../libs/website';
 import { useQuery, useMutation } from '@apollo/client';
-import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS } from '../website.gql';
+import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED } from '../website.gql';
 import { REAUTHENTICATE } from '../users.gql';
 
 
@@ -10,8 +10,22 @@ export const useGetWebsites = () => {
 
   const { ...queryResult } = useQuery(GET_WEBSITES, {
 		onCompleted: data => {
-			console.log(data)
 			setWebsite(data?.getWebsites[0])
+		}
+	});
+
+	return { ...queryResult }
+}
+export const useGetPublished = ({title, onCompleted}) => {
+	const { setWebsite } = useWebsite();
+
+  const { ...queryResult } = useQuery(GET_PUBLISHED, {
+		variables: {title},
+		onCompleted: data => {
+			setWebsite(data?.getPublished)
+			console.log('asd')
+
+			onCompleted && onCompleted(data)
 		}
 	});
 
@@ -45,11 +59,12 @@ export const useUpdatePageData = ({ onCompleted, onError }) => {
 
 	const [updatePageData, { data }] = useMutation(UPDATE_PAGE_DATA, {
 		refetchQueries: [
-			REAUTHENTICATE,
-			"Reauthenticate"
+			GET_WEBSITES,
+			"GetWebsites"
 		],
 		onQueryUpdated: (observable, diff) => {
-			const { websites } = diff.result.getCurrentUser;
+			const websites = diff.result.getWebsites;
+			console.log(websites)
 			setWebsite(websites[0]);
 		},
 		onCompleted,
