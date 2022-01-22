@@ -8,7 +8,7 @@ import { useMetadata } from 'core/metadata';
 export const usePaymentForm = (planId) => {
 	const stripe = useStripe();
 	const elements = useElements();
-	const { settingsForm: { collectionSize }} = useMetadata();
+	const { settingsForm: { size }} = useMetadata();
 
 	const { addToast } = useToast();
 	const { form: paymentForm } = useForm({
