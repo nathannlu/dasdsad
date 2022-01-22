@@ -4,6 +4,7 @@ import { ImageSearch as ImageSearchIcon, Settings as SettingsIcon, Web as WebIco
 
 import { useGetCollections } from 'gql/hooks/collection.hook';
 import { useGetContracts } from 'gql/hooks/contract.hook';
+import { useGetWebsites } from 'gql/hooks/website.hook';
 
 // Pages
 import Collections from './Collections';
@@ -18,6 +19,7 @@ const Dashboard = () => {
 
 	useGetCollections()
 	useGetContracts()
+	useGetWebsites()
 
 	return (
 		<Fade in>

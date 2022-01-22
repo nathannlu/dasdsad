@@ -26,55 +26,55 @@ const Pages = () => {
 				component="main"
 				sx={{
 					flexGrow: 1,
-					height: '100%',
-					overflow: 'hidden'
+					overflow: 'hidden',
+					marginTop: '65px'
 				}}
 			>
-				{/*Object.keys(website).length > 0*/ false ? (
-					<Grid container gap={2}>
-						<Box>
+				{Object.keys(website).length > 0 ? (
+					<Stack>
+							<Box>
 							<Typography gutterBottom variant="h4">
 								Page Manager
 							</Typography>
 						</Box>
 
-
+					<Grid container gap={2}>
 						{website.pages == null ? (
 							<Box> loading </Box>
 						) : website.pages.map((page) => (
-							<Fade key={page.pageName} in>
-								<Grid item xs={3}>
-									<Card variant="outlined">
-											<Box sx={{ bgcolor: 'grey.300'}}>
-											<img src="https://uni-pages-screenshots.s3.amazonaws.com/empty_thumbnail.jpg" />
-										</Box>
-										<Box sx={{
-											bgcolor: 'white',
-											p: 2
-										}}>
-											<Typography gutterBottom variant="h6">
-												{page.pageName}
-											</Typography>
+							<Fade key={page.name} in>
+								<Grid item xs={4}>
+									<Link to={`/builder/${website.title}/${page.name}`}>
+										<Card variant="outlined">
+											<Box sx={{ bgcolor: 'grey.300', p:5}}>
+												<img style={{width: '100%'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac51faa89e1bad8184d_minting-website-icon.png" />
+											</Box>
+											<Box sx={{
+												bgcolor: 'white',
+												p: 2
+											}}>
+												<Typography gutterBottom variant="h6">
+													{name.value}
+												</Typography>
 
-											<Stack direction="row" gap={2}>
-												<Button 
-													startIcon={<EditIcon />}
-													size="small" 
-													variant="contained"
-													href={`/builder/${website.title}/${page.pageName}`} 
-												>
-													Edit page
-												</Button>
-											</Stack>
-										</Box>
-									</Card>
+												<Stack direction="row" gap={2}>
+													<Button
+														size="small"
+														variant="contained"
+													>
+														Edit page
+													</Button>
+												</Stack>
+											</Box>
+										</Card>
+									</Link>
 								</Grid>
 							</Fade>
 						))}
 					</Grid>
+					</Stack>
 				) : (
 					<Grid container mt={4}>
-
 						<Grid item xs={3} mt={4}>
 							<Stack direction="column" justifyContent="space-between" sx={{height: '80vh'}}>
 								<Box>
@@ -123,7 +123,6 @@ const Pages = () => {
 							Create your new website
 						</Button>
 						<TextField onChange={e => setTitle(e.target.value)} />
-						*/}
 
 						<Box 
 							position="fixed" 
@@ -147,6 +146,7 @@ const Pages = () => {
 								</Box>
 							</Box>
 						</Box>
+						*/}
 					</Grid>
 				)}
 

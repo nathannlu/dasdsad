@@ -16,6 +16,11 @@ import posthog from 'posthog-js';
 
 import Routes from './routes';
 
+import { useGetCollections } from 'gql/hooks/collection.hook';
+import { useGetContracts } from 'gql/hooks/contract.hook';
+import { useGetWebsites } from 'gql/hooks/website.hook';
+
+
 
 function App() {
 	const { addToast } = useToast();
@@ -24,6 +29,12 @@ function App() {
 
 	const { start, progress } = useGenerator();
 	const { settingsForm: {size}} = useMetadata();
+
+
+	useGetCollections()
+	useGetContracts()
+	useGetWebsites()
+
 
 	const initBeforeUnLoad = (showExitPrompt) => {
 		console.log(showExitPrompt)

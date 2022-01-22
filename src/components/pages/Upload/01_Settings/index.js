@@ -12,7 +12,8 @@ const Deploy = (props) => {
 		deployContractForm: {
 			royaltyPercentage,
 			priceInEth,
-			maxSupply
+			maxSupply,
+			ipfsLink,
 		},
 		selectInput,
 		setSelectInput
@@ -70,6 +71,18 @@ const Deploy = (props) => {
 								</Stack>
 							</Stack>
 
+							<Stack gap={2} direction="row">
+								<Stack sx={{flex: 1}}>
+									<FormLabel sx={{fontWeight:'bold'}}>
+										IPFS link
+									</FormLabel>
+									<Typography gutterBottom variant="body2">
+										If you have your own IPFS link. Leave this empty if you want to upload to IPFS now
+									</Typography>
+									<TextField {...ipfsLink} fullWidth />
+								</Stack>
+							</Stack>
+
 							<Stack>
 								<FormLabel sx={{fontWeight:'bold'}}>
 									Select your Blockchain
@@ -95,7 +108,16 @@ const Deploy = (props) => {
 						<Button onClick={() => props.previousStep()}>
 							Prev
 						</Button>
-						<Button onClick={() => verifyStep1() && props.nextStep()}>
+						<Button onClick={() => {
+							if(verifyStep1()) {
+								if(ipfsLink.value.length > 0) {
+									props.goToStep(5)
+								}
+								else if(ipfsLink.value.length < 1) {
+									props.nextStep()
+								}
+							}
+						}}>
 							Next
 						</Button>
 					</Stack>

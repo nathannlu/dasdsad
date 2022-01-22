@@ -23,6 +23,9 @@ import Uploads from 'components/pages/Dashboard/Upload';
 // Published Website Route
 import Published from 'components/Published'; 
 
+// Website
+import Website from 'components/pages/Website';
+
 
 const GlobalRoutes = () => {
 	const routes = [
@@ -43,6 +46,7 @@ const GlobalRoutes = () => {
 		{ path: '/collection/:id', component:Collection, private: true },
 		{ path: '/contract/:id', component: Uploads, private: true },
 
+		{ path: '/website', component: Website, private: true },
 
 		// Published routes
 		{ path: '/published/:title/:pageName', component: Published },
