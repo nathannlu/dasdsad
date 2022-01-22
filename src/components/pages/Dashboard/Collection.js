@@ -52,7 +52,6 @@ const Collection = () => {
 									Edit
 								</Button>
 							</Link>
-
 						</Stack>
 
 						<Box py={2}>

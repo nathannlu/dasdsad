@@ -17,7 +17,7 @@ export const WebsiteProvider = ({ children }) => {
 	*/
 
 	const getWebsitePage = (pageName) => {
-		return website.pages.find(page => page.pageName == pageName);
+		return website?.pages.find(page => page.name == pageName);
 	}
 
 	return (

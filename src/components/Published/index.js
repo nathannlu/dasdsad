@@ -5,7 +5,7 @@ import lz from 'lzutf8';
 import AllTemplates from '../blocks/main';
 import { useGetWebsite } from 'gql/hooks/website.hook';
 import { useWeb3 } from 'libs/web3';
-import { useWebsite } from 'libs/website';
+import { useWebsites } from 'libs/website';
 
 const Published = props => {
 	const [json, setJson] = useState('');
@@ -18,7 +18,7 @@ const Published = props => {
 	const { setWebsite } = useWebsite();
 
 
-	useGetWebsite({
+	useGetWebsites({
 		title,
 		onCompleted: (data) => {
 			const website = data.getWebsite

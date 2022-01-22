@@ -1,46 +1,63 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_WEBSITE = gql`
-	mutation CreateWebsite($author: ID!, $title: String!) {
-		createWebsite(author: $author, title: $title) {
+	mutation CreateWebsite($title: String!, $contractAddress: String) {
+		createWebsite(title: $title, contractAddress: $contractAddress) {
+			author
 			title
 			isPublished
+			isSubscribed
 			pages {
-				pageName
-				pageData
+				name
+				data
 			}
-			customDomain
-			isCustomDomainActive
-			author
-		}	
-	}
-`
-
-// Depreciated
-// App now uses REAUTHENTICATE from users.gql to populate website state
-export const GET_WEBSITE = gql`
-	query GetWebsite($title: String!) {
-		getWebsite(title: $title) {
-			author
-			title
-			customDomain
-			isCustomDomainActive
-			contractAddress
-			priceInEth
-			pages {
-				pageName
-				pageData
+			domains {
+				domain
+				isActive	
+			}
+			settings {
+				connectedContractId	
 			}
 		}
 	}
 `
 
-export const BUILD_WEBSITE = gql`
-	query BuildWebsite($title: String!) {
-		buildWebsite(title: $title)
+export const GET_WEBSITES = gql`
+	query GetWebsites {
+		getWebsites {
+			author
+			title
+			isPublished
+			isSubscribed
+			pages {
+				name
+				data
+			}
+			domains {
+				domain
+				isActive	
+			}
+			settings {
+				connectedContractId
+			}
+		}
 	}
 `
 
+
+
+export const UPDATE_PAGE_DATA = gql`
+	mutation UpdatePageData($websiteId: ID!, $pageName: String!, $pageData: String!) {
+		updatePageData(websiteId: $websiteId, pageName: $pageName, pageData: $pageData) {
+			pages {
+				name
+				data
+			}
+		}
+	}
+`
+
+// WIP
 export const ADD_PAGE = gql`
 	mutation AddPage($websiteTitle: String!, $pageName: String!, $pageData: String) {
 		addPage(websiteTitle: $websiteTitle, pageName: $pageName, pageData: $pageData) {
@@ -50,16 +67,6 @@ export const ADD_PAGE = gql`
 		}
 	}
 `
-
-export const UPDATE_PAGE_DATA = gql`
-	mutation UpdatePageData($uid: ID!, $pageData: String!) {
-		updatePageData(uid: $uid, pageData: $pageData) {
-			pageName
-			pageData
-		}
-	}
-`
-
 export const SET_CUSTOM_DOMAIN = gql`
 	mutation SetCustomDomain($title: String!, $customDomain: String!) {
 		setCustomDomain(title: $title, customDomain: $customDomain) {
@@ -87,5 +94,10 @@ export const SET_CONTRACT_ADDRESS = gql`
 			contractAddress
 			priceInEth
 		}
+	}
+`
+export const BUILD_WEBSITE = gql`
+	query BuildWebsite($title: String!) {
+		buildWebsite(title: $title)
 	}
 `

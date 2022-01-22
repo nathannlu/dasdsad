@@ -52,6 +52,7 @@ const Collections = () => {
 								</Card>
 							</Link>
 						</Grid>
+
 					</Box>
 				) : (
 					<Grid item xs={4} sx={{margin: '0 auto'}}>

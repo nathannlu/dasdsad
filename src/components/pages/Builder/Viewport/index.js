@@ -74,7 +74,6 @@ const Viewport = props => {
 						</div>
 					</div>
 				</div>
-
 			</Box>
 		</ViewportProvider>
 	)
