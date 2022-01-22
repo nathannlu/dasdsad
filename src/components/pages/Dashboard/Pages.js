@@ -20,6 +20,7 @@ const Pages = () => {
 	})
 
 
+
 	return (
 		<Fade in>
 			<Box 
@@ -30,7 +31,7 @@ const Pages = () => {
 					marginTop: '65px'
 				}}
 			>
-				{website && Object.keys(website).length > 0 ? (
+				{website && website !== undefined && Object.keys(website).length > 0 ? (
 					<Stack>
 							<Box>
 							<Typography gutterBottom variant="h4">
