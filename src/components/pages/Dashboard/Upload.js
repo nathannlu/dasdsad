@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useDeploy } from 'libs/deploy';
 import { useGetContracts } from 'gql/hooks/contract.hook';
-import { Container, Stack, Box, Grid, Typography, Button } from 'ds/components';
+import { Container, TextField, Stack, Box, Grid, Typography, Button } from 'ds/components';
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
@@ -12,6 +12,8 @@ const Upload = (props) => {
 	const [contract, setContract] = useState({});
 	const [price, setPrice] = useState();
 	const { id } = useParams();
+
+	const [newMetadataUrl, setNewMetadataUrl] = useState('');
 
 	const { contracts } = useDeploy();
 	const { 
@@ -23,8 +25,10 @@ const Upload = (props) => {
 		mint,
 		checkOwner,
 		getTotalMinted,
+		updateBaseUri,
 		getBaseUri
 	} = useWeb3()
+
 
 	useGetContracts()
 	useEffect(() => {
@@ -42,7 +46,6 @@ const Upload = (props) => {
 
 				const b = await getBalance(c.address)
 				setBalance(b);
-
 
 				setPrice(c.nftCollection.price);
 
@@ -114,7 +117,18 @@ const Upload = (props) => {
 					<Button variant="contained" onClick={() => mintNow()}>
 						Mint
 					</Button>
+
 				</Stack>
+					
+					<Stack>
+						Set new metadata url
+						<TextField onChange={e => setNewMetadataUrl(e.target.value)} />
+						<Button variant="contained" onClick={() => {
+							updateBaseUri(newMetadataUrl, contract.address)
+						}}>
+							Update Base URI
+						</Button>
+					</Stack>
 
 				<Stack sx={{background: '#eee', borderRadius: 2, p:2}}>
 					<Typography variant="h6">
@@ -128,6 +142,8 @@ const Upload = (props) => {
 						))}
 					</Box>
 				</Stack>
+
+
 			</Stack>
 		</Container>
 	)

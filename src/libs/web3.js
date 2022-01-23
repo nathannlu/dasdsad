@@ -99,7 +99,9 @@ export const Web3Provider = ({ children }) => {
 	}
 
 	const getBaseUri = async (baseUri, contractAddress) => {
+		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
+
 
 		return contract.methods.baseTokenURI().call()
 	}
@@ -107,6 +109,7 @@ export const Web3Provider = ({ children }) => {
 	// Update base URI
 	const updateBaseUri = async (baseUri, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
+		console.log(baseUri);
 
 		contract.methods.setBaseURI(baseUri).send({ from: account, value: 0 }, err => {
 			if (err) {
@@ -193,6 +196,15 @@ export const Web3Provider = ({ children }) => {
 
 		return contract.methods.totalSupply().call()
 	}
+	const getBaseTokenURI = async (contractAddress) => {
+		const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+
+
+		return contract.methods.baseTokenURI().call()
+	}
+
+
 
 
 
