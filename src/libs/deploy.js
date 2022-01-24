@@ -21,8 +21,9 @@ export const DeployProvider = ({ children }) => {
 	const { addToast } = useToast()
 	const { account } = useWeb3()
 	const { user } = useAuth();
-	const [activeStep, setActiveStep] = useState(null);
+	const [activeStep, setActiveStep] = useState(0);
 	const [start, setStart] = useState(false);
+	const [error, setError] = useState(false);
 
 
 	const [contracts, setContracts] = useState([]);
@@ -57,13 +58,6 @@ export const DeployProvider = ({ children }) => {
 
 	const deployContract = async () => {
 		try {
-			setStart(true);
-
-			if(deployContractForm.ipfsLink.value.length < 1) {
-				await pinFolderToIPFS(uploadedFiles);
-				await pinMetadataToIPFS(uploadedJson)
-			}
-
 			const web3 = window.web3
 			const contract = new web3.eth.Contract(NFTCollectible.abi)
 			const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
@@ -92,13 +86,12 @@ export const DeployProvider = ({ children }) => {
 			contract
 				.deploy(options)
 				.send(senderInfo, (err, txnHash) => {
-					console.log('deploying contract...')
-					setActiveStep(2);
 					if(err) {
 						addToast({
 							severity: 'error',
-							message: err
+							message: err.message
 						});
+						setError(error)
 					} else {
 						addToast({
 							severity: 'info',
@@ -109,9 +102,10 @@ export const DeployProvider = ({ children }) => {
 				.on('error', err => {
 					addToast({
 						severity: 'error',
-						message: err
+						message: err.message
 					});
 					setLoading(false)
+					setError(error)
 				})
 				.on('confirmation', (confirmationNumber, receipt) => {
 					console.log('deployed')
@@ -127,8 +121,9 @@ export const DeployProvider = ({ children }) => {
 		} catch (e) {
 			addToast({
 				severity: 'error',
-				message: e
+				message: e.message
 			});
+			setError(true);
 		}
 	};
 
@@ -148,7 +143,9 @@ export const DeployProvider = ({ children }) => {
 		setStart(false);
 	}
 
-	const pinFolderToIPFS = async (folder) => {
+	const pinImages = async () => {
+		const folder = uploadedFiles
+		setStart(true);
 		setActiveStep(0);
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
     const src = `./images`;
@@ -169,55 +166,58 @@ export const DeployProvider = ({ children }) => {
 			name: user.id + '_assets',
     });
 		data.append('pinataMetadata', metadata);
-		await axios.post(url,
-			data,
-			{
-				maxBodyLength: 'Infinity',
-				headers: {
-					'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
-					'pinata_api_key': config.pinata.key,
-					'pinata_secret_api_key': config.pinata.secret
-				}
+
+		const opt = {
+			maxBodyLength: 'Infinity',
+			headers: {
+				'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
+				'pinata_api_key': config.pinata.key,
+				'pinata_secret_api_key': config.pinata.secret
 			}
-    ).then(function (response) {
-			setImagesUrl(response.data.IpfsHash)
+		}
+		try {
+			const res = await axios.post(url,data,opt)
+			setImagesUrl(res.data.IpfsHash)
 			addToast({
 				severity: 'success',
-				message: 'Added images to IPFS under URL: https://ipfs.io/ipfs/' + response.data.IpfsHash
+				message: 'Added images to IPFS under URL: ipfs//' + res.data.IpfsHash
 			})
-    }).catch(function (error) {
+		} catch(e) {
 			addToast({
 				severity: 'error',
-				message: error
+				message: e.message
 			});
-    });
+		}
 	};
 
 	const updateAndSaveJson = async (file, data) => {
 		return new Promise((resolve, reject) => {
+
 			if(file.name !=='metadata.json') {
 				const fileReader = new FileReader();
 				fileReader.onload = function ( evt ) {
 					// Parse JSON and modify
 					const jsonMetadata = JSON.parse(evt.target.result)
-					jsonMetadata.image = `ipfs://${imagesUrl}/${jsonMetadata.properties.files[0].uri}`
+					const tokenId = file.name.split('.')[0]
+					jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.png`
 
 					// Attach JSON to formdata
 					const metadataFile = new Blob([JSON.stringify(jsonMetadata)])
-					data.append('file', metadataFile, `/metadata/${file.name}`)
+					data.append('file', metadataFile, `/metadata/${tokenId}`)
 
 					resolve(data)
 				};
 				fileReader.readAsText(file);
 
 			} else {
-				data.append('file', file, '/metadata/metadata.json')
+				data.append('file', file, '/metadata/metadata')
 				resolve(data)
 			}
 		})
 	}
-	const pinMetadataToIPFS = async (folder) => {
-		setActiveStep(1);
+
+	const pinMetadata = async () => {
+		const folder = uploadedJson;
     let data = new FormData();
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
@@ -236,28 +236,28 @@ export const DeployProvider = ({ children }) => {
     });
 		data.append('pinataMetadata', metadata);
 
-		await axios.post(url,
-			data,
-			{
-				maxBodyLength: 'Infinity',
-				headers: {
-					'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
-					'pinata_api_key': config.pinata.key,
-					'pinata_secret_api_key': config.pinata.secret
-				}
+		const opt = {
+			maxBodyLength: 'Infinity',
+			headers: {
+				'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
+				'pinata_api_key': config.pinata.key,
+				'pinata_secret_api_key': config.pinata.secret
 			}
-    ).then(function (response) {
-			setIpfsUrl(response.data.IpfsHash)
+		}
+		try {
+			const res = await axios.post(url, data, opt)
 			addToast({
 				severity: 'success',
-				message: 'Added json metadata to IPFS under URL: https://ipfs.io/ipfs/' + response.data.IpfsHash
+				message: 'Added json metadata to IPFS under URL: ipfs://' + res.data.IpfsHash
 			})
-    }).catch(function (error) {
+			setIpfsUrl(res.data.IpfsHash)
+
+		} catch(e) {
 			addToast({
 				severity: 'error',
-				message: error
+				message: e.message 
 			});
-    });
+    };
 	}
 
 
@@ -277,6 +277,8 @@ export const DeployProvider = ({ children }) => {
 				ipfsUrl,
 				setIpfsUrl,
 
+				pinImages,
+				pinMetadata,
 				deployContract,
 				contracts,
 				setContracts,
@@ -285,6 +287,7 @@ export const DeployProvider = ({ children }) => {
 				setSelectInput,
 
 				activeStep,
+				setActiveStep,
 				start
 			}}
 		>

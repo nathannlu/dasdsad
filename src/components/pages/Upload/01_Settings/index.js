@@ -22,76 +22,84 @@ const Deploy = (props) => {
 
 	return (
 		<Fade in>
-			<Container>
 				<Stack gap={3}>
-					<Card sx={{p: 2}}>
-						<Stack gap={3}>
-							<Stack>
-								<Typography gutterBottom variant="h4">
-									01. Create NFT collection
+					<Stack gap={3}>
+						<Stack>
+							<Typography gutterBottom variant="h4">
+								01. Create NFT collection
+							</Typography>
+							<Typography gutterBottom variant="body">
+								Fill in and configure your smart contracts
+							</Typography>
+						</Stack>
+
+						{/*
+						<Stack gap={2} direction="row">
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									Royalty percentage
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Take a percentage of sales when your NFT is traded	
 								</Typography>
-								<Typography gutterBottom variant="body">
-									Fill in and configure your smart contracts
+								<TextField {...royaltyPercentage} fullWidth />
+							</Stack>
+						</Stack>
+						*/}
+
+						<Stack gap={2} direction="row">
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									Price per NFT minted
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Set the price in ether for minting one NFT.
 								</Typography>
+								<TextField {...priceInEth} fullWidth />
 							</Stack>
 
-							{/*
-							<Stack gap={2} direction="row">
-								<Stack sx={{flex: 1}}>
-									<FormLabel sx={{fontWeight:'bold'}}>
-										Royalty percentage
-									</FormLabel>
-									<Typography gutterBottom variant="body2">
-										Take a percentage of sales when your NFT is traded	
-									</Typography>
-									<TextField {...royaltyPercentage} fullWidth />
-								</Stack>
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									Total number of NFTs
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Set the total number of NFTs in your collection
+								</Typography>
+								<TextField {...maxSupply} fullWidth />
+							</Stack>
+						</Stack>
+						{/*
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									IPFS Link
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Set IPFS link
+								</Typography>
+								<TextField {...ipfsLink} fullWidth />
 							</Stack>
 							*/}
 
-							<Stack gap={2} direction="row">
-								<Stack sx={{flex: 1}}>
-									<FormLabel sx={{fontWeight:'bold'}}>
-										Price per NFT minted
-									</FormLabel>
-									<Typography gutterBottom variant="body2">
-										Set the price in ether for minting one NFT.
-									</Typography>
-									<TextField {...priceInEth} fullWidth />
-								</Stack>
+						<Stack>
+							<FormLabel sx={{fontWeight:'bold'}}>
+								Select your Blockchain
+							</FormLabel>
+							<TextField select onChange={e=>setSelectInput(e.target.value)} value={selectInput}>
+								{/*
+								<MenuItem value="Solana">
+									Solana
+								</MenuItem>
+								<MenuItem value="Polygon">
+									Polygon
+								</MenuItem>
+								*/}
+								<MenuItem value="ethereum">
+									Ethereum
+								</MenuItem>
 
-								<Stack sx={{flex: 1}}>
-									<FormLabel sx={{fontWeight:'bold'}}>
-										Total number of NFTs
-									</FormLabel>
-									<Typography gutterBottom variant="body2">
-										Set the total number of NFTs in your collection
-									</Typography>
-									<TextField {...maxSupply} fullWidth />
-								</Stack>
-							</Stack>
-
-							<Stack>
-								<FormLabel sx={{fontWeight:'bold'}}>
-									Select your Blockchain
-								</FormLabel>
-								<TextField select onChange={e=>setSelectInput(e.target.value)} value={selectInput}>
-									{/*
-									<MenuItem value="Solana">
-										Solana
-									</MenuItem>
-									<MenuItem value="Polygon">
-										Polygon
-									</MenuItem>
-									*/}
-									<MenuItem value="ethereum">
-										Ethereum
-									</MenuItem>
-
-								</TextField>
-							</Stack>
+							</TextField>
 						</Stack>
-					</Card>
+					</Stack>
 					<Stack justifyContent="space-between" direction="row">
 						<Button onClick={() => props.previousStep()}>
 							Prev
@@ -110,7 +118,6 @@ const Deploy = (props) => {
 						</Button>
 					</Stack>
 				</Stack>
-			</Container>
 		</Fade>
 	)
 };

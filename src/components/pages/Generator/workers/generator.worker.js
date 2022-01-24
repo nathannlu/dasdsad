@@ -19,7 +19,7 @@ self.onmessage = async (event) => {
 
 		// Loop over count and compile
 		for(let i = 0; i < count; i++) {
-			let filename = i + 1;
+			let filename = i;
 			const generatedImage = await generateOneImage({settings, layers, filename})
 
 			// Has video that needs to be merged

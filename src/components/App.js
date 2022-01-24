@@ -37,8 +37,6 @@ function App() {
 
 
 	const initBeforeUnLoad = (showExitPrompt) => {
-		console.log(showExitPrompt)
-
 		window.onbeforeunload = (event) => {
 			// Show prompt based on state
 			if (showExitPrompt) {
