@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Link, Box, Typography, Stack, Card, Grid, Fade } from 'ds/components';
+import { Container, Button, Link, Box, Typography, Stack, Card, Grid, Fade } from 'ds/components';
 import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
 import { useDeploy } from 'libs/deploy';
 
@@ -8,21 +8,24 @@ const Dashboard = () => {
 	
 	return (
 		<Fade in>
-			<Box sx={{pt: 10}}>
+			<Container sx={{pt: 10}}>
 				{contracts.length > 0 ? (
-					<Box>
+					<Stack gap={2}>
 						<Box>
-							<Typography gutterBottom variant="h4">
+							<Typography variant="h4">
 								Your contracts
+							</Typography>
+							<Typography gutterBottom variant="body">
+								A list of your deployed contracts
 							</Typography>
 						</Box>
 
-						<Grid container>
+						<Grid gap={2} container>
 							{contracts.map((contract, i) => (
-							<Grid item xs={4}>
-								<Link to={`/contract/${contract.id}`}>
+							<Grid item xs={3}>
+								<Link to={`/smart-contracts/${contract.id}`}>
 									<Card variant="outlined">
-										<Box sx={{ bgcolor: 'grey.300', p:5}}>
+										<Box sx={{ bgcolor: 'grey.100', p:5}}>
 											<img 
 												style={{width: '100%'}}
 												src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6943de77b8cf95ef1_deploy-to-blockchain-icon.png"
@@ -46,7 +49,7 @@ const Dashboard = () => {
 							</Grid>
 							))}
 						</Grid>
-					</Box>
+					</Stack>
 				) : (
 					<Grid item xs={4} sx={{margin: '0 auto'}}>
 						<Stack mt={10} gap={2}>
@@ -76,7 +79,7 @@ const Dashboard = () => {
 
 				)}
 
-			</Box>
+			</Container>
 		</Fade>
 	)
 };

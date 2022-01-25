@@ -15,13 +15,8 @@ import posthog from 'posthog-js';
 
 import Routes from 'components/routes';
 
-import { useGetCollections } from 'gql/hooks/collection.hook';
-import { useGetContracts } from 'gql/hooks/contract.hook';
-import { useGetWebsites } from 'gql/hooks/website.hook';
 
-
-import Blockchain from 'services/blockchain';
-
+//import Blockchain from 'services/blockchain';
 
 
 function App() {
@@ -32,9 +27,6 @@ function App() {
 	const { start, progress } = useGenerator();
 	const { settingsForm: {size}} = useMetadata();
 
-	useGetCollections()
-	useGetContracts()
-	useGetWebsites()
 
 	const initBeforeUnLoad = (showExitPrompt) => {
 		window.onbeforeunload = (event) => {
@@ -88,8 +80,9 @@ function App() {
     return (
 		<Box sx={{minHeight: '100vh'}}>
 			<Helmet>
-				<title>Create your NFT collection with no-code - NFT Art Generator</title>
-				<link rel="canonical" href="https://app.ambition.so/" />
+
+				<title>Ambition</title>
+				<link rel="canonical" href="https://app.ambition.so" />
 				<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 			</Helmet>
 
@@ -102,10 +95,6 @@ function App() {
 				history={history}
 			>
 				<Routes />
-				{/*
-				<Route path="/smart-contracts" component={Blockchain} />
-				*/}
-
 			</Router>
 
 			{start && (

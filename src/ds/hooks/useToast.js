@@ -36,7 +36,7 @@ export const ToastManager = ({children}) => {
 			{children}
 
 			{toastQueue.map(toast => (
-				<Snackbar key={toast.id} open={toast.open} autoHideDuration={5000} onClose={() => removeToast(toast.id)}>
+				<Snackbar key={toast.id} open={toast.open} autoHideDuration={5000} onClose={() => removeToast(toast.id)} sx={{zIndex: 9999}}>
 					<Alert onClose={() => removeToast(toast.id)} severity={toast.severity} sx={{ width: '100%' }}>
 						{ toast.message }
 					</Alert>

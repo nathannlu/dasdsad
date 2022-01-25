@@ -12,8 +12,6 @@ export const RouteBuilder = ({ routes }) => {
 				routes.map(route => {
 					const TagName = route.private ? PrivateRoute : Route;
 
-					console.log(path === '/' ? route.path : path + route.path)
-
 					return (
 						<TagName
 							key={route.path}

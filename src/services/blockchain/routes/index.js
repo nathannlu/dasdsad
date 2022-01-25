@@ -1,8 +1,6 @@
 import React, { lazy, Suspense } from 'react';
-import { Redirect } from 'react-router-dom';
 import { RouteBuilder } from 'components/routes/RouteBuilder';
 import { CircularProgress, Stack } from 'ds/components'
-import Layout from 'components/layout/Layout';
 
 // Dashboard Routes
 const Dashboard = lazy(() => import("services/blockchain/pages/Dashboard"))
@@ -32,11 +30,9 @@ const BlockchainRoutes = () => {
 	];
 
 	return (
-		<Layout>
-			<Suspense fallback={<Loading />}>
-				<RouteBuilder routes={routes} />
-			</Suspense>
-		</Layout>
+		<Suspense fallback={<Loading />}>
+			<RouteBuilder routes={routes} />
+		</Suspense>
 	)
 };
 

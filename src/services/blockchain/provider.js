@@ -1,15 +1,14 @@
 import React, { useState, useContext } from 'react';
 
-export const DeployContext = React.createContext({})
+export const ContractContext = React.createContext({})
 
-export const useDeploy = () => useContext(DeployContext)
+export const useContract = () => useContext(ContractContext)
 
-
-export const DeployProvider = ({ children }) => {
+export const ContractProvider = ({ children }) => {
 
 	return (
-		<DeployContext.Provider>
+		<ContractContext.Provider>
 			{ children }
-		</DeployContext.Provider>
+		</ContractContext.Provider>
 	)
 }
