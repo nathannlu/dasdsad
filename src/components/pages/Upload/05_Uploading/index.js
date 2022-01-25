@@ -6,11 +6,11 @@ import { useDeploy } from 'libs/deploy';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Uploading = () => {
-	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, loading, error } = useDeploy();
+	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, metadataUrl, loading, error } = useDeploy();
 	const history = useHistory();
 	
 	return (
-		<Stack>
+		<Stack gap={2}>
 			<Stepper activeStep={activeStep} orientation="vertical">
 				<Step>
 					<StepLabel>
@@ -22,7 +22,7 @@ const Uploading = () => {
 						<Stack gap={2}>
 							{imagesUrl ? (
 								<Box>
-									Images uploaded to {imagesUrl}. Please verify the content is correct.
+									Your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${imagesUrl}/0.png`} target="_blank">ipfs://{imagesUrl}/</a>. Please verify the content is correct.
 								</Box>
 							) : (
 								<CircularProgress />
@@ -54,7 +54,7 @@ const Uploading = () => {
 						<Stack gap={2}>
 							{ipfsUrl ? (
 								<Box>
-									Metadata uploaded to {ipfsUrl}. Please verify the content is correct.
+									Metadata for your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/0`} target="_blank">{ipfsUrl}</a>. Please verify the content is correct.
 								</Box>
 							) : (
 								<CircularProgress />
@@ -105,6 +105,9 @@ const Uploading = () => {
 					</StepContent>
 				</Step>
 
+
+
+			</Stepper>
 				{error && (
 					<Button
 						size="small" 
@@ -114,8 +117,6 @@ const Uploading = () => {
 						Try again
 					</Button>
 				)}
-
-			</Stepper>
 		</Stack>
 	)
 };

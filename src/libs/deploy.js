@@ -35,7 +35,7 @@ export const DeployProvider = ({ children }) => {
 	const [uploadedJson, setUploadedJson] = useState([]);
 	// IPFS urls 
 	const [imagesUrl, setImagesUrl] = useState('')
-//	const [metadataUrl, setMetadataUrl] = useState('') //unused 
+	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
 	const { form: deployContractForm } = useForm({
 		priceInEth: {
@@ -59,8 +59,11 @@ export const DeployProvider = ({ children }) => {
 	const deployContract = async () => {
 		try {
 			const web3 = window.web3
-			const contract = new web3.eth.Contract(NFTCollectible.abi)
+			let contract = new web3.eth.Contract(NFTCollectible.abi)
 			const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
+
+			console.log(contract.defaultChain)
+
 
 			let options;
 			if(deployContractForm.ipfsLink.value.length < 1) {
@@ -105,7 +108,7 @@ export const DeployProvider = ({ children }) => {
 						message: err.message
 					});
 					setLoading(false)
-					setError(error)
+					setError(true)
 				})
 				.on('confirmation', (confirmationNumber, receipt) => {
 					console.log('deployed')
@@ -187,6 +190,7 @@ export const DeployProvider = ({ children }) => {
 				severity: 'error',
 				message: e.message
 			});
+			setError(true);
 		}
 	};
 
@@ -250,7 +254,8 @@ export const DeployProvider = ({ children }) => {
 				severity: 'success',
 				message: 'Added json metadata to IPFS under URL: ipfs://' + res.data.IpfsHash
 			})
-			setIpfsUrl(res.data.IpfsHash)
+			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/')
+			setMetadataUrl(res.data.IpfsHash)
 
 		} catch(e) {
 			addToast({
@@ -270,12 +275,11 @@ export const DeployProvider = ({ children }) => {
 				setUploadedJson,
 				imagesUrl,
 				setImagesUrl,
-//				metadataUrl,
-//				setMetadataUrl,
 				deployContractForm,
 
 				ipfsUrl,
 				setIpfsUrl,
+				metadataUrl,
 
 				pinImages,
 				pinMetadata,
@@ -288,7 +292,8 @@ export const DeployProvider = ({ children }) => {
 
 				activeStep,
 				setActiveStep,
-				start
+				start,
+				error
 			}}
 		>
 			{children}
