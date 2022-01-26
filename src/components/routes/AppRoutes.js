@@ -15,6 +15,8 @@ const Builder = lazy(() => import("components/pages/Builder"))
 // Payment Website Route
 const Payment = lazy(() => import("components/pages/Payments"))
 
+// Broken Route
+const BrokenRoutes = lazy(() => import("components/pages/Broken"))
 
 const AppRoutes = () => {
 	const routes = [
@@ -54,6 +56,10 @@ const AppRoutes = () => {
 			path: "/",
 			component: () => <Redirect to="/dashboard" />,
 			exact: true
+		},
+        {
+			path: '*',
+			component: BrokenRoutes
 		}
 	];
 
