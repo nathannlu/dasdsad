@@ -22,22 +22,22 @@ const Content = ({ layer }) => {
 			</TableHead>
 			<TableBody>
 				{layer.images?.map((image,i) => (
-					<TableRow>
+					<TableRow key={i}>
 						<TableCell 
 							sx={smallerThanMobile ? {width:'50px'}: {}}
 						>
-							{image.type == 'image/png' ? (
+							{image.type == 'image/png' && (
 								<img 
 									style={{width: '50px', height: '50px', border: '1px solid rgba(0,0,0,.5)', borderRadius: '4px'}} 
 									src={image.preview}
 								/>
-							): null}
-							{image.type == 'video/mp4' ? (
+							)}
+							{image.type == 'video/mp4' && (
 								<video width="50px" height="50px" loop autoPlay muted>
 									<source src={image.preview} type="video/mp4" />
 										Sorry, your browser doesn't support embedded videos.
 								</video>
-							): null}
+							)}
 							<Box
 								sx={smallerThanMobile ? {fontSize:'10px'}: {}}
 							>

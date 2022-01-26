@@ -12,14 +12,12 @@ import Payment from './05_Payment';
 import Generating from './06_Generating';
 import Model from './Model';
 
-
 const Generator = () => {
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const [activeStep, setActiveStep] = useState(1);
 	const isLastStep = activeStep == 5 || activeStep == 6;
 
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
-
 
 	return (
 		<Fade in>
@@ -51,8 +49,7 @@ const Generator = () => {
 					</Stack>
 				</Grid>
 
-
-				{!smallerThanTablet ? (
+				{!smallerThanTablet && (
 					<Grid 
 						md={!isLastStep ? 6 : 8} 
 						alignItems="center" 
@@ -65,14 +62,11 @@ const Generator = () => {
 					>
 						<Model activeStep={activeStep} isLastStep={isLastStep} />
 					</Grid>
-				): null}
+				)}
 			</Grid>
 		</Fade>
 	)
 };
-
-
-
 
 export default Generator;
 
