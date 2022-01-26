@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Stack, Button, Box, Typography } from 'ds/components';
 import { useValidateForm } from '../hooks/useValidateForm'
 import { Chip } from '@mui/material';
 import T from './Traits';
-
 
 const Traits = props => {
 	/*

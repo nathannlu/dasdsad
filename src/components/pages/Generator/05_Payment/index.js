@@ -4,17 +4,14 @@ import { useMetadata } from 'core/metadata';
 import { Fade, Box, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip } from '@mui/material'
 import { Lock as LockIcon } from '@mui/icons-material';
-
 import { Elements } from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { useGenerator } from 'core/generator';
-const stripePromise = loadStripe(config.stripe.publicKey);
 import posthog from 'posthog-js';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import PaymentModal from './PaymentModal';
 
-
+const stripePromise = loadStripe(config.stripe.publicKey);
 
 const Payment = props => {
 	const [fadeIn, setFadeIn] = useState(false);
@@ -22,7 +19,6 @@ const Payment = props => {
 	const { generateImages } = useGenerator();
 	const { settingsForm } = useMetadata();
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
-
 
 	useEffect(() => {
 		if(!smallerThanTablet) {
@@ -37,7 +33,6 @@ const Payment = props => {
 
 	}, [props.isActive])
 
-	
 	return (
 		<Fade in={fadeIn}>
 			<Stack justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
@@ -51,8 +46,6 @@ const Payment = props => {
 							Ready to launch the next BAYC?
 						</Typography>
 					</Box>
-
-
 
 					<Stack direction="row">
 						<Button fullWidth variant="contained" onClick={() => {

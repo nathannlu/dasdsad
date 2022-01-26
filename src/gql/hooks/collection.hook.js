@@ -21,8 +21,11 @@ export const useGetCollections = async () => {
 
   const { ...queryResult } = useQuery(GET_COLLECTIONS, {
 		onCompleted: async data => {
-			// Update layer maanger, traits manager
+			// Update layer manager, traits manager
 			let collections = data.getCollections
+
+            if (collections.length === 0) return; 
+
 			let layers = [...collections[0].layers]
 			let clonedLayers = JSON.parse(JSON.stringify(layers))
 

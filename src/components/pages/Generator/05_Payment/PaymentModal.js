@@ -4,11 +4,9 @@ import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, IconButto
 import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useCharge } from 'gql/hooks/billing.hook';
 import { usePaymentForm } from '../hooks/usePaymentForm';
-
 import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 
 const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
@@ -26,10 +24,9 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 			onPaymentSuccess(data);
 			setIsModalOpen(false);
 			save();
-			// save image
-			
-//		generateImages();
-//		nextStep();
+			// save image	
+            //generateImages();
+            //nextStep();
 		},
 		onError: onPaymentError
 	});
@@ -41,7 +38,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		if(settingsForm.coupon.value == 'ch_3KD9JpJUIYorshTC0byzp3BZ') {
 			setIsModalOpen(false);
 			save();
-
+            
 		} else {
 			const card = elements.getElement(CardElement);
 			const result = await stripe.createToken(card);
@@ -53,8 +50,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		}
 	}
 	
-
-
 	return (
 		<Modal
 			open={isModalOpen}
@@ -140,9 +135,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 									<Typography variant="body1">
 										Total due today ${(0.10 * settingsForm.size.value - .01).toFixed(2)} USD
 									</Typography>
-
-									<Divider />
-										
+									<Divider />							
 									<LoadingButton 
 										startIcon={<LockIcon />} 
 										loading={loading} 

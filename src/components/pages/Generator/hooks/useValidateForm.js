@@ -59,7 +59,6 @@ export const useValidateForm = () => {
 			});
 			return false;
 		}
-
 		return true;
 	}
 

@@ -24,8 +24,6 @@ export const usePaymentForm = (planId) => {
 		}
 	})
 
-
-
 	const createPaymentMethod = async () => {
 		const { error, paymentMethod } = await stripe.createPaymentMethod({
 			type: 'card',
@@ -77,10 +75,8 @@ export const usePaymentForm = (planId) => {
 		console.log(err.message)
 	}
 
-	const setPaidCookie = () => {
-		
+	const setPaidCookie = () => {		
 		// store email as a cookie in browser
-
 		// store a hashed stripe transaction id
 	}
 

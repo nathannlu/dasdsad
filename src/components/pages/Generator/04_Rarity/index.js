@@ -30,7 +30,7 @@ const Rarity = props => {
 
 				<Box>
 					{layers.map((layer, i) => (
-						<Accordion expanded={selected == i} onChange={e => { 
+						<Accordion key={i} expanded={selected == i} onChange={e => { 
 							setSelected(i);
 						}}>
 							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>

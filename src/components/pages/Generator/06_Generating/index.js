@@ -4,10 +4,8 @@ import { Chip, CircularProgress } from '@mui/material'
 import { useGenerator } from 'core/generator';
 import { useMetadata } from 'core/metadata';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-
 import posthog from 'posthog-js';
 //import Login from 'components/pages/Auth/LoginModal';
-
 
 const Generating = () => {
 	const { settingsForm: { size } } = useMetadata();
@@ -52,7 +50,6 @@ const Generating = () => {
 				)}
 			</Stack>
 
-
 			{/*
 			<Stack gap={2}>
 				<Typography variant="h5">
@@ -76,16 +73,12 @@ const Generating = () => {
 			</Stack>
 			*/}
 			
-
-
 			<Stack gap={2}>
 				<Link to="/login">
 					<Button variant="contained">
 						Log in to download
 					</Button>
 				</Link>
-
-
 				<Typography gutterBottom variant="body">
 					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/ambition_so" target="_blank">Twitter</a>
 				</Typography>
@@ -119,10 +112,7 @@ const Generating = () => {
 			</Link>
 			)
 			<Login in={displayAuth} setDisplayAuth={setDisplayAuth} />
-*/}
-
-
-
+            */}
 		</Stack>
 	)
 };

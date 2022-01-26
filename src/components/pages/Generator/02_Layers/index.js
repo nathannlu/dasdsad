@@ -22,7 +22,7 @@ const Layers = props => {
 			<L />
 		</Stack>
 
-			<Stack justifyContent="space-between" direction="row">
+        <Stack justifyContent="space-between" direction="row">
 				<Button onClick={() => props.previousStep()}>
 					Prev
 				</Button>
