@@ -8,21 +8,16 @@ import { useAnalytics } from 'libs/analytics';
 import { useGenerator }  from 'core/generator';
 import { useMetadata} from 'core/metadata';
 import { useGetCurrentUser } from 'gql/hooks/users.hook';
-
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { LinearProgress } from '@mui/material';
 import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import posthog from 'posthog-js';
-
 import Routes from './routes';
-
 import { useGetCollections } from 'gql/hooks/collection.hook';
 import { useGetContracts } from 'gql/hooks/contract.hook';
 import { useGetWebsites } from 'gql/hooks/website.hook';
 
-
-
-function App() {
+const App = () => {
 	const { addToast } = useToast();
 	const { initGA, initPosthog, initLogRocket } = useAnalytics();
 	const history = createBrowserHistory();
@@ -30,11 +25,9 @@ function App() {
 	const { start, progress } = useGenerator();
 	const { settingsForm: {size}} = useMetadata();
 
-
 	useGetCollections()
 	useGetContracts()
 	useGetWebsites()
-
 
 	const initBeforeUnLoad = (showExitPrompt) => {
 		window.onbeforeunload = (event) => {
@@ -50,16 +43,13 @@ function App() {
 		};
 	};
 
+    window.onload = function() {
+        initBeforeUnLoad(start);
+    };
 
-  window.onload = function() {
-    initBeforeUnLoad(start);
-  };
 	useEffect(() => {
-    initBeforeUnLoad(start);
+        initBeforeUnLoad(start);
 	}, [start]);
-
-
-
 
 	useGetCurrentUser();
 	initGA()
@@ -67,8 +57,8 @@ function App() {
 	initLogRocket()
 
 	useEffect(() => {
-		if (posthog.isFeatureEnabled('deploy_smart_contract_test')) {
-				// run your activation code here
+		if (posthog.isFeatureEnabled('deploy_smart_contract_test')) {
+			// run your activation code here
 			posthog.capture(
 				'Viewing deploy_smart_contract_test version', {
 					$set: {
@@ -77,8 +67,6 @@ function App() {
 			});
 		}
 	});
-
-
 
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	useEffect(() => {
@@ -90,16 +78,13 @@ function App() {
 		}
 	}, [smallerThanTablet])
 
-
-
-  return (
+    return (
 		<Box sx={{minHeight: '100vh'}}>
 			<Helmet>
 				<title>Create your NFT collection with no-code - NFT Art Generator</title>
-				<link rel="canonical" href="https://app.nftdatagen.com" />
+				<link rel="canonical" href="https://app.ambition.so/" />
 				<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 			</Helmet>
-
 
 			<Router 
 				getUserConfirmation={(message, callback) => {
@@ -110,11 +95,9 @@ function App() {
 				history={history}
 			>
 				<Routes />
-
 			</Router>
 
-
-			{start ? (
+			{start && (
 				<Box
 					sx={{
 						position: 'fixed',
@@ -135,18 +118,17 @@ function App() {
 						variant="determinate" 
 					/>
 				</Box>
-			):null}
+			)}
 
-
-			{!smallerThanTablet ? (
+			{!smallerThanTablet && (
 				<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'fixed', right: 20, bottom: 50}}>
 					<Avatar sx={{ background: '#738ADB', width: 64, height: 64, cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,.2)'}}>
 						<CommentIcon />
 					</Avatar>
 				</a>
-			) : null}
+			)}
 		</Box>
-  );
+    );
 }
 
 export default App;
