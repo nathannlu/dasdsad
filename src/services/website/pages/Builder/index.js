@@ -41,7 +41,6 @@ const App = props => {
 
 
 	return (
-		<Box sx={{position:'absolute', top:0, zIndex: 2000, width: '100%', height: '100%'}}>
 			<Editor
 				onRender={RenderNode}
 				resolver={templates}
@@ -61,7 +60,6 @@ const App = props => {
 					}
 				</Viewport>
 			</Editor>
-		</Box>
 	);
 };
 
