@@ -23,7 +23,7 @@ const Broken = () => {
                         mb: 5
                     }}
                     alt='Broken Route Icon'
-                    src='/assets/images/browser-error.png'
+                    src='https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61f1dc8561db0122a091c817_browser-error.png'
                 />
                 <Typography 
                     fontSize='125pt'
