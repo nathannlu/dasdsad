@@ -81,14 +81,15 @@ const ComponentSelection = props => {
 						</Typography>
 					</Box>
 					<Stack gap={2} sx={{ bgcolor: 'grey.100', p: 4 }}>
-						{categorizedTemplates.map(group => (
-							<Stack sx={{paddingBottom: 3}} >
+						{categorizedTemplates.map((group, idx) => (
+							<Stack key={idx} sx={{paddingBottom: 3}} >
 								<Typography gutterBottom variant="h5">
 									{group.groupKey}
 								</Typography>
 								<Stack gap={2} direction="row">
-									{group.templates.map(t => (
+									{group.templates.map((t, idx) => (
 										<Grid
+                                            key={idx}
 											item
 											xs={2}
 											sx={{

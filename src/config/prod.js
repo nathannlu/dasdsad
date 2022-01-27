@@ -3,7 +3,8 @@ export default {
 	stripe: {
 		publicKey: "pk_live_51IwVBBJUIYorshTCsEs4rhnpUiekirehz1xmykzFV6vMzJQdSbfHtSPO3u6OCVPTb63XFrIemVHIFUiYLgN2jlc900n94oHzbG",
 		products: {
-			contract: 'prod_L0hlfe2EeLafmO'
+			contract: 'prod_L0hlfe2EeLafmO',
+            website: 'prod_L2PjChEBAf0fur',
 		}
 	},
 	pinata: {

@@ -1,14 +1,13 @@
 import { useAuth } from '../../libs/auth';
 import { useWebsite } from '../../libs/website';
 import { useQuery, useMutation } from '@apollo/client';
-import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED } from '../website.gql';
+import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED, SET_SUBSCRIPTION } from '../website.gql';
 import { REAUTHENTICATE } from '../users.gql';
-
 
 export const useGetWebsites = () => {
 	const { setWebsite } = useWebsite();
 
-  const { ...queryResult } = useQuery(GET_WEBSITES, {
+    const { ...queryResult } = useQuery(GET_WEBSITES, {
 		onCompleted: data => {
 			setWebsite(data?.getWebsites[0])
 		}
@@ -19,7 +18,7 @@ export const useGetWebsites = () => {
 export const useGetPublished = ({title, onCompleted}) => {
 	const { setWebsite } = useWebsite();
 
-  const { ...queryResult } = useQuery(GET_PUBLISHED, {
+    const { ...queryResult } = useQuery(GET_PUBLISHED, {
 		variables: {title},
 		onCompleted: data => {
 			setWebsite(data?.getPublished)
@@ -64,7 +63,7 @@ export const useUpdatePageData = ({ onCompleted, onError }) => {
 		],
 		onQueryUpdated: (observable, diff) => {
 			const websites = diff.result.getWebsites;
-			console.log(websites)
+			//console.log(websites)
 			setWebsite(websites[0]);
 		},
 		onCompleted,
@@ -75,7 +74,22 @@ export const useUpdatePageData = ({ onCompleted, onError }) => {
 	return [ updatePageData, { data }];
 };
 
+export const useSetSubscription = ({ isSubscribed, onCompleted, onError }) => {
+	const { setWebsite } = useWebsite();
 
+	const [setWebsiteSubscription, { data }] = useMutation(SET_SUBSCRIPTION, {
+        variables: { isSubscribed: isSubscribed },
+		onCompleted: (data) => {
+            console.log(data)
+            if (onCompleted) {
+				onCompleted(data);
+			}
+        },
+		onError
+	})
+
+	return [ setWebsiteSubscription, { data }];
+};
 
 // WIP
 export const useAddPage = ({pageName, pageData, onCompleted, onError}) => {

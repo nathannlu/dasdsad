@@ -31,7 +31,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, callback }) => {
 	return (
 		<Modal
 			open={isModalOpen}
-			closeOnOuterClick={true}
 			onClose={()=>setIsModalOpen(false)}
 			sx={{overflow: 'auto', alignItems: 'center', display: 'flex'}}
 		>
@@ -67,6 +66,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, callback }) => {
 							<Stack direction="row" gap={2}>
 								{productPrices?.map((price, i) => (
 									<Card
+                                        key={i}
 										onClick={() => setSelectedPlan(price)}
 										sx={{
 											border: selectedPlan?.id == price.id && 2,
