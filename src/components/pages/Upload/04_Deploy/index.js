@@ -3,7 +3,7 @@ import { useWeb3 } from 'libs/web3';
 import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { useDeploy } from 'libs/deploy';
 import CheckoutModal from 'components/pages/Payments/CheckoutModal';
-
+import { useToast } from 'ds/hooks/useToast';
 import { Elements } from '@stripe/react-stripe-js';
 import config from 'config';
 import {loadStripe} from '@stripe/stripe-js';
@@ -16,9 +16,11 @@ const Deploy = (props) => {
 		start,
 		setStart,
 		activeStep,
+        pinImages,
 		validateNetwork
 	} = useDeploy();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+    const { addToast } = useToast()
 
 	useEffect(() => {
 		(async () => {
@@ -29,8 +31,18 @@ const Deploy = (props) => {
 
 
 	const callback = async () => {
-		await validateNetwork();
-        props.nextStep();
+		try {
+            const res = await validateNetwork();
+            if (!res) throw new Error("Failed to validate network");
+            props.nextStep();
+            await pinImages();
+        }
+        catch (err) {
+            addToast({
+                severity: 'error',
+                message: err.message
+            });
+        }
 	}
 
 	return (
@@ -56,8 +68,8 @@ const Deploy = (props) => {
 						Once you're ready, deploy the contract. Ethereum charges a small gas fee for deploying to the blockchain. Double check to confirm all your information is correct, smart contracts are immutable after deployment.
 					</Typography>
 					<LoadingButton
-						//onClick={callback}
-						onClick={() => setIsModalOpen(true)}
+						onClick={callback}
+						//onClick={() => setIsModalOpen(true)}
 						variant="contained"
 						fullWidth
 					>

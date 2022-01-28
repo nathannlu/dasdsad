@@ -15,7 +15,7 @@ const Deploy = (props) => {
 			ipfsLink,
 		},
 		selectInput,
-		setSelectInput
+		handleSelectNetwork,
 	} = useDeploy();
 	const { verifyStep1 } = useDeployContractForm();
 
@@ -83,21 +83,24 @@ const Deploy = (props) => {
 							<FormLabel sx={{fontWeight:'bold'}}>
 								Select your Blockchain
 							</FormLabel>
-							<TextField select onChange={e=>setSelectInput(e.target.value)} value={selectInput}>
+							<TextField select onChange={e => handleSelectNetwork(e.target.value)} value={selectInput}>
 								{/*
 								<MenuItem value="Solana">
 									Solana
-								</MenuItem>
-								<MenuItem value="Polygon">
-									Polygon
 								</MenuItem>
 								*/}
 								<MenuItem value="ethereum">
 									Ethereum
 								</MenuItem>
+                                <MenuItem value="polygon">
+									Polygon
+								</MenuItem>
                                 <Divider orientation='horizontal'/>
                                 <MenuItem value="rinkeby">
 									Rinkeby Test Network
+								</MenuItem>
+                                <MenuItem value="mumbai">
+									Polygon Mumbai Test Network
 								</MenuItem>
 
 							</TextField>

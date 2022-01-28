@@ -12,7 +12,6 @@ export const Web3Provider = ({ children }) => {
 	const [account, setAccount] = useState(null);			// eth address
 	const { addToast } = useToast();
 
-
 	// Checks if browser has Ethereum extension installed
 	// If yes then set up Web3
 	// If no then alert user
@@ -188,7 +187,6 @@ export const Web3Provider = ({ children }) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
 
-
 		return contract.methods.totalSupply().call()
 	}
 
@@ -200,16 +198,64 @@ export const Web3Provider = ({ children }) => {
 	}
 
     // Get current network
-    const getNetworkID = async () => {
-        return window.ethereum.networkVersion;
+    const getNetworkID = () => {
+        return `0x${parseInt(window.ethereum.networkVersion).toString(16)}`;
     }
 
     // Set current network
     const setNetwork = async (networkID) => {
         return window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: `0x${networkID}` }],
-        });
+            params: [{ chainId: networkID }],
+        })
+        .then(() => {
+            return 'prompt_successful';
+        })
+        .catch(async err => {
+            if (err.code === 4001) { // User cancled prompt
+                return 'prompt_cancled';
+            }
+            else if (err.code === 4902) { // Unrecognized chain ID
+                let networkData = {
+                    chainId: "",
+                    chainName: "",
+                    nativeCurrency: {
+                        name: "",
+                        symbol: "",
+                        decimals: -1
+                    },
+                    rpcUrls: [],
+                    blockExplorerUrls: []
+                }
+
+                networkData.chainId = networkID;
+
+                if (networkID === "0x89") { // Polygon
+                    networkData.rpcUrls.push("https://polygon-rpc.com");
+                    networkData.chainName = "Polygon Mainnet (Matic)";
+                    networkData.nativeCurrency.name = "Polygon";
+                    networkData.nativeCurrency.symbol = "MATIC";
+                    networkData.nativeCurrency.decimals = 18;
+                    networkData.blockExplorerUrls.push("https://polygonscan.com");
+                }
+                else if (networkID === "0x13881") { // Polygon Mumbai Testnet
+                    networkData.rpcUrls.push("https://rpc-mumbai.maticvigil.com");
+                    networkData.chainName = "Polygon Mumbai Testnet";
+                    networkData.nativeCurrency.name = "Mumbai";
+                    networkData.nativeCurrency.symbol = "MATIC";
+                    networkData.nativeCurrency.decimals = 18;
+                    networkData.blockExplorerUrls.push("https://mumbai.polygonscan.com");
+                }
+
+                await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params: [networkData]
+                });
+
+                return 'prompt_successful';
+            }
+            return 'prompt_cancled';
+        })
     }
 
 	return (

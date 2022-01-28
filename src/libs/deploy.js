@@ -140,25 +140,25 @@ export const DeployProvider = ({ children }) => {
 		setStart(false);
 	}
 
-    // Check before network pinning image
-    const validateNetwork = async () => {
+    const handleSelectNetwork = async (value) => {
         try {
             if (!window.ethereum) throw new Error("Please install Metamask Wallet");
-
-            if (selectInput === "ethereum") {        
-                const id = await getNetworkID(); // Check current network
-                if (id !== 1) { // Ethereum
-                    await setNetwork(1); // Switch to ethereum
-                }
+            const id = getNetworkID();
+            let res = true;
+            if (value === "ethereum") {
+                if (id !== "0x1") res = await setNetwork("0x1");
             }
-            else if (selectInput === "rinkeby") {        
-                const id = await getNetworkID(); // Check current network
-                if (id !== 4) { // Rinkeby
-                    await setNetwork(4); // Switch to rinkeby
-                }
-            }     
-
-            await pinImages();
+            else if (value === "polygon") {
+                if (id !== "0x89") res = await setNetwork("0x89");
+            }
+            else if (value === "rinkeby") {
+                if (id !== "0x4") res = await setNetwork("0x4");
+            }
+            else if (value === "mumbai") {
+                if (id !== "0x13881") res = await setNetwork("0x13881");
+            }
+            if (res === "prompt_cancled") throw new Error("Please switch to the desired network")
+            setSelectInput(value);
         }
         catch (e) {
             addToast({
@@ -166,6 +166,37 @@ export const DeployProvider = ({ children }) => {
 				message: e.message
 			});
 			setError(true);
+        }
+    }
+
+    // Check before network pinning image
+    const validateNetwork = async () => {
+        try {
+            if (!window.ethereum) throw new Error("Please install Metamask Wallet");
+            const id = await getNetworkID(); // Check current network
+            let res = true;
+            if (selectInput === "ethereum") {
+                if (id !== "0x1") res = await setNetwork("0x1");
+            }
+            else if (selectInput === "polygon") {
+                if (id !== "0x89") res = await setNetwork("0x89");
+            }
+            else if (selectInput === "rinkeby") {
+                if (id !== "0x4") res = await setNetwork("0x4");
+            }
+            else if (selectInput === "mumbai") {
+                if (id !== "0x13881") res = await setNetwork("0x13881");
+            }
+            if (!res) return false;
+            return true;
+        }
+        catch (e) {
+            addToast({
+				severity: 'error',
+				message: e.message
+			});
+			setError(true);
+            return false;
         }
     }
 
@@ -316,7 +347,7 @@ export const DeployProvider = ({ children }) => {
 				setContracts,
 
 				selectInput,
-				setSelectInput,
+				handleSelectNetwork,
 
 				activeStep,
 				setActiveStep,
