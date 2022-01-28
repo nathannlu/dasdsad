@@ -33,14 +33,32 @@ import {
 import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
 import { AccountLayout, u64 } from '@solana/spl-token';
+import Wallet from '../externals/nodewallet';
 /*
 export type AccountAndPubkey = {
   pubkey: string;
   account: AccountInfo<Buffer>;
 };
-*/
 
 //export type StringPublicKey = string;
+
+*/
+
+// global prototype function
+Object.prototype.toBuffer = function(fn) {
+	if (typeof this == 'string') {
+		console.log(this)
+	//	let uint8Array = Buffer.from(this, 'utf-8')
+	//	let uint8Array = new TextEncoder("utf-8").encode(this);
+//		let uint8Array = new Buffer(this)
+//		let uint8Array = Uint8Array.from([160, 165, 201, 130, 104, 38, 126, 124, 21, 179, 1, 78, 84, 33, 193, 205, 224, 50, 224, 115, 67, 130, 183, 186, 16, 13, 10, 178, 255, 102, 236, 235])
+		let uint8Array = Buffer.alloc(32);
+		console.log(uint8Array)
+		return uint8Array
+	//	console.log(fn)
+		
+	}
+};
 
 export function getCluster(name) {
   for (const cluster of CLUSTERS) {
@@ -174,7 +192,6 @@ export const createCandyMachineV2 = async function (
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
-			/*
       signers: [payerWallet, candyAccount],
       remainingAccounts:
         remainingAccounts.length > 0 ? remainingAccounts : undefined,
@@ -186,7 +203,6 @@ export const createCandyMachineV2 = async function (
           candyAccount.publicKey,
         ),
       ],
-			*/
     }),
 	}
 
@@ -576,9 +592,9 @@ export function loadWalletKey(keypair) {
   const loaded = Keypair.fromSecretKey(
 //    new Uint8Array(JSON.parse(fs.readFileSync(keypair).toString())),
 
-		new Uint8Array(JSON.parse('{}')),
+		new Uint8Array(keypair),
   );
-  log.info(`wallet public key: ${loaded.publicKey}`);
+  console.log(`wallet public key: ${loaded.publicKey}`);
   return loaded;
 }
 
@@ -596,7 +612,8 @@ export async function loadCandyProgramV2(
     customRpcUrl || getCluster(env),
   );
 
-  const walletWrapper = walletKeyPair // new anchor.Wallet(walletKeyPair);
+  const walletWrapper = new Wallet(walletKeyPair);
+	console.log('wallet wrapper', walletWrapper)
   const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
   });

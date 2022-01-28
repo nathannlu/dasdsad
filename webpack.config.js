@@ -31,11 +31,9 @@ module.exports = env => {
 				{ from: 'public/assets/js', to: 'assets/js' }, // Copies webworkers
 				{ from: 'public/_redirects', to: '_redirects' }
 			]),
-			/*
 			new webpack.ProvidePlugin({
 				Buffer: ['buffer', 'Buffer'],
 			}),
-			*/
 	//		new BundleAnalyzerPlugin
 		],
 		module: {
