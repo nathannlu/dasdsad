@@ -68,8 +68,8 @@ const Deploy = (props) => {
 						Once you're ready, deploy the contract. Ethereum charges a small gas fee for deploying to the blockchain. Double check to confirm all your information is correct, smart contracts are immutable after deployment.
 					</Typography>
 					<LoadingButton
-						onClick={callback}
-						//onClick={() => setIsModalOpen(true)}
+						//onClick={callback}
+						onClick={() => setIsModalOpen(true)}
 						variant="contained"
 						fullWidth
 					>

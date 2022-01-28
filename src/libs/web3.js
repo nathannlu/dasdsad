@@ -9,7 +9,7 @@ export const Web3Context = React.createContext({})
 export const useWeb3 = () => useContext(Web3Context)
 
 export const Web3Provider = ({ children }) => {
-	const [account, setAccount] = useState(null);			// eth address
+	const [account, setAccount] = useState(null); // eth address
 	const { addToast } = useToast();
 
 	// Checks if browser has Ethereum extension installed

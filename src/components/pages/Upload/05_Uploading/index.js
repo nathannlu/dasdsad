@@ -6,7 +6,7 @@ import { useDeploy } from 'libs/deploy';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Uploading = () => {
-	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, metadataUrl, loading, error } = useDeploy();
+	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, metadataUrl, loading, error, newContract } = useDeploy();
 	const history = useHistory();
 	
 	return (
@@ -84,9 +84,9 @@ const Uploading = () => {
 					</StepLabel>
 					<StepContent>
 						<Stack gap={2}>
-							{loading ? (
+							{!loading ? (
 								<Box>
-									Your collection is live! Smart contract is deployed to this address {ipfsUrl}.
+									Your collection is live! Smart contract is deployed to this address {newContract}.
 								</Box>
 							) : (
 								<CircularProgress />

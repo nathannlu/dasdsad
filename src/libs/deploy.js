@@ -15,7 +15,7 @@ export const DeployContext = React.createContext({})
 export const useDeploy = () => useContext(DeployContext)
 
 export const DeployProvider = ({ children }) => {
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const { addToast } = useToast()
 	const { account, getNetworkID, setNetwork } = useWeb3()
 	const { user } = useAuth();
@@ -30,6 +30,7 @@ export const DeployProvider = ({ children }) => {
 	const [imagesUrl, setImagesUrl] = useState('')
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const [newContract, setNewContract] = useState('');
 	const { form: deployContractForm } = useForm({
 		priceInEth: {
 			default: '',
@@ -51,21 +52,19 @@ export const DeployProvider = ({ children }) => {
 
 	const deployContract = async () => {
 		try {
-			const web3 = window.web3
-			let contract = new web3.eth.Contract(NFTCollectible.abi)
-			const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
+			const web3 = window.web3;
+            let contract = new web3.eth.Contract(NFTCollectible.abi);
+            const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
 
-			console.log(contract.defaultChain)
-
-			let options;
-			if(deployContractForm.ipfsLink.value.length < 1) {
+            let options;
+            if(deployContractForm.ipfsLink.value.length < 1) {
 				options = {
 					data: NFTCollectible.bytecode,
 					arguments: [ipfsUrl, priceInWei, deployContractForm.maxSupply.value]
 				}
 			}
 
-			if(deployContractForm.ipfsLink.value.length > 0) {
+            if(deployContractForm.ipfsLink.value.length > 0) {
 				addToast({
 					severity: 'info',
 					message: "Deploying with IPFS link: " + deployContractForm.ipfsLink.value
@@ -76,19 +75,21 @@ export const DeployProvider = ({ children }) => {
 				}
 			}
 
-			const senderInfo = {
-				from: account
+            const senderInfo = {
+				from: account,
 			}
 
-			contract.deploy(options)
-            .send(senderInfo, (err, txnHash) => {
+            contract
+            .deploy(options)
+            .send(senderInfo, (err, txnhash) => {
                 if(err) {
                     addToast({
                         severity: 'error',
                         message: err.message
                     });
                     setError(error)
-                } else {
+                } 
+                else {
                     addToast({
                         severity: 'info',
                         message: "Deploying contract... should take a couple of seconds"
@@ -103,17 +104,26 @@ export const DeployProvider = ({ children }) => {
                 setLoading(false)
                 setError(true)
             })
-            .on('confirmation', (confirmationNumber, receipt) => {
-                console.log('deployed')
+            .on('transactionHash', (transactionHash) => { 
+                // do Nothing
+            })
+            .on('receipt', receipt => {
+                // console.log("receipt: " + receipt.contractAddress) // contains the new contract address
+            })
+            .on('confirmation', (confirmationNumber, receipt) => { 
+                //console.log('deployed');
+            })
+            .then(async newContractInstance => {
+                const newContractAddress = newContractInstance.options.address; // instance with the new contract address
+                await onDeploySuccess(newContractAddress);
+                setNewContract(newContractAddress);
+                setLoading(false);
                 addToast({
                     severity: 'success',
-                    message:'Contract deployed under:' + receipt.contractAddress
+                    message: `Contract deployed under: ${newContractAddress}`
                 })
-                onDeploySuccess(receipt.contractAddress);
-                
-                posthog.capture('User deployed smart contract');
-                setLoading(false)
-            })
+                // posthog.capture('User deployed smart contract');
+            });
 		} 
         catch (e) {
 			addToast({
@@ -175,8 +185,6 @@ export const DeployProvider = ({ children }) => {
             if (!window.ethereum) throw new Error("Please install Metamask Wallet");
             const id = await getNetworkID(); // Check current network
             let res = true;
-            console.log(selectInput)
-            console.log(id)
             if (selectInput === "ethereum") {
                 if (id !== "0x1") res = await setNetwork("0x1");
             }
@@ -347,6 +355,8 @@ export const DeployProvider = ({ children }) => {
 				deployContract,
 				contracts,
 				setContracts,
+                loading,
+                newContract,
 
 				selectInput,
 				handleSelectNetwork,
