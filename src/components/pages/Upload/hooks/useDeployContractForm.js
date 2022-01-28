@@ -22,11 +22,10 @@ export const useDeployContractForm = () => {
 	const { addToast } = useToast();
 	const { deployContractForm } = useDeploy();
 
-
 	const onDeploy = () => {
 		addToast({
 			severity: 'info',
-			message: 'Deploying contract to Ethereum. This might take a couple of seconds...'
+			message: 'Deploying contract to blockchain. This might take a couple of seconds...'
 		})
 	}
 
@@ -55,6 +54,7 @@ export const useDeployContractForm = () => {
 			return true
 		}
 	}
+
 	const verifyStep2 = (files) => {
 		if(files.length !== parseInt(deployContractForm.maxSupply.value)) {
 			addToast({
@@ -70,6 +70,7 @@ export const useDeployContractForm = () => {
 			return true;
 		}
 	}
+
 	const verifyStep3 = (files) => {
 		if(files.length !== parseInt(deployContractForm.maxSupply.value) + 1) {
 			addToast({

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useWeb3 } from 'libs/web3';
-import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
+import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton, Divider } from 'ds/components';
 import { useDeploy } from 'libs/deploy';
 import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
-
 
 const Deploy = (props) => {
 	const {
@@ -95,6 +94,10 @@ const Deploy = (props) => {
 								*/}
 								<MenuItem value="ethereum">
 									Ethereum
+								</MenuItem>
+                                <Divider orientation='horizontal'/>
+                                <MenuItem value="rinkeby">
+									Rinkeby Test Network
 								</MenuItem>
 
 							</TextField>

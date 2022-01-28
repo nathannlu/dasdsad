@@ -32,7 +32,6 @@ export const Web3Provider = ({ children }) => {
 			})
 		}
 	};
-
 	
 	// Load account and load smart contracts
 	const loadBlockchainData = async (_contract) => {
@@ -46,7 +45,6 @@ export const Web3Provider = ({ children }) => {
 		}
 	};
 
-
 	const signNonce = async ({address, nonce}) => {
 		const web3 = window.web3
 
@@ -58,7 +56,6 @@ export const Web3Provider = ({ children }) => {
 
 		return ({address, signature})
 	}
-
 
 	// Mint NFT
 	const mint = async (price, contractAddress) => {
@@ -101,8 +98,6 @@ export const Web3Provider = ({ children }) => {
 	const getBaseUri = async (baseUri, contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
-
-
 		return contract.methods.baseTokenURI().call()
 	}
 	
@@ -196,18 +191,26 @@ export const Web3Provider = ({ children }) => {
 
 		return contract.methods.totalSupply().call()
 	}
+
 	const getBaseTokenURI = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
 
-
 		return contract.methods.baseTokenURI().call()
 	}
 
+    // Get current network
+    const getNetworkID = async () => {
+        return window.ethereum.networkVersion;
+    }
 
-
-
-
+    // Set current network
+    const setNetwork = async (networkID) => {
+        return window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: `0x${networkID}` }],
+        });
+    }
 
 	return (
 		<Web3Context.Provider
@@ -224,6 +227,8 @@ export const Web3Provider = ({ children }) => {
 				account,
 				signNonce,
 				checkOwner,
+                getNetworkID,
+                setNetwork,
 			}}
 		>
 			{ children }

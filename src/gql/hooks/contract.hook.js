@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI } from '../contract.gql';
 import { useDeploy } from 'libs/deploy';
 
-
 export const useCreateContract = ({ onCompleted, onError }) => {
 	const [createContract, { ...mutationResult }] = useMutation(CREATE_CONTRACT, {
 		onCompleted,
@@ -14,7 +13,7 @@ export const useCreateContract = ({ onCompleted, onError }) => {
 
 export const useGetContracts = async () => {
 	const { setContracts } = useDeploy();
-  const { ...queryResult } = useQuery(GET_CONTRACTS, {
+    const { ...queryResult } = useQuery(GET_CONTRACTS, {
 		onCompleted: async data => {
 			setContracts(data.getContracts)
 		},
@@ -31,5 +30,3 @@ export const useSetBaseUri = ({ onCompleted, onError }) => {
 
 	return [ setBaseUri, { ...mutationResult }]
 };
-
-

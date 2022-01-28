@@ -16,7 +16,7 @@ const Deploy = (props) => {
 		start,
 		setStart,
 		activeStep,
-		pinImages
+		validateNetwork
 	} = useDeploy();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -29,8 +29,8 @@ const Deploy = (props) => {
 
 
 	const callback = async () => {
-		props.nextStep();
-		await pinImages();
+		await validateNetwork();
+        props.nextStep();
 	}
 
 	return (
@@ -56,7 +56,7 @@ const Deploy = (props) => {
 						Once you're ready, deploy the contract. Ethereum charges a small gas fee for deploying to the blockchain. Double check to confirm all your information is correct, smart contracts are immutable after deployment.
 					</Typography>
 					<LoadingButton
-//						onClick={callback}
+						//onClick={callback}
 						onClick={() => setIsModalOpen(true)}
 						variant="contained"
 						fullWidth

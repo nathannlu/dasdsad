@@ -14,23 +14,16 @@ export const DeployContext = React.createContext({})
 
 export const useDeploy = () => useContext(DeployContext)
 
-
-
 export const DeployProvider = ({ children }) => {
 	const [loading, setLoading] = useState(false)
 	const { addToast } = useToast()
-	const { account } = useWeb3()
+	const { account, getNetworkID, setNetwork } = useWeb3()
 	const { user } = useAuth();
 	const [activeStep, setActiveStep] = useState(0);
 	const [start, setStart] = useState(false);
 	const [error, setError] = useState(false);
-
-
 	const [contracts, setContracts] = useState([]);
 	const [selectInput, setSelectInput] = useState('ethereum');
-
-	
-
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedJson, setUploadedJson] = useState([]);
 	// IPFS urls 
@@ -64,7 +57,6 @@ export const DeployProvider = ({ children }) => {
 
 			console.log(contract.defaultChain)
 
-
 			let options;
 			if(deployContractForm.ipfsLink.value.length < 1) {
 				options = {
@@ -72,56 +64,58 @@ export const DeployProvider = ({ children }) => {
 					arguments: [ipfsUrl, priceInWei, deployContractForm.maxSupply.value]
 				}
 			}
+
 			if(deployContractForm.ipfsLink.value.length > 0) {
 				addToast({
 					severity: 'info',
-					message: "Deploying with IPFS link: " +deployContractForm.ipfsLink.value
+					message: "Deploying with IPFS link: " + deployContractForm.ipfsLink.value
 				});
 				options = {
 					data: NFTCollectible.bytecode,
 					arguments: [deployContractForm.ipfsLink.value, priceInWei, deployContractForm.maxSupply.value]
 				}
 			}
+
 			const senderInfo = {
 				from: account
 			}
 
-			contract
-				.deploy(options)
-				.send(senderInfo, (err, txnHash) => {
-					if(err) {
-						addToast({
-							severity: 'error',
-							message: err.message
-						});
-						setError(error)
-					} else {
-						addToast({
-							severity: 'info',
-							message: "Deploying contract... should take a couple of seconds"
-						});
-					}
-				})
-				.on('error', err => {
-					addToast({
-						severity: 'error',
-						message: err.message
-					});
-					setLoading(false)
-					setError(true)
-				})
-				.on('confirmation', (confirmationNumber, receipt) => {
-					console.log('deployed')
-					addToast({
-						severity: 'success',
-						message:'Contract deployed under:' + receipt.contractAddress
-					})
-					onDeploySuccess(receipt.contractAddress);
-					
-					posthog.capture('User deployed smart contract');
-					setLoading(false)
-				})
-		} catch (e) {
+			contract.deploy(options)
+            .send(senderInfo, (err, txnHash) => {
+                if(err) {
+                    addToast({
+                        severity: 'error',
+                        message: err.message
+                    });
+                    setError(error)
+                } else {
+                    addToast({
+                        severity: 'info',
+                        message: "Deploying contract... should take a couple of seconds"
+                    });
+                }
+            })
+            .on('error', err => {
+                addToast({
+                    severity: 'error',
+                    message: err.message
+                });
+                setLoading(false)
+                setError(true)
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+                console.log('deployed')
+                addToast({
+                    severity: 'success',
+                    message:'Contract deployed under:' + receipt.contractAddress
+                })
+                onDeploySuccess(receipt.contractAddress);
+                
+                posthog.capture('User deployed smart contract');
+                setLoading(false)
+            })
+		} 
+        catch (e) {
 			addToast({
 				severity: 'error',
 				message: e.message
@@ -146,28 +140,58 @@ export const DeployProvider = ({ children }) => {
 		setStart(false);
 	}
 
+    // Check before network pinning image
+    const validateNetwork = async () => {
+        try {
+            if (!window.ethereum) throw new Error("Please install Metamask Wallet");
+
+            if (selectInput === "ethereum") {        
+                const id = await getNetworkID(); // Check current network
+                if (id !== 1) { // Ethereum
+                    await setNetwork(1); // Switch to ethereum
+                }
+            }
+            else if (selectInput === "rinkeby") {        
+                const id = await getNetworkID(); // Check current network
+                if (id !== 4) { // Rinkeby
+                    await setNetwork(4); // Switch to rinkeby
+                }
+            }     
+
+            await pinImages();
+        }
+        catch (e) {
+            addToast({
+				severity: 'error',
+				message: e.message
+			});
+			setError(true);
+        }
+    }
+
 	const pinImages = async () => {
 		const folder = uploadedFiles
 		setStart(true);
 		setActiveStep(0);
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-    const src = `./images`;
+        const src = `./images`;
 
 		addToast({
 			severity: 'info',
 			message: "Deploying images to IPFS... this may take a long time depending on your collection size"
 		});
 
-    let data = new FormData();
+        let data = new FormData();
 		for (let i = 0; i < folder.length; i++) {
 			data.append('file', folder[i], `/assets/${folder[i].name}`)
 		}
 
-    //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
-    //metadata is optional
-    const metadata = JSON.stringify({
-			name: user.id + '_assets',
-    });
+        //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
+        //metadata is optional
+        const metadata = JSON.stringify({
+            name: user.id + '_assets',
+        });
+
 		data.append('pinataMetadata', metadata);
 
 		const opt = {
@@ -178,6 +202,7 @@ export const DeployProvider = ({ children }) => {
 				'pinata_secret_api_key': config.pinata.secret
 			}
 		}
+
 		try {
 			const res = await axios.post(url,data,opt)
 			setImagesUrl(res.data.IpfsHash)
@@ -185,7 +210,8 @@ export const DeployProvider = ({ children }) => {
 				severity: 'success',
 				message: 'Added images to IPFS under URL: ipfs//' + res.data.IpfsHash
 			})
-		} catch(e) {
+		} 
+        catch(e) {
 			addToast({
 				severity: 'error',
 				message: e.message
@@ -222,7 +248,7 @@ export const DeployProvider = ({ children }) => {
 
 	const pinMetadata = async () => {
 		const folder = uploadedJson;
-    let data = new FormData();
+        let data = new FormData();
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
 		addToast({
@@ -235,9 +261,10 @@ export const DeployProvider = ({ children }) => {
 			await updateAndSaveJson(folder[i], data)
 		}
 
-    const metadata = JSON.stringify({
-			name: user.id + '_metadata',
-    });
+        const metadata = JSON.stringify({
+            name: user.id + '_metadata',
+        });
+
 		data.append('pinataMetadata', metadata);
 
 		const opt = {
@@ -248,6 +275,7 @@ export const DeployProvider = ({ children }) => {
 				'pinata_secret_api_key': config.pinata.secret
 			}
 		}
+
 		try {
 			const res = await axios.post(url, data, opt)
 			addToast({
@@ -256,15 +284,14 @@ export const DeployProvider = ({ children }) => {
 			})
 			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/')
 			setMetadataUrl(res.data.IpfsHash)
-
-		} catch(e) {
+		} 
+        catch(e) {
 			addToast({
 				severity: 'error',
 				message: e.message 
 			});
-    };
+        };
 	}
-
 
 	return (
 		<DeployContext.Provider
@@ -281,6 +308,7 @@ export const DeployProvider = ({ children }) => {
 				setIpfsUrl,
 				metadataUrl,
 
+                validateNetwork,
 				pinImages,
 				pinMetadata,
 				deployContract,
