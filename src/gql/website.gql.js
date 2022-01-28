@@ -64,7 +64,13 @@ export const GET_PUBLISHED = gql`
 		}
 	}
 `
-
+export const SET_SUBSCRIPTION = gql`
+    mutation SetWebsiteSubscription($isSubscribed: Boolean!) {
+        setWebsiteSubscription(isSubscribed: $isSubscribed) {
+            isSubscribed
+        }
+    }
+`
 
 
 export const UPDATE_PAGE_DATA = gql`

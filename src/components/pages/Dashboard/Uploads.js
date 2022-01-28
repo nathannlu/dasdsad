@@ -19,8 +19,12 @@ const Collections = () => {
 						</Box>
 
 						<Grid container>
-							{contracts.map((contract, i) => (
-							<Grid item xs={4}>
+							{contracts.map((contract, idx) => (
+							<Grid 
+                                key={idx} 
+                                item 
+                                xs={4}
+                            >
 								<Link to={`/contract/${contract.id}`}>
 									<Card variant="outlined">
 										<Box sx={{ bgcolor: 'grey.300', p:5}}>

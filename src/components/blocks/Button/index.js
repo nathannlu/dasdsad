@@ -12,12 +12,12 @@ const Button = ({isMint, text, link}) => {
 	}, [])
 
 	const {website} = useWebsite();
-	console.log(website)
+	//console.log(website)
 
 	return isMint ? (
-		<button onClick={() => mint(website.settings.connectedContractAddress)} class="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">{text}</button>
+		<button onClick={() => mint(website.settings.connectedContractAddress)} className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">{text}</button>
 	) : (
-		<button onClick={() => window.location.href = link} class="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">{text}</button>
+		<button onClick={() => window.location.href = link} className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">{text}</button>
 	)
 };
 

@@ -41,8 +41,6 @@ const Website = () => {
 		}
 	}
 
-		
-
 	return (
 		<Fade in>
 			<Container>
@@ -80,8 +78,11 @@ const Website = () => {
 									Select your smart contract
 								</FormLabel>
 								<TextField select onChange={e=>setSelectInput(e.target.value)} value={selectInput}>
-									{contracts.map(c => (
-										<MenuItem value={c.address}>
+									{contracts.map((c, idx) => (
+										<MenuItem 
+                                            key={idx} 
+                                            value={c.address}
+                                        >
 											{c.address}
 										</MenuItem>
 									))}

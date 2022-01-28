@@ -38,7 +38,6 @@ const Viewport = props => {
 		})
 	})
 	const { addToast } = useToast();
-
 	const { getWebsitePage } = useWebsite();
 	const { uid } = getWebsitePage(window.location.pathname.split("/").slice(-1).pop())
 
@@ -53,7 +52,7 @@ const Viewport = props => {
 			>
 				<SettingsPanel />
 				<ComponentSelection />
-				<Navbar />
+                <Navbar />
 
 				<div className="flex-1 h-full">
 					<div className="w-full h-full">
