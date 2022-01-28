@@ -4,6 +4,7 @@ const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack')
 
 
 module.exports = env => {
@@ -30,6 +31,11 @@ module.exports = env => {
 				{ from: 'public/assets/js', to: 'assets/js' }, // Copies webworkers
 				{ from: 'public/_redirects', to: '_redirects' }
 			]),
+			/*
+			new webpack.ProvidePlugin({
+				Buffer: ['buffer', 'Buffer'],
+			}),
+			*/
 	//		new BundleAnalyzerPlugin
 		],
 		module: {
@@ -53,6 +59,11 @@ module.exports = env => {
 					}
 				},
 				{
+					test: /\.mjs$/,
+					include: /node_modules/,
+					type: 'javascript/auto'
+				},
+				{
 					test: /\.css$/i,
 					use: ["style-loader", "css-loader"],
 				},
@@ -63,7 +74,7 @@ module.exports = env => {
 			]
 		},
 		resolve: {
-			extensions: ['.js', '.jsx', '.ts', '.tsx'],
+			extensions: ['.mjs','.js', '.jsx', '.ts', '.tsx'],
 			alias: {
 				'react-hooks-worker': `${__dirname}/src`,
 				'ds': `${__dirname}/src/ds`,
@@ -77,7 +88,18 @@ module.exports = env => {
 				'ethereum': `${__dirname}/src/ethereum`,
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
+				'solana': `${__dirname}/src/solana`,
 			},
+			/*
+			fallback: {
+				util: require.resolve('util/'),
+				assert: require.resolve('assert/'),
+				buffer: require.resolve('buffer/'),
+				process: require.resolve('process/browser'),
+				stream: require.resolve("stream-browserify"),
+				zlib: require.resolve("browserify-zlib")
+			}
+			*/
 		},
 		devServer: {
 			port: process.env.PORT || '3000',

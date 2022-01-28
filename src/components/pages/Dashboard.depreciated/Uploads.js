@@ -4,12 +4,18 @@ import { Edit as EditIcon, School as SchoolIcon, PlayCircleOutline as PlayIcon }
 import posthog from 'posthog-js';
 import { useDeploy } from 'libs/deploy';
 
+import Solana from './Solana';
+
+
 const Collections = () => {
 	const { contracts } = useDeploy();
 	
 	return (
 		<Fade in>
 			<Box sx={{mt: 10}}>
+				<Solana />
+
+
 				{contracts.length > 0 ? (
 					<Box>
 						<Box>
