@@ -3,18 +3,40 @@ import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, 
 import Dropzone from 'react-dropzone'
 import { usePinata } from '../hooks/usePinata';
 import { useDeploy } from 'libs/deploy';
+import { useWeb3 } from 'libs/web3';
 import { useDeployContractForm } from '../hooks/useDeployContractForm';
+import { useToast } from 'ds/hooks/useToast';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
 
 const Connect = (props) => {
-	const { uploadedJson, setUploadedJson, ipfsUrl } = useDeploy()
+	const { uploadedJson, setUploadedJson, ipfsUrl } = useDeploy();
+    const { getNetworkID } = useWeb3();
 	const { pinMetadataToIPFS } = usePinata();
 	const { verifyStep3 } = useDeployContractForm();
+    const { addToast } = useToast();
 
-	const handleJsonUpload = (acceptedFiles) => {
-		setUploadedJson([...uploadedJson, ...acceptedFiles]);
+	const handleJsonUpload = async (acceptedFiles) => {
+        // validate if metadata is for the right network
+        const id = getNetworkID();
+        const fileReader = new FileReader();
+        fileReader.onload = (evt) => {
+            const json = JSON.parse(evt.target.result);
+            if (id === "0x89" || id === "0x13881") { // Polygon and Mumbai
+                if (!json.hasOwnProperty("symbol")) {
+                    addToast({
+                        severity: 'error',
+                        message: "Your metadata must be compatible with Solana"
+                    })
+                } else {
+                    setUploadedJson([...uploadedJson, ...acceptedFiles]);
+                }
+            } else {
+                setUploadedJson([...uploadedJson, ...acceptedFiles]);
+            }
+        }
+        fileReader.readAsText(acceptedFiles[0]);
 	}
 	const onMetadataSubmit = async e => {
 		console.log(uploadedJson)

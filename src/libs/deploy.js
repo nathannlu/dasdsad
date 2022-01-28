@@ -175,6 +175,8 @@ export const DeployProvider = ({ children }) => {
             if (!window.ethereum) throw new Error("Please install Metamask Wallet");
             const id = await getNetworkID(); // Check current network
             let res = true;
+            console.log(selectInput)
+            console.log(id)
             if (selectInput === "ethereum") {
                 if (id !== "0x1") res = await setNetwork("0x1");
             }
