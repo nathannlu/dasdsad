@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Prompt } from 'react-router-dom';
+import { BrowserRouter as Router, Prompt, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { Helmet } from 'react-helmet';
 import { Avatar, Box, Typography } from 'ds/components';
@@ -12,12 +12,19 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { LinearProgress } from '@mui/material';
 import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import posthog from 'posthog-js';
-import Routes from './routes';
+
+import Routes from 'components/routes';
+
 import { useGetCollections } from 'gql/hooks/collection.hook';
 import { useGetContracts } from 'gql/hooks/contract.hook';
 import { useGetWebsites } from 'gql/hooks/website.hook';
 
-const App = () => {
+
+import Blockchain from 'services/blockchain';
+
+
+
+function App() {
 	const { addToast } = useToast();
 	const { initGA, initPosthog, initLogRocket } = useAnalytics();
 	const history = createBrowserHistory();
@@ -95,6 +102,10 @@ const App = () => {
 				history={history}
 			>
 				<Routes />
+				{/*
+				<Route path="/smart-contracts" component={Blockchain} />
+				*/}
+
 			</Router>
 
 			{start && (

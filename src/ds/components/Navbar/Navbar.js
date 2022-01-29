@@ -13,11 +13,11 @@ const Navbar = ({ pageName }) => {
 	const open = Boolean(anchorEl);
 
 	return (
-		<AppBar position="fixed" sx={{background: 'black', py: 2}}>
+		<AppBar position="fixed" sx={{bgcolor: 'grey.100', py: 2, boxShadow: 'none', borderBottom: '1px solid rgba(0,0,0,.2)'}}>
 			<Container>
 				<Stack direction="row" justifyContent="space-between" alignItems="center">
 					<Link to="/dashboard">
-						<img style={{width: '125px'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png" />
+						<img style={{height: '25px'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png" />
 					</Link>
 					<Box className="ml-auto">
 						<div 
@@ -27,6 +27,7 @@ const Navbar = ({ pageName }) => {
 							aria-expanded={open ? 'true' : undefined}
 							onClick={e => setAnchorEl(e.currentTarget)}
 							className="ml-auto"
+							style={{color: 'black'}}
 						>
 							Account
 						</div>

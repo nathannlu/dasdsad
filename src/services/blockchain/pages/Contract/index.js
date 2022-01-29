@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useDeploy } from 'libs/deploy';
 import { useGetContracts } from 'gql/hooks/contract.hook';
-import { Container, TextField, Stack, Box, Grid, Typography, Button } from 'ds/components';
+import { Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
@@ -76,20 +76,46 @@ const Upload = (props) => {
 
 	return (
 		<Container>
-			<Stack gap={2}>
-				<Stack>
-					<Typography variant="h3">
-						Dashboard for contract
-					</Typography>
-					<div>
-						Contract address:
-						{contract.address ? contract.address : null}
-					</div>
-				</Stack>
+			<Stack gap={4}>
 
+				<Stack direction="column" gap={2}>
+					<Box>
+						<img 
+							style={{height: '40px'}}
+							src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6943de77b8cf95ef1_deploy-to-blockchain-icon.png" 
+						/>
+					</Box>
+					<Box>
+						<Typography variant="h4">
+							Dashboard for contract
+						</Typography>
+					</Box>
+					<Box>
+						<Typography variant="body">
+							Your deployed smart-contract's address on the blockchain
+						</Typography>
+
+						<Box sx={{
+							px:1,
+							py:.5,
+							bgcolor: 'grey.100', 
+							fontWeight:'bold', 
+							border: '0.5px solid rgba(0,0,0,.1)',
+							borderRadius: 2,
+						}}>
+							{contract.address ? contract.address : 'asd'}
+						</Box>
+					</Box>
+					<Box>
+						<Link to="https://opensea.io/get-listed/step-two" target="_blank">
+							Connect with OpenSea
+						</Link>
+					</Box>
+				</Stack>
+				<Divider />
 				<Stack>
-					<Typography variant="h6">
-						General information
+					<Typography variant="h6" sx={{fontWeight:'bold'}}>
+						Details
 					</Typography>
 					<div>
 						Balance:
@@ -109,26 +135,36 @@ const Upload = (props) => {
 						{contract?.nftCollection ? contract?.nftCollection?.size : null}
 					</div>
 				</Stack>
+				<Divider />
+				<Stack gap={2}>
+					<Typography variant="h6" sx={{fontWeight:'bold'}}>
+						Interact
+					</Typography>
+					<Stack direction="row" gap={2}>
+						<Button size="small" variant="contained" onClick={() => withdraw(contract.address)}>
+							Pay out to bank
+						</Button>
+						<Button size="small" variant="contained" onClick={() => mintNow()}>
+							Mint
+						</Button>
 
-				<Stack direction="row" gap={2}>
-					<Button variant="contained" onClick={() => withdraw(contract.address)}>
-						Withdraw
-					</Button>
-					<Button variant="contained" onClick={() => mintNow()}>
-						Mint
-					</Button>
 
+					</Stack>
+						<Stack direction="row">
+							<TextField 
+								size="small"
+								placeholder="New metadata URL" 
+								onChange={e => setNewMetadataUrl(e.target.value)}
+							/>
+							<Button size="small" variant="contained" onClick={() => {
+								updateBaseUri(newMetadataUrl, contract.address)
+							}}>
+								Update Base URI
+							</Button>
+						</Stack>
 				</Stack>
 					
-					<Stack>
-						Set new metadata url
-						<TextField onChange={e => setNewMetadataUrl(e.target.value)} />
-						<Button variant="contained" onClick={() => {
-							updateBaseUri(newMetadataUrl, contract.address)
-						}}>
-							Update Base URI
-						</Button>
-					</Stack>
+
 
 				<Stack sx={{background: '#eee', borderRadius: 2, p:2}}>
 					<Typography variant="h6">

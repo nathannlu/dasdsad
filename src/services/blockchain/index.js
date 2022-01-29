@@ -1,28 +1,28 @@
 import React from 'react';
-import BlockchainProvider from './provider';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { createBrowserHistory } from 'history';
+import { DeployProvider } from './provider';
+import Routes from './routes';
 
 const BlockchainService = () => {
+	const history = createBrowserHistory();
 
 	return (
 		<>
 		<Helmet>
-			<title>Create your NFT collection with no-code - NFT Art Generator</title>
-			<link rel="canonical" href="https://app.nftdatagen.com" />
+			<title>
+				Blockchain - Ambition
+			</title>
+			<link rel="canonical" href="https://app.ambition.so" />
 			<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 		</Helmet>
 
-		<BlockchainProvider>
-			<Router 
-				getUserConfirmation={(message, callback) => {
-					const allowTransition = window.confirm(message);
-					console.log(message)
-					callback(allowTransition);	
-				}}
-				history={history}
-			>
+		<DeployProvider>
+			<Router history={history}>
 				<Routes />
 			</Router>
-		</BlockchainProvider>
+		</DeployProvider>
 		</>
 	);
 };

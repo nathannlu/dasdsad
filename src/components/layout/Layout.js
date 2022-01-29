@@ -3,7 +3,7 @@ import { Navbar } from 'ds/components';
 
 const Layout = ({ children }) => {
 	return (
-		<main>
+		<main style={{paddingTop: '58px'}}>
 			<Navbar />
 			{children}
 		</main>
