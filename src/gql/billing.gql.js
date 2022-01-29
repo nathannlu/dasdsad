@@ -27,3 +27,25 @@ export const CREATE_PAYMENT_INTENT = gql`
 		createPaymentIntent(price: $price)
 	}
 `
+
+export const GET_USER_SUBSCRIPTIONS = gql`
+	query GetUserSubscriptions($customerId: String!) {
+		getUserSubscriptions(customerId: $customerId) {
+			id
+            status
+            productId
+            productType
+            price
+            startDate
+            endDate
+            isCanceled
+            canceledDate
+		}
+	}
+`
+
+export const STOP_USER_SUBSCRIPTION = gql`
+    mutation StopUserSubscription($subscriptionId: String!) {
+        stopUserSubscription(subscriptionId: $subscriptionId)
+    }
+`
