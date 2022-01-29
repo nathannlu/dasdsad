@@ -1,8 +1,8 @@
 import { useQuery, useMutation } from '@apollo/client';
 import { CREATE_COLLECTION, GET_COLLECTIONS } from '../collection.gql';
-import { useLayerManager } from 'core/manager';
-import { useMetadata } from 'core/metadata'
-import { useTraits } from 'core/traits';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useMetadata } from 'services/generator/controllers/metadata'
+import { useTraits } from 'services/generator/controllers/traits';
 import { toDataURL } from 'utils/imageData';
 
 export const useCreateCollection = ({ onCompleted, onError }) => {
@@ -23,7 +23,7 @@ export const useGetCollections = async () => {
 		onCompleted: async data => {
 			// Update layer maanger, traits manager
 			let collections = data.getCollections
-			let layers = [...collections[0].layers]
+			let layers = [...collections[0]?.layers]
 			let clonedLayers = JSON.parse(JSON.stringify(layers))
 
 			// Add field for base64
@@ -46,6 +46,7 @@ export const useGetCollections = async () => {
 
 				return {...newState}
 			});
+
 			setLayers(clonedLayers)
 		},
 	});

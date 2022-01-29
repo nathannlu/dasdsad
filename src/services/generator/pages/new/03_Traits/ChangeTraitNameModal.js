@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack, FormLabel, TextField, Modal,  Box, Typography, Button } from 'ds/components';
-import { useLayerManager } from 'core/manager';
-import { useTrait } from 'core/traits';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useTrait } from 'services/generator/controllers/traits';
 import { useNewTraitNameForm } from '../hooks/useNewTraitNameForm';
 
 

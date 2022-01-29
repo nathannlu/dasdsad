@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Stack, Slider } from 'ds/components';
 import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { useTrait } from 'core/traits';
+import { useTrait } from 'services/generator/controllers/traits';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Content = ({ layer }) => {

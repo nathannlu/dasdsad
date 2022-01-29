@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Stack, Typography, Box } from 'ds/components';
 import { AnimatePresence } from "framer-motion"
-import { useLayerManager } from 'core/manager';
+import { useLayerManager } from 'services/generator/controllers/manager';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Layer from './Layer';

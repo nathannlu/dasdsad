@@ -1,5 +1,5 @@
 import { useAuth } from 'libs/auth';
-import { useWebsite } from 'libs/website';
+import { useWebsite } from 'services/website/provider';
 import { useQuery, useMutation } from '@apollo/client';
 import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Dropzone from 'react-dropzone'
 import { Stack, Box } from 'ds/components';
 import TraitsDisplay from './TraitsDisplay';
-import { useTrait } from 'core/traits';
+import { useTrait } from 'services/generator/controllers/traits';
 
 export function Content({index, editing}) {
 	const { addTrait } = useTrait();

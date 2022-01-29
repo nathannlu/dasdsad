@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Container, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import Dropzone from 'react-dropzone'
 import { usePinata } from '../hooks/usePinata';
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 import { useToast } from 'ds/hooks/useToast';
 import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
@@ -11,7 +11,7 @@ import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
 
 const ConnectTraits = (props) => {
-	const { uploadedFiles, setUploadedFiles } = useDeploy()
+	const { uploadedFiles, setUploadedFiles } = useContract()
 	const { verifyStep2 } = useDeployContractForm();
 
 	const { addToast } = useToast();

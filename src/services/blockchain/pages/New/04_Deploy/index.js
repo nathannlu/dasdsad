@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 import CheckoutModal from 'components/pages/Payments/CheckoutModal';
 
 import { Elements } from '@stripe/react-stripe-js';
@@ -17,7 +17,7 @@ const Deploy = (props) => {
 		setStart,
 		activeStep,
 		pinImages
-	} = useDeploy();
+	} = useContract() 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	useEffect(() => {

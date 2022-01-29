@@ -29,5 +29,13 @@ const WebsiteService = () => {
 	);
 };
 
+const Main = () => {
+	return (
+		<WebsiteProvider>
+			<WebsiteService />
+		</WebsiteProvider>
+	)
+};
 
-export default WebsiteService;
+
+export default Main;

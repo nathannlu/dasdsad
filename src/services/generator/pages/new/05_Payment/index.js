@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import config from 'config';
-import { useMetadata } from 'core/metadata';
+import { useMetadata } from 'services/generator/controllers/metadata';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useGenerator } from 'services/generator/controllers/generator';
 import { Fade, Box, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip } from '@mui/material'
 import { Lock as LockIcon } from '@mui/icons-material';
 
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
-import { useGenerator } from 'core/generator';
 const stripePromise = loadStripe(config.stripe.publicKey);
 import posthog from 'posthog-js';
 import useMediaQuery from '@mui/material/useMediaQuery';

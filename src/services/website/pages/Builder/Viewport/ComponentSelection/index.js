@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Fade, Stack, Typography, Modal, Grid, Box, Button, Container } from 'ds/components';
 import { useEditor, useNode } from '@craftjs/core';
-import { useViewport } from 'components/pages/Builder/Viewport/context'
-import templates from 'components/blocks/main';
+import { useViewport } from '../context'
+import templates from 'services/website/pages/Builder/blocks/main';
 import getIcons from 'ds/components/icons';
 
 const iconList = getIcons();

@@ -12,15 +12,12 @@ import Reset from 'components/pages/Auth/Reset';
 // Generator
 //import Generator from 'components/pages/Generator';
 
-import AppRoutes from './AppRoutes';
-import BuilderRoutes from './BuilderRoutes';
+import AppRoutes from 'services/routes';
+//import BuilderRoutes from './BuilderRoutes';
 //import Uploads from 'components/pages/Dashboard/Upload';
 
 // Published Website Route
 import Published from 'components/Published'; 
-
-// Website
-import Website from 'components/pages/Website';
 
 
 const GlobalRoutes = () => {

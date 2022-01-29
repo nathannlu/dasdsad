@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
 import { SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
 
@@ -16,7 +16,7 @@ const Upload = (props) => {
 
 	const [newMetadataUrl, setNewMetadataUrl] = useState('');
 
-	const { contracts } = useDeploy();
+	const { contracts } = useContract();
 	const { 
 		retrieveContract,
 		loadWeb3,

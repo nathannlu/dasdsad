@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, Button, Link, Box, Typography, Stack, Card, Grid, Fade } from 'ds/components';
 import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 
 const Dashboard = () => {
-	const { contracts } = useDeploy();
+	const { contracts } = useContract();
 	
 	return (
 		<Fade in>

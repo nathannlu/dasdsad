@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Grid, Box,Button, Typography, TextField, FormLabel } from 'ds/components';
 import { Chip } from '@mui/material';
-import { useMetadata } from 'core/metadata';
+import { useMetadata } from 'services/generator/controllers/metadata';
 
 import { useValidateForm } from '../hooks/useValidateForm'
 

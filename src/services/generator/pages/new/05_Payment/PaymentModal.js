@@ -5,8 +5,8 @@ import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useCharge } from 'gql/hooks/billing.hook';
 import { usePaymentForm } from '../hooks/usePaymentForm';
 
-import { useGenerator } from 'core/generator';
-import { useMetadata } from 'core/metadata';
+import { useGenerator } from 'services/generator/controllers/generator';
+import { useMetadata } from 'services/generator/controllers/metadata';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Fade, Box, FormLabel, TextField, Divider, Stack, Button, Typography, Card, LoadingButton, Slider } from 'ds/components';
 import { Chip, CircularProgress } from '@mui/material'
-import { useGenerator } from 'core/generator';
-import { useMetadata } from 'core/metadata';
+import { useGenerator } from 'services/generator/controllers/generator';
+import { useMetadata } from 'services/generator/controllers/metadata';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
 import posthog from 'posthog-js';

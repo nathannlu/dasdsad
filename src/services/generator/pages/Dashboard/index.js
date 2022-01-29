@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Link, Box, Container, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
 import AddIcon from '@mui/icons-material/Add';
-import { useLayerManager } from 'core/manager';
-import { useGenerator } from 'core/generator';
-import { useMetadata } from 'core/metadata';
+import { useMetadata } from 'services/generator/controllers/metadata';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useGenerator } from 'services/generator/controllers/generator';
 
 const Collections = () => {
 

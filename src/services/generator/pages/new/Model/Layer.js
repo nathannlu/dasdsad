@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import { Box } from 'ds/components';
-import { useLayerManager } from 'core/manager';
-import { useTrait } from 'core/traits'
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useTrait } from 'services/generator/controllers/traits'
 
 import { defaultCss, baseCss, selectedCss, compiledImgCss } from './styles';
 

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import Dropzone from 'react-dropzone'
 import { usePinata } from '../hooks/usePinata';
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
 
 const Connect = (props) => {
-	const { uploadedJson, setUploadedJson, ipfsUrl } = useDeploy()
+	const { uploadedJson, setUploadedJson, ipfsUrl } = useContract()
 	const { pinMetadataToIPFS } = usePinata();
 	const { verifyStep3 } = useDeployContractForm();
 

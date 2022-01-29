@@ -20,14 +20,18 @@ const BlockchainService = () => {
 			<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 		</Helmet>
 
-		<ContractProvider>
-			<Router history={history}>
-				<Routes />
-			</Router>
-		</ContractProvider>
+		<Router history={history}>
+			<Routes />
+		</Router>
 		</>
 	);
 };
 
+const Main = () => (
+	<ContractProvider>
+		<BlockchainService />
+	</ContractProvider>
+);
 
-export default BlockchainService;
+
+export default Main;

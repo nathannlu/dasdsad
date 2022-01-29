@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 //import { useWebsite } from 'libs/website';
-import NFTCollectible from 'ethereum/abis/NFTCollectible.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
 
 export const Web3Context = React.createContext({})
 

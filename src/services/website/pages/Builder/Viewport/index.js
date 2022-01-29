@@ -4,8 +4,8 @@ import lz from 'lzutf8';
 
 import { Button, IconButton, Stack, Box } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
-import { useWebsite } from 'libs/website';
-import { useUpdatePageData } from 'gql/hooks/website.hook';
+import { useWebsite } from 'services/website/provider';
+import { useUpdatePageData } from 'services/website/gql/hooks/website.hook';
 import Navbar from '../Navbar';
 
 import {

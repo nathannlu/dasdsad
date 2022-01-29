@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Button, Container, Divider, Box, TextField, Typography, Stack, Card, Grid, Modal, Fade } from 'ds/components';
 import { useForm } from 'ds/hooks/useForm';
 import { Link } from 'react-router-dom';
-import { useWebsite } from 'libs/website';
-import { useCreateWebsite } from 'gql/hooks/website.hook';
+import { useWebsite } from 'services/website/provider';
+import { useCreateWebsite } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
 
@@ -12,12 +12,7 @@ const Pages = () => {
 	const { website } = useWebsite();
 	const [title, setTitle] = useState();
 	const { addToast } = useToast();
-	const [createWebsite] = useCreateWebsite({
-		title,
-		onCompleted: data => {
-			console.log(data);
-		}
-	})
+	const [createWebsite] = useCreateWebsite({title})
 
 
 

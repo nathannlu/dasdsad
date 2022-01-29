@@ -1,6 +1,6 @@
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
-import { useDeploy } from 'libs/deploy'
+import { useContract } from 'services/blockchain/provider';
 
 export const useDeployContractForm = () => {
 	/*
@@ -20,7 +20,7 @@ export const useDeployContractForm = () => {
 	});
 	*/
 	const { addToast } = useToast();
-	const { deployContractForm } = useDeploy();
+	const { deployContractForm } = useContract();
 
 
 	const onDeploy = () => {

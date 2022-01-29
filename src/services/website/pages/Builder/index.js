@@ -3,9 +3,9 @@ import lz from 'lzutf8';
 import { Box } from 'ds/components';
 import {Editor, Frame, Element} from '@craftjs/core';
 
-import { useWebsite } from 'libs/website';
-import templates from 'components/blocks/main';
-import { useGetWebsites } from 'gql/hooks/website.hook';
+import { useWebsite } from 'services/website/provider';
+import templates from './blocks/main';
+import { useGetWebsites } from 'services/website/gql/hooks/website.hook';
 
 import Viewport from './Viewport';
 import { RenderNode } from './RenderNode';

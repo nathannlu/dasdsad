@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from '../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
@@ -17,7 +17,7 @@ const Deploy = (props) => {
 		},
 		selectInput,
 		setSelectInput
-	} = useDeploy();
+	} = useContract();
 	const { verifyStep1 } = useDeployContractForm();
 
 	return (

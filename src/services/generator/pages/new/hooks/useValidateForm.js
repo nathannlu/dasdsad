@@ -1,6 +1,6 @@
 import { useToast } from 'ds/hooks/useToast';
-import { useMetadata } from 'core/metadata';
-import { useLayerManager } from 'core/manager';
+import { useMetadata } from 'services/generator/controllers/metadata';
+import { useLayerManager } from 'services/generator/controllers/manager';
 
 export const useValidateForm = () => {
 	const { addToast } = useToast()

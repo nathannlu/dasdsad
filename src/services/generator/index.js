@@ -29,5 +29,13 @@ const GeneratorService = () => {
 	);
 };
 
+const Main = () => {
+	return (
+		<CollectionProvider>
+			<GeneratorService />
+		</CollectionProvider>
+	)
+};
 
-export default GeneratorService;
+
+export default Main;

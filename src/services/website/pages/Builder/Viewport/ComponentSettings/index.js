@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Drawer, Box, Typography } from "@material-ui/core";
 import { useEditor } from '@craftjs/core';
-import { useViewport } from 'components/pages/Builder/Viewport/context'
+import { useViewport } from '../context'
 
 export const SettingsPanel = props => {
 	const { isDrawerOpen, handleClose, setIsDrawerOpen, openComponentSettings } = useViewport()

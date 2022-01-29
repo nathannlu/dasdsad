@@ -4,9 +4,9 @@ import lz from 'lzutf8';
 
 import { Fade, Button, IconButton, Stack, Box } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
-import { useWebsite } from 'libs/website';
-import { useUpdatePageData } from 'gql/hooks/website.hook';
-import { useGetWebsites } from 'gql/hooks/website.hook';
+import { useWebsite } from 'services/website/provider';
+import { useUpdatePageData } from 'services/website/gql/hooks/website.hook';
+import { useGetWebsites } from 'services/website/gql/hooks/website.hook';
 
 import {
 	Save as SaveIcon,

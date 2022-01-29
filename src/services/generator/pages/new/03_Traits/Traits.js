@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLayerManager } from 'core/manager';
+import { useLayerManager } from 'services/generator/controllers/manager';
 import { Stack, Button, Box, Typography } from 'ds/components';
 import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { Layers as LayersIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';

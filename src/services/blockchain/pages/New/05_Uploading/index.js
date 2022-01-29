@@ -2,11 +2,11 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Uploading = () => {
-	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, metadataUrl, loading, error } = useDeploy();
+	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, metadataUrl, loading, error } = useContract();
 	const history = useHistory();
 	
 	return (

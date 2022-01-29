@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
-import { useLayerManager } from 'core/manager';
-import { useTrait } from 'core/traits';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useTrait } from 'services/generator/controllers/traits';
 
 export const useNewTraitNameForm = ({editTrait, isModalOpen, setIsModalOpen}) => {
 	const { addToast } = useToast();

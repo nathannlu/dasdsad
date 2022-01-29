@@ -4,7 +4,7 @@ import { Stack, Box, Button, Card, Typography, TextField, IconButton  } from 'ds
 import { Chip } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, Layers as LayersIcon } from '@mui/icons-material'
 
-import { useLayerManager } from 'core/manager';
+import { useLayerManager } from 'services/generator/controllers/manager';
 import { useNewLayerForm } from '../hooks/useNewLayerForm';
 
 

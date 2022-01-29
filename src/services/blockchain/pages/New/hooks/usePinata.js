@@ -4,7 +4,7 @@ import config from 'config';
 import basePathConverter from 'base-path-converter';
 import { useToast } from 'ds/hooks/useToast';
 
-import { useDeploy } from 'libs/deploy';
+import { useContract } from 'services/blockchain/provider';
 
 export const usePinata = () => {
 	const { 
@@ -18,7 +18,7 @@ export const usePinata = () => {
 		setMetadataUrl,
 		ipfsUrl,
 		setIpfsUrl
-	} = useDeploy();
+	} = useContract();
 
 	const { addToast } = useToast();
 //	const [updatedMetadata, setUpdatedMetadata] = useState([]);

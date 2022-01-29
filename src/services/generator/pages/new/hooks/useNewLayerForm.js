@@ -1,6 +1,6 @@
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
-import { useLayerManager } from 'core/manager';
+import { useLayerManager } from 'services/generator/controllers/manager';
 
 export const useNewLayerForm = () => {
 	const { addToast } = useToast();

@@ -3,7 +3,7 @@ import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import posthog from 'posthog-js';
-import { useMetadata } from 'core/metadata';
+import { useMetadata } from 'services/generator/controllers/metadata';
 
 export const usePaymentForm = (planId) => {
 	const stripe = useStripe();

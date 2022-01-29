@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Typography, Stack, Box, Grid, IconButton } from 'ds/components';
 import { Edit as EditIcon, CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
-import { useLayerManager } from 'core/manager';
-import { useTrait } from 'core/traits';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useTrait } from 'services/generator/controllers/traits';
 
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
