@@ -74,7 +74,6 @@ function App() {
 
 			<title>Ambition</title>
 			<link rel="canonical" href="https://app.ambition.so" />
-			<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 		</Helmet>
 
 		<Router 

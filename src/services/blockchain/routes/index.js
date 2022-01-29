@@ -11,12 +11,6 @@ const Contract = lazy(() => import("services/blockchain/pages/Contract"))
 const BlockchainRoutes = () => {
 	const routes = [
 		{
-			path: '/smart-contracts',
-			component: Dashboard,
-			private: true,
-			exact: true 
-		},
-		{
 			path: '/smart-contracts/new',
 			component: New,
 			private: true,
@@ -26,6 +20,12 @@ const BlockchainRoutes = () => {
 			path: '/smart-contracts/:id',
 			component: Contract,
 			private: true,
+		},
+		{
+			path: '/smart-contracts',
+			component: Dashboard,
+			private: true,
+			exact: true 
 		},
 	];
 

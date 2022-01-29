@@ -1,13 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { createBrowserHistory } from 'history';
 import { CollectionProvider } from './provider';
 import { useGetCollections } from 'services/generator/gql/hooks/collection.hook';
 import Routes from './routes';
 
 const GeneratorService = () => {
-	const history = createBrowserHistory();
+	const history = useHistory();
 	useGetCollections()
 
 	return (

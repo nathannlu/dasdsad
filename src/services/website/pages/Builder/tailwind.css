@@ -92187,3 +92187,10 @@ textarea:focus {
   }
 }
 
+/* CUSTOM CSS */
+.ambition-main {
+	padding-top: 0 !important;
+}
+.ambition-header {
+	display: none;
+}

@@ -3,8 +3,8 @@ import { RouteBuilder } from 'components/routes/RouteBuilder';
 import { CircularProgress, Stack } from 'ds/components'
 
 const Dashboard = lazy(() => import("services/website/pages/Dashboard"))
-const New = lazy(() => import("services/website/pages/New"))
 const Builder = lazy(() => import("services/website/pages/Builder"))
+const New = lazy(() => import("services/website/pages/New"))
 
 
 const WebsiteRoutes = () => {

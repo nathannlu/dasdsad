@@ -1,13 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { createBrowserHistory } from 'history';
 import { ContractProvider } from './provider';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 import Routes from './routes';
 
 const BlockchainService = () => {
-	const history = createBrowserHistory();
+	const history = useHistory();
 	useGetContracts({})
 
 	return (

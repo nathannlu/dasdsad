@@ -18,7 +18,6 @@ const GeneratorRoutes = () => {
 		{
 			path: '/collections/new',
 			component: New,
-			private: true,
 			exact: true 
 		},
 		{

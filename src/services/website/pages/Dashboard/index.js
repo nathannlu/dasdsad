@@ -8,8 +8,6 @@ import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
 
 const Pages = () => {
 	const { website } = useWebsite();
-	console.log(website)
-
 
 	return (
 		<Fade in>
@@ -38,7 +36,7 @@ const Pages = () => {
 							) : website.pages.map((page) => (
 								<Fade key={page.name} in>
 									<Grid item xs={3}>
-										<Link to={`/websites/${website.title}/${page.name}`}>
+										<a href={`/websites/${website.title}/${page.name}`}>
 											<Card variant="outlined">
 												<Box sx={{ bgcolor: 'grey.100', p:5}}>
 													<img style={{width: '100%'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac51faa89e1bad8184d_minting-website-icon.png" />
@@ -61,7 +59,7 @@ const Pages = () => {
 													</Stack>
 												</Box>
 											</Card>
-										</Link>
+										</a>
 									</Grid>
 								</Fade>
 							))}

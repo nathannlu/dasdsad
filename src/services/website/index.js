@@ -1,13 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { createBrowserHistory } from 'history';
 import { WebsiteProvider } from './provider';
 import { useGetWebsites } from 'services/website/gql/hooks/website.hook';
 import Routes from './routes';
 
 const WebsiteService = () => {
-	const history = createBrowserHistory();
+	const history = useHistory();
 	useGetWebsites();
 
 	return (

@@ -68,35 +68,20 @@ const Deploy = (props) => {
 								<TextField {...maxSupply} fullWidth />
 							</Stack>
 						</Stack>
-						{/*
-							<Stack sx={{flex: 1}}>
-								<FormLabel sx={{fontWeight:'bold'}}>
-									IPFS Link
-								</FormLabel>
-								<Typography gutterBottom variant="body2">
-									Set IPFS link
-								</Typography>
-								<TextField {...ipfsLink} fullWidth />
-							</Stack>
-							*/}
-
 						<Stack>
 							<FormLabel sx={{fontWeight:'bold'}}>
 								Select your Blockchain
 							</FormLabel>
 							<TextField select onChange={e=>setSelectInput(e.target.value)} value={selectInput}>
-								{/*
 								<MenuItem value="Solana">
 									Solana
 								</MenuItem>
 								<MenuItem value="Polygon">
 									Polygon
 								</MenuItem>
-								*/}
 								<MenuItem value="ethereum">
 									Ethereum
 								</MenuItem>
-
 							</TextField>
 						</Stack>
 					</Stack>

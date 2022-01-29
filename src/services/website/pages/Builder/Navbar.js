@@ -61,7 +61,7 @@ const Navbar = () => {
 			>
 				<div className="container mx-auto flex flex-wrap items-center">
 					<Box>
-						<a href="/dashboard">
+						<a href="/websites">
 							<img style={{height: '25px'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png" />
 						</a>
 					</Box>

@@ -10,12 +10,15 @@ import { useGetWebsites } from 'services/website/gql/hooks/website.hook';
 import Viewport from './Viewport';
 import { RenderNode } from './RenderNode';
 
-import './styles.css';
+import './tailwind.css';
+
+
 
 
 const App = props => {
 	const [websiteData, setWebsiteData] = useState('');	
 	const [enabled, setEnabled] = useState(false);
+	const [page, setPage] = useState({});
 
 	const { website } = useWebsite();
 
@@ -27,6 +30,8 @@ const App = props => {
 	useEffect(() => {
 		if(Object.keys(website).length > 0){
 			const page = website?.pages?.find(page => page.name == pageName);
+			setPage(page)
+
 			const base64 = page.data
 			if (base64 !== undefined) {
 				const uint8array = lz.decodeBase64(base64);
@@ -45,7 +50,7 @@ const App = props => {
 				onRender={RenderNode}
 				resolver={templates}
 			>
-				<Viewport>
+				<Viewport page={page}>
 					{enabled &&
 						(
 							<Frame data={websiteData}>

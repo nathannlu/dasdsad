@@ -39,8 +39,9 @@ const Viewport = props => {
 	})
 	const { addToast } = useToast();
 
-	const { getWebsitePage } = useWebsite();
-	const { uid } = getWebsitePage(window.location.pathname.split("/").slice(-1).pop())
+//	const { getWebsitePage } = useWebsite();
+//	const { uid } = getWebsitePage(window.location.pathname.split("/").slice(-1).pop())
+
 
 	return (
 		<ViewportProvider>

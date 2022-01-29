@@ -76,7 +76,6 @@ const Dashboard = () => {
 							</Box>
 						</Stack>
 					</Grid>
-
 				)}
 
 			</Container>
