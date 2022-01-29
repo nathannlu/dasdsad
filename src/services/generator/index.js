@@ -20,11 +20,9 @@ const GeneratorService = () => {
 			<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 		</Helmet>
 
-		<CollectionProvider>
-			<Router history={history}>
-				<Routes />
-			</Router>
-		</CollectionProvider>
+		<Router history={history}>
+			<Routes />
+		</Router>
 		</>
 	);
 };

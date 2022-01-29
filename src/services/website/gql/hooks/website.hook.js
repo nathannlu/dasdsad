@@ -42,9 +42,7 @@ export const useCreateWebsite = ({title, contractAddress, onCompleted, onError})
 		onCompleted: data => {
 			setWebsite(data?.createWebsite)
 			
-			if (onCompleted) {
-				onCompleted(data);
-			}
+			onCompleted &&onCompleted(data);
 		},
 		onError,
 	})

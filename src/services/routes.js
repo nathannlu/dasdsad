@@ -8,6 +8,8 @@ import Generator from 'services/generator';
 import Blockchain from 'services/blockchain';
 import Website from 'services/website';
 
+import Payment from 'components/pages/Payments';
+
 // Broken Route
 const BrokenRoutes = lazy(() => import("components/pages/Broken"))
 
@@ -31,13 +33,13 @@ const AppRoutes = () => {
 			private: true,
 			exact: true
 		},
+		*/
 		{
 			path: '/billing',
 			component: Payment,
 			private: true,
 			exact: true
 		},
-		*/
 		{
 			path: "/",
 			component: () => <Redirect to="/dashboard" />,

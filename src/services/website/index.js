@@ -20,11 +20,9 @@ const WebsiteService = () => {
 			<meta name="description" content="Generate thousands of digital arts online - The simplest way." />
 		</Helmet>
 
-		<WebsiteProvider>
-			<Router history={history}>
-				<Routes />
-			</Router>
-		</WebsiteProvider>
+		<Router history={history}>
+			<Routes />
+		</Router>
 		</>
 	);
 };

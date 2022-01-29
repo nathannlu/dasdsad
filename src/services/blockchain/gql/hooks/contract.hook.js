@@ -12,11 +12,16 @@ export const useCreateContract = ({ onCompleted, onError }) => {
 	return [ createContract, { ...mutationResult }]
 };
 
-export const useGetContracts = async () => {
+export const useGetContracts = async ({ onCompleted, onError }) => {
 	const { setContracts } = useContract();
   const { ...queryResult } = useQuery(GET_CONTRACTS, {
 		onCompleted: async data => {
-			setContracts(data.getContracts)
+
+			if (setContracts !== undefined) {
+				setContracts(data.getContracts)
+			}
+
+			onCompleted && onCompleted(data)
 		},
 	});
 

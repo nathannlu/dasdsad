@@ -12,9 +12,6 @@ const Collection = () => {
 	const [settings, setSettings] = useState('layers')
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 
-
-
-
 	const { save, start, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
 
 	useEffect(listenToWorker,[])

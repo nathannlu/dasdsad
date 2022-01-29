@@ -8,7 +8,7 @@ import Routes from './routes';
 
 const BlockchainService = () => {
 	const history = createBrowserHistory();
-	useGetContracts()
+	useGetContracts({})
 
 	return (
 		<>
