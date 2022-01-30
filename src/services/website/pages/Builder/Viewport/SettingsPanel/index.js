@@ -35,7 +35,7 @@ const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, s
         }
 		return { selected };
 	})
-    const { deleteImage, onSaveChanges, imagePlaceHolders } = useWebsite();
+    const { deleteImage, onSaveChanges, imagePlaceHolders, addImageToLocal } = useWebsite();
 
     const handleDeleteImage = async (parentKey, prop) => {
         let placeholderSrc = '';
@@ -44,9 +44,16 @@ const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, s
         else if (selected.name === 'Content_B') placeholderSrc = 'https://dummyimage.com/720x400';
         else if (selected.name === 'Feature_C') placeholderSrc = 'https://dummyimage.com/460x500';
 
-        await deleteImage(prop.value.substring(prop.value.indexOf(".com/") + 5, prop.value.length - 1));
+        const uuid = prop.value.substring(prop.value.indexOf(".com/") + 5, prop.value.length - 1);
+
+        await deleteImage(uuid);
         setImage([parentKey], placeholderSrc);
-        onSaveChanges(query, true);
+        await onSaveChanges(query);
+    }
+
+    const onChangeImage = (parentKey, info) => {
+        setImage([parentKey], info.cdnUrl);
+        addImageToLocal(info.uuid);
     }
 
 	return Object.keys(props).map(key => (
@@ -88,7 +95,7 @@ const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, s
                     <Widget 
                         publicKey='dfeba611508a6f7760ca'
                         id={key}
-                        onChange={info => setImage([parentKey], info.cdnUrl)}
+                        onChange={info => onChangeImage(parentKey, info)}
                     />
                 ) : (
                     <Button

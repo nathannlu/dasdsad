@@ -13,7 +13,7 @@ const App = props => {
 	const [websiteData, setWebsiteData] = useState('');	
 	const [enabled, setEnabled] = useState(false);
 	const [page, setPage] = useState({});
-	const { website } = useWebsite();
+	const { website, removeUnusedImages } = useWebsite();
 	const { pageName } = props.match.params; // Used to query DB for page data
 
 	// Load website data on load
@@ -27,6 +27,8 @@ const App = props => {
             const uint8array = lz.decodeBase64(base64);
             const json = lz.decompress(uint8array);
             
+            removeUnusedImages(json);
+
             setWebsiteData(json);
             setEnabled(true);
         }
