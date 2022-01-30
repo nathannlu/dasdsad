@@ -14,26 +14,26 @@ import {
 	ArrowUpward as UpIcon
 } from '@mui/icons-material'
 
-
 export const RenderNode = ({ render }) => {
-	const { actions: {add, move}, query: {createNode, node}, connectors: {select} } = useEditor();
-  const { actions, query, connectors } = useEditor();
-  const {
-    id,
-    isActive,
-    isHover,
-    dom,
-    deletable,
-		isNavOrHeader
-  } = useNode((node) => ({
-    isActive: node.events.selected,
-    isHover: node.events.hovered,
-		deletable: query.node(node.id).isDeletable(), // && !(node.data.name.split('_')[0] == 'Header' || node.data.name.split('_')[0] == 'Footer'),
-    dom: node.dom,
-		isNavOrHeader: false // node.data.name.split('_')[0] == 'Header' || node.data.name.split('_')[0] == 'Footer'
-  }));
+    const { actions: {add, move}, query: {createNode, node}, connectors: {select} } = useEditor();
+    const { actions, query, connectors } = useEditor();
+    const {
+        id,
+        isActive,
+        isHover,
+        dom,
+        deletable,
+            isNavOrHeader
+    } = useNode((node) => ({
+        isActive: node.events.selected,
+        isHover: node.events.hovered,
+        deletable: query.node(node.id).isDeletable(), // && !(node.data.name.split('_')[0] == 'Header' || node.data.name.split('_')[0] == 'Footer'),
+        dom: node.dom,
+        isNavOrHeader: false // node.data.name.split('_')[0] == 'Header' || node.data.name.split('_')[0] == 'Footer'
+    }));
+
 	const { openComponentSelection, openComponentSettings } = useViewport();
-  const currentRef = useRef();
+    const currentRef = useRef();
 	const currentNodeIndex = node('ROOT').get().data.nodes.findIndex(arrItem => arrItem == id)
 
 	const moveUp = () => {
@@ -53,48 +53,47 @@ export const RenderNode = ({ render }) => {
 	}
 
 	// Hover/active selection indicator
-  useEffect(() => {
-    if (dom) {
-      if (isActive || isHover) {
-				dom.classList.add('component-selected')
-			} else {
-				dom.classList.remove('component-selected')
-			};
-    }
-  }, [dom, isActive, isHover]);
+    useEffect(() => {
+        if (dom) {
+        if (isActive || isHover) {
+                    dom.classList.add('component-selected')
+                } else {
+                    dom.classList.remove('component-selected')
+                };
+        }
+    }, [dom, isActive, isHover]);
 
 	// Get properties of hovered div
-  const getPos = useCallback((dom) => {
-    const { top, left, bottom, right } = dom
-      ? dom.getBoundingClientRect()
-      : { top: 0, left: 0, bottom: 0, right: 0 };
-    return {
-      top: `${top}px`,
-      left: `${left}px`,
-			bottom: `${bottom}px`,
-			height: `${bottom - top}px`,
-			width: `${right - left}px`
-    };
-  }, []);
+    const getPos = useCallback((dom) => {
+        const { top, left, bottom, right } = dom
+        ? dom.getBoundingClientRect()
+        : { top: 0, left: 0, bottom: 0, right: 0 };
+
+        return {
+        top: `${top}px`,
+        left: `${left}px`,
+                bottom: `${bottom}px`,
+                height: `${bottom - top}px`,
+                width: `${right - left}px`
+        };
+    }, []);
 
 	// Scroll handler 
-  const scroll = useCallback(() => {
-    const { current: currentDOM } = currentRef;
-
-    if (!currentDOM) return;
-    const { top, left } = getPos(dom);
-    currentDOM.style.top = top;
-    currentDOM.style.left = left;
-  }, [dom]);
+    const scroll = useCallback(() => {
+        const { current: currentDOM } = currentRef;
+        if (!currentDOM) return;
+        const { top, left } = getPos(dom);
+        currentDOM.style.top = top;
+        currentDOM.style.left = left;
+    }, [dom]);
 
 	// Add scroll event listenr to HTML
-  useEffect(() => {
-    document.addEventListener('scroll', scroll);
-
-    return () => {
-      document.removeEventListener('scroll', scroll);
-    };
-  }, [scroll]);
+    useEffect(() => {
+        document.addEventListener('scroll', scroll);
+        return () => {
+            document.removeEventListener('scroll', scroll);
+        };
+    }, [scroll]);
 
   return (
     <>

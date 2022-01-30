@@ -3,7 +3,7 @@
 //
 
 import React, { useState, useEffect } from "react";
-import { useNode } from '@craftjs/core';
+import { useNode, useEditor } from '@craftjs/core';
 import { useToast } from 'ds/hooks/useToast';
 import { Fade, Button, IconButton, Box, Stack, Typography, TextField } from "ds/components";
 import { useForm } from 'ds/hooks/useForm';
@@ -12,6 +12,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { DeleteOutlineOutlined as DeleteIcon } from '@mui/icons-material'
 
 import { Widget } from "@uploadcare/react-widget";
+import { useWebsite } from "services/website/provider"
 
 // Props object schema
 // --
@@ -24,7 +25,30 @@ import { Widget } from "@uploadcare/react-widget";
 //	content: {...},
 //	button: {...}
 // }
+
 const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, setImage, parentKey ) => {
+    const { query } = useEditor();
+    const { selected, connectors: {select} } = useEditor((state, query) => { // We should make a wrapper for craftJS
+		const [currentNodeId] = state.events.selected.values();
+        const selected = {
+            name: state.nodes[currentNodeId].data.name
+        }
+		return { selected };
+	})
+    const { deleteImage, onSaveChanges, imagePlaceHolders } = useWebsite();
+
+    const handleDeleteImage = async (parentKey, prop) => {
+        let placeholderSrc = '';
+        if (selected.name === 'Hero_A' || selected.name === 'Hero_B' || selected.name === 'Hero_C') placeholderSrc = 'https://dummyimage.com/720x600';
+        else if (selected.name === 'Header_A' || selected.name === 'Footer_A') placeholderSrc = 'https://via.placeholder.com/50';
+        else if (selected.name === 'Content_B') placeholderSrc = 'https://dummyimage.com/720x400';
+        else if (selected.name === 'Feature_C') placeholderSrc = 'https://dummyimage.com/460x500';
+
+        await deleteImage(prop.value.substring(prop.value.indexOf(".com/") + 5, prop.value.length - 1));
+        setImage([parentKey], placeholderSrc);
+        onSaveChanges(query, true);
+    }
+
 	return Object.keys(props).map(key => (
 		<Box key={key} pb={3}>
 			<Typography style={{fontWeight: 'bold', textTransform: 'capitalize'}} variant="h6">
@@ -60,18 +84,22 @@ const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, s
 						{props[key].value ? "Turn into link" : "Turn into mint"}
 					</Button>
 				),
-				'image': (
-					<>
-					<Widget 
-						publicKey='dfeba611508a6f7760ca'
-						id={key}
-						onChange={info => setImage([parentKey], info.cdnUrl)}
-					/>
-						<Button>
-							delete {props[key].value}
-						</Button>
-					</>
-				),
+				'image': props[key]._type == 'image' && imagePlaceHolders.some(img => props[key].value.includes(img)) ? (
+                    <Widget 
+                        publicKey='dfeba611508a6f7760ca'
+                        id={key}
+                        onChange={info => setImage([parentKey], info.cdnUrl)}
+                    />
+                ) : (
+                    <Button
+                        variant='contained'
+                        color='error'
+                        size='small'
+                        onClick={() => handleDeleteImage(parentKey, props[key])}
+                    >
+                        Delete
+                    </Button>
+                ),
 				'array': props[key]._type == 'array' &&
 					props[key].value.map((item, i) => (
 						<Box key={i} sx={{background: '#f0f2f5', p: 2, mb: 2, boxShadow: 1, borderRadius: 2}}>
@@ -95,7 +123,7 @@ const generateSettingFields = (props, onChange, addItem, deleteItem, flipBool, s
 				)
 			}
 		</Box>
-		))
+    ))
 }
 
 
@@ -204,10 +232,10 @@ export const Settings = () => {
 		}
 	}
 
-  return (
-    <Box>
-			{generateSettingFields(props, onChange, addItem, deleteItem, flipBool, setImage)}
-    </Box>
-  )
+    return (
+        <Box>
+            {generateSettingFields(props, onChange, addItem, deleteItem, flipBool, setImage)}
+        </Box>
+    )
 }
 

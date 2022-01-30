@@ -4,11 +4,10 @@ import { useQuery, useMutation } from '@apollo/client';
 import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
-
 export const useGetWebsites = () => {
 	const { setWebsite } = useWebsite();
 
-  const { ...queryResult } = useQuery(GET_WEBSITES, {
+    const { ...queryResult } = useQuery(GET_WEBSITES, {
 		onCompleted: data => {
 			setWebsite(data?.getWebsites[0])
 		}
@@ -16,10 +15,11 @@ export const useGetWebsites = () => {
 
 	return { ...queryResult }
 }
+
 export const useGetPublished = ({title, onCompleted}) => {
 	const { setWebsite } = useWebsite();
 
-  const { ...queryResult } = useQuery(GET_PUBLISHED, {
+    const { ...queryResult } = useQuery(GET_PUBLISHED, {
 		variables: {title},
 		onCompleted: data => {
 			setWebsite(data?.getPublished)
@@ -30,6 +30,7 @@ export const useGetPublished = ({title, onCompleted}) => {
 
 	return { ...queryResult }
 }
+
 export const useCreateWebsite = ({title, contractAddress, onCompleted, onError}) => {
 	const { user } = useAuth();
 	const { setWebsite } = useWebsite();
@@ -52,7 +53,7 @@ export const useCreateWebsite = ({title, contractAddress, onCompleted, onError})
 
 // @TODO change this hook to use variables
 export const useUpdatePageData = ({ onCompleted, onError }) => {
-	const { setWebsite } = useWebsite();
+	//const { setWebsite } = useWebsite();
 
 	const [updatePageData, { data }] = useMutation(UPDATE_PAGE_DATA, {
 		refetchQueries: [
@@ -60,19 +61,15 @@ export const useUpdatePageData = ({ onCompleted, onError }) => {
 			"GetWebsites"
 		],
 		onQueryUpdated: (observable, diff) => {
-			const websites = diff.result.getWebsites;
-			console.log(websites)
-			setWebsite(websites[0]);
+			const websites = diff.result.getWebsites; // why is this getting 2 more websites lmao
+			//setWebsite(websites[0]); // setWebsite is undefined at this point
 		},
 		onCompleted,
 		onError
 	})
 
-
 	return [ updatePageData, { data }];
 };
-
-
 
 // WIP
 export const useAddPage = ({pageName, pageData, onCompleted, onError}) => {
@@ -102,6 +99,7 @@ export const useAddPage = ({pageName, pageData, onCompleted, onError}) => {
 
 	return [ addPage, { data }];
 };
+
 // @TODO change this hook to use variables
 export const useDeletePage = ({ onCompleted, onError }) => {
 	const { setWebsite } = useWebsite();
@@ -131,6 +129,7 @@ export const useDeletePage = ({ onCompleted, onError }) => {
 
 	return [ deletePage, { data }];
 };
+
 export const useSetCustomDomain = ({title, customDomain, onCompleted, onError}) => {
 	const { setWebsite } = useWebsite();
 
@@ -156,6 +155,7 @@ export const useSetCustomDomain = ({title, customDomain, onCompleted, onError}) 
 
 	return [setCustomDomain, { ...mutationResult }];
 };
+
 export const useVerifyDns = ({title, onCompleted}) => {
 	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
 		variables: { title },
@@ -164,6 +164,7 @@ export const useVerifyDns = ({title, onCompleted}) => {
 
 	return [verifyDns, { ...mutationResult }];
 };
+
 export const useSetContractAddress = ({ onCompleted, onError }) => {
 	const { setWebsite } = useWebsite();
 
@@ -189,6 +190,7 @@ export const useSetContractAddress = ({ onCompleted, onError }) => {
 
 	return [setContractAddress, { ...mutationResult }];
 };
+
 export const useBuildWebsite = ({ title, onCompleted }) => {
   const { ...queryResult } = useQuery(BUILD_WEBSITE, {
 		variables: { title },
