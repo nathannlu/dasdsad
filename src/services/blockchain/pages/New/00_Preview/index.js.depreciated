@@ -1,12 +1,6 @@
 import React from 'react';
 import { Button, Container, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 
-const blockchains = [
-	{ value: 'Ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
-	{ value: 'Polygon', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
-	{ value: 'Solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
-];
-
 const Preview = props => {
 	
 	return (
@@ -24,18 +18,39 @@ const Preview = props => {
 						</Typography>
 					</Stack>
 
-					<Stack gap={2}>
-						{blockchains.map((item, i) => (
-							<Card p={2} key={i}>
-								<img
-									style={{width: '50px'}}
-									src={item.img}
-								/>
-								Deploy on {item.value}
-							</Card>
-						))}
+					<Stack>
+						<Typography variant="h5">
+							Overview
+						</Typography>
+						<ol>
+							<li>
+								Configure smart contract
+							</li>
+							<li>
+								Upload images to IPFS
+							</li>
+							<li>
+								Upload metadata to IPFS
+							</li>
+							<li>
+								Deploy contract
+							</li>
+						</ol>
 					</Stack>
 
+					<Stack>
+						<Typography variant="h5">
+							Payments
+						</Typography>
+						<ol>
+							<li>
+								Ethereum charge 1.3eth gas fees to deploy your contract
+							</li>
+							<li>
+								Ambition charge $19.99/mo for hosting on our decentralized file storage node
+							</li>
+						</ol>
+					</Stack>
 
 					<Button onClick={() =>props.nextStep()} variant="contained">
 						Let's get started

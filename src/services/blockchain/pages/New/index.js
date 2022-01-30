@@ -5,12 +5,12 @@ import { AppBar, Toolbar } from '@mui/material';
 import StepWizard from 'react-step-wizard';
 import CloseIcon from '@mui/icons-material/Close';
 
-import Settings from './01_Settings';
-import Traits from './02_Traits';
-import Metadata from './03_Metadata';
-import Deploy from './04_Deploy';
 import Preview from './00_Preview';
-import Uploading from './05_Uploading';
+import Settings from './Ethereum/01_Settings';
+import Traits from './Ethereum/02_Traits';
+import Metadata from './Ethereum/03_Metadata';
+import Deploy from './Ethereum/04_Deploy';
+import Uploading from './Ethereum/05_Uploading';
 
 import Model from './Model';
 
