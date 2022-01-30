@@ -22,7 +22,7 @@ const Dashboard = () => {
 
 						<Grid gap={2} container>
 							{contracts.map((contract, i) => (
-							<Grid item xs={3}>
+							<Grid key={i} item xs={3}>
 								<Link to={`/smart-contracts/${contract.id}`}>
 									<Card variant="outlined">
 										<Box sx={{ bgcolor: 'grey.100', p:5}}>

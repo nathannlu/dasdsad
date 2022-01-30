@@ -5,9 +5,12 @@ import { Link } from 'react-router-dom';
 import { useWebsite } from 'services/website/provider';
 import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
 
-
 const Pages = () => {
 	const { website } = useWebsite();
+
+    const onEditPage = (websiteTitle, pageName) => {
+        location.href = `/websites/${websiteTitle}/${pageName}`;
+    }
 
 	return (
 		<Fade in>
@@ -36,30 +39,28 @@ const Pages = () => {
 							) : website.pages.map((page) => (
 								<Fade key={page.name} in>
 									<Grid item xs={3}>
-										<a href={`/websites/${website.title}/${page.name}`}>
-											<Card variant="outlined">
-												<Box sx={{ bgcolor: 'grey.100', p:5}}>
-													<img style={{width: '100%'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac51faa89e1bad8184d_minting-website-icon.png" />
-												</Box>
-												<Box sx={{
-													bgcolor: 'white',
-													p: 2
-												}}>
-													<Typography gutterBottom variant="h6">
-														{name.value}
-													</Typography>
+                                        <Card variant="outlined" onClick={() => onEditPage(website.title, page.name)}>
+                                            <Box sx={{ bgcolor: 'grey.100', p:5}}>
+                                                <img style={{width: '100%'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac51faa89e1bad8184d_minting-website-icon.png" />
+                                            </Box>
+                                            <Box sx={{
+                                                bgcolor: 'white',
+                                                p: 2
+                                            }}>
+                                                <Typography gutterBottom variant="h6">
+                                                    {name.value}
+                                                </Typography>
 
-													<Stack direction="row" gap={2}>
-														<Button
-															size="small"
-															variant="contained"
-														>
-															Edit page
-														</Button>
-													</Stack>
-												</Box>
-											</Card>
-										</a>
+                                                <Stack direction="row" gap={2}>
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                    >
+                                                        Edit page
+                                                    </Button>
+                                                </Stack>
+                                            </Box>
+                                        </Card>
 									</Grid>
 								</Fade>
 							))}

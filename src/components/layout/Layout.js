@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { Navbar, Link, Box, Stack, Button, Container, Tabs, Tab } from 'ds/components';
 
-
 const links = [
 	{ value: 'Collections', link: '/collections' },
 	{ value: 'Blockchain', link: '/smart-contracts' },
 	{ value: 'Website', link: '/websites' },
 ];
-
 
 const Layout = ({ children }) => {
 	const [selectedPage, setSelectedPage] = useState('collections');
@@ -31,6 +29,7 @@ const Layout = ({ children }) => {
 						<Stack gap={1} p={1} direction="row">
 							{links.map((link,i) => (
 								<Button
+                                    key={i}
 									size="small"
 									variant={selectedPage == link.link.replace('/','') ? 'contained' : 'text'}
 									sx={{
