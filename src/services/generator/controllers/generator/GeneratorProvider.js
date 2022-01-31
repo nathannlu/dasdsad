@@ -7,7 +7,7 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 import posthog from 'posthog-js';
 
-import Worker from "services/generator/pages/new/workers/generator.worker.js";
+import Worker from "services/generator/pages/New/workers/generator.worker.js";
 const worker = new Worker();
 
 
