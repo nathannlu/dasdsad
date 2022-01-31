@@ -9,7 +9,7 @@ import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCol
 export const useEthereum = () => {
 	const { deployContractForm } = useDeployContractForm();
 	const { account } = useWeb3()
-	const { setLoading, setError, setStart } = useContract();
+	const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
 	const { addToast } = useToast();
 	const [createContract] = useCreateContract({
 		onCompleted: () => {
@@ -43,13 +43,13 @@ export const useEthereum = () => {
 	const handleDeploymentSuccess = async (newContractAddress) => {
 		const ContractInput = {
 			address: newContractAddress,
-			blockchain: "ethereum",
+			blockchain: selectInput,
 			nftCollection: {
 				price: parseFloat(deployContractForm.priceInEth.value),
 				currency: 'eth',
 				size: parseInt(deployContractForm.maxSupply.value),
 				royalty: parseInt(deployContractForm.royaltyPercentage.value),
-				baseUri: deployContractForm.ipfsLink.value
+				baseUri: ipfsUrl
 			}
 		}
 
@@ -64,7 +64,7 @@ export const useEthereum = () => {
 			const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
 			const options = {
 				data: NFTCollectible.bytecode,
-				arguments: [deployContractForm.ipfsLink.value, priceInWei, deployContractForm.maxSupply.value]
+				arguments: [ipfsUrl, priceInWei, deployContractForm.maxSupply.value]
 			}
 			const senderInfo = {
 				from: account,

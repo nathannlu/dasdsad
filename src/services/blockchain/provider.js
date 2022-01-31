@@ -26,6 +26,7 @@ export const ContractProvider = ({ children }) => {
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
 
 
+
     const handleSelectNetwork = async (value) => {
         try {
             if (!window.ethereum) throw new Error("Please install Metamask Wallet");

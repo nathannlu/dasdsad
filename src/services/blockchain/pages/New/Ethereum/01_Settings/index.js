@@ -78,7 +78,7 @@ const Deploy = (props) => {
 								<MenuItem value="Solana">
 									Solana
 								</MenuItem>
-								<MenuItem value="Polygon">
+								<MenuItem value="polygon">
 									Polygon
 								</MenuItem>
 								<MenuItem value="ethereum">

@@ -36,7 +36,6 @@ const Preview = props => {
 						))}
 					</Stack>
 
-
 					<Button onClick={() =>props.nextStep()} variant="contained">
 						Let's get started
 					</Button>

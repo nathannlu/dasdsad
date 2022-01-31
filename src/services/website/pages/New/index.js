@@ -56,7 +56,7 @@ const Website = props => {
 					overflow: 'hidden',
 					bgcolor: 'white',
 					position: 'absolute',
-					zIndex: 2000,
+					zIndex: 1100,
 					top: 0,
 					paddingTop: '67px'
 				}}
