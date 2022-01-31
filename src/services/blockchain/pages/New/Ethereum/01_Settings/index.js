@@ -2,23 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { Container, Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { useContract } from 'services/blockchain/provider';
-import { useDeployContractForm } from '../hooks/useDeployContractForm';
+import { useDeployContractForm } from '../../hooks/useDeployContractForm';
 
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 
 
 const Deploy = (props) => {
 	const {
+		selectInput,
+		setSelectInput
+	} = useContract();
+	const { 
 		deployContractForm: {
 			royaltyPercentage,
 			priceInEth,
 			maxSupply,
 			ipfsLink,
 		},
-		selectInput,
-		setSelectInput
-	} = useContract();
-	const { verifyStep1 } = useDeployContractForm();
+		verifyStep1
+	} = useDeployContractForm();
 
 	return (
 		<Fade in>
@@ -91,12 +93,7 @@ const Deploy = (props) => {
 						</Button>
 						<Button onClick={() => {
 							if(verifyStep1()) {
-								if(ipfsLink.value.length > 0) {
-									props.goToStep(5)
-								}
-								else if(ipfsLink.value.length < 1) {
-									props.nextStep()
-								}
+								props.nextStep()
 							}
 						}}>
 							Next

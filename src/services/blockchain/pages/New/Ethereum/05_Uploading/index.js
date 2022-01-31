@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Stack, Card, Typography, FormLabel, TextField, Box, Grid, Fade, MenuItem, LoadingButton } from 'ds/components';
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
+import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
+import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Uploading = () => {
-	const { activeStep, pinImages, pinMetadata, deployContract, setActiveStep, imagesUrl, ipfsUrl, metadataUrl, loading, error } = useContract();
+	const { activeStep, setActiveStep, start, loading, error, imagesUrl, metadataUrl, ipfsUrl } = useContract();
+	const { deployEthereumContract } = useEthereum();
+	const { pinImages, pinMetadata }= useIPFS();
 	const history = useHistory();
 	
 	return (
@@ -66,7 +70,7 @@ const Uploading = () => {
 									variant="contained"
 									onClick={async () => {
 										setActiveStep(2)
-										await deployContract();
+										await deployEthereumContract();
 									}
 								}>
 									Confirm
@@ -84,7 +88,7 @@ const Uploading = () => {
 					</StepLabel>
 					<StepContent>
 						<Stack gap={2}>
-							{loading ? (
+							{!loading ? (
 								<Box>
 									Your collection is live! Smart contract is deployed to this address {ipfsUrl}.
 								</Box>

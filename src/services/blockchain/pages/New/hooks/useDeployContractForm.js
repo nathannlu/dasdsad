@@ -3,10 +3,9 @@ import { useToast } from 'ds/hooks/useToast';
 import { useContract } from 'services/blockchain/provider';
 
 export const useDeployContractForm = () => {
-	/*
 	const { form: deployContractForm } = useForm({
 		priceInEth: {
-			default: '',
+			default: '0.05',
 			placeholder: '0.05'
 		},
 		royaltyPercentage: {
@@ -14,13 +13,14 @@ export const useDeployContractForm = () => {
 			placeholder: 5
 		},
 		maxSupply: {
-			default: '',
-			placeholder: '3333'	
+			default: '100',
+			placeholder: '3333'
+		},
+		ipfsLink: {
+			default: 'asd',
 		}
 	});
-	*/
 	const { addToast } = useToast();
-	const { deployContractForm } = useContract();
 
 
 	const onDeploy = () => {
