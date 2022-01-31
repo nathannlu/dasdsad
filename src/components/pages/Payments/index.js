@@ -1,32 +1,31 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { useAuth } from 'libs/auth';
 import { Fade, Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, Menu, MenuItem, IconButton, TextField, ListItemText, ListItemIcon } from 'ds/components';
 import { TableContainer, Paper, Chip, TablePagination } from '@mui/material';
-import { useGetUserSubscriptions, useStopUserSubscription } from 'gql/hooks/billing.hook';
+import { useGetUserSubscriptions } from 'gql/hooks/billing.hook';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ConfirmationModal from './ConfirmationModal';
-import { useToast } from 'ds/hooks/useToast';
+import { useBilling } from './hooks/useBilling'; 
 
 const Payment = () => {
 	const { user } = useAuth();
-	const [transactions, setTransactions] = useState(null);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [filterKey, setFilterKey] = useState('');
-    const [anchorEls, setAnchorEls] = useState([]);
-    const confirmationModalRef = useRef(null);
-    const { addToast } = useToast();
-    const [ stopUserSubscription ] = useStopUserSubscription({
-		onCompleted: data => {
-			if (data.stopUserSubscription) {
-                addToast({
-                    severity: 'success',
-                    message: "Subscription successfully cancelled."
-                });
-            }
-		}
-	});
+    const {
+        transactions,
+        page,
+        rowsPerPage,
+        filterKey, 
+        anchorEls,
+        confirmationModalRef, 
+        onCompleteUserSubscription,
+        onCancelSubscription,
+        onCancel,
+        onChangePage,
+        onChangeRowsPerPage,
+        onMenuOpen,
+        onMenuClose,
+        getDateFromTimestamp,
+        setFilterKey } = useBilling();
 
     useGetUserSubscriptions({
 		customerId: user.stripeCustomerId,
@@ -34,63 +33,6 @@ const Payment = () => {
             onCompleteUserSubscription(data);
         }
 	});
-
-    const onCompleteUserSubscription = (data) => {
-        const { getUserSubscriptions } = data;
-        setTransactions(getUserSubscriptions);
-    }
-
-    const getDateFromTimestamp = (timestamp) => {
-        const a = new Date(timestamp * 1000);
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        return `${a.getDate()} ${months[a.getMonth()]} ${a.getFullYear()}`;
-    }
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-    
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 8));
-        setPage(0);
-    };
-
-    const handleMenuOpen = (idx, e) => {
-        let tempState = [...anchorEls];
-        tempState[idx] = e.target;
-        setAnchorEls(tempState);
-    }
-
-    const handleMenuClose = (idx) => {
-        let tempState = [...anchorEls];
-        tempState[idx] = null;
-        setAnchorEls(tempState);
-    }
-
-    const handleCancelSubscription = (idx) => {
-        const productType = transactions[idx].productType;
-        confirmationModalRef.current.show({
-            title: "Are you sure you want to cancel subscription?",
-            description: `Cancelling this subscription will render your ${productType === "Contract" ? "NFT Collection" : "Website"} inactive`,
-            data: {
-                transactionIndex: idx
-            }
-        });
-    }
-
-    const handleConfirmCancel = async (data) => {
-        const isCanceled = transactions[data.transactionIndex].isCanceled;
-        if (isCanceled) {
-            addToast({
-                severity: 'error',
-                message: "Subscription was cancelled already."
-            });
-            return;
-        }
-        const subscriptionId = transactions[data.transactionIndex].id;
-        await stopUserSubscription({variables: { subscriptionId }});
-        window.location.reload(true);
-    }
 
 	return (
 		<Fade in>
@@ -104,10 +46,10 @@ const Payment = () => {
             >
                 <ConfirmationModal 
                     ref={confirmationModalRef}
-                    onConfirm={handleConfirmCancel}
+                    onConfirm={onCancel}
                 />
                 <Box
-                    marginTop='10em'
+                    marginTop='6em'
                     maxWidth='1000px'
                     width='100%'
                 >
@@ -168,16 +110,19 @@ const Payment = () => {
                                         <IconButton 
                                             aria-label="Settings"
                                             color='secondary'
-                                            onClick={(e) => handleMenuOpen(idx, e)}
+                                            onClick={(e) => {
+                                                if (transaction.isCanceled) return;
+                                                onMenuOpen(idx, e);
+                                            }}
                                         >
                                             <SettingsIcon />
                                         </IconButton>
                                         <Menu
                                             anchorEl={anchorEls[idx]}
                                             open={Boolean(anchorEls[idx])}
-                                            onClose={() => handleMenuClose(idx)}
+                                            onClose={() => onMenuClose(idx)}
                                         >
-                                            <MenuItem onClick={() => handleCancelSubscription(idx)}>
+                                            <MenuItem onClick={() => onCancelSubscription(idx)}>
                                                 <ListItemIcon>
                                                     <CancelIcon fontSize="small" />
                                                 </ListItemIcon>
@@ -202,8 +147,8 @@ const Payment = () => {
                                 count={transactions.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                onPageChange={onChangePage}
+                                onRowsPerPageChange={onChangeRowsPerPage}
                             />
                         )}
                     </Box>
