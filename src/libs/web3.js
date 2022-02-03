@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
-//import { useWebsite } from 'libs/website';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
 
 export const Web3Context = React.createContext({})
@@ -61,7 +60,7 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
 		const priceInWei = Web3.utils.toWei(price);
 
-		contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
+		await contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
 			if (err) {
 				addToast({
 					severity: 'error',
@@ -186,16 +185,29 @@ export const Web3Provider = ({ children }) => {
 	const getTotalMinted = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
-
-		return contract.methods.totalSupply().call()
+        const total = await contract.methods.totalSupply().call();
+		return total;
 	}
 
 	const getBaseTokenURI = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
-
 		return contract.methods.baseTokenURI().call()
 	}
+
+    const getPrice = async (contractAddress) => {
+		const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+        const price = await contract.methods.PRICE().call();
+		return web3.utils.fromWei(price)
+	}
+
+    const getMaximumSupply = async (contractAddress) => {
+        const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+        const max = await contract.methods.MAX_SUPPLY().call();
+        return max;
+    }
 
     // Get current network
     const getNetworkID = () => {
@@ -275,6 +287,8 @@ export const Web3Provider = ({ children }) => {
 				checkOwner,
                 getNetworkID,
                 setNetwork,
+                getPrice,
+                getMaximumSupply,
 			}}
 		>
 			{ children }

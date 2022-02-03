@@ -61,10 +61,10 @@ function App() {
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	useEffect(() => {
 		if(smallerThanTablet) {
-			addToast({
-				severity: 'info',
-				message: 'This app was designed for desktop-use. For a better experience, please use our desktop version'
-			})
+			// addToast({
+			// 	severity: 'info',
+			// 	message: 'This app was designed for desktop-use. For a better experience, please use our desktop version'
+			// })
 		}
 	}, [smallerThanTablet])
 
