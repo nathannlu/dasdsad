@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
+import { Textfield } from '@mui/material'
 import { SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
-
+import { useToast } from 'ds/hooks/useToast';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
@@ -12,9 +14,11 @@ const Upload = (props) => {
 	const [soldCount, setSoldCount] = useState(null)
 	const [contract, setContract] = useState({});
 	const [price, setPrice] = useState();
+    const [embedChainId, setEmbedChainId] = useState('');
+    const [embedCode, setEmbedCode] = useState('');
 	const { id } = useParams();
-
 	const [newMetadataUrl, setNewMetadataUrl] = useState('');
+    const { addToast } = useToast();
 
 	const { contracts } = useContract();
 	const { 
@@ -30,23 +34,36 @@ const Upload = (props) => {
 		getBaseUri
 	} = useWeb3()
 
-
 	useEffect(() => {
 		(async () => {
 			await loadWeb3()
 			await loadBlockchainData()
 		})()
 	}, [])
+
 	useEffect(() => {
 		if(contracts.length > 0) {
 			(async () => {
 				const c = contracts.find(c => c.id == id)
 				setContract(c)
-				console.log(c)
+
+                let chainId;
+                if (c.blockchain === 'ethereum') chainId = '0x1'
+                else if (c.blockchain === 'rinkeby') chainId = '0x4'
+                else if (c.blockchain === 'polygon') chainId = '0x89'
+                else if (c.blockchain === 'mumbai') chainId = '0x13881'
+                setEmbedChainId(chainId);
+
+                setEmbedCode(`<iframe
+                src="http://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${c.address}&chainId=${chainId}"
+                width="300px"
+                height="100px"
+                frameborder="0"
+                scrolling="no"
+            />`);
 
 				const b = await getBalance(c.address)
 				setBalance(b);
-
 				setPrice(c.nftCollection.price);
 
 				const nftsSold = b / c.nftCollection.price
@@ -72,6 +89,14 @@ const Upload = (props) => {
 	const mintNow = async () => {
 		await mint(contract.nftCollection.price.toString(), contract.address)
 	}
+
+    const copyEmbedCode = () => {
+        navigator.clipboard.writeText(embedCode);
+        addToast({
+            severity: 'info',
+            message: 'Embed code copied to clipboard'
+        })
+    }
 
 	return (
 		<Fade in>
@@ -116,7 +141,7 @@ const Upload = (props) => {
 							Details
 						</Typography>
 
-						<Grid container xs={3}>
+						<Grid container>
 							<Grid item xs={6}>
 								Balance:
 							</Grid>
@@ -186,20 +211,75 @@ const Upload = (props) => {
 						</Stack>
 					</Stack>
 						
-
-
 					<Stack sx={{background: '#eee', borderRadius: 2, p:2}}>
 						<Typography variant="h6">
 							Addresses who own your NFT
 						</Typography>
 						<Box>
-							{owners.map(addr => (
-								<div key={addr}>
+							{owners.map((addr, idx) => (
+								<div key={idx}>
 									{addr}
 								</div>
 							))}
 						</Box>
 					</Stack>
+
+                    <Divider />
+                    <Stack gap={2} alignItems='flex-start'>
+                        <Typography variant="h6" sx={{fontWeight:'bold'}}>
+							Embed
+						</Typography>
+                        <Box
+                            display='flex'
+                        >
+                            <Box
+                                flex='1'
+                                display='flex'
+                                flexDirection='column'
+                            >
+                                <Typography>
+                                    Code:
+                                </Typography>
+                                <TextField
+                                    sx={{
+                                        width: '600px',
+                                        mb: '1em'
+                                    }}
+                                    rows={8}
+                                    multiline
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
+                                    value={embedCode}
+                                />
+                                <Button
+                                    variant='outlined'
+                                    endIcon={<ContentCopyIcon />}
+                                    onClick={copyEmbedCode}
+                                >
+                                    Copy to clipboard
+                                </Button>
+                            </Box>
+                            <Box
+                                sx={{ ml: '1em' }}
+                                display='flex'
+                                flexDirection='column'
+                            >
+                                <Typography>
+                                    Preview:
+                                </Typography>
+                                <Box>
+                                    <iframe
+                                        src={`http://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${contract.address}&chainId=${embedChainId}`}
+                                        width="300px"
+                                        height="100px"
+                                        frameBorder="0"
+                                        scrolling="no"
+                                    />
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Stack>
 				</Stack>
 			</Container>
 		</Fade>

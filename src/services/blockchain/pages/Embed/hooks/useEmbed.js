@@ -1,62 +1,65 @@
 import { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
-import { useWebsite } from 'services/website/provider';
 import { useLocation } from 'react-router-dom';
 
 export const useEmbed = () => {
-    const { website } = useWebsite();
     const { search } = useLocation();
     const { getPrice, getMaximumSupply, getTotalMinted, mint, getNetworkID, setNetwork } = useWeb3();
+    const [contractAddress, setContractAddress] = useState('');
+    const [chainId, setChainId] = useState('');
     const [price, setPrice] = useState(-1);
     const [maxSupply, setMaxSupply] = useState(-1);
     const [currentSupply, setCurrentSupply] = useState(-1);
     const [prefix, setPrefix] = useState('');
-    const [chainId, setChainId] = useState('');
     const [isSwitch, setIsSwitch] = useState(true);
     const [isMinting, setIsMinting] = useState(false);
 
-    // Load Chain ID, Price and Supply Count
+    // Get query params (ANOTHER CHECK WE COULD ADD IS IF THE CONTRACT ADDRESS IS DEPLOYED ON OUR WEBSITE)
     useEffect(() => {
-        if (Object.keys(website).length == 0) return;
+        if (!search) return;
         const urlParams = new URLSearchParams(search);
-        const chaindId = urlParams.get('chainId');
-        setChainId(chaindId);
-        if (chaindId == '0x1' || chaindId == '0x4') {
-            setPrefix('ETH');
+        const contractAddress = urlParams.get('contract');
+        const chainId = urlParams.get('chainId');
+        setContractAddress(contractAddress);
+        setChainId(chainId);
+    }, [search])
+
+    useEffect(() => {
+        if (!chainId.length) return;
+
+        // Check if chain ID is right
+        if (getNetworkID() === chainId) {
+            setIsSwitch(false);
+        } else {
+            setIsSwitch(true);
         }
-        else if (chaindId == '0x89' || chaindId == '0x13881') {
-            setPrefix('MATIC');
-        }
+
+        // Set Prefix for mint button
+        if (chainId == '0x1' || chainId == '0x4') setPrefix('ETH');
+        else if (chainId == '0x89' || chainId == '0x13881') setPrefix('MATIC');
+
+        // Set price, supply for mint button
         (async () => {
             try {
-                const price = await getPrice(website.settings.connectedContractAddress);
+                const price = await getPrice(contractAddress);
                 setPrice(price);
-                const cSupply = await getTotalMinted(website.settings.connectedContractAddress);
+                const cSupply = await getTotalMinted(contractAddress);
                 setCurrentSupply(cSupply);
-                const mSupply = await getMaximumSupply(website.settings.connectedContractAddress);
+                const mSupply = await getMaximumSupply(contractAddress);
                 setMaxSupply(mSupply);
             }
             catch (e) {
 
             }
 		})()
-    }, [website])
-
-    useEffect(() => {
-        if (chainId.length == 0) return;
-        if (getNetworkID() === chainId) {
-            setIsSwitch(false);
-        } else {
-            setIsSwitch(true);
-        }
     }, [chainId])
 
     const onMint = async () => {
-        if (price == -1 || Object.keys(website).length == 0) return;
+        if (price == -1 || currentSupply == -1 || maxSupply  == -1) return;
         if (getNetworkID() === chainId) {
             try {
                 setIsMinting(true);
-                await mint(price, website.settings.connectedContractAddress);
+                await mint(price, contractAddress);
                 setIsMinting(false);
             }
             catch (e) {
@@ -75,9 +78,9 @@ export const useEmbed = () => {
     }
 
 	return {
-        prefix,
-        price,
-        maxSupply,
+        prefix, 
+        price, 
+        maxSupply, 
         currentSupply,
         isSwitch,
         isMinting,

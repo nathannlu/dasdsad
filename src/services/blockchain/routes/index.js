@@ -6,10 +6,16 @@ import { CircularProgress, Stack } from 'ds/components'
 const Dashboard = lazy(() => import("services/blockchain/pages/Dashboard"))
 const New = lazy(() => import("services/blockchain/pages/New"))
 const Contract = lazy(() => import("services/blockchain/pages/Contract"))
-
+const Embed = lazy(() => import("services/blockchain/pages/Embed"))
 
 const BlockchainRoutes = () => {
 	const routes = [
+        {
+			path: '/smart-contracts/embed',
+			component: Embed,
+			private: false,
+			exact: true 
+		},
 		{
 			path: '/smart-contracts/new',
 			component: New,

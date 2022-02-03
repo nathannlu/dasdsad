@@ -61,9 +61,31 @@ const Embed = () => {
                             Switch Network
                         </Button>
                     )}
-                    <Typography>
-                        {currentSupply}/{maxSupply}
-                    </Typography>
+                    <Box
+                        display='flex'
+                        justifyContent='space-between'
+                    >
+                        <Typography fontSize='10pt'>
+                            {currentSupply}/{maxSupply}
+                        </Typography>
+                        <Box 
+                            display='flex'
+                            alignItems='center'
+                        >
+                            <Typography 
+                                fontSize='10pt'
+                                color='rgba(0,0,0,0.4)'
+                                sx={{
+                                    mr: '.25em'
+                                }}
+                            >
+                                Powered by
+                            </Typography>
+                            <a href="https://ambition.so/">
+                                <img style={{height: '15px'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png" alt='Ambition Logo'/>
+                            </a>
+                        </Box>
+                    </Box>
                 </Box>
             ) : (
                 <Box
@@ -75,7 +97,6 @@ const Embed = () => {
                     Chain ID does not match current smart contract
                 </Box>
             )}
-
         </Box>
     )
 }

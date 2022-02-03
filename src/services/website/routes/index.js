@@ -5,8 +5,6 @@ import { CircularProgress, Stack } from 'ds/components'
 const Dashboard = lazy(() => import("services/website/pages/Dashboard"))
 const Builder = lazy(() => import("services/website/pages/Builder"))
 const New = lazy(() => import("services/website/pages/New"))
-const Embed = lazy(() => import("services/website/pages/Embed"))
-
 
 const WebsiteRoutes = () => {
 	const routes = [
@@ -21,12 +19,6 @@ const WebsiteRoutes = () => {
 			component: New,
 			private: true,
 			exact: true 
-		},
-        {
-			path: '/websites/:title/embed',
-			component: Embed,
-			private: true,
-            exact: true
 		},
 		{
 			path: '/websites/:title/:pageName',
