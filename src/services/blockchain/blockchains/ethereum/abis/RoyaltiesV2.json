@@ -64,7 +64,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address payable\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint96\",\"name\":\"value\",\"type\":\"uint96\"}],\"indexed\":false,\"internalType\":\"struct LibPart.Part[]\",\"name\":\"royalties\",\"type\":\"tuple[]\"}],\"name\":\"RoyaltiesSet\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getRaribleV2Royalties\",\"outputs\":[{\"components\":[{\"internalType\":\"address payable\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint96\",\"name\":\"value\",\"type\":\"uint96\"}],\"internalType\":\"struct LibPart.Part[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol\":\"RoyaltiesV2\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol\":{\"keccak256\":\"0xf9fd0d768bdc8ca426790737f8548484573148dd5ed0365c31d98a06ecc0ed5b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a2ba75721d1959d7932d7818e8acfa9823ed82e3364ce761dc9255fabc1651e0\",\"dweb:/ipfs/QmSdFnmtyEUSfoh7DLBAZdtYfTKkz35bBWgEoNsfheyBL9\"]},\"/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol\":{\"keccak256\":\"0x8789892cf243b2d5b142c5dda714d45dc63cbcde383bdd582abfeb64cc91ede4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://99a54f4068dcb7f32da28e1e104c2e4905e6792d58aa2ba390dad1e4be3a522e\",\"dweb:/ipfs/QmNkfxL4bogtxi8G75gkn46j4LiUGoteDadya7vJWyeDpZ\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address payable\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint96\",\"name\":\"value\",\"type\":\"uint96\"}],\"indexed\":false,\"internalType\":\"struct LibPart.Part[]\",\"name\":\"royalties\",\"type\":\"tuple[]\"}],\"name\":\"RoyaltiesSet\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getRaribleV2Royalties\",\"outputs\":[{\"components\":[{\"internalType\":\"address payable\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint96\",\"name\":\"value\",\"type\":\"uint96\"}],\"internalType\":\"struct LibPart.Part[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol\":\"RoyaltiesV2\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol\":{\"keccak256\":\"0xf9fd0d768bdc8ca426790737f8548484573148dd5ed0365c31d98a06ecc0ed5b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a2ba75721d1959d7932d7818e8acfa9823ed82e3364ce761dc9255fabc1651e0\",\"dweb:/ipfs/QmSdFnmtyEUSfoh7DLBAZdtYfTKkz35bBWgEoNsfheyBL9\"]},\"/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol\":{\"keccak256\":\"0x8789892cf243b2d5b142c5dda714d45dc63cbcde383bdd582abfeb64cc91ede4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://99a54f4068dcb7f32da28e1e104c2e4905e6792d58aa2ba390dad1e4be3a522e\",\"dweb:/ipfs/QmNkfxL4bogtxi8G75gkn46j4LiUGoteDadya7vJWyeDpZ\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -73,9 +73,9 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.8.0;\n\nimport \"./LibPart.sol\";\n\ninterface RoyaltiesV2 {\n    event RoyaltiesSet(uint256 tokenId, LibPart.Part[] royalties);\n\n    function getRaribleV2Royalties(uint256 id) external view returns (LibPart.Part[] memory);\n}\n",
-  "sourcePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol",
+  "sourcePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol",
   "ast": {
-    "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol",
+    "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol",
     "exportedSymbols": {
       "LibPart": [
         32
@@ -100,7 +100,7 @@
         "src": "33:23:2"
       },
       {
-        "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
+        "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
         "file": "./LibPart.sol",
         "id": 41,
         "nameLocation": "-1:-1:-1",
@@ -320,7 +320,7 @@
     "src": "33:238:2"
   },
   "legacyAST": {
-    "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol",
+    "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/RoyaltiesV2.sol",
     "exportedSymbols": {
       "LibPart": [
         32
@@ -345,7 +345,7 @@
         "src": "33:23:2"
       },
       {
-        "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
+        "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
         "file": "./LibPart.sol",
         "id": 41,
         "nameLocation": "-1:-1:-1",
@@ -570,7 +570,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.2",
-  "updatedAt": "2022-01-20T17:21:26.254Z",
+  "updatedAt": "2022-02-02T04:11:43.386Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

@@ -1,22 +1,56 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, IconButton, Divider, Fade, Grid, Stack, Container, Typography } from 'ds/components';
+import { Box, LoadingButton, IconButton, FormLabel, TextField, Divider, Fade, Grid, Stack, Container, Typography, Card } from 'ds/components';
 import { AppBar, Toolbar } from '@mui/material';
+import { useContract } from 'services/blockchain/provider';
+import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
+import { useDeployContractForm } from './hooks/useDeployContractForm';
 import StepWizard from 'react-step-wizard';
 import CloseIcon from '@mui/icons-material/Close';
 
-import Preview from './00_Preview';
-import Settings from './Ethereum/01_Settings';
-import Traits from './Ethereum/02_Traits';
-import Metadata from './Ethereum/03_Metadata';
-import Deploy from './Ethereum/04_Deploy';
-import Uploading from './Ethereum/05_Uploading';
-
-import Model from './Model';
+const blockchains = [
+	{ title: 'Ethereum', value:'ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
+	{ title: 'Polygon', value:'polygon', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
+	/*
+	{ title: 'Solana', value: 'solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
+	*/
+];
 
 const Upload = () => {
 	const [activeStep, setActiveStep] = useState();
 	const history = useHistory();
+	const {
+		selectInput,
+		setSelectInput
+	} = useContract();
+	const { 
+		deployContractForm: {
+			name,
+			symbol,
+			priceInEth,
+			maxSupply,
+		},
+		onCompleted
+	} = useDeployContractForm();
+	const [createContract, { loading }] = useCreateContract({
+		onCompleted
+	});
+	const currency = {
+		'ethereum': 'eth',
+		'polygon' : 'matic',
+		'solana'	: 'sol',
+	}[selectInput]
+	const ContractInput = {
+		name: name.value,
+		symbol: symbol.value,
+		blockchain: selectInput,
+		type: 'whitelist',
+		nftCollection: {
+			price: parseFloat(priceInEth.value),
+			size: parseInt(maxSupply.value),
+			currency,
+		}
+	}
 
 	return (
 		<Fade in>
@@ -25,7 +59,7 @@ const Upload = () => {
 				sx={{
 					minHeight: '100vh',
 					overflow: 'hidden',
-					bgcolor: '#191A24',
+					bgcolor: '#fff',
 					position: 'absolute',
 					zIndex: 1100,
 					top: 0,
@@ -46,43 +80,105 @@ const Upload = () => {
 					</Stack>
 				</AppBar>
 
-				<Grid md={6} item sx={{transition: 'all .5s'}}>
-					<Stack
-						p={4}
-						gap={2}
-						sx={{
-							backgroundColor: 'white',
-							height: '100%',
-						}}
-					>
-						<StepWizard transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
-							<Preview />
-							<Settings />
-							<Traits />
-							<Metadata />
-							<Deploy />
-							<Uploading />
-						</StepWizard>
-					</Stack>
-				</Grid>
+				<Grid md={6} item sx={{transition: 'all .5s', mx:'auto'}}>
+					<Stack gap={2} py={4}>
+						<Stack>
+							<Typography gutterBottom variant="h4">
+								01. Create NFT collection
+							</Typography>
+							<Typography gutterBottom variant="body">
+								Fill in and configure your smart contracts
+							</Typography>
+						</Stack>
+						<Stack sx={{flex: 1}}>
+							<FormLabel sx={{fontWeight:'bold'}}>
+								Name
+							</FormLabel>
+							<Typography gutterBottom variant="body2">
+								Set the name for your collection
+							</Typography>
+							<TextField {...name} fullWidth />
+						</Stack>
+						<Stack gap={2} direction="row">
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									Symbol
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Set the symbol for your collection.
+								</Typography>
+								<TextField {...symbol} fullWidth />
+							</Stack>
+						</Stack>
 
-				<Grid 
-					md={6} 
-					alignItems="center" 
-					justifyContent="center" 
-					item 
-					sx={{
-						display: 'flex',
-						transition: 'all .5s',
-						height: '100%',
-						minHeight: '100vh'
-					}}
-				>
-					<Model activeStep={activeStep} />
+						<Stack gap={2} direction="row">
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									Price per NFT minted
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Set the price in ether for minting one NFT.
+								</Typography>
+								<TextField {...priceInEth} fullWidth />
+							</Stack>
+
+							<Stack sx={{flex: 1}}>
+								<FormLabel sx={{fontWeight:'bold'}}>
+									Total number of NFTs
+								</FormLabel>
+								<Typography gutterBottom variant="body2">
+									Set the total number of NFTs in your collection
+								</Typography>
+								<TextField {...maxSupply} fullWidth />
+							</Stack>
+						</Stack>
+
+
+						<Stack pt={2} gap={2}>
+							<FormLabel sx={{fontWeight:'bold'}}>
+								Select your blockchain
+							</FormLabel>
+							{blockchains.map((item, i) => (
+								<Card
+									sx={{
+										border: item.value == selectInput && 2,
+										borderColor: item.value == selectInput && 'primary.main',
+										borderRadius: 2,
+										transition: '.2s all',
+										color: item.value == selectInput && 'primary.main',
+										opacity: item.value != selectInput && .8
+									}}
+									onClick={() =>setSelectInput(item.value)} 
+									key={i}
+								>
+									<Stack direction="row" alignItems="center" gap={2} p={2}>
+										<img
+											style={{width: '50px'}}
+											src={item.img}
+										/>
+										<Typography variant="body" sx={{fontWeight:'bold'}}>
+											Deploy on {item.title}
+										</Typography>
+									</Stack>
+								</Card>
+							))}
+						</Stack>
+
+						<Stack mt={2}>
+							<LoadingButton 
+								loading={loading}
+								onClick={() => createContract({ variables: { contract: ContractInput}})} 
+								variant="contained"
+							>
+								Create collection
+							</LoadingButton>
+						</Stack>
+
+					</Stack>
+
 				</Grid>
 			</Grid>
 		</Fade>
-
 	)
 };
 

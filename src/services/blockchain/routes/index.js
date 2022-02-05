@@ -17,15 +17,16 @@ const BlockchainRoutes = () => {
 			exact: true 
 		},
 		{
-			path: '/smart-contracts/:id',
-			component: Contract,
-			private: true,
-		},
-		{
 			path: '/smart-contracts',
 			component: Dashboard,
 			private: true,
-			exact: true 
+			exact: true,
+		},
+		{
+			path: '/smart-contracts/:id',
+			component: Contract,
+			private: true,
+			exact: true,
 		},
 	];
 

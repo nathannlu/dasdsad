@@ -1,7 +1,7 @@
 {
   "contractName": "AbstractRoyalties",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol\":\"AbstractRoyalties\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol\":{\"keccak256\":\"0xf9fd0d768bdc8ca426790737f8548484573148dd5ed0365c31d98a06ecc0ed5b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a2ba75721d1959d7932d7818e8acfa9823ed82e3364ce761dc9255fabc1651e0\",\"dweb:/ipfs/QmSdFnmtyEUSfoh7DLBAZdtYfTKkz35bBWgEoNsfheyBL9\"]},\"/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol\":{\"keccak256\":\"0x29f08cd851612650bf405ab02592907e92c4f987a5a0cb676445b8c03d43d955\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://041fd980437914c0c2d94c7d31842a3d35688ef9dce9bc651298333767909a46\",\"dweb:/ipfs/QmWvUYZSWPR3aULmgvJ12eBuWo4RMnQW5KcUYTtyenqZnC\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol\":\"AbstractRoyalties\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol\":{\"keccak256\":\"0xf9fd0d768bdc8ca426790737f8548484573148dd5ed0365c31d98a06ecc0ed5b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a2ba75721d1959d7932d7818e8acfa9823ed82e3364ce761dc9255fabc1651e0\",\"dweb:/ipfs/QmSdFnmtyEUSfoh7DLBAZdtYfTKkz35bBWgEoNsfheyBL9\"]},\"/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol\":{\"keccak256\":\"0x29f08cd851612650bf405ab02592907e92c4f987a5a0cb676445b8c03d43d955\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://041fd980437914c0c2d94c7d31842a3d35688ef9dce9bc651298333767909a46\",\"dweb:/ipfs/QmWvUYZSWPR3aULmgvJ12eBuWo4RMnQW5KcUYTtyenqZnC\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -10,9 +10,9 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.8.0;\n\nimport \"../LibPart.sol\";\n\nabstract contract AbstractRoyalties {\n    mapping (uint256 => LibPart.Part[]) internal royalties;\n\n    function _saveRoyalties(uint256 id, LibPart.Part[] memory _royalties) internal {\n        uint256 totalValue;\n        for (uint i = 0; i < _royalties.length; i++) {\n            require(_royalties[i].account != address(0x0), \"Recipient should be present\");\n            require(_royalties[i].value != 0, \"Royalty value should be positive\");\n            totalValue += _royalties[i].value;\n            royalties[id].push(_royalties[i]);\n        }\n        require(totalValue < 10000, \"Royalty total value should be < 10000\");\n        _onRoyaltiesSet(id, _royalties);\n    }\n\n    function _updateAccount(uint256 _id, address _from, address _to) internal {\n        uint length = royalties[_id].length;\n        for(uint i = 0; i < length; i++) {\n            if (royalties[_id][i].account == _from) {\n                royalties[_id][i].account = payable(address(uint160(_to)));\n            }\n        }\n    }\n\n    function _onRoyaltiesSet(uint256 id, LibPart.Part[] memory _royalties) virtual internal;\n}\n",
-  "sourcePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol",
+  "sourcePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol",
   "ast": {
-    "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol",
+    "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol",
     "exportedSymbols": {
       "AbstractRoyalties": [
         212
@@ -37,7 +37,7 @@
         "src": "33:23:3"
       },
       {
-        "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
+        "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
         "file": "../LibPart.sol",
         "id": 62,
         "nameLocation": "-1:-1:-1",
@@ -1951,7 +1951,7 @@
     "src": "33:1146:3"
   },
   "legacyAST": {
-    "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol",
+    "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/impl/AbstractRoyalties.sol",
     "exportedSymbols": {
       "AbstractRoyalties": [
         212
@@ -1976,7 +1976,7 @@
         "src": "33:23:3"
       },
       {
-        "absolutePath": "/Users/nathan/Code/work/nftdatagen/src/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
+        "absolutePath": "/Users/nathan/Code/work/frontend/src/services/blockchain/blockchains/ethereum/contracts/@rarible/royalties/contracts/LibPart.sol",
         "file": "../LibPart.sol",
         "id": 62,
         "nameLocation": "-1:-1:-1",
@@ -3895,7 +3895,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.2",
-  "updatedAt": "2022-01-20T17:21:26.254Z",
+  "updatedAt": "2022-02-02T04:11:43.388Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

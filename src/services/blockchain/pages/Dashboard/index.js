@@ -8,17 +8,31 @@ const Dashboard = () => {
 	
 	return (
 		<Fade in>
-			<Container sx={{pt: 10}}>
+			<Container sx={{pt: 4}}>
 				{contracts.length > 0 ? (
 					<Stack gap={2}>
-						<Box>
-							<Typography variant="h4">
-								Your contracts
-							</Typography>
-							<Typography gutterBottom variant="body">
-								A list of your deployed contracts
-							</Typography>
-						</Box>
+						<Stack direction="row" alignItems="center">
+							<Box>
+								<Typography variant="h4">
+									Your contracts
+								</Typography>
+								<Typography gutterBottom variant="body">
+									A list of your deployed contracts
+								</Typography>
+							</Box>
+
+							<Box sx={{ml:'auto'}}>
+								<Link to="/smart-contracts/new">
+									<Button
+										size="small"
+										startIcon={<AddIcon />}
+										variant="contained"
+									>
+										Add contract
+									</Button>
+								</Link>
+							</Box>
+						</Stack>
 
 						<Grid gap={2} container>
 							{contracts.map((contract, i) => (
@@ -36,6 +50,10 @@ const Dashboard = () => {
 											p: 2
 										}}>
 											<Stack direction="row" gap={2}>
+												<Typography>
+													{contract.name}
+												</Typography>
+
 												<Button
 													size="small"
 													variant="contained"

@@ -28,6 +28,7 @@ export const ContractProvider = ({ children }) => {
 
 
     const handleSelectNetwork = async (value) => {
+			console.log(value)
         try {
             if (!window.ethereum) throw new Error("Please install Metamask Wallet");
             const id = getNetworkID();
@@ -109,6 +110,8 @@ export const ContractProvider = ({ children }) => {
 		setStart,
 		error,
 		setError,
+		selectInput,
+		setSelectInput,
 
 		validateNetwork,
 		handleSelectNetwork,

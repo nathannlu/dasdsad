@@ -2,7 +2,8 @@ import React, { useState, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 //import { useWebsite } from 'libs/website';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
+//import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFT.json';
 
 export const Web3Context = React.createContext({})
 
@@ -84,6 +85,36 @@ export const Web3Provider = ({ children }) => {
 			addToast({
 				severity: 'success',
 				message: 'Purchase complete.'
+			})
+		})
+	}
+
+	const openContract = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
+
+		contract.methods.setOpen(true).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.on("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: 'Sales are now open.'
 			})
 		})
 	}
@@ -264,6 +295,7 @@ export const Web3Provider = ({ children }) => {
 				loadWeb3,
 				loadBlockchainData,
 				mint,
+				openContract,
 				getBaseUri,
 				updateBaseUri,
 				retrieveContract,

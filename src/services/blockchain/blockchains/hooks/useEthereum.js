@@ -1,17 +1,17 @@
 import Web3 from 'web3/dist/web3.min';
-import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
+import { useUpdateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFT.json';
 
 export const useEthereum = () => {
 	const { deployContractForm } = useDeployContractForm();
 	const { account } = useWeb3()
 	const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
 	const { addToast } = useToast();
-	const [createContract] = useCreateContract({
+	const [updateContract] = useUpdateContract({
 		onCompleted: () => {
 			addToast({
 				severity: 'success',
@@ -40,31 +40,32 @@ export const useEthereum = () => {
 	}
 
 	// @TODO update baseUri & blockchain
-	const handleDeploymentSuccess = async (newContractAddress) => {
-		const ContractInput = {
-			address: newContractAddress,
-			blockchain: selectInput,
-			nftCollection: {
-				price: parseFloat(deployContractForm.priceInEth.value),
-				currency: 'eth',
-				size: parseInt(deployContractForm.maxSupply.value),
-				royalty: parseInt(deployContractForm.royaltyPercentage.value),
-				baseUri: ipfsUrl
-			}
-		}
-
-		// @TODO handle if saving contract fails
-		await createContract({ variables: { contract: ContractInput} });
+	const handleDeploymentSuccess = async (newContractAddress, id) => {
+		await updateContract({ variables: { id: id, address: newContractAddress} });
 	}
 
-	const deployEthereumContract = async () => {
+	const deployEthereumContract = async ({id,uri, name, symbol, totalSupply, cost, open}) => {
+
 		try {
+
 			const web3 = window.web3;
 			const contract = new web3.eth.Contract(NFTCollectible.abi);
-			const priceInWei = web3.utils.toWei(deployContractForm.priceInEth.value);
+			const priceInWei = web3.utils.toWei(cost.toString());
+
+			console.log(uri,name,symbol,totalSupply,priceInWei)
+			/*
+			const uri = ipfsUrl;
+			const name = '';
+			const symbol = '';
+			const totalSupply = deployContractForm.maxSupply.value
+			const cost = priceInWei
+			const open = false;
+			*/
+
+
 			const options = {
 				data: NFTCollectible.bytecode,
-				arguments: [ipfsUrl, priceInWei, deployContractForm.maxSupply.value]
+				arguments: [uri, name, symbol, totalSupply, priceInWei, open]
 			}
 			const senderInfo = {
 				from: account,
@@ -83,7 +84,7 @@ export const useEthereum = () => {
 				}
 			})
 			.on('error', err => handleDeploymentError(err))
-			.then(async newContractInstance => handleDeploymentSuccess(newContractInstance.options.address));
+			.then(async newContractInstance => handleDeploymentSuccess(newContractInstance.options.address, id));
 		} catch (e) {
 			handleDeploymentError(e)
 		}
