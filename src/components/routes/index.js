@@ -8,6 +8,8 @@ import Login from 'components/pages/Auth/Login';
 import ForgotPassword from 'components/pages/Auth/ForgotPassword';
 import Reset from 'components/pages/Auth/Reset';
 
+import Generator from 'services/generator';
+
 import AppRoutes from 'services/routes';
 
 // Published Website Route
@@ -22,6 +24,8 @@ const GlobalRoutes = () => {
 		{ path: '/login/reset', component: Reset },
 		{ path: '/login', component: Login },
 		{ path: '/signup', component: Signup },
+
+		{ path: '/collections', component: Generator },
 
 
 

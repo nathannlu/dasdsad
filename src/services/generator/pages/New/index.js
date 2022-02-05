@@ -36,9 +36,10 @@ const Generator = () => {
 					position: 'absolute',
 					zIndex: 1100,
 					top: 0,
-					paddingTop: '67px'
+//					paddingTop: '67px'
 				}}
 			>
+				{/*
 				<AppBar position="fixed" sx={{bgcolor: 'grey.100', py: 2, boxShadow: 'none', borderBottom: '1px solid rgba(0,0,0,.2)', color: '#000'}}>
 					<Stack direction="row" px={2} gap={2} alignItems="center">
 						<IconButton onClick={() => history.goBack()}>
@@ -52,6 +53,7 @@ const Generator = () => {
 						</Box>
 					</Stack>
 				</AppBar>
+				*/}
 
 				<Grid md={!isLastStep ? 6 : 4} item sx={{transition: 'all .5s'}}>
 					<Stack

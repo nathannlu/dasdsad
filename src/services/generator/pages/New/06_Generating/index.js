@@ -53,38 +53,10 @@ const Generating = () => {
 			</Stack>
 
 
-			{/*
 			<Stack gap={2}>
-				<Typography variant="h5">
-					Create your Account now
-				</Typography>
-				<Box>
-					<FormLabel>
-						Email
-					</FormLabel>
-					<TextField value="test@test.com" fullWidth />
-				</Box>
-				<Box>
-					<FormLabel>
-						Password
-					</FormLabel>
-					<TextField password fullWidth />
-				</Box>
-				<Button fullWidth variant="contained">
-					Create an account now!
+				<Button disabled={!done} onClick={save} variant="contained">
+					Download
 				</Button>
-			</Stack>
-			*/}
-			
-
-
-			<Stack gap={2}>
-				<Link to="/login">
-					<Button variant="contained">
-						Log in to download
-					</Button>
-				</Link>
-
 
 				<Typography gutterBottom variant="body">
 					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/ambition_so" target="_blank">Twitter</a>

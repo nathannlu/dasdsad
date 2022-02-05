@@ -23,7 +23,6 @@ const AppRoutes = () => {
 		},
 
 
-		{ path: '/collections', component: Generator },
 		{ path: '/smart-contracts', component: Blockchain },
 		{ path: '/websites', component: Website },
 		/*
