@@ -2,32 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
+import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
-import { SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
+import { Chip } from '@mui/material';
+import { WarningAmber as WarningAmberIcon, SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
+import IPFSModal from './IPFSModal';
+
 
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
 	const [owners, setOwners] = useState([]);
 	const [soldCount, setSoldCount] = useState(null)
+
 	const [contract, setContract] = useState({});
 	const [price, setPrice] = useState();
 	const { id } = useParams();
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const [newMetadataUrl, setNewMetadataUrl] = useState('');
 
-	const { contracts } = useContract();
-	const { 
-		retrieveContract,
+	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
+
+	const { deployEthereumContract } = useEthereum();
+	const { contracts, handleSelectNetwork } = useContract();
+	const {
 		loadWeb3,
 		loadBlockchainData,
-		withdraw,
 		getBalance,
-		mint,
 		checkOwner,
-		getTotalMinted,
+
+		withdraw,
+		mint,
+		openContract,
 		updateBaseUri,
-		getBaseUri
 	} = useWeb3()
 
 
@@ -83,6 +91,10 @@ const Upload = (props) => {
 								style={{height: '40px'}}
 								src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6943de77b8cf95ef1_deploy-to-blockchain-icon.png" 
 							/>
+							<Chip label={contract?.blockchain} />
+							{!isSetupComplete && (
+								<Chip icon={<WarningAmberIcon />} color="warning" label="Set up required" />
+							)}
 						</Box>
 						<Box>
 							<Typography variant="h4">
@@ -92,24 +104,78 @@ const Upload = (props) => {
 								Your deployed smart-contract's address on the blockchain
 							</Typography>
 						</Box>
-						<Box>
-							<Box sx={{
-								px:1,
-								py:.5,
-								bgcolor: 'grey.100', 
-								fontWeight:'bold', 
-								border: '0.5px solid rgba(0,0,0,.1)',
-								borderRadius: 2,
-							}}>
-								{contract.address ? contract.address : 'asd'}
+						{contract?.address && (
+						<Stack direction="column" gap={2}>
+							<Box>
+								<Box sx={{
+									px:1,
+									py:.5,
+									bgcolor: 'grey.100', 
+									fontWeight:'bold', 
+									border: '0.5px solid rgba(0,0,0,.1)',
+									borderRadius: 2,
+								}}>
+									{contract.address ? contract.address : null}
+								</Box>
 							</Box>
-						</Box>
-						<Box>
-							<Link to="https://opensea.io/get-listed/step-two" target="_blank">
-								Connect with OpenSea
-							</Link>
-						</Box>
+							<Box>
+								<Link to="https://opensea.io/get-listed/step-two" target="_blank">
+									Connect with OpenSea
+								</Link>
+							</Box>
+						</Stack>
+						)}
+
+
 					</Stack>
+					{!isSetupComplete ? (
+						<>
+						{!contract?.nftCollection?.baseUri && (
+						<Stack>
+							<Typography variant="h6" sx={{fontWeight:'bold'}}>
+								Set NFT assets location
+							</Typography>
+							<Typography variant="body">
+								Link your metadata and images to the smart contract.
+							</Typography>
+							<Box>
+								<Button variant="contained" onClick={() => setIsModalOpen(true)}>
+									Upload to IPFS
+								</Button>
+							</Box>
+						</Stack>
+						)}
+						{contract?.nftCollection?.baseUri && (
+							<Stack>
+								<Typography variant="h6" sx={{fontWeight:'bold'}}>
+									Deploy to the blockchain
+								</Typography>
+								<Typography variant="body">
+									Deploy your smart contract to the blockchain in order to accept public mints, configure whitelists, set public sale.
+								</Typography>
+								<Box>
+									<Button onClick={async () => {
+											await handleSelectNetwork(contract?.blockchain);
+											await deployEthereumContract({
+												uri: contract.nftCollection.baseUri,
+												name: contract.name,
+												symbol: contract.symbol,
+												totalSupply: contract.nftCollection.size,
+												cost: contract.nftCollection.price,
+												open: false,
+												id
+											})
+										}}
+										variant="contained"
+									>
+										Deploy to blockchain
+									</Button>
+								</Box>
+							</Stack>
+						)}
+						</>
+					) : (
+						<>
 					<Divider />
 					<Stack>
 						<Typography variant="h6" sx={{fontWeight:'bold'}}>
@@ -166,6 +232,13 @@ const Upload = (props) => {
 							>
 								Mint
 							</Button>
+							<Button 
+								size="small"
+								variant="contained"
+								onClick={() => openContract(contract.address)}
+							>
+								openContract
+							</Button>
 						</Stack>
 						<Stack gap={1}>
 							<Typography variant="small">
@@ -200,7 +273,10 @@ const Upload = (props) => {
 							))}
 						</Box>
 					</Stack>
+						</>
+					)}
 				</Stack>
+				<IPFSModal id={id} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
 			</Container>
 		</Fade>
 	)

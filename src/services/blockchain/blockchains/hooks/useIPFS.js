@@ -19,11 +19,13 @@ export const useIPFS = () => {
 	} = useContract()
 	const { addToast } = useToast();
 	const { user } = useAuth();
+	const [loading,setLoading] = useState(false)
 
 
-	const pinImages = async () => {
+	const pinImages = async (callback) => {
 		const folder = uploadedFiles
 		setStart(true);
+		setLoading(true)
 		setActiveStep(0);
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
         const src = `./images`;
@@ -70,6 +72,9 @@ export const useIPFS = () => {
 			});
 			setError(true);
 		}
+		
+		setLoading(false)
+		callback()
 	};
 
 	const updateAndSaveJson = async (file, data) => {
@@ -98,10 +103,11 @@ export const useIPFS = () => {
 		})
 	}
 
-	const pinMetadata = async () => {
+	const pinMetadata = async (callback) => {
 		const folder = uploadedJson;
         let data = new FormData();
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+		setLoading(true)
 
 		addToast({
 			severity: 'info',
@@ -143,13 +149,15 @@ export const useIPFS = () => {
 				message: e.message 
 			});
         };
+	
+		setLoading(false)
+		callback();
 	}
 
 
 	return {
 		pinMetadata,
-		pinImages
+		pinImages,
+		loading
 	}
-
-
 }
