@@ -34,6 +34,8 @@ import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
 import { AccountLayout, u64 } from '@solana/spl-token';
 import Wallet from '../externals/nodewallet';
+import bs58 from 'bs58';
+
 /*
 export type AccountAndPubkey = {
   pubkey: string;
@@ -47,16 +49,9 @@ export type AccountAndPubkey = {
 // global prototype function
 Object.prototype.toBuffer = function(fn) {
 	if (typeof this == 'string') {
-		console.log(this)
-	//	let uint8Array = Buffer.from(this, 'utf-8')
-	//	let uint8Array = new TextEncoder("utf-8").encode(this);
-//		let uint8Array = new Buffer(this)
-//		let uint8Array = Uint8Array.from([160, 165, 201, 130, 104, 38, 126, 124, 21, 179, 1, 78, 84, 33, 193, 205, 224, 50, 224, 115, 67, 130, 183, 186, 16, 13, 10, 178, 255, 102, 236, 235])
-		let uint8Array = Buffer.alloc(32);
-		console.log(uint8Array)
-		return uint8Array
-	//	console.log(fn)
-		
+		console.log(this);
+    const decoded = bs58.decode(this);
+		return decoded;
 	}
 };
 
