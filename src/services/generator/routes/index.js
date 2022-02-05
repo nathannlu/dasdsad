@@ -9,22 +9,26 @@ const Collection = lazy(() => import("services/generator/pages/Collection"))
 
 const GeneratorRoutes = () => {
 	const routes = [
+		/*	
 		{
 			path: '/collections',
 			component: Dashboard,
 			private: true,
 			exact: true 
 		},
+		*/
 		{
 			path: '/collections/new',
 			component: New,
-			exact: true 
+			exact: true
 		},
+		/*
 		{
 			path: '/collections/:id',
 			component: Collection,
 			private: true,
 		},
+		*/
 	];
 
 	return (

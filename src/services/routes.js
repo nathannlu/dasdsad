@@ -17,7 +17,7 @@ const AppRoutes = () => {
 	const routes = [
 		{
 			path: '/dashboard',
-			component: () => <Redirect to="/collections" />,
+			component: () => <Redirect to="/smart-contracts" />,
 			private: true,
 			exact: true 
 		},
