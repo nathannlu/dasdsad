@@ -25,11 +25,11 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		onCompleted: data => {
 			onPaymentSuccess(data);
 			setIsModalOpen(false);
-			save();
+//			save();
 			// save image
 			
-//		generateImages();
-//		nextStep();
+			generateImages();
+			nextStep();
 		},
 		onError: onPaymentError
 	});

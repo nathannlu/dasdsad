@@ -57,8 +57,12 @@ const Payment = props => {
 
 					<Stack direction="row">
 						<Button fullWidth variant="contained" onClick={() => {
+							{/*
 							generateImages();
 							props.nextStep()
+							*/}
+
+							setIsCheckoutModalOpen(true)
 							posthog.capture('User clicked on "Generate collection" button');
 						}}>
 							Generate collection
