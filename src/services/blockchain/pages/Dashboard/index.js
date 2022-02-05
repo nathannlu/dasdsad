@@ -42,7 +42,7 @@ const Dashboard = () => {
 										<Box sx={{ bgcolor: 'grey.100', p:5}}>
 											<img 
 												style={{width: '100%'}}
-												src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6943de77b8cf95ef1_deploy-to-blockchain-icon.png"
+												src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61f8e07dada6650c668f1147_smart-contract.png"
 											/>
 										</Box>
 										<Box sx={{
