@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from 'libs/auth';
-import { useWebsite } from 'libs/website';
+import { useWebsite } from 'services/website/provider';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';

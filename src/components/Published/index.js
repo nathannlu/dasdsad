@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Editor, Frame } from '@craftjs/core';
 import lz from 'lzutf8';
 
-import AllTemplates from '../blocks/main';
-import { useGetPublished } from 'gql/hooks/website.hook';
+import AllTemplates from 'services/website/pages/Builder/blocks/main';
+import { useGetPublished } from 'services/website/gql/hooks/website.hook';
 import { useWeb3 } from 'libs/web3';
-import { useWebsite } from 'libs/website';
+import { useWebsite } from 'services/website/provider';
 
 import './styles.css';
 

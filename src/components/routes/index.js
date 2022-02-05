@@ -8,21 +8,10 @@ import Login from 'components/pages/Auth/Login';
 import ForgotPassword from 'components/pages/Auth/ForgotPassword';
 import Reset from 'components/pages/Auth/Reset';
 
-// Generator
-//import Generator from 'components/pages/Generator';
-
-import AppRoutes from './AppRoutes';
-import BuilderRoutes from './BuilderRoutes';
-import Generator from 'components/pages/Generator';
-import Collection from 'components/pages/Dashboard/Collection';
-import Upload from 'components/pages/Upload';
-import Uploads from 'components/pages/Dashboard/Upload';
+import AppRoutes from 'services/routes';
 
 // Published Website Route
 import Published from 'components/Published'; 
-
-// Website
-import Website from 'components/pages/Website';
 
 
 const GlobalRoutes = () => {
@@ -34,21 +23,10 @@ const GlobalRoutes = () => {
 		{ path: '/login', component: Login },
 		{ path: '/signup', component: Signup },
 
-		// Generator
-		{ path: '/generator', component: Generator },
 
-		// Smart contract
-		{ path: '/upload', component: Upload, private: true },
-		{ path: '/collection/:id', component:Collection, private: true },
-		{ path: '/contract/:id', component: Uploads, private: true },
-		{ path: '/website', component: Website, private: true },
 
-		// Published routes
-		{ path: '/published/:title/:pageName', component: Published },
-
-		// Builder routes
-		{ path: '/builder/:title/:pageName', component: BuilderRoutes, private: true },
 		{ path: '/', component: () => <Redirect to="/login" />, exact: true},
+
 
 		// Dashboard routes
 		{ path: '/', component: AppRoutes, private: true },

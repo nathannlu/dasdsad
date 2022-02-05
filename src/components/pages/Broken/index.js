@@ -11,8 +11,7 @@ const Broken = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    minHeight: '100vh',
-                    mt: '62px'
+                    mt: '8em'
                 }}
             >
                 <Box

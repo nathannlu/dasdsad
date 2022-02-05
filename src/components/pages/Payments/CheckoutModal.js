@@ -32,7 +32,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, planId, callback }) => {
 		<Modal
 			open={isModalOpen}
 			onClose={()=>setIsModalOpen(false)}
-			sx={{overflow: 'auto', alignItems: 'center', display: 'flex'}}
+			sx={{overflow: 'auto', alignItems: 'center', display: 'flex', zIndex: 5000}}
 		>
 			<form
 				onSubmit={async e => {

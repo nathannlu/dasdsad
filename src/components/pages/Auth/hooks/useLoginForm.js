@@ -3,21 +3,26 @@ import { useHistory } from 'react-router-dom';
 import { useForm } from 'ds/hooks/useForm';
 import { useAuth } from 'libs/auth'; 
 import { useToast } from 'ds/hooks/useToast'; 
-import { useCreateCollection } from 'gql/hooks/collection.hook';
-import { useLayerManager } from 'core/manager';
-import { useMetadata } from 'core/metadata';
+
+/*
+import { useCreateCollection } from 'services/generator/gql/hooks/collection.hook';
+import { useLayerManager } from 'services/generator/controllers/manager';
+import { useMetadata } from 'services/generator/controllers/metadata';
+*/
 
 export const useLoginForm = () => {
 	const { isAuthenticated } = useAuth();
 	const { addToast } = useToast();
 	const history = useHistory();
-	const { query: {layers} } = useLayerManager();
-	const { settingsForm } = useMetadata();
+//	const { query: {layers} } = useLayerManager();
+//	const { settingsForm } = useMetadata();
+	/*
 	const [createCollection] = useCreateCollection({
 		onCompleted: data => {
 			console.log(data);
 		}
 	});
+	*/
 
 	const { form: loginForm } = useForm({
 		email: {
@@ -44,6 +49,7 @@ export const useLoginForm = () => {
 	const handleLoginSuccess = async () => {
 		// On successful log in, save layers to person
 
+		/*
 		// If is first time
 		if(layers) {
 			let _layers = [...layers]
@@ -65,8 +71,9 @@ export const useLoginForm = () => {
 				size: settingsForm.collectionSize.value
 			};
 
-			await createCollection({variables: {collection: obj}})
+//			await createCollection({variables: {collection: obj}})
 		}
+		*/
 
 		handleRedirect();
 	}
