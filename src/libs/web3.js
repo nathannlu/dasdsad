@@ -35,6 +35,7 @@ export const Web3Provider = ({ children }) => {
 	
 	// Load account and load smart contracts
 	const loadBlockchainData = async (_contract) => {
+
 		if (window.ethereum) {
 			//const Contract = _contract
 			const web3 = window.web3
@@ -52,7 +53,6 @@ export const Web3Provider = ({ children }) => {
 			web3.utils.fromUtf8(`I am signing my one-time nonce: ${nonce}`),
 			address,
 		)
-		console.log(address, signature)
 
 		return ({address, signature})
 	}
@@ -125,12 +125,7 @@ export const Web3Provider = ({ children }) => {
 		return owner
 	}
 
-	const getBaseUri = async (baseUri, contractAddress) => {
-		const web3 = window.web3
-		const contract = await retrieveContract(contractAddress)
-		return contract.methods.baseTokenURI().call()
-	}
-	
+
 	// Update base URI
 	const updateBaseUri = async (baseUri, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
@@ -214,13 +209,6 @@ export const Web3Provider = ({ children }) => {
 		}
 	}
 
-	const getTotalMinted = async (contractAddress) => {
-		const web3 = window.web3
-		const contract = await retrieveContract(contractAddress)
-
-		return contract.methods.totalSupply().call()
-	}
-
 	const getBaseTokenURI = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
@@ -289,6 +277,21 @@ export const Web3Provider = ({ children }) => {
         })
     }
 
+	const payInEth = async (size, callback) => {
+		const web3 = window.web3
+		const inEth = 0.000034;
+		const amount = inEth * size;
+
+
+		web3.eth.sendTransaction({
+			from: account,
+			to: "0x6C20AbbBDC33B00d2C1411Be28026d5495486ae0",
+			value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
+		}, (err, res) => {
+			callback(res)	
+		})
+	}
+
 	return (
 		<Web3Context.Provider
 			value={{
@@ -296,17 +299,17 @@ export const Web3Provider = ({ children }) => {
 				loadBlockchainData,
 				mint,
 				openContract,
-				getBaseUri,
 				updateBaseUri,
 				retrieveContract,
 				withdraw,
 				getBalance,
-				getTotalMinted,
 				account,
 				signNonce,
 				checkOwner,
                 getNetworkID,
                 setNetwork,
+
+				payInEth,
 			}}
 		>
 			{ children }

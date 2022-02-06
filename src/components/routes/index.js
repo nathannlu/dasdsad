@@ -25,7 +25,7 @@ const GlobalRoutes = () => {
 		{ path: '/login', component: Login },
 		{ path: '/signup', component: Signup },
 
-		{ path: '/collections', component: Generator },
+		{ path: '/generator', component: Generator },
 
 
 

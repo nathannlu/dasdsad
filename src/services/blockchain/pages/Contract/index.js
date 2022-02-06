@@ -45,6 +45,7 @@ const Upload = (props) => {
 			await loadBlockchainData()
 		})()
 	}, [])
+
 	useEffect(() => {
 		if(contracts.length > 0) {
 			(async () => {
