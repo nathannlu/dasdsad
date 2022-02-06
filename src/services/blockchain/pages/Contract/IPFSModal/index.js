@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Modal, Box, Button, Stack } from 'ds/components';
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
-import Traits from './Traits';
-import Metadata from './Metadata';
 import { useContract } from 'services/blockchain/provider';
 import { useSetBaseUri } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
+
+import Preview from './Preview';
+import Traits from './Traits';
+import Metadata from './Metadata';
 
 const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
 	const [activeStep, setActiveStep] = useState(0); 
@@ -20,6 +22,8 @@ const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
 				margin: '0 auto',
 				background: '#fff'
 			}}>
+				<Preview />
+				{/*
 				<Stepper activeStep={activeStep}>
 					<Step>
 						<StepLabel>
@@ -38,10 +42,11 @@ const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
 					</Step>
 				</Stepper>
 				{{
-					0: <Traits setActiveStep={setActiveStep} />,
-					1: <Metadata setActiveStep={setActiveStep} />,
-					2: <Confirmation id={id} setIsModalOpen={setIsModalOpen} />
+					1: <Traits setActiveStep={setActiveStep} />,
+					2: <Metadata setActiveStep={setActiveStep} />,
+					3: <Confirmation id={id} setIsModalOpen={setIsModalOpen} />
 				}[activeStep]}
+				*/}
 			</Box>
 		</Modal>
 	)
