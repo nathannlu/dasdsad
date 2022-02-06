@@ -3,6 +3,7 @@ import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 //import { useWebsite } from 'libs/website';
 //import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
+import config from 'config';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFT.json';
 
 export const Web3Context = React.createContext({})
@@ -285,7 +286,7 @@ export const Web3Provider = ({ children }) => {
 
 		web3.eth.sendTransaction({
 			from: account,
-			to: "0x6C20AbbBDC33B00d2C1411Be28026d5495486ae0",
+			to: config.company.walletAddress,
 			value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
 		}, (err, res) => {
 			callback(res)	
