@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Preview = () => {
+const Preview = (props) => {
 	
 	return (
 		<div>
@@ -13,6 +13,10 @@ const Preview = () => {
 				<small>
 					$19.99/mo
 				</small>
+
+				<button onClick={props.nextStep}>
+					Next
+				</button>
 			</div>
 		</div>
 	)
