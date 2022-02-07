@@ -44,7 +44,7 @@ export const useDeployContractForm = () => {
 	const onCompleted = () => {
 		addToast({
 			severity: 'success',
-			message: 'Smart contract successfully deployed'
+			message: 'Smart contract successfully created'
 		})
 		handleRedirect()
 	}

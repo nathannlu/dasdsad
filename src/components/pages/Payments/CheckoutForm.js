@@ -23,7 +23,6 @@ const CheckoutModal = ({ planId, callback }) => {
 		onCompleted: data => {
 			onPaymentSuccess(data)
 			callback(data)
-			setIsModalOpen(false);
 		},
 		onError: onPaymentError
 	});
@@ -37,10 +36,7 @@ const CheckoutModal = ({ planId, callback }) => {
 					subscribe({variables: { paymentMethodId: paymentMethod.id }})
 				}
 			}}
-			style={{
-				width: '1200px',
-				margin: '0 auto',
-			}}
+
 		>
 			<Box sx={{bgcolor: 'white', borderBottom: 1, borderColor: 'grey.300', p: 4}}>
 				<Typography variant="h4">
