@@ -11,7 +11,6 @@ import CloseIcon from '@mui/icons-material/Close';
 const blockchains = [
 	{ title: 'Ethereum', value:'ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
 	{ title: 'Polygon', value:'polygon', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
-    { title: 'Mumbai', value:'mumbai', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
 	/*
 	{ title: 'Solana', value: 'solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
 	*/
