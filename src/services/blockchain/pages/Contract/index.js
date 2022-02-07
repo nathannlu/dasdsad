@@ -7,8 +7,8 @@ import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button,
 import { Chip } from '@mui/material';
 import { WarningAmber as WarningAmberIcon, SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
 import IPFSModal from './IPFSModal';
-
-
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
@@ -31,20 +31,21 @@ const Upload = (props) => {
 		loadBlockchainData,
 		getBalance,
 		checkOwner,
-
 		withdraw,
 		mint,
 		openContract,
 		updateBaseUri,
+        contractState,
+        getContractState,
 	} = useWeb3()
-
 
 	useEffect(() => {
 		(async () => {
-			await loadWeb3()
-			await loadBlockchainData()
+			await loadWeb3();
+			await loadBlockchainData();
 		})()
 	}, [])
+
 	useEffect(() => {
 		if(contracts.length > 0) {
 			(async () => {
@@ -65,6 +66,9 @@ const Upload = (props) => {
 					setSoldCount(nftsSold)
 				}
 
+                // Get sales status
+                await getContractState(c.address);
+
 				let list = [];
 				for (let i = 0; i < nftsSold; i++) {
 					const o = await checkOwner(i, c.address)
@@ -78,7 +82,8 @@ const Upload = (props) => {
 	},[contracts])
 
 	const mintNow = async () => {
-		await mint(contract.nftCollection.price.toString(), contract.address)
+        console.log(contract.nftCollection.price.toString())
+		await mint(contract.nftCollection.price.toString(), contract.address);
 	}
 
 	return (
@@ -182,12 +187,12 @@ const Upload = (props) => {
 							Details
 						</Typography>
 
-						<Grid container xs={3}>
+						<Grid container>
 							<Grid item xs={6}>
 								Balance:
 							</Grid>
 							<Grid sx={{fontWeight:'bold'}} item xs={6}>
-								{balance}ETH
+								{balance} {contract.nftCollection.currency}
 							</Grid>
 							<Grid item xs={6}>
 								NFTs sold:
@@ -199,7 +204,7 @@ const Upload = (props) => {
 								Price per NFT:
 							</Grid>
 							<Grid sx={{fontWeight:'bold'}} item xs={6}>
-								{price}ETH
+								{price} {contract.nftCollection.currency}
 							</Grid>
 							<Grid item xs={6}>
 								Collection size:
@@ -207,8 +212,17 @@ const Upload = (props) => {
 							<Grid sx={{fontWeight:'bold'}} item xs={6}>
 								{contract?.nftCollection ? contract?.nftCollection?.size : null}
 							</Grid>
+                            <Grid item xs={6}>
+								Sales Status:
+							</Grid>
+							<Grid sx={{fontWeight:'bold'}} item xs={6}>
+                                {contractState ? (
+                                    <Chip label='Open' color='success' size='small'/>
+                                ) : (
+                                    <Chip label='Closed' color='error' size='small'/>
+                                )}
+							</Grid>
 						</Grid>
-
 					</Stack>
 					<Divider />
 					<Stack gap={2}>
@@ -224,21 +238,35 @@ const Upload = (props) => {
 							>
 								Pay out to bank
 							</Button>
-							<Button 
-								startIcon={<PaymentIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => mintNow()}
-							>
-								Mint
-							</Button>
-							<Button 
-								size="small"
-								variant="contained"
-								onClick={() => openContract(contract.address)}
-							>
-								openContract
-							</Button>
+                            {contractState ? (
+                                <Button 
+                                    startIcon={<LockIcon />}
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => openContract(contract.address, false)}
+                                    color='error'
+                                >
+                                    Close Contract
+                                </Button>
+                            ) : (
+                                <Button 
+                                    startIcon={<LockOpenIcon />}
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => openContract(contract.address)}
+                                >
+                                    Open Contract
+                                </Button>
+                            )}
+                            <Button 
+                                startIcon={<PaymentIcon />}
+                                size="small"
+                                variant="contained"
+                                onClick={() => mintNow()}
+                                disabled={!contractState}
+                            >
+                                Mint
+                            </Button>
 						</Stack>
 						<Stack gap={1}>
 							<Typography variant="small">
@@ -258,9 +286,6 @@ const Upload = (props) => {
 							</Stack>
 						</Stack>
 					</Stack>
-						
-
-
 					<Stack sx={{background: '#eee', borderRadius: 2, p:2}}>
 						<Typography variant="h6">
 							Addresses who own your NFT
