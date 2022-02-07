@@ -18,7 +18,7 @@ const GeneratorRoutes = () => {
 		},
 		*/
 		{
-			path: '/collections/new',
+			path: '/generator',
 			component: New,
 			exact: true
 		},
