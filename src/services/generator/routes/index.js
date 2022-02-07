@@ -2,9 +2,9 @@ import React, { lazy, Suspense } from 'react';
 import { RouteBuilder } from 'components/routes/RouteBuilder';
 import { CircularProgress, Stack } from 'ds/components'
 
-const Dashboard = lazy(() => import("services/generator/pages/Dashboard"))
+//const Dashboard = lazy(() => import("services/generator/pages/Dashboard"))
 const New = lazy(() => import("services/generator/pages/New"))
-const Collection = lazy(() => import("services/generator/pages/Collection"))
+//const Collection = lazy(() => import("services/generator/pages/Collection"))
 
 
 const GeneratorRoutes = () => {
@@ -18,7 +18,7 @@ const GeneratorRoutes = () => {
 		},
 		*/
 		{
-			path: '/collections/new',
+			path: '/generator',
 			component: New,
 			exact: true
 		},

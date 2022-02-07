@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
-import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
 import { Chip } from '@mui/material';
 import { WarningAmber as WarningAmberIcon, SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
+
 import IPFSModal from './IPFSModal';
+import NotComplete from './NotComplete';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
+
+
+
 
 const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
@@ -24,8 +28,7 @@ const Upload = (props) => {
 
 	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
 
-	const { deployEthereumContract } = useEthereum();
-	const { contracts, handleSelectNetwork } = useContract();
+	const { contracts } = useContract();
 	const {
 		loadWeb3,
 		loadBlockchainData,
@@ -97,9 +100,7 @@ const Upload = (props) => {
 								src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d2aac6943de77b8cf95ef1_deploy-to-blockchain-icon.png" 
 							/>
 							<Chip label={contract?.blockchain} />
-							{!isSetupComplete && (
-								<Chip icon={<WarningAmberIcon />} color="warning" label="Set up required" />
-							)}
+
 						</Box>
 						<Box>
 							<Typography variant="h4">
@@ -108,6 +109,17 @@ const Upload = (props) => {
 							<Typography variant="body">
 								Your deployed smart-contract's address on the blockchain
 							</Typography>
+						</Box>
+
+						<Box>
+							<Typography variant="body">
+								Status:
+							</Typography>
+							{!isSetupComplete ? (
+								<Chip icon={<WarningAmberIcon />} color="warning" label="Set up required" />
+							) : (
+								<Chip color="success" label="Active" />
+							)}
 						</Box>
 						{contract?.address && (
 						<Stack direction="column" gap={2}>
@@ -134,51 +146,11 @@ const Upload = (props) => {
 
 					</Stack>
 					{!isSetupComplete ? (
-						<>
-						{!contract?.nftCollection?.baseUri && (
-						<Stack>
-							<Typography variant="h6" sx={{fontWeight:'bold'}}>
-								Set NFT assets location
-							</Typography>
-							<Typography variant="body">
-								Link your metadata and images to the smart contract.
-							</Typography>
-							<Box>
-								<Button variant="contained" onClick={() => setIsModalOpen(true)}>
-									Upload to IPFS
-								</Button>
-							</Box>
-						</Stack>
-						)}
-						{contract?.nftCollection?.baseUri && (
-							<Stack>
-								<Typography variant="h6" sx={{fontWeight:'bold'}}>
-									Deploy to the blockchain
-								</Typography>
-								<Typography variant="body">
-									Deploy your smart contract to the blockchain in order to accept public mints, configure whitelists, set public sale.
-								</Typography>
-								<Box>
-									<Button onClick={async () => {
-											await handleSelectNetwork(contract?.blockchain);
-											await deployEthereumContract({
-												uri: contract.nftCollection.baseUri,
-												name: contract.name,
-												symbol: contract.symbol,
-												totalSupply: contract.nftCollection.size,
-												cost: contract.nftCollection.price,
-												open: false,
-												id
-											})
-										}}
-										variant="contained"
-									>
-										Deploy to blockchain
-									</Button>
-								</Box>
-							</Stack>
-						)}
-						</>
+						<NotComplete 
+							id={id}
+							contract={contract} 
+							setIsModalOpen={setIsModalOpen} 
+						/>
 					) : (
 						<>
 					<Divider />
