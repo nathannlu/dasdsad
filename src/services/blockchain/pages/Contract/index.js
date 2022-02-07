@@ -8,6 +8,8 @@ import { WarningAmber as WarningAmberIcon, SwapVert as SwapVertIcon, Payment as 
 
 import IPFSModal from './IPFSModal';
 import NotComplete from './NotComplete';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
 
 
 
