@@ -15,8 +15,8 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
   const elements = useElements();
 	const { settingsForm  } = useMetadata();
-	const { generateImages, save } = useGenerator();
-	const { payInEth, loadWeb3, loadBlockchainData } = useWeb3();
+	const { generateImages, save, start } = useGenerator();
+	const { payInEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
 
 	const {
 		paymentForm: { nameOnCard, email },
@@ -24,12 +24,15 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		onPaymentError,
 	} = usePaymentForm();
 	const onCompleted = data => {
-		onPaymentSuccess(data);
-		setIsModalOpen(false);
-//			save();
-			// save image
-		generateImages();
-		nextStep();
+		if(!start) {
+			setIsModalOpen(false);
+	//			save();
+				// save image
+			generateImages();
+			nextStep();
+
+			onPaymentSuccess(data);
+		}
 	}
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => onCompleted,
@@ -99,15 +102,16 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 				>
 					<Grid item md={6}>
 						<Stack gap={2}>
-							<Button 
+							<LoadingButton 
 								startIcon={<LockIcon />} 
 								onClick={() => payInEth(settingsForm.size.value, onCompleted)} 
+								loading={ethPayLoading}
 								variant="contained" 
 								color="black"
 								sx={{color: 'white'}}
 							>
 								Pay {0.000034 * settingsForm.size.value} Eth now
-							</Button>
+							</LoadingButton>
 							<Typography variant="h5">
 								Payment info <LockIcon />
 							</Typography>

@@ -12,6 +12,7 @@ export const useWeb3 = () => useContext(Web3Context)
 
 export const Web3Provider = ({ children }) => {
 	const [account, setAccount] = useState(null); // eth address
+	const [loading, setLoading] = useState(false);
 	const { addToast } = useToast();
 
 	// Checks if browser has Ethereum extension installed
@@ -288,9 +289,23 @@ export const Web3Provider = ({ children }) => {
 			from: account,
 			to: config.company.walletAddress,
 			value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
-		}, (err, res) => {
-			callback(res)	
 		})
+		.on('transactionHash', () => {
+			setLoading(true);
+			addToast({
+				severity: 'info',
+				message: 'Sending transaction. This could take up to a minute...'
+			})
+		})
+		.once('confirmation', () => {
+			setLoading(false);
+			callback()
+		})
+		.on('error', () => {
+			setLoading(false);
+		})
+
+		return [loading]
 	}
 
 	return (
@@ -310,6 +325,7 @@ export const Web3Provider = ({ children }) => {
                 getNetworkID,
                 setNetwork,
 
+				loading,
 				payInEth,
 			}}
 		>
