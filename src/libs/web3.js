@@ -11,6 +11,7 @@ export const useWeb3 = () => useContext(Web3Context)
 
 export const Web3Provider = ({ children }) => {
 	const [account, setAccount] = useState(null); // eth address
+    const [contractState, setContractState] = useState(false);
 	const { addToast } = useToast();
 
 	// Checks if browser has Ethereum extension installed
@@ -62,6 +63,8 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
 		const priceInWei = Web3.utils.toWei(price);
 
+        console.log(contract.methods)
+
 		contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
 			if (err) {
 				addToast({
@@ -84,15 +87,15 @@ export const Web3Provider = ({ children }) => {
 		.on("confirmation", () => {
 			addToast({
 				severity: 'success',
-				message: 'Purchase complete.'
+				message: 'NFT successfully minted.'
 			})
 		})
 	}
 
-	const openContract = async (contractAddress) => {
+	const openContract = async (contractAddress, status = true) => {
 		const contract = await retrieveContract(contractAddress)
 
-		contract.methods.setOpen(true).send({ from: account, value: 0 }, err => {
+		contract.methods.setOpen(status).send({ from: account, value: 0 }, err => {
 			if (err) {
 				addToast({
 					severity: 'error',
@@ -112,16 +115,26 @@ export const Web3Provider = ({ children }) => {
 			})
 		})
 		.on("confirmation", () => {
+            getContractState(contractAddress);
 			addToast({
 				severity: 'success',
-				message: 'Sales are now open.'
+				message: `Sales are now ${status ? 'open' : 'closed'}.`
 			})
 		})
 	}
 
+    const getContractState = async (contractAddress) => {
+        const contract = await retrieveContract(contractAddress);
+        const state = await contract.methods.open().call();
+        setContractState(state);
+        return state; // false - closed, true - open
+    }
+
 	const checkOwner = async (id, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
+        console.log(contract.methods);
 		const owner = await contract.methods.ownerOf(id).call();
+        console.log(owner);
 		return owner
 	}
 
@@ -307,6 +320,8 @@ export const Web3Provider = ({ children }) => {
 				checkOwner,
                 getNetworkID,
                 setNetwork,
+                contractState,
+                getContractState,
 			}}
 		>
 			{ children }

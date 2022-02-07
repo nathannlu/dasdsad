@@ -11,6 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const blockchains = [
 	{ title: 'Ethereum', value:'ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
 	{ title: 'Polygon', value:'polygon', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
+    { title: 'Mumbai', value:'mumbai', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
 	/*
 	{ title: 'Solana', value: 'solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
 	*/
@@ -35,22 +36,28 @@ const Upload = () => {
 	const [createContract, { loading }] = useCreateContract({
 		onCompleted
 	});
-	const currency = {
-		'ethereum': 'eth',
-		'polygon' : 'matic',
-		'solana'	: 'sol',
-	}[selectInput]
-	const ContractInput = {
-		name: name.value,
-		symbol: symbol.value,
-		blockchain: selectInput,
-		type: 'whitelist',
-		nftCollection: {
-			price: parseFloat(priceInEth.value),
-			size: parseInt(maxSupply.value),
-			currency,
-		}
-	}
+
+    const onCreateContract = async () => {
+        const currencyMap = {
+            'ethereum': 'eth',
+            'rinkeby': 'eth',
+            'polygon': 'matic',
+            'mumbai': 'matic',
+            'solana': 'sol',
+        }
+        const ContractInput = {
+            name: name.value,
+            symbol: symbol.value,
+            blockchain: selectInput,
+            type: 'whitelist',
+            nftCollection: {
+                price: parseFloat(priceInEth.value),
+                size: parseInt(maxSupply.value),
+                currency: currencyMap[selectInput],
+            }
+        }
+        await createContract({ variables: { contract: ContractInput}});
+    }
 
 	return (
 		<Fade in>
@@ -167,7 +174,7 @@ const Upload = () => {
 						<Stack mt={2}>
 							<LoadingButton 
 								loading={loading}
-								onClick={() => createContract({ variables: { contract: ContractInput}})} 
+								onClick={onCreateContract} 
 								variant="contained"
 							>
 								Create collection
