@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, IconButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
@@ -8,31 +8,39 @@ import { usePaymentForm } from '../hooks/usePaymentForm';
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useWeb3 } from 'libs/web3';
 
 
 const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
   const elements = useElements();
 	const { settingsForm  } = useMetadata();
-	const { generateImages, save } = useGenerator();
+	const { generateImages, save, start } = useGenerator();
+	const { payInEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
 
 	const {
 		paymentForm: { nameOnCard, email },
 		onPaymentSuccess,
 		onPaymentError,
 	} = usePaymentForm();
-	const [ charge, { loading }] = useCharge({
-		onCompleted: data => {
-			onPaymentSuccess(data);
+	const onCompleted = data => {
+		if(!start) {
 			setIsModalOpen(false);
-//			save();
-			// save image
-			
+	//			save();
+				// save image
 			generateImages();
 			nextStep();
-		},
+
+			onPaymentSuccess(data);
+		}
+	}
+	const [ charge, { loading }] = useCharge({
+		onCompleted: data => onCompleted,
 		onError: onPaymentError
 	});
+
+
+
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
 	const onSubmit = async e => {
@@ -52,6 +60,14 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 			}})
 		}
 	}
+
+	useEffect(() => {
+		(async () => {
+			await loadWeb3();
+			await loadBlockchainData();
+		})()
+	}, [])
+
 	
 
 
@@ -86,6 +102,16 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 				>
 					<Grid item md={6}>
 						<Stack gap={2}>
+							<LoadingButton 
+								startIcon={<LockIcon />} 
+								onClick={() => payInEth(settingsForm.size.value, onCompleted)} 
+								loading={ethPayLoading}
+								variant="contained" 
+								color="black"
+								sx={{color: 'white'}}
+							>
+								Pay {0.000034 * settingsForm.size.value} Eth now
+							</LoadingButton>
 							<Typography variant="h5">
 								Payment info <LockIcon />
 							</Typography>

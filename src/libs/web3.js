@@ -3,6 +3,7 @@ import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 //import { useWebsite } from 'libs/website';
 //import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
+import config from 'config';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFT.json';
 
 export const Web3Context = React.createContext({})
@@ -11,6 +12,7 @@ export const useWeb3 = () => useContext(Web3Context)
 
 export const Web3Provider = ({ children }) => {
 	const [account, setAccount] = useState(null); // eth address
+	const [loading, setLoading] = useState(false);
     const [contractState, setContractState] = useState(false);
 	const { addToast } = useToast();
 
@@ -36,6 +38,7 @@ export const Web3Provider = ({ children }) => {
 	
 	// Load account and load smart contracts
 	const loadBlockchainData = async (_contract) => {
+
 		if (window.ethereum) {
 			//const Contract = _contract
 			const web3 = window.web3
@@ -53,7 +56,6 @@ export const Web3Provider = ({ children }) => {
 			web3.utils.fromUtf8(`I am signing my one-time nonce: ${nonce}`),
 			address,
 		)
-		console.log(address, signature)
 
 		return ({address, signature})
 	}
@@ -138,12 +140,7 @@ export const Web3Provider = ({ children }) => {
 		return owner
 	}
 
-	const getBaseUri = async (baseUri, contractAddress) => {
-		const web3 = window.web3
-		const contract = await retrieveContract(contractAddress)
-		return contract.methods.baseTokenURI().call()
-	}
-	
+
 	// Update base URI
 	const updateBaseUri = async (baseUri, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
@@ -227,13 +224,6 @@ export const Web3Provider = ({ children }) => {
 		}
 	}
 
-	const getTotalMinted = async (contractAddress) => {
-		const web3 = window.web3
-		const contract = await retrieveContract(contractAddress)
-
-		return contract.methods.totalSupply().call()
-	}
-
 	const getBaseTokenURI = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
@@ -302,6 +292,35 @@ export const Web3Provider = ({ children }) => {
         })
     }
 
+	const payInEth = async (size, callback) => {
+		const web3 = window.web3
+		const inEth = 0.000034;
+		const amount = inEth * size;
+
+
+		web3.eth.sendTransaction({
+			from: account,
+			to: config.company.walletAddress,
+			value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
+		})
+		.on('transactionHash', () => {
+			setLoading(true);
+			addToast({
+				severity: 'info',
+				message: 'Sending transaction. This could take up to a minute...'
+			})
+		})
+		.once('confirmation', () => {
+			setLoading(false);
+			callback()
+		})
+		.on('error', () => {
+			setLoading(false);
+		})
+
+		return [loading]
+	}
+
 	return (
 		<Web3Context.Provider
 			value={{
@@ -309,17 +328,18 @@ export const Web3Provider = ({ children }) => {
 				loadBlockchainData,
 				mint,
 				openContract,
-				getBaseUri,
 				updateBaseUri,
 				retrieveContract,
 				withdraw,
 				getBalance,
-				getTotalMinted,
 				account,
 				signNonce,
 				checkOwner,
                 getNetworkID,
                 setNetwork,
+
+				loading,
+				payInEth,
                 contractState,
                 getContractState,
 			}}

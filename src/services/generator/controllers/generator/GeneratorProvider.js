@@ -32,6 +32,11 @@ export const GeneratorProvider = ({children}) => {
 
 		// Runs check
 		if(validateForm()) {
+			setStart(true);
+			addToast({
+				severity: 'info',
+				message: 'Generating collection. This will take a some time...'
+			})
 			worker.postMessage({
 				message:'generate',
 				settings: {
@@ -40,13 +45,6 @@ export const GeneratorProvider = ({children}) => {
 				},
 				layers: [...layers],
 				count: size.value
-			})
-
-			setStart(true);
-
-			addToast({
-				severity: 'info',
-				message: 'Generating collection. This will take a some time...'
 			})
 		}
 	};

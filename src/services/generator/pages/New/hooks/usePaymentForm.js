@@ -66,7 +66,7 @@ export const usePaymentForm = (planId) => {
 				}
 		});
 
-		setPaidCookie();
+//		setPaidCookie();
 	}
 
 	const onPaymentError = err => {

@@ -15,5 +15,9 @@ export default {
     uploadcare: {
         publicKey: "dfeba611508a6f7760ca",
         secretKey: "279067b46a3249a1fe39"
-    }
+    },
+	company: {
+		walletAddress: '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166'	
+	}
+
 }
