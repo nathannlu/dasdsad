@@ -118,7 +118,7 @@ const Upload = (props) => {
 							{!isSetupComplete ? (
 								<Chip icon={<WarningAmberIcon />} color="warning" label="Set up required" />
 							) : (
-								<Chip color="success" label="Active" />
+								<Chip color="success" label="Live on blockchain" />
 							)}
 						</Box>
 						{contract?.address && (
@@ -136,9 +136,11 @@ const Upload = (props) => {
 								</Box>
 							</Box>
 							<Box>
-								<Link to="https://opensea.io/get-listed/step-two" target="_blank">
-									Connect with OpenSea
-								</Link>
+								<a href="https://opensea.io/get-listed/step-two" target="_blank">
+									<Button>
+										Connect with OpenSea
+									</Button>
+								</a>
 							</Box>
 						</Stack>
 						)}
