@@ -1,15 +1,20 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useEditor } from '@craftjs/core';
 import { Fade, Button, IconButton, Stack, Box } from 'ds/components';
 import { useWebsite } from 'services/website/provider';
-import { useGetWebsites } from 'services/website/gql/hooks/website.hook';
-
+import { useGetWebsites, useSetWebsiteSubscription } from 'services/website/gql/hooks/website.hook';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutModal from 'components/pages/Payments/CheckoutModal';
+import config from 'config'
 import {
 	Save as SaveIcon,
 	FileUpload as FileUploadIcon,
 	Undo as UndoIcon,
 	Redo as RedoIcon
 } from '@mui/icons-material'
+
+const stripePromise = loadStripe(config.stripe.publicKey);
 
 const Navbar = () => {
 	const {
@@ -22,9 +27,21 @@ const Navbar = () => {
 		canUndo: state.options.enabled && query.history.canUndo(),
 		canRedo: state.options.enabled && query.history.canRedo(),
 	}));
-	const { onSaveChanges } = useWebsite();
+	const { onSaveChanges, onSave, isCheckoutModalOpen, setIsCheckoutModalOpen } = useWebsite();
+    const [setWebsiteSubscription] = useSetWebsiteSubscription({
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    });
 
     useGetWebsites();
+
+    const onSuccessPayment = async (data) => {
+        console.log(data)
+        await setWebsiteSubscription({ variables: { isSubscribed: true } });
+        await onSaveChanges(query);
+    }
 
 	return (
 		<Fade in>
@@ -57,11 +74,20 @@ const Navbar = () => {
 
 						<Button
 							size="small"
-							onClick={() => onSaveChanges(query)}
+							onClick={() => onSave(query)}
 							disabled={!canUndo}
 						>
 							Save
 						</Button>
+
+                        <Elements stripe={stripePromise}>
+                            <CheckoutModal
+                                isModalOpen={isCheckoutModalOpen}
+                                callback={onSuccessPayment}
+                                planId={config.stripe.products.website}
+                                setIsModalOpen={setIsCheckoutModalOpen}
+                            />
+                        </Elements>
 					</Stack>
 				</div>
 			</Box>

@@ -1,7 +1,7 @@
 import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 import { useQuery, useMutation } from '@apollo/client';
-import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED } from '../website.gql';
+import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED, SET_WEBSITE_SUBSCRIPTION } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
 export const useGetWebsites = () => {
@@ -200,3 +200,16 @@ export const useBuildWebsite = ({ title, onCompleted }) => {
 	return { ...queryResult }
 }
 
+export const useSetWebsiteSubscription = ({ onError }) => {
+	const { website, setWebsite } = useWebsite();
+
+    const [setWebsiteSubscription] = useMutation(SET_WEBSITE_SUBSCRIPTION, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            newWebsite.isSubscribed = true;
+			setWebsite(newWebsite);
+		}
+	})
+
+	return [setWebsiteSubscription];
+}
