@@ -11,10 +11,9 @@ import CloseIcon from '@mui/icons-material/Close';
 const Website = props => {
 	const [contracts, setContracts] = useState([]);
 	const [websiteTitle, setWebsiteTitle] = useState('');
-	const [selectInput, setSelectInput] = useState(null);
+	const [selectInput, setSelectInput] = useState('Select your contract');
 	const { addToast } = useToast();
 	const history = useHistory();
-
 
 	const [createWebsite] = useCreateWebsite({ 
 		title: websiteTitle,
@@ -27,24 +26,31 @@ const Website = props => {
 			history.push('/websites');
 		}
 	});
+
 	useGetContracts({
 		onCompleted: data => {
-			setContracts(data.getContracts)
-			setSelectInput(data.getContracts[0]?.address)
+            const availableContracts =  data.getContracts.filter((contract) => {
+                return contract.address;
+            })
+            if (!availableContracts.length) return;
+            setContracts(availableContracts);
+			setSelectInput(availableContracts[0].address);
 		}
 	})
 
-
 	const onSubmit = () => {
-		if(websiteTitle.length < 1) {
-			addToast({
+        try {
+            if (!websiteTitle.length) throw new Error('Website subdomain must be filled');
+            if (!selectInput.length || selectInput === 'Select your contract') throw new Error('You must choose a contract');
+
+            createWebsite();
+        }
+        catch (e) {
+            addToast({
 				severity: 'error',
-				message: 'Subdomain cannot be left blank',
+				message: e.message,
 			});
-		}
-		else {
-			createWebsite()
-		}
+        }
 	}
 
 	return (
