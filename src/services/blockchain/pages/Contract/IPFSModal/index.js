@@ -18,7 +18,7 @@ const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
 			//onClose={()=>setIsModalOpen(false)}
 			sx={{overflow: 'auto', alignItems: 'center', display: 'flex', zIndex: 5000}}
 		>
-			<Box p={2} sx={{
+			<Box p={3} pt={1} sx={{
 				width: '1200px',
 				margin: '0 auto',
 				background: '#fff'
@@ -28,6 +28,7 @@ const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
 						<CloseIcon onClick={() => setIsModalOpen(false)} />
 					</IconButton>
 				</Stack>
+
 				<StepWizard transitions={{}}>
 					<Preview />
 					{/* user imports their own link */}
