@@ -13,7 +13,8 @@ export const useWebsite = () => useContext(WebsiteContext);
 export const WebsiteProvider = ({ children }) => {
     const { addToast } = useToast();
 	const [website, setWebsite] = useState({});
-    const [imagePlaceHolders, setImagePlaceHolders] = useState(['https://via.placeholder.com/', 'https://dummyimage.com/'])
+    const [imagePlaceHolders, setImagePlaceHolders] = useState(['https://via.placeholder.com/', 'https://dummyimage.com/']);
+    const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 	const [updatePageData, { data }] = useUpdatePageData({
 		onCompleted: () => addToast({
 			severity: 'success',
@@ -30,6 +31,14 @@ export const WebsiteProvider = ({ children }) => {
 		return website?.pages.find(page => page.name == pageName);
 	}
 
+    const onSave = async (query) => {
+        if (!website.isSubscribed) {
+            setIsCheckoutModalOpen(true);
+        } else {
+            onSaveChanges(query);
+        }
+    }
+ 
     const onSaveChanges = async (query) => {
         try {
             const json = query.serialize();
@@ -155,6 +164,9 @@ export const WebsiteProvider = ({ children }) => {
                 addImageToLocal,
                 removeImageFromLocal,
                 removeUnusedImages,
+                isCheckoutModalOpen,
+                setIsCheckoutModalOpen,
+                onSave,
 			}}
 		>
 			{children}

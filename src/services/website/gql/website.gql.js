@@ -65,8 +65,6 @@ export const GET_PUBLISHED = gql`
 	}
 `
 
-
-
 export const UPDATE_PAGE_DATA = gql`
 	mutation UpdatePageData($websiteId: ID!, $pageName: String!, $pageData: String!) {
 		updatePageData(websiteId: $websiteId, pageName: $pageName, pageData: $pageData) {
@@ -117,8 +115,17 @@ export const SET_CONTRACT_ADDRESS = gql`
 		}
 	}
 `
+
 export const BUILD_WEBSITE = gql`
 	query BuildWebsite($title: String!) {
 		buildWebsite(title: $title)
 	}
+`
+
+export const SET_WEBSITE_SUBSCRIPTION = gql`
+    mutation SetWebsiteSubscription($isSubscribed: Boolean!) {
+        setWebsiteSubscription(isSubscribed: $isSubscribed) {
+            isSubscribed
+        }
+    }
 `
