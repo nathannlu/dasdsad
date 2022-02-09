@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI, UPDATE_CONTRACT } from '../contract.gql';
+import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI, UPDATE_CONTRACT, SET_WHITELIST } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
 
@@ -43,6 +43,20 @@ export const useSetBaseUri = ({ onCompleted, onError }) => {
 	})
 
 	return [ setBaseUri, { ...mutationResult }]
+};
+
+export const useSetWhitelist = ({ onCompleted, onError }) => {
+	const { setContracts } = useContract();
+
+	const [setWhitelist, { ...mutationResult }] = useMutation(SET_WHITELIST, {
+		onCompleted: async data => {
+			
+			onCompleted && onCompleted(data)
+		},
+		onError
+	})
+
+	return [ setWhitelist, { ...mutationResult }]
 };
 
 

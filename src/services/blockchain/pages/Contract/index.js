@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { MerkleTree } from 'merkletreejs';
+import keccak256 from 'keccak256';
 import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
+import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { Chip } from '@mui/material';
 import { WarningAmber as WarningAmberIcon, SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
 
@@ -18,6 +21,10 @@ const Upload = (props) => {
 	const [balance, setBalance] = useState(null)
 	const [owners, setOwners] = useState([]);
 	const [soldCount, setSoldCount] = useState(null)
+	const [airdropList, setAirdropList] = useState('');
+	const [whitelistAddresses,setWhitelistAddresses] = useState('');
+	
+	const [setWhitelist] = useSetWhitelist({})
 
 	const [contract, setContract] = useState({});
 	const [price, setPrice] = useState();
@@ -36,10 +43,16 @@ const Upload = (props) => {
 		checkOwner,
 		withdraw,
 		mint,
-		openContract,
+		presaleMint,
+		openSales,
+		openPresale,
 		updateBaseUri,
         contractState,
         getContractState,
+		presaleState,
+		getPresaleState,
+		airdrop,
+		setWhitelist: setContractWhitelist
 	} = useWeb3()
 
 	useEffect(() => {
@@ -71,6 +84,7 @@ const Upload = (props) => {
 
                 // Get sales status
                 await getContractState(c.address);
+                await getPresaleState(c.address);
 
 				let list = [];
 				for (let i = 0; i < nftsSold; i++) {
@@ -85,8 +99,19 @@ const Upload = (props) => {
 	},[contracts])
 
 	const mintNow = async () => {
-        console.log(contract.nftCollection.price.toString())
 		await mint(contract.nftCollection.price.toString(), contract.address);
+	}
+
+	const setMerkleRoot = () => {
+		const addresses = whitelistAddresses.split('\n');
+		const leafNodes = addresses.map(addr => keccak256(addr));	
+		const merkleTree = new MerkleTree(leafNodes,keccak256, { sortPairs: true });
+		const root = merkleTree.getRoot()
+
+		setContractWhitelist(contract.address, root)
+
+		// @TODO move this to set contract whitelist callback 
+		setWhitelist({ variables: {id, whitelist: addresses }});
 	}
 
 	return (
@@ -186,8 +211,20 @@ const Upload = (props) => {
 							<Grid sx={{fontWeight:'bold'}} item xs={6}>
 								{contract?.nftCollection ? contract?.nftCollection?.size : null}
 							</Grid>
+
                             <Grid item xs={6}>
-								Sales Status:
+								Pre sales status:
+							</Grid>
+							<Grid sx={{fontWeight:'bold'}} item xs={6}>
+                                {presaleState ? (
+                                    <Chip label='Open' color='success' size='small'/>
+                                ) : (
+                                    <Chip label='Closed' color='error' size='small'/>
+                                )}
+							</Grid>
+
+                            <Grid item xs={6}>
+								Public sales status:
 							</Grid>
 							<Grid sx={{fontWeight:'bold'}} item xs={6}>
                                 {contractState ? (
@@ -217,21 +254,42 @@ const Upload = (props) => {
                                     startIcon={<LockIcon />}
                                     size="small"
                                     variant="contained"
-                                    onClick={() => openContract(contract.address, false)}
+                                    onClick={() => openSales(contract.address, false)}
                                     color='error'
                                 >
-                                    Close Contract
+                                    Close Public Sales
                                 </Button>
                             ) : (
                                 <Button 
                                     startIcon={<LockOpenIcon />}
                                     size="small"
                                     variant="contained"
-                                    onClick={() => openContract(contract.address)}
+                                    onClick={() => openSales(contract.address)}
                                 >
-                                    Open Contract
+                                    Open Public Sales
                                 </Button>
                             )}
+                            {presaleState ? (
+                                <Button 
+                                    startIcon={<LockIcon />}
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => openPresale(contract.address, false)}
+                                    color='error'
+                                >
+                                    Close Pre-Sales
+                                </Button>
+                            ) : (
+                                <Button 
+                                    startIcon={<LockOpenIcon />}
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => openPresale(contract.address)}
+                                >
+                                    Open Pre-Sales
+                                </Button>
+                            )}
+
                             <Button 
                                 startIcon={<PaymentIcon />}
                                 size="small"
@@ -240,6 +298,18 @@ const Upload = (props) => {
                                 disabled={!contractState}
                             >
                                 Mint
+                            </Button>
+                            <Button 
+                                startIcon={<PaymentIcon />}
+                                size="small"
+                                variant="contained"
+                                onClick={() => presaleMint(
+																	contract.nftCollection.price.toString(), 
+																	contract.address,
+																	contract.nftCollection.whitelist)}
+//                                disabled={!contractState}
+                            >
+                                Presale Mint
                             </Button>
 						</Stack>
 						<Stack gap={1}>
@@ -259,7 +329,64 @@ const Upload = (props) => {
 								</Button>
 							</Stack>
 						</Stack>
+
+
+						<Stack gap={1}>
+							<Typography variant="body" sx={{fontWeight:'bold'}}>
+								Airdrop
+							</Typography>
+							<Typography variant="small">
+								Please make sure there are no extra spaces, commas, or line breaks in your list.
+							</Typography>
+							<Stack direction="row">
+								<TextField 
+									sx={{width: '500px'}}
+									multiline
+									rows={7}
+									size="small"
+									onChange={e => setAirdropList(e.target.value)}
+									placeholder={`0x123\n0x456\n0x789`}
+								/>
+								<Box>
+									<Button size="small" variant="contained" onClick={() => {
+										airdrop(contract.address, airdropList.split("\n"))
+									}}>
+										<UploadIcon />
+									</Button>
+								</Box>
+
+							</Stack>
+						</Stack>
+
+						<Stack gap={1}>
+							<Typography variant="body" sx={{fontWeight:'bold'}}>
+								Set whitelist
+							</Typography>
+							<Typography variant="small">
+								Paste <u>every</u> address you would like to enable presale for. Please make sure there are no extra spaces, commas, or line breaks in your list.
+							</Typography>
+							<Stack direction="row">
+								<TextField 
+									sx={{width: '500px'}}
+									multiline
+									rows={7}
+									size="small"
+									onChange={e => setWhitelistAddresses(e.target.value)}
+								/>
+								<Box>
+									<Button size="small" variant="contained" onClick={() => {
+										setMerkleRoot(whitelistAddresses)
+									}}>
+										<UploadIcon />
+									</Button>
+								</Box>
+
+							</Stack>
+						</Stack>
+
 					</Stack>
+
+
 					<Stack sx={{background: '#eee', borderRadius: 2, p:2}}>
 						<Typography variant="h6">
 							Addresses who own your NFT

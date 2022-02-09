@@ -4,7 +4,9 @@ import { useToast } from 'ds/hooks/useToast';
 //import { useWebsite } from 'libs/website';
 //import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
 import config from 'config';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFT.json';
+import { MerkleTree } from 'merkletreejs';
+import keccak256 from 'keccak256';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 
 export const Web3Context = React.createContext({})
 
@@ -14,6 +16,7 @@ export const Web3Provider = ({ children }) => {
 	const [account, setAccount] = useState(null); // eth address
 	const [loading, setLoading] = useState(false);
     const [contractState, setContractState] = useState(false);
+    const [presaleState, setPresaleState] = useState(false);
 	const { addToast } = useToast();
 
 	// Checks if browser has Ethereum extension installed
@@ -86,7 +89,7 @@ export const Web3Provider = ({ children }) => {
 				message: err.message
 			})
 		})
-		.on("confirmation", () => {
+		.once("confirmation", () => {
 			addToast({
 				severity: 'success',
 				message: 'NFT successfully minted.'
@@ -94,7 +97,54 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-	const openContract = async (contractAddress, status = true) => {
+	// compare array buffers
+	function compare(a, b) {
+		for (let i = a.length; -1 < i; i -= 1) {
+			if ((a[i] !== b[i])) return false;
+		}
+		return true;
+	}
+
+	const presaleMint = async (price, contractAddress, whitelist) => {
+		const contract = await retrieveContract(contractAddress)
+		const priceInWei = Web3.utils.toWei(price);
+
+		const leafNodes = whitelist.map(addr => keccak256(addr));
+		const claimingAddress = await leafNodes.find(node =>  compare(keccak256(account), node))
+
+		const merkleTree = new MerkleTree(leafNodes,keccak256, { sortPairs: true });
+
+		const hexProof = merkleTree.getHexProof(claimingAddress)
+
+
+		contract.methods.presaleMint(1,hexProof).send({ from: account, value: priceInWei }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.once("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: 'NFT successfully minted.'
+			})
+		})
+	}
+
+	const openSales = async (contractAddress, status = true) => {
 		const contract = await retrieveContract(contractAddress)
 
 		contract.methods.setOpen(status).send({ from: account, value: 0 }, err => {
@@ -116,11 +166,101 @@ export const Web3Provider = ({ children }) => {
 				message: err.message
 			})
 		})
-		.on("confirmation", () => {
+		.once("confirmation", () => {
             getContractState(contractAddress);
 			addToast({
 				severity: 'success',
 				message: `Sales are now ${status ? 'open' : 'closed'}.`
+			})
+		})
+	}
+	const openPresale = async (contractAddress, status = true) => {
+		const contract = await retrieveContract(contractAddress)
+
+		contract.methods.setPresaleOpen(status).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.once("confirmation", () => {
+            getPresaleState(contractAddress);
+			addToast({
+				severity: 'success',
+				message: `Pre sales are now ${status ? 'open' : 'closed'}.`
+			})
+		})
+	}
+
+	const setWhitelist = async (contractAddress, root) => {
+		const contract = await retrieveContract(contractAddress)
+
+		contract.methods.setPreSaleAddresses(root).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.once("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: `Successfully set whitelist addresses`
+			})
+		})
+	}
+
+	const airdrop = async (contractAddress, list) => {
+		const contract = await retrieveContract(contractAddress)
+
+		contract.methods.airdrop(list).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.once("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: `Successfully airdropped users`
 			})
 		})
 	}
@@ -129,6 +269,12 @@ export const Web3Provider = ({ children }) => {
         const contract = await retrieveContract(contractAddress);
         const state = await contract.methods.open().call();
         setContractState(state);
+        return state; // false - closed, true - open
+    }
+    const getPresaleState = async (contractAddress) => {
+        const contract = await retrieveContract(contractAddress);
+        const state = await contract.methods.presaleOpen().call();
+        setPresaleState(state);
         return state; // false - closed, true - open
     }
 
@@ -165,7 +311,7 @@ export const Web3Provider = ({ children }) => {
 				message: err.message
 			})
 		})
-		.on("confirmation", () => {
+		.once("confirmation", () => {
 			addToast({
 				severity: 'success',
 				message: 'Successfully updated baseUri.'
@@ -195,7 +341,7 @@ export const Web3Provider = ({ children }) => {
 				message: err.message
 			})
 		})
-		.on("confirmation", () => {
+		.once("confirmation", () => {
 			addToast({
 				severity: 'success',
 				message: 'Funds are deposited to your account'
@@ -321,13 +467,18 @@ export const Web3Provider = ({ children }) => {
 		return [loading]
 	}
 
+
+
 	return (
 		<Web3Context.Provider
 			value={{
 				loadWeb3,
 				loadBlockchainData,
+				airdrop,
 				mint,
-				openContract,
+				presaleMint,
+				openSales,
+				openPresale,
 				updateBaseUri,
 				retrieveContract,
 				withdraw,
@@ -342,6 +493,9 @@ export const Web3Provider = ({ children }) => {
 				payInEth,
                 contractState,
                 getContractState,
+                presaleState,
+                getPresaleState,
+				setWhitelist
 			}}
 		>
 			{ children }

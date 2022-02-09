@@ -16,6 +16,7 @@ export const CREATE_CONTRACT = gql`
 				size
 				royalty
 				baseUri
+				whitelist
 			}
 		}
 	}
@@ -37,6 +38,7 @@ export const UPDATE_CONTRACT = gql`
 				size
 				royalty
 				baseUri
+				whitelist
 			}
 		}
 	}
@@ -59,6 +61,7 @@ export const GET_CONTRACTS = gql`
 				size
 				royalty
 				baseUri
+				whitelist
 			}
 		}
 	}
@@ -71,6 +74,14 @@ export const SET_BASE_URI = gql`
 			nftCollection {
 				baseUri
 			}
+		}
+	}
+`
+
+export const SET_WHITELIST = gql`
+	mutation SetWhitelist($whitelist: [String!]!, $id: ID!) {
+		setWhitelist(whitelist: $whitelist, id: $id)	{
+			id
 		}
 	}
 `
