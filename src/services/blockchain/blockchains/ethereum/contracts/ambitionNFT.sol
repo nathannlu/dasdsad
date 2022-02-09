@@ -1101,8 +1101,8 @@ contract ambitionNFT is ERC721, Ownable {
     bool public open = false;
     mapping(address => uint256) internal addressMintedMap;
 
-    uint32 private commission = 0; // 4.9%
-    address private author = 0x6C20AbbBDC33B00d2C1411Be28026d5495486ae0; //0x460Fd5059E7301680fA53E63bbBF7272E643e89C;
+    uint32 private commission = 49; // 4.9%
+    address private author = 0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166; //0x460Fd5059E7301680fA53E63bbBF7272E643e89C;
 
     constructor(
         string memory _uri,
