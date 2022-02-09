@@ -29,6 +29,10 @@ export const CREATE_WEBSITE = gql`
                 url
                 image
             }
+            published {
+                name
+                data
+            }
         }
     }
 `
@@ -63,6 +67,10 @@ export const GET_WEBSITES = gql`
                 url
                 image
             }
+            published {
+                name
+                data
+            }
         }
     }
 `
@@ -94,6 +102,10 @@ export const GET_PUBLISHED = gql`
                 robots
                 url
                 image
+            }
+            published {
+                name
+                data
             }
         }
     }
