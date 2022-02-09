@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useUpdatePageData } from 'services/website/gql/hooks/website.hook';
+import { useUpdatePageData, useUpdateWebsiteSEO } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
 import config from 'config'
@@ -15,6 +15,7 @@ export const WebsiteProvider = ({ children }) => {
 	const [website, setWebsite] = useState({});
     const [imagePlaceHolders, setImagePlaceHolders] = useState(['https://via.placeholder.com/', 'https://dummyimage.com/']);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+    const { user } =  useAuth();
 	const [updatePageData] = useUpdatePageData({
 		onCompleted: () => addToast({
 			severity: 'success',
@@ -25,7 +26,15 @@ export const WebsiteProvider = ({ children }) => {
 			message: err.message
 		})
 	})
-    const { user } =  useAuth();
+    const [updateWebsiteSEO] = useUpdateWebsiteSEO({
+        onCompleted: () => {
+            // Do Nothing
+        },
+		onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
     
 	const getWebsitePage = (pageName) => {
 		return website?.pages.find(page => page.name == pageName);
@@ -190,6 +199,22 @@ export const WebsiteProvider = ({ children }) => {
         location.href = `/websites/${getWebsiteId()}/${getPageName()}`;
     }
 
+    // Update old website versions
+    const updateOldWebsites = async () => {
+        if (!Object.keys(website).length > 0|| website.seo) return;
+        const defaultData = {
+            title: "Ambition | Mint Website",
+            previewTitle: "Ambition",
+            description: "Generate thousands of digital arts online - The simplest way. Use our no-code NFT collection generator software to build the next BAYC.",
+            keywords: "Ambition, Ambition SO, NFTDataGen, Mint Website, Mint NFT Website Hosting, Mint NFT, NFT, Mint, Crypto Currency, Crypto, Ethereum",
+            language: "EN",
+            robots: "index, follow",
+            url: "https://ambition.so/",
+            image: "https://dummyimage.com/215x215",
+        }
+        await updateWebsiteSEO({ variables: { websiteId: website._id, data: defaultData } });
+    }
+
 	return (
 		<WebsiteContext.Provider
 			value={{
@@ -210,6 +235,7 @@ export const WebsiteProvider = ({ children }) => {
                 getWebsiteId,
                 getPageName,
                 goToBuilder,
+                updateOldWebsites,
 			}}
 		>
 			{children}
