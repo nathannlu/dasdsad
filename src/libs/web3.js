@@ -285,7 +285,6 @@ export const Web3Provider = ({ children }) => {
 		return owner
 	}
 
-
 	// Update base URI
 	const updateBaseUri = async (baseUri, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
@@ -388,6 +387,22 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
         const max = await contract.methods.MAX_SUPPLY().call();
         return max;
+    // Compare current network with target network and switches if it doesn't match
+    const compareNetwork = async (targetNetwork, callback) => {
+        const curNetwork = getNetworkID();
+        if (curNetwork !== targetNetwork) {
+            const status = await setNetwork(targetNetwork);
+            if (status === 'prompt_successful') callback();
+            else if (status === 'prompt_cancled') {
+                addToast({
+                    severity: 'error',
+                    message: 'User canceled switching networks'
+                })
+            }
+        }
+        else {
+            callback();
+        }
     }
 
     // Get current network
@@ -452,31 +467,31 @@ export const Web3Provider = ({ children }) => {
     }
 
 	const payInEth = async (size, callback) => {
-		const web3 = window.web3
-		const inEth = 0.000034;
-		const amount = inEth * size;
-
-
-		web3.eth.sendTransaction({
-			from: account,
-			to: config.company.walletAddress,
-			value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
-		})
-		.on('transactionHash', () => {
-			setLoading(true);
-			addToast({
-				severity: 'info',
-				message: 'Sending transaction. This could take up to a minute...'
-			})
-		})
-		.once('confirmation', () => {
-			setLoading(false);
-			callback()
-		})
-		.on('error', () => {
-			setLoading(false);
-		})
-
+        compareNetwork('0x1', () => {
+            const web3 = window.web3
+            const inEth = 0.000034;
+            const amount = inEth * size;
+    
+            web3.eth.sendTransaction({
+                from: account,
+                to: config.company.walletAddress,
+                value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
+            })
+            .on('transactionHash', () => {
+                setLoading(true);
+                addToast({
+                    severity: 'info',
+                    message: 'Sending transaction. This could take up to a minute...'
+                })
+            })
+            .once('confirmation', () => {
+                setLoading(false);
+                callback()
+            })
+            .on('error', () => {
+                setLoading(false);
+            })
+        })
 		return [loading]
 	}
 
@@ -501,6 +516,7 @@ export const Web3Provider = ({ children }) => {
 				checkOwner,
                 getNetworkID,
                 setNetwork,
+                compareNetwork,
 
 				loading,
 				payInEth,

@@ -10,10 +10,9 @@ import { useMetadata } from 'services/generator/controllers/metadata';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useWeb3 } from 'libs/web3';
 
-
 const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const stripe = useStripe();
-  const elements = useElements();
+    const elements = useElements();
 	const { settingsForm  } = useMetadata();
 	const { generateImages, save, start } = useGenerator();
 	const { payInEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
@@ -23,23 +22,31 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		onPaymentSuccess,
 		onPaymentError,
 	} = usePaymentForm();
+
 	const onCompleted = data => {
-		if(!start) {
+		console.log(data)
+		setIsModalOpen(false);
+				//save();
+			//save image
+		generateImages();
+		nextStep();
+
+		onPaymentSuccess(data);
+	}
+
+	const [ charge, { loading }] = useCharge({
+		onCompleted: data => {
 			setIsModalOpen(false);
-	//			save();
-				// save image
+					//save();
+				//save image
 			generateImages();
 			nextStep();
 
 			onPaymentSuccess(data);
-		}
-	}
-	const [ charge, { loading }] = useCharge({
-		onCompleted: data => onCompleted,
+
+		},
 		onError: onPaymentError
 	});
-
-
 
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
@@ -67,9 +74,6 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 			await loadBlockchainData();
 		})()
 	}, [])
-
-	
-
 
 	return (
 		<Modal
