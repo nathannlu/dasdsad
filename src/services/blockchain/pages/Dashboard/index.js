@@ -22,13 +22,13 @@ const Dashboard = () => {
 							</Box>
 
 							<Stack gap={1} direction="row" sx={{ml:'auto'}}>
-								<Link to="/generator">
+								<a href="/generator">
 									<Button
 										size="small"
 									>
 										Generate your collection
 									</Button>
-								</Link>
+								</a>
 								<Link to="/smart-contracts/new">
 									<Button
 										size="small"
