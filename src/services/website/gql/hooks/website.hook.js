@@ -24,7 +24,7 @@ export const useGetWebsites = () => {
     const { ...queryResult } = useQuery(GET_WEBSITES, {
 		onCompleted: data => {
 			setWebsite(data?.getWebsites[0])
-            console.log(data.getWebsites[0])
+            //console.log(data.getWebsites[0])
 		}
 	});
 

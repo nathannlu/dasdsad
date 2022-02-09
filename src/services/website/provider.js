@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useUpdatePageData, useUpdateWebsiteSEO } from 'services/website/gql/hooks/website.hook';
+import { useUpdatePageData, useUpdateWebsiteSEO, useSetWebsiteFavicon } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
 import config from 'config'
@@ -27,6 +27,15 @@ export const WebsiteProvider = ({ children }) => {
 		})
 	})
     const [updateWebsiteSEO] = useUpdateWebsiteSEO({
+        onCompleted: () => {
+            // Do Nothing
+        },
+		onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [setWebsiteFavicon] = useSetWebsiteFavicon({
         onCompleted: () => {
             // Do Nothing
         },
@@ -201,18 +210,29 @@ export const WebsiteProvider = ({ children }) => {
 
     // Update old website versions
     const updateOldWebsites = async () => {
-        if (!Object.keys(website).length > 0|| website.seo) return;
-        const defaultData = {
-            title: "Ambition | Mint Website",
-            previewTitle: "Ambition",
-            description: "Generate thousands of digital arts online - The simplest way. Use our no-code NFT collection generator software to build the next BAYC.",
-            keywords: "Ambition, Ambition SO, NFTDataGen, Mint Website, Mint NFT Website Hosting, Mint NFT, NFT, Mint, Crypto Currency, Crypto, Ethereum",
-            language: "EN",
-            robots: "index, follow",
-            url: "https://ambition.so/",
-            image: "https://dummyimage.com/215x215",
+        if (!Object.keys(website).length > 0) return;
+        
+        console.log(website);
+
+        // Add Favicon
+        if (!website.favicon) {
+            await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: 'https://dummyimage.com/25x25' } });
         }
-        await updateWebsiteSEO({ variables: { websiteId: website._id, data: defaultData } });
+        
+        // Add SEO
+        if (!website.seo) {
+            const defaultData = {
+                title: "Ambition | Mint Website",
+                previewTitle: "Ambition",
+                description: "Generate thousands of digital arts online - The simplest way. Use our no-code NFT collection generator software to build the next BAYC.",
+                keywords: "Ambition, Ambition SO, NFTDataGen, Mint Website, Mint NFT Website Hosting, Mint NFT, NFT, Mint, Crypto Currency, Crypto, Ethereum",
+                language: "EN",
+                robots: "index, follow",
+                url: "https://ambition.so/",
+                image: "https://dummyimage.com/215x215",
+            }
+            await updateWebsiteSEO({ variables: { websiteId: website._id, data: defaultData } });
+        }
     }
 
 	return (

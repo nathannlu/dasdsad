@@ -20,7 +20,6 @@ const App = props => {
     useEffect(() => {
         if(!Object.keys(website).length > 0) return;
         const update = async () => {
-            if (website.seo) return;
             await updateOldWebsites();
         }
         update();

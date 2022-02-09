@@ -30,6 +30,10 @@ const Settings = () => {
         displayImage,
         onChangeDisplayImage,
         onDeleteDisplayImage,
+        onSaveFavicon,
+        styleSaveStatus,
+        seoSaveStatus,
+        setSeoSaveStatus,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -37,8 +41,8 @@ const Settings = () => {
         onTitleChange, onPreviewTitleChange,
         onDescriptionChange, onKeywordsChange,
         onLanguageChange, onRobotsChange,
-        onUrlChange
-    } = useSEOForm();
+        onUrlChange,
+    } = useSEOForm(setSeoSaveStatus);
 
     return (
         <Box
@@ -392,18 +396,7 @@ const Settings = () => {
                                     {displayImage === 'https://dummyimage.com/215x215' ? (
                                         <Widget 
                                             publicKey='dfeba611508a6f7760ca'
-                                            onChange={(info) => {
-                                                onChangeDisplayImage(info, {
-                                                    title,
-                                                    previewTitle,
-                                                    description,
-                                                    keywords,
-                                                    language,
-                                                    robots,
-                                                    url,
-                                                    image: info.cdnUrl,
-                                                });
-                                            }}
+                                            onChange={info => onChangeDisplayImage(info)}
                                         />
                                     ) : (
                                         <>
@@ -412,18 +405,7 @@ const Settings = () => {
                                                 variant='contained' 
                                                 color='error' 
                                                 size='small' 
-                                                onClick={() => {
-                                                    onDeleteDisplayImage({
-                                                        title,
-                                                        previewTitle,
-                                                        description,
-                                                        keywords,
-                                                        language,
-                                                        robots,
-                                                        url,
-                                                        image: "https://dummyimage.com/215x215",
-                                                    });
-                                                }} 
+                                                onClick={onDeleteDisplayImage} 
                                                 startIcon={<DeleteOutlineIcon />}
                                                 sx={{ mt: '1em' }}
                                             >
@@ -449,6 +431,19 @@ const Settings = () => {
                                         Delete Website
                                     </Button>
                                 )}
+                                {tabValue === 'style' && (
+                                    <Button
+                                        variant='contained'
+                                        onClick={() => {
+                                            onSaveFavicon();
+                                        }}
+                                        size='small'
+                                        startIcon={<SaveIcon />}
+                                        disabled={!styleSaveStatus}
+                                    >
+                                        Save Changes
+                                    </Button>
+                                )}
                                 {tabValue === 'seo' && (
                                     <Button
                                         variant='contained'
@@ -466,6 +461,7 @@ const Settings = () => {
                                         }}
                                         size='small'
                                         startIcon={<SaveIcon />}
+                                        disabled={!seoSaveStatus}
                                     >
                                         Save Changes
                                     </Button>

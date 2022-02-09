@@ -11,6 +11,8 @@ const useSettings = () => {
     const [confirmationData, setConfirmationData] = useState(null);
     const [faviconImage, setFaviconImage] = useState('https://dummyimage.com/25x25');
     const [displayImage, setDisplayImage] = useState('https://dummyimage.com/215x215');
+    const [styleSaveStatus, setStyleSaveStatus] = useState(false);
+    const [seoSaveStatus, setSeoSaveStatus] = useState(false);
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
 		onCompleted: () => {
@@ -55,21 +57,6 @@ const useSettings = () => {
         if (!Object.keys(website).length) return;
         const update = async () => {
             setFaviconImage(website.favicon ? website.favicon : "https://dummyimage.com/25x25");
-            // Check for old websites
-            const defaultData = {
-                title: "Ambition | Mint Website",
-                previewTitle: "Ambition",
-                description: "Generate thousands of digital arts online - The simplest way. Use our no-code NFT collection generator software to build the next BAYC.",
-                keywords: "Ambition, Ambition SO, NFTDataGen, Mint Website, Mint NFT Website Hosting, Mint NFT, NFT, Mint, Crypto Currency, Crypto, Ethereum",
-                language: "EN",
-                robots: "index, follow",
-                url: "https://ambition.so/",
-                image: "https://dummyimage.com/215x215",
-            }
-            if (!website.seo) {
-                await updateWebsiteSEO({ variables: { websiteId: website._id, data: defaultData } });
-                location.reload();
-            }
             setDisplayImage(website.seo.image);
             const faviconUUID = website.favicon.substring(website.favicon.indexOf(".com/") + 5, website.favicon.length - 1);
             const displayUUID = website.seo.image.substring(website.seo.image.indexOf(".com/") + 5, website.seo.image.length - 1);
@@ -88,57 +75,67 @@ const useSettings = () => {
     }
 
     const onProceedDelete = async () => {
+        await removeUnusedImages([]);
+        await removeUnusedImages([], true);
         localStorage.removeItem(`${websiteId}-${pageName}-images-settings`);
         localStorage.removeItem(`${websiteId}-${pageName}-images`);
         await deleteWebsite();
     }
 
     const onDeleteFavicon = async () => {
-        const uuid = faviconImage.substring(faviconImage.indexOf(".com/") + 5, faviconImage.length - 1);
-        await deleteImage(uuid, true);
         setFaviconImage('https://dummyimage.com/25x25');
-        await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: 'https://dummyimage.com/25x25' } });
+        setStyleSaveStatus(true);
     }
 
     const onChangeFavicon = async (info) => {
         setFaviconImage(info.cdnUrl);
         addImageToLocal(info.uuid, true);
-        await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: info.cdnUrl } });
+        setStyleSaveStatus(true);
+    }
+
+    const onSaveFavicon = async () => {
+        // Save new favicon
+        if (faviconImage !== 'https://dummyimage.com/25x25') {
+            const uuid = faviconImage.substring(faviconImage.indexOf(".com/") + 5, faviconImage.length - 1);
+            const faviconURL = `https://ucarecdn.com/${uuid}/`;
+            setFaviconImage(faviconURL);
+            await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: faviconURL } });
+        } // Delete favicon
+        else if (website.favicon !== 'https://dummyimage.com/25x25' && faviconImage === 'https://dummyimage.com/25x25') {
+            const uuid = website.favicon.substring(website.favicon.indexOf(".com/") + 5, website.favicon.length - 1);
+            await deleteImage(uuid, true);
+            await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: 'https://dummyimage.com/25x25' } });
+        }
+
+        setStyleSaveStatus(false);
     }
 
     const onSaveSEO = async (data) => {
         let newData = {...data};
-        if (!newData.language) newData.language = "EN";
-        if (!newData.robot) newData.robots = "index, follow";
         if (typeof newData.language === 'object' && Object.keys(newData.language).length && newData.language.data.length) newData.language = newData.language.data 
         else newData.language = newData.language = "EN";
+        
+        // Check if should delete display image
+        if (website.seo.image !== 'https://dummyimage.com/215x215' && displayImage === 'https://dummyimage.com/215x215') {
+            const uuid = website.seo.image.substring(website.seo.image.indexOf(".com/") + 5, website.seo.image.length - 1);
+            console.log(uuid);
+            newData.image = 'https://dummyimage.com/215x215';
+            await deleteImage(uuid, true);
+        }
 
-        await updateWebsiteSEO({ variables: { websiteId: website._id, data: newData } })
+        await updateWebsiteSEO({ variables: { websiteId: website._id, data: newData } });
+        setSeoSaveStatus(false);
     }
 
-    const onChangeDisplayImage = async (info, data) => {
-        let newData = {...data};
-        if (!newData.language) newData.language = "EN";
-        if (!newData.robot) newData.robots = "index, follow";
-        if (typeof newData.language === 'object' && Object.keys(newData.language).length && newData.language.data.length) newData.language = newData.language.data 
-        else newData.language = newData.language = "EN";
-
+    const onChangeDisplayImage = async (info) => {
         setDisplayImage(info.cdnUrl);
         addImageToLocal(info.uuid, true);
-        await updateWebsiteSEO({ variables: { websiteId: website._id, data: newData } })
+        setSeoSaveStatus(true);
     }
 
-    const onDeleteDisplayImage = async (data) => {
-        let newData = {...data};
-        if (!newData.language) newData.language = "EN";
-        if (!newData.robot) newData.robots = "index, follow";
-        if (typeof newData.language === 'object' && Object.keys(newData.language).length && newData.language.data.length) newData.language = newData.language.data 
-        else newData.language = newData.language = "EN";
-
-        const uuid = displayImage.substring(displayImage.indexOf(".com/") + 5, displayImage.length - 1);
-        await deleteImage(uuid, true);
+    const onDeleteDisplayImage = async () => {
         setDisplayImage('https://dummyimage.com/215x215');
-        await updateWebsiteSEO({ variables: { websiteId: website._id, data: newData } })
+        setSeoSaveStatus(true);
     }
 
     return {
@@ -151,12 +148,17 @@ const useSettings = () => {
         setConfirmationData,
         onProceedDelete,
         faviconImage,
+        onSaveFavicon,
         onChangeFavicon,
         onDeleteFavicon,
-        onSaveSEO,
         displayImage,
+        onSaveSEO,
         onChangeDisplayImage,
         onDeleteDisplayImage,
+        styleSaveStatus,
+        setStyleSaveStatus,
+        seoSaveStatus,
+        setSeoSaveStatus,
     }
 }
 

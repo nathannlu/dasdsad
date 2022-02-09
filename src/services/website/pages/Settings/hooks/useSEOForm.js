@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWebsite } from 'services/website/provider';
 
-const useSEOForm = () => {
+const useSEOForm = (setSeoSaveStatus) => {
     const { website } = useWebsite();
     const [title, setTitle] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
@@ -12,8 +12,7 @@ const useSEOForm = () => {
     const [url, setUrl] = useState('');
 
     useEffect(() => {
-        if (!Object.keys(website).length) return;
-        if (!website.seo) return;
+        if (!Object.keys(website).length || !website.seo) return;
         setTitle(website.seo.title);
         setPreviewTitle(website.seo.previewTitle);
         setDescription(website.seo.description);
@@ -48,30 +47,37 @@ const useSEOForm = () => {
 
     const onTitleChange = (e) => {
         setTitle(e.target.value);
+        setSeoSaveStatus(true);
     }
 
     const onPreviewTitleChange = (e) => {
         setPreviewTitle(e.target.value);
+        setSeoSaveStatus(true);
     }
 
     const onDescriptionChange = (e) => {
         setDescription(e.target.value);
+        setSeoSaveStatus(true);
     }
 
     const onKeywordsChange = (e) => {
         setKeywords(e.target.value);
+        setSeoSaveStatus(true);
     }
 
     const onLanguageChange = (e, target) => {
         setLanguage(target);
+        setSeoSaveStatus(true);
     }
 
     const onRobotsChange = (e, target) => {
         setRobots(target);
+        setSeoSaveStatus(true);
     }
 
     const onUrlChange = (e) => {
         setUrl(e.target.value);
+        setSeoSaveStatus(true);
     }
 
     return {
@@ -88,7 +94,7 @@ const useSEOForm = () => {
         robots,
         onRobotsChange,
         url,
-        onUrlChange
+        onUrlChange,
     }
 }
 
