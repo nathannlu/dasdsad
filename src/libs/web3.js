@@ -387,6 +387,7 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
         const max = await contract.methods.MAX_SUPPLY().call();
         return max;
+		}
     // Compare current network with target network and switches if it doesn't match
     const compareNetwork = async (targetNetwork, callback) => {
         const curNetwork = getNetworkID();
