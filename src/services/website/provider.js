@@ -15,7 +15,7 @@ export const WebsiteProvider = ({ children }) => {
 	const [website, setWebsite] = useState({});
     const [imagePlaceHolders, setImagePlaceHolders] = useState(['https://via.placeholder.com/', 'https://dummyimage.com/']);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
-	const [updatePageData, { data }] = useUpdatePageData({
+	const [updatePageData] = useUpdatePageData({
 		onCompleted: () => addToast({
 			severity: 'success',
 			message: "Progress saved!"
@@ -43,8 +43,8 @@ export const WebsiteProvider = ({ children }) => {
         try {
             const json = query.serialize();
             const pageData = (lz.encodeBase64(lz.compress(json)));
-            const websiteId = window.location.pathname.split("/").slice(-2)[0];
-            const pageName = window.location.pathname.split("/").slice(-1).pop();
+            const websiteId = getWebsiteId();
+            const pageName = getPageName();
             
             // Removed unused images when saved
             await removeUnusedImages(json);
@@ -70,7 +70,7 @@ export const WebsiteProvider = ({ children }) => {
         }
     }
 
-    const deleteImage = async (imageID) => {
+    const deleteImage = async (imageID, isSettings = false) => {
         try {
             const opt = {
                 headers: {
@@ -80,7 +80,7 @@ export const WebsiteProvider = ({ children }) => {
             }
             const res = await axios.delete(`https://api.uploadcare.com/files/${imageID}/`, opt);
 
-            removeImageFromLocal(imageID);
+            removeImageFromLocal(imageID, isSettings);
         }
         catch (e) {
             addToast({
@@ -90,10 +90,10 @@ export const WebsiteProvider = ({ children }) => {
         }
     }
 
-    const deleteImageBulk = async (imageIdArray) => {
+    const deleteImageBulk = async (imageIdArray, isSettings = false) => {
         try {
             imageIdArray.forEach((imageId) => {
-                removeImageFromLocal(imageId);
+                removeImageFromLocal(imageId, isSettings);
             })
 
             const opt = {
@@ -114,41 +114,80 @@ export const WebsiteProvider = ({ children }) => {
         }
     }
 
-    const addImageToLocal = (uuid) => {
-        const websiteId = window.location.pathname.split("/").slice(-2)[0];
-        const pageName = window.location.pathname.split("/").slice(-1).pop();
-        const storageItems = localStorage.getItem(`${websiteId}-${pageName}-images`);
+    // Add Image to local storage
+    // Note: LocalStorage key is different for website builder and settings
+    const addImageToLocal = (uuid, isSettings = false) => {
+        const websiteId = getWebsiteId();
+        const pageName = getPageName();
+
+        let storageItems;
+        if (isSettings) storageItems = localStorage.getItem(`${websiteId}-${pageName}-images-settings`);
+        else storageItems = localStorage.getItem(`${websiteId}-${pageName}-images`);
+
         if (!storageItems) {
-            localStorage.setItem(`${websiteId}-${pageName}-images`, JSON.stringify([uuid]));
+            if (isSettings) localStorage.setItem(`${websiteId}-${pageName}-images-settings`, JSON.stringify([uuid]));
+            else localStorage.setItem(`${websiteId}-${pageName}-images`, JSON.stringify([uuid]));
         } else {
             let currentUploadedImages = JSON.parse(storageItems);
             currentUploadedImages.push(uuid);
-            localStorage.setItem(`${websiteId}-${pageName}-images`, JSON.stringify(currentUploadedImages));
+            if (isSettings) localStorage.setItem(`${websiteId}-${pageName}-images-settings`, JSON.stringify(currentUploadedImages));
+            else localStorage.setItem(`${websiteId}-${pageName}-images`, JSON.stringify(currentUploadedImages));
         }
     }
 
-    const removeImageFromLocal = (uuid) => {
-        const websiteId = window.location.pathname.split("/").slice(-2)[0];
-        const pageName = window.location.pathname.split("/").slice(-1).pop();
-        const storageItems = localStorage.getItem(`${websiteId}-${pageName}-images`);
+    // Remove Image from local storage
+    // Note: LocalStorage key is different for website builder and settings
+    const removeImageFromLocal = (uuid, isSettings = false) => {
+        const websiteId = getWebsiteId();
+        const pageName = getPageName();
+
+        let storageItems;
+        if (isSettings) storageItems = localStorage.getItem(`${websiteId}-${pageName}-images-settings`);
+        else storageItems = localStorage.getItem(`${websiteId}-${pageName}-images`);
+
         if (!storageItems) return;
         let currentUploadedImages = JSON.parse(storageItems);
         currentUploadedImages.splice(currentUploadedImages.indexOf(uuid), 1);
-        localStorage.setItem(`${websiteId}-${pageName}-images`, JSON.stringify(currentUploadedImages));
+
+        if (isSettings) localStorage.setItem(`${websiteId}-${pageName}-images-settings`, JSON.stringify(currentUploadedImages));
+        else localStorage.setItem(`${websiteId}-${pageName}-images`, JSON.stringify(currentUploadedImages));
     }
 
-    const removeUnusedImages = async (jsonPageData) => {
-        const websiteId = window.location.pathname.split("/").slice(-2)[0];
-        const pageName = window.location.pathname.split("/").slice(-1).pop();
-        const storageItems = localStorage.getItem(`${websiteId}-${pageName}-images`);
+    // Remove Unused Images from database
+    // Note: LocalStorage key is different for website builder and settings
+    // Note: if on settings, im passing settings images through jsonPageData parameter
+    const removeUnusedImages = async (jsonPageData, isSettings = false) => {
+        const websiteId = getWebsiteId();
+        const pageName = getPageName();
+
+        let storageItems;
+        if (isSettings) storageItems = localStorage.getItem(`${websiteId}-${pageName}-images-settings`);
+        else storageItems = localStorage.getItem(`${websiteId}-${pageName}-images`);
+
         if (storageItems != null && storageItems.length > 0) {
             let unusedImages = [];
             JSON.parse(storageItems).forEach((imageId) => {
                 if (jsonPageData.indexOf(imageId) == -1) unusedImages.push(imageId);
             })
             if (!unusedImages.length) return;
-            await deleteImageBulk(unusedImages)
+            await deleteImageBulk(unusedImages, isSettings);
         }
+    }
+
+    const getWebsiteId = () => {
+        return window.location.pathname.split("/")[2];
+    }
+
+    const getPageName = () => {
+        return window.location.pathname.split("/")[3];
+    }
+
+    const goToSettings = () => {
+        location.href = `/websites/${getWebsiteId()}/${getPageName()}/settings`;
+    }
+
+    const goToBuilder = () => {
+        location.href = `/websites/${getWebsiteId()}/${getPageName()}`;
     }
 
 	return (
@@ -167,6 +206,10 @@ export const WebsiteProvider = ({ children }) => {
                 isCheckoutModalOpen,
                 setIsCheckoutModalOpen,
                 onSave,
+                goToSettings,
+                getWebsiteId,
+                getPageName,
+                goToBuilder,
 			}}
 		>
 			{children}

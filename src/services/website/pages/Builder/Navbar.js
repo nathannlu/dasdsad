@@ -13,6 +13,7 @@ import {
 	Undo as UndoIcon,
 	Redo as RedoIcon
 } from '@mui/icons-material'
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const stripePromise = loadStripe(config.stripe.publicKey);
 
@@ -27,7 +28,7 @@ const Navbar = () => {
 		canUndo: state.options.enabled && query.history.canUndo(),
 		canRedo: state.options.enabled && query.history.canRedo(),
 	}));
-	const { onSaveChanges, onSave, isCheckoutModalOpen, setIsCheckoutModalOpen } = useWebsite();
+	const { onSaveChanges, onSave, isCheckoutModalOpen, setIsCheckoutModalOpen, goToSettings } = useWebsite();
     const [setWebsiteSubscription] = useSetWebsiteSubscription({
         onError: err => addToast({
 			severity: 'error',
@@ -65,6 +66,10 @@ const Navbar = () => {
 								<RedoIcon />
 							</IconButton>
 						</Box>
+
+                        <IconButton onClick={goToSettings}>
+                            <SettingsIcon />
+                        </IconButton>
 
 						<a style={{display: 'flex'}} href={`https://${window.location.pathname.split("/").slice(-2)[0]}.ambition.so/`} target="_blank">
                             <Button size="small">
