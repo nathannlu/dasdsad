@@ -6,7 +6,6 @@ const Dashboard = lazy(() => import("services/website/pages/Dashboard"))
 const Builder = lazy(() => import("services/website/pages/Builder"))
 const New = lazy(() => import("services/website/pages/New"))
 
-
 const WebsiteRoutes = () => {
 	const routes = [
 		{

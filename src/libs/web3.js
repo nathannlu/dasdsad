@@ -68,9 +68,8 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
 		const priceInWei = Web3.utils.toWei(price);
 
-        console.log(contract.methods)
 
-		contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
+		await contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
 			if (err) {
 				addToast({
 					severity: 'error',
@@ -370,12 +369,26 @@ export const Web3Provider = ({ children }) => {
 		}
 	}
 
+
 	const getBaseTokenURI = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
-
 		return contract.methods.baseTokenURI().call()
 	}
+
+	const getPrice = async (contractAddress) => {
+		const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+        const price = await contract.methods.PRICE().call();
+		return web3.utils.fromWei(price)
+	}
+
+    const getMaximumSupply = async (contractAddress) => {
+        const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+        const max = await contract.methods.MAX_SUPPLY().call();
+        return max;
+    }
 
     // Get current network
     const getNetworkID = () => {
@@ -495,7 +508,9 @@ export const Web3Provider = ({ children }) => {
                 getContractState,
                 presaleState,
                 getPresaleState,
-				setWhitelist
+				setWhitelist,
+                getPrice,
+                getMaximumSupply,
 			}}
 		>
 			{ children }
