@@ -49,7 +49,7 @@ export const useEmbed = () => {
                 setMaxSupply(mSupply);
             }
             catch (e) {
-
+							console.log(e)
             }
 		})()
     }, [chainId])

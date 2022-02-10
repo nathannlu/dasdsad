@@ -378,14 +378,27 @@ export const Web3Provider = ({ children }) => {
 	const getPrice = async (contractAddress) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
-        const price = await contract.methods.PRICE().call();
+        const price = await contract.methods.cost().call();
 		return web3.utils.fromWei(price)
 	}
 
+    const getTotalMinted = async (contractAddress) => {
+        const web3 = window.web3
+		const contract = await retrieveContract(contractAddress)
+
+//        const state = await contract.methods.open().call();
+        const minted = await contract.methods.supply().call();
+
+        return minted;
+		}
     const getMaximumSupply = async (contractAddress) => {
         const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
-        const max = await contract.methods.MAX_SUPPLY().call();
+			console.log(contract)
+
+//        const state = await contract.methods.open().call();
+        const max = await contract.methods.totalSupply().call();
+
         return max;
 		}
     // Compare current network with target network and switches if it doesn't match
@@ -528,6 +541,7 @@ export const Web3Provider = ({ children }) => {
 				setWhitelist,
                 getPrice,
                 getMaximumSupply,
+				getTotalMinted
 			}}
 		>
 			{ children }

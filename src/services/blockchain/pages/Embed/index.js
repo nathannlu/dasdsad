@@ -14,7 +14,10 @@ const Embed = () => {
 		(async () => {
 			await loadWeb3();
             await loadBlockchainData();
+
 		})()
+
+			console.log(maxSupply)
 	}, [])
 
     return (
