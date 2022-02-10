@@ -1,7 +1,21 @@
 import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 import { useQuery, useMutation } from '@apollo/client';
-import { BUILD_WEBSITE, GET_WEBSITES, CREATE_WEBSITE, ADD_PAGE, DELETE_PAGE, UPDATE_PAGE_DATA, SET_CUSTOM_DOMAIN, VERIFY_DNS, SET_CONTRACT_ADDRESS, GET_PUBLISHED, SET_WEBSITE_SUBSCRIPTION } from '../website.gql';
+import { BUILD_WEBSITE, 
+    GET_WEBSITES, 
+    CREATE_WEBSITE, 
+    ADD_PAGE, 
+    DELETE_PAGE, 
+    UPDATE_PAGE_DATA, 
+    SET_CUSTOM_DOMAIN, 
+    VERIFY_DNS, 
+    SET_CONTRACT_ADDRESS, 
+    GET_PUBLISHED, 
+    DELETE_WEBSITE,
+    SET_WEBSITE_FAVICON,
+    UPDATE_WEBSITE_SEO,
+    SET_WEBSITE_SUBSCRIPTION,
+} from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
 export const useGetWebsites = () => {
@@ -10,6 +24,7 @@ export const useGetWebsites = () => {
     const { ...queryResult } = useQuery(GET_WEBSITES, {
 		onCompleted: data => {
 			setWebsite(data?.getWebsites[0])
+            //console.log(data.getWebsites[0])
 		}
 	});
 
@@ -199,6 +214,41 @@ export const useBuildWebsite = ({ title, onCompleted }) => {
 
 	return { ...queryResult }
 }
+
+export const useDeleteWebsite = ({ websiteId, onCompleted, onError }) => {
+    const { setWebsite } = useWebsite();
+
+	const [deleteWebsite] = useMutation(DELETE_WEBSITE, {
+		variables: { websiteId },
+		onCompleted: data => {
+            // if website is deleted
+            if (data.deleteWebsite) location.href = '/websites';
+        },
+		onError
+	})
+
+	return [ deleteWebsite ];
+};
+
+export const useSetWebsiteFavicon = ({ websiteId, imageUrl, onCompleted, onError }) => {
+	const [setWebsiteFavicon] = useMutation(SET_WEBSITE_FAVICON, {
+		variables: { websiteId, imageUrl },
+		onCompleted,
+		onError
+	})
+
+	return [ setWebsiteFavicon ];
+};
+
+export const useUpdateWebsiteSEO = ({ websiteId, data, onCompleted, onError }) => {
+	const [updateWebsiteSEO] = useMutation(UPDATE_WEBSITE_SEO, {
+		variables: { websiteId, data },
+		onCompleted,
+		onError
+	})
+
+	return [ updateWebsiteSEO ];
+};
 
 export const useSetWebsiteSubscription = ({ onError }) => {
 	const { website, setWebsite } = useWebsite();

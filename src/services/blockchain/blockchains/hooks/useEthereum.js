@@ -4,7 +4,7 @@ import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFT.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 
 export const useEthereum = () => {
 	const { deployContractForm } = useDeployContractForm();

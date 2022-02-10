@@ -1,68 +1,114 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_WEBSITE = gql`
-	mutation CreateWebsite($title: String!, $contractAddress: String) {
-		createWebsite(title: $title, contractAddress: $contractAddress) {
-			author
-			title
-			isPublished
-			isSubscribed
-			pages {
-				name
-				data
-			}
-			domains {
-				domain
-				isActive	
-			}
-			settings {
-				connectedContractAddress
-			}
-		}
-	}
+    mutation CreateWebsite($title: String!, $contractAddress: String) {
+        createWebsite(title: $title, contractAddress: $contractAddress) {
+            author
+            title
+            isPublished
+            isSubscribed
+            pages {
+                name
+                data
+            }
+            domains {
+                domain
+                isActive	
+            }
+            settings {
+                connectedContractAddress
+            }
+            favicon
+            seo {
+                title
+                previewTitle
+                description
+                keywords
+                language
+                robots
+                url
+                image
+            }
+            published {
+                name
+                data
+            }
+        }
+    }
 `
 
 export const GET_WEBSITES = gql`
-	query GetWebsites {
-		getWebsites {
-			author
-			title
-			isPublished
-			isSubscribed
-			pages {
-				name
-				data
-			}
-			domains {
-				domain
-				isActive	
-			}
-			settings {
-				connectedContractAddress
-			}
-		}
-	}
+    query GetWebsites {
+        getWebsites {
+            _id
+            author
+            title
+            isPublished
+            isSubscribed
+            pages {
+                name
+                data
+            }
+            domains {
+                domain
+                isActive	
+            }
+            settings {
+                connectedContractAddress
+            }
+            favicon
+            seo {
+                title
+                previewTitle
+                description
+                keywords
+                language
+                robots
+                url
+                image
+            }
+            published {
+                name
+                data
+            }
+        }
+    }
 `
 export const GET_PUBLISHED = gql`
-	query GetPublished($title: String!) {
-		getPublished(title: $title) {
-			author
-			title
-			isPublished
-			isSubscribed
-			pages {
-				name
-				data
-			}
-			domains {
-				domain
-				isActive	
-			}
-			settings {
-				connectedContractAddress
-			}
-		}
-	}
+    query GetPublished($title: String!) {
+        getPublished(title: $title) {
+            author
+            title
+            isPublished
+            isSubscribed
+            pages {
+                name
+                data
+            }
+            domains {
+                domain
+                isActive	
+            }
+            settings {
+                connectedContractAddress
+            }
+            favicon
+            seo {
+                title
+                previewTitle
+                description
+                keywords
+                language
+                robots
+                url
+                image
+            }
+            published {
+                name
+                data
+            }
+        }
+    }
 `
 
 export const UPDATE_PAGE_DATA = gql`
@@ -119,6 +165,24 @@ export const SET_CONTRACT_ADDRESS = gql`
 export const BUILD_WEBSITE = gql`
 	query BuildWebsite($title: String!) {
 		buildWebsite(title: $title)
+	}
+`
+
+export const DELETE_WEBSITE = gql`
+	mutation DeleteWebsite($websiteId: String!) {
+		deleteWebsite(websiteId: $websiteId)
+	}
+`
+
+export const SET_WEBSITE_FAVICON = gql`
+	mutation SetWebsiteFavicon($websiteId: String!, $imageUrl: String!) {
+		setWebsiteFavicon(websiteId: $websiteId, imageUrl: $imageUrl)
+	}
+`
+
+export const UPDATE_WEBSITE_SEO = gql`
+	mutation UpdateWebsiteSEO($websiteId: String!, $data: SeoInput!) {
+		updateWebsiteSEO(websiteId: $websiteId, data: $data)
 	}
 `
 

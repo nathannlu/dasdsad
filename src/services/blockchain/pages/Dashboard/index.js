@@ -21,22 +21,29 @@ const Dashboard = () => {
 								</Typography>
 							</Box>
 
-							<Box sx={{ml:'auto'}}>
+							<Stack gap={1} direction="row" sx={{ml:'auto'}}>
+								<a href="/generator">
+									<Button
+										size="small"
+									>
+										Generate your collection
+									</Button>
+								</a>
 								<Link to="/smart-contracts/new">
 									<Button
 										size="small"
 										startIcon={<AddIcon />}
 										variant="contained"
 									>
-										Add contract
+										Create contract
 									</Button>
 								</Link>
-							</Box>
+							</Stack>
 						</Stack>
 
-						<Grid gap={2} container>
+						<Grid container>
 							{contracts.map((contract, i) => (
-							<Grid key={i} item xs={3}>
+							<Grid key={i} p={1} item xs={3}>
 								<Link to={`/smart-contracts/${contract.id}`}>
 									<Card variant="outlined">
 										<Box sx={{ bgcolor: 'grey.100', p:5}}>

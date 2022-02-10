@@ -13,14 +13,23 @@ const App = props => {
 	const [websiteData, setWebsiteData] = useState('');	
 	const [enabled, setEnabled] = useState(false);
 	const [page, setPage] = useState({});
-	const { website, removeUnusedImages } = useWebsite();
+	const { website, removeUnusedImages, updateOldWebsites } = useWebsite();
 	const { pageName } = props.match.params; // Used to query DB for page data
+
+    // Update old websites
+    useEffect(() => {
+        if(!Object.keys(website).length > 0) return;
+        const update = async () => {
+            await updateOldWebsites();
+        }
+        update();
+    }, [website])
 
 	// Load website data on load
 	useEffect(() => {
 		if(!Object.keys(website).length > 0) return;
 		const page = website?.pages?.find(page => page.name == pageName);
-        setPage(page)
+        setPage(page);
 
         const base64 = page.data
         if (base64 !== undefined) {
