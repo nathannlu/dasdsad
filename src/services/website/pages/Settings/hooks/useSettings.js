@@ -15,13 +15,6 @@ const useSettings = () => {
     const [seoSaveStatus, setSeoSaveStatus] = useState(false);
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
-		onCompleted: () => {
-            addToast({
-                severity: 'success',
-                message: "Website Deleted"
-            })
-            location.href = '/';
-        },
 		onError: err => addToast({
 			severity: 'error',
 			message: err.message

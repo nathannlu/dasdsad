@@ -216,9 +216,14 @@ export const useBuildWebsite = ({ title, onCompleted }) => {
 }
 
 export const useDeleteWebsite = ({ websiteId, onCompleted, onError }) => {
+    const { setWebsite } = useWebsite();
+
 	const [deleteWebsite] = useMutation(DELETE_WEBSITE, {
 		variables: { websiteId },
-		onCompleted,
+		onCompleted: data => {
+            // if website is deleted
+            if (data.deleteWebsite) location.href = '/websites';
+        },
 		onError
 	})
 
