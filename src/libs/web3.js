@@ -393,17 +393,19 @@ export const Web3Provider = ({ children }) => {
 		}
     const getMaximumSupply = async (contractAddress) => {
         const web3 = window.web3
+			try {
 		const contract = await retrieveContract(contractAddress)
 
 //        const state = await contract.methods.open().call();
         const max = await contract.methods.totalSupply().call();
 
-			if (max == -1) {
-        const max2 = await contract.methods.MAX_SUPPLY().call();
 				
+        return max;
+			} catch (e) {
+        const max2 = await contract.methods.MAX_SUPPLY().call();
+
 				return max2
 			}
-        return max;
 		}
     // Compare current network with target network and switches if it doesn't match
     const compareNetwork = async (targetNetwork, callback) => {
