@@ -2,6 +2,7 @@ import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 import { useContract } from 'services/blockchain/provider';
 import { useHistory } from 'react-router-dom';
+import posthog from 'posthog-js';
 
 export const useDeployContractForm = () => {
 	const { form: deployContractForm } = useForm({
@@ -46,6 +47,7 @@ export const useDeployContractForm = () => {
 			severity: 'success',
 			message: 'Smart contract successfully created'
 		})
+		posthog.capture('User created contract');
 		handleRedirect()
 	}
 

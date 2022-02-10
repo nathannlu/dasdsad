@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Grid, Stack, Typography, Button } from 'ds/components';
 import { Chip } from '@mui/material';
+import posthog from 'posthog-js';
 
 const Preview = (props) => {
 	
@@ -21,7 +22,10 @@ const Preview = (props) => {
 					}
 				}}
 				item 
-				onClick={() => props.goToStep(3)}
+				onClick={() => {
+					posthog.capture('User selected upload to IPFS');
+					props.goToStep(3)
+				}}
 			>
 				<Stack justifyContent="space-between" sx={{height: '100%'}}>
 					<Box>
@@ -58,7 +62,10 @@ const Preview = (props) => {
 			</Grid>
 			<Grid 
 				item 
-				onClick={() => props.goToStep(2)}
+				onClick={() => {
+					posthog.capture('User selected upload to personal storage');
+					props.goToStep(2)
+				}}
 				sx={{
 					p:3,
 					flex: 1,

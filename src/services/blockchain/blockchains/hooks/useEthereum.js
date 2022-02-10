@@ -5,6 +5,7 @@ import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
+import posthog from 'posthog-js';
 
 export const useEthereum = () => {
 	const { deployContractForm } = useDeployContractForm();
@@ -41,6 +42,12 @@ export const useEthereum = () => {
 
 	// @TODO update baseUri & blockchain
 	const handleDeploymentSuccess = async (newContractAddress, id) => {
+		posthog.capture(
+			'User deployed contract to blockchain', {
+				$set: {
+					deployedContract: true,
+				}
+		});
 		await updateContract({ variables: { id: id, address: newContractAddress} });
 	}
 

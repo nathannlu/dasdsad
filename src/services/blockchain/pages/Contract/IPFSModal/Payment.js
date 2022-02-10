@@ -4,6 +4,7 @@ import config from 'config';
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
+import posthog from 'posthog-js';
 
 const Payment = (props) => {
 
@@ -13,6 +14,13 @@ const Payment = (props) => {
 	}, [])
 
 	const callback = () => {
+		posthog.capture(
+			'User subscribed to IPFS', {
+				$set: {
+					paidForIPFSHosting: true,
+				}
+		});
+
 		props.nextStep();	
 	}
 	
