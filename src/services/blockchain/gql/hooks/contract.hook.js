@@ -34,8 +34,23 @@ export const useGetContracts = async ({ onCompleted, onError }) => {
 }
 
 export const useSetBaseUri = ({ onCompleted, onError }) => {
+	const { setContracts } = useContract();
 	const [setBaseUri, { ...mutationResult }] = useMutation(SET_BASE_URI, {
 		onCompleted: async data => {
+			const updated = data.setBaseUri
+			
+			// Find obj in arr and updated
+			setContracts(prevState => {
+				const newState = prevState.map(contract => {
+					if (contract.id == updated.id) {
+						return {...contract, nftCollection: updated.nftCollection};
+					}
+
+					return contract;
+				})
+
+				return newState
+			})
 
 			onCompleted && onCompleted(data)
 		},
@@ -61,8 +76,24 @@ export const useSetWhitelist = ({ onCompleted, onError }) => {
 
 
 export const useUpdateContract = ({ onCompleted, onError }) => {
+	const { setContracts } = useContract();
+
 	const [updateContract, { ...mutationResult }] = useMutation(UPDATE_CONTRACT, {
 		onCompleted: async data => {
+			const updated = data.updateContract
+
+			// Find obj in arr and updated
+			setContracts(prevState => {
+				const newState = prevState.map(contract => {
+					if (contract.id == updated.id) {
+						return {...contract, address: updated.address};
+					}
+
+					return contract;
+				})
+
+				return newState
+			})
 
 			onCompleted && onCompleted(data)
 		},

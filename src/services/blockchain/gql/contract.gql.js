@@ -72,7 +72,12 @@ export const SET_BASE_URI = gql`
 		setBaseUri(baseUri: $baseUri, id: $id)	{
 			id
 			nftCollection {
+				price
+				currency
+				size
+				royalty
 				baseUri
+				whitelist
 			}
 		}
 	}

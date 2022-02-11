@@ -423,6 +423,7 @@ export const Web3Provider = ({ children }) => {
         else {
             callback();
         }
+//            callback();
     }
 
     // Get current network
