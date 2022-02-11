@@ -8,7 +8,7 @@ export const FeatureAProps = {
 		value: [
 			{
 				title: {
-					value: 'test 1',
+					value: 'SubHeading 1',
 					_type: 'textfield'
 				},
 				content: {
@@ -18,7 +18,7 @@ export const FeatureAProps = {
 			},
 			{
 				title: {
-					value: 'test 1',
+					value: 'SubHeading 2',
 					_type: 'textfield'
 				},
 				content: {
@@ -28,7 +28,7 @@ export const FeatureAProps = {
 			},
 			{
 				title: {
-					value: 'test 1',
+					value: 'SubHeading 3',
 					_type: 'textfield'
 				},
 				content: {

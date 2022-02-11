@@ -212,8 +212,6 @@ export const WebsiteProvider = ({ children }) => {
     const updateOldWebsites = async () => {
         if (!Object.keys(website).length > 0) return;
         
-        console.log(website);
-
         // Add Favicon
         if (!website.favicon) {
             await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: 'https://dummyimage.com/25x25' } });
