@@ -39,7 +39,6 @@ const Navbar = () => {
     useGetWebsites();
 
     const onSuccessPayment = async (data) => {
-        console.log(data)
         await setWebsiteSubscription({ variables: { isSubscribed: true } });
         await onSaveChanges(query);
     }
