@@ -82,7 +82,7 @@ const Upload = (props) => {
 
                 setEmbedCode(`<iframe
                 src="https://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${c.address}&chainId=${chainId}"
-                width="300px"
+                width="350px"
                 height="100px"
                 frameborder="0"
                 scrolling="no"
