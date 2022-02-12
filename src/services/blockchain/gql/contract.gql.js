@@ -44,10 +44,31 @@ export const UPDATE_CONTRACT = gql`
 	}
 `
 
-
 export const GET_CONTRACTS = gql`
 	query GetContracts {
 		getContracts {
+			id
+			name
+			symbol
+			type
+			author
+			blockchain
+			address
+			nftCollection {
+				price
+				currency
+				size
+				royalty
+				baseUri
+				whitelist
+			}
+		}
+	}
+`
+
+export const GET_CONTRACT = gql`
+	query GetContract($address: String!) {
+		getContract(address: $address) {
 			id
 			name
 			symbol

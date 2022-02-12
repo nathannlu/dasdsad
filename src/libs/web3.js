@@ -64,12 +64,11 @@ export const Web3Provider = ({ children }) => {
 	}
 
 	// Mint NFT
-	const mint = async (price, contractAddress) => {
+	const mint = async (price, contractAddress, count = 1) => {
 		const contract = await retrieveContract(contractAddress)
 		const priceInWei = Web3.utils.toWei(price);
 
-
-		await contract.methods.mintNFTs(1).send({ from: account, value: priceInWei }, err => {
+		await contract.methods.mintNFTs(count).send({ from: account, value: priceInWei }, err => {
 			if (err) {
 				addToast({
 					severity: 'error',
@@ -78,7 +77,7 @@ export const Web3Provider = ({ children }) => {
 			} else {
 				addToast({
 					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+					message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
 				})
 			}
 		})
@@ -104,7 +103,7 @@ export const Web3Provider = ({ children }) => {
 		return true;
 	}
 
-	const presaleMint = async (price, contractAddress, whitelist) => {
+	const presaleMint = async (price, contractAddress, whitelist, count = 1) => {
 		const contract = await retrieveContract(contractAddress)
 		const priceInWei = Web3.utils.toWei(price);
 
@@ -116,7 +115,7 @@ export const Web3Provider = ({ children }) => {
 		const hexProof = merkleTree.getHexProof(claimingAddress)
 
 
-		contract.methods.presaleMint(1,hexProof).send({ from: account, value: priceInWei }, err => {
+		contract.methods.presaleMint(count, hexProof).send({ from: account, value: priceInWei }, err => {
 			if (err) {
 				addToast({
 					severity: 'error',
@@ -125,7 +124,7 @@ export const Web3Provider = ({ children }) => {
 			} else {
 				addToast({
 					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+					message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
 				})
 			}
 		})
