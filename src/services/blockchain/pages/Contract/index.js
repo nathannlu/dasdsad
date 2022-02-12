@@ -471,7 +471,7 @@ const Upload = (props) => {
                                 <Box>
                                     <iframe
                                         src={`http://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${contract.address}&chainId=${embedChainId}`}
-                                        width="300px"
+                                        width="350px"
                                         height="100px"
                                         frameBorder="0"
                                         scrolling="no"
