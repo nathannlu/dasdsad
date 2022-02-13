@@ -10,7 +10,7 @@ import ImportLink from './ImportLink';
 import Payment from './Payment';
 import Upload from './Upload';
 
-const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
+const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
 
 	return (
 		<Modal
@@ -35,7 +35,7 @@ const IPFSModal = ({ isModalOpen, setIsModalOpen, id }) => {
 					<ImportLink id={id} setIsModalOpen={setIsModalOpen}  />
 
 					{/* uploads to ipfs with us */}
-					<Payment />
+					<Payment contract={contract} />
 					<Upload id={id} setIsModalOpen={setIsModalOpen} />
 
 				</StepWizard>

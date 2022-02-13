@@ -10,6 +10,7 @@ export const CREATE_CONTRACT = gql`
 			author
 			blockchain
 			address
+			isSubscribed
 			nftCollection {
 				price
 				currency
@@ -32,6 +33,7 @@ export const UPDATE_CONTRACT = gql`
 			author
 			blockchain
 			address
+			isSubscribed
 			nftCollection {
 				price
 				currency
@@ -54,6 +56,7 @@ export const GET_CONTRACTS = gql`
 			author
 			blockchain
 			address
+			isSubscribed
 			nftCollection {
 				price
 				currency

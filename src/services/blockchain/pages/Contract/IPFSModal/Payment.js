@@ -10,8 +10,10 @@ const Payment = (props) => {
 
 	useEffect(() => {
 		// If contract is subscribed, skip to next step
-		
-	}, [])
+		if(props.isActive && props.contract.isSubscribed) { 
+			props.nextStep();
+		}
+	}, [props])
 
 	const callback = () => {
 		posthog.capture(
@@ -21,7 +23,7 @@ const Payment = (props) => {
 				}
 		});
 
-		props.nextStep();	
+		props.nextStep();
 	}
 	
 	return (

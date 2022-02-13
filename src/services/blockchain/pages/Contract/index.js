@@ -484,7 +484,7 @@ const Upload = (props) => {
 						</>
 					)}
 				</Stack>
-				<IPFSModal id={id} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+				<IPFSModal id={id} contract={contract} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
 			</Container>
 		</Fade>
 	)
