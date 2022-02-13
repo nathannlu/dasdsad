@@ -24,10 +24,22 @@ const Signup = props => {
 		<Fade in>
 			<Box
 				sx={{
-					backgroundImage: 'url(login.jpg)', 
-					backgroundSize: 'contain', 
-					backgroundPosition: 'right',
-					background: 'black',
+					background: `radial-gradient(
+                92.81% 48.44% at -24.53% -16.02%,
+                #943cff 0%,
+                rgba(255, 255, 255, 0) 100%
+              ),
+              radial-gradient(
+                75.78% 68.16% at 56.74% -24.02%,
+                #fd9d52 0%,
+                rgba(255, 255, 255, 0) 100%
+              ),
+              radial-gradient(
+                160.86% 46.39% at 177.14% -15.62%,
+                #dd45d3 9.06%,
+                rgba(255, 255, 255, 0) 100%
+              ),
+              #f7fafc`,
 					minHeight: '100vh',
 				}}
 			>

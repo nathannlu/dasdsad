@@ -20,10 +20,10 @@ const ForgotPassword = props => {
 
 			<Box
 				sx={{
-					backgroundImage: 'url(login.jpg)', 
-					backgroundSize: 'contain', 
+					backgroundImage: 'url(https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/6208747ded33564312b6ef56_background.png)', 
+					backgroundSize: 'cover', 
 					backgroundPosition: 'right',
-					background: 'black',
+					backgroundRepeat: 'no-repeat',
 					minHeight: '100vh',
 				}}
 			>

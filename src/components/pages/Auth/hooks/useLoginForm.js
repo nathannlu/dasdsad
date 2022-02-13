@@ -27,10 +27,12 @@ export const useLoginForm = () => {
 	const { form: loginForm } = useForm({
 		email: {
 			default: '',
+			placeholder: 'Email',
 			rules: []
 		},
 		password: {
 			default: '',
+			placeholder: 'Password',
 			rules: []
 		}
 	})

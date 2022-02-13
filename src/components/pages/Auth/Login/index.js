@@ -23,10 +23,22 @@ const Login = props => {
 		<Fade in>
 			<Box
 				sx={{
-					backgroundImage: 'url(login.jpg)', 
-					backgroundSize: 'contain', 
-					backgroundPosition: 'right',
-					background: 'black',
+					background: `radial-gradient(
+                55.87% 55.87% at 35.49% -18.37%,
+                #943cff 0%,
+                rgba(255, 255, 255, 0) 100%
+              ),
+              radial-gradient(
+                91.61% 92.58% at 104.86% -43.36%,
+                #fd9d52 0%,
+                rgba(255, 255, 255, 0) 100%
+              ),
+              radial-gradient(
+                50.59% 55.55% at -2.99% -8.69%,
+                #dd45d3 9.06%,
+                rgba(255, 255, 255, 0) 100%
+              )
+              #f7fafc`,
 					minHeight: '100vh',
 				}}
 			>
@@ -48,6 +60,12 @@ const Login = props => {
 							Need an account? <Link className="link" to="/signup">Create an account</Link>
 						</Typography>
 						<MetamaskButton />
+
+						<Box sx={{textAlign:'center', opacity: .8}}>
+							<Typography>
+								or
+							</Typography>
+						</Box>
 
 						<form onSubmit={e => {
 							e.preventDefault();
