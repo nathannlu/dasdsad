@@ -7,7 +7,7 @@ import { useSubscribePlan } from 'gql/hooks/billing.hook';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, Card, Typography, Divider, CardElement, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon } from '@mui/icons-material';
 
-const CheckoutModal = ({ planId, callback }) => {
+const CheckoutModal = ({ contractId, planId, callback }) => {
 	const { user } = useAuth();
 	const { productPrices, selectedPlan, setSelectedPlan } = useGetPlanSettings(planId);
 	const {
@@ -20,6 +20,8 @@ const CheckoutModal = ({ planId, callback }) => {
 	const [ subscribe, { loading }] = useSubscribePlan({
 		priceId: selectedPlan?.id,
 		customerId: user.stripeCustomerId,
+		objectId: contractId,
+		type: 'contract',
 		onCompleted: data => {
 			onPaymentSuccess(data)
 			callback(data)

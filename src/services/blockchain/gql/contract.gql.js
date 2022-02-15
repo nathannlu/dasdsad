@@ -114,3 +114,4 @@ export const SET_WHITELIST = gql`
 		}
 	}
 `
+

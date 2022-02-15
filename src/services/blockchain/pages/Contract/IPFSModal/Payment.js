@@ -28,7 +28,7 @@ const Payment = (props) => {
 	
 	return (
 		<Elements stripe={stripePromise}>
-			<CheckoutForm planId={config.stripe.products.contract} callback={callback} />
+			<CheckoutForm planId={config.stripe.products.contract} callback={callback} contractId={props.contractId} />
 		</Elements>
 	)
 };

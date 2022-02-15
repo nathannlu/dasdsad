@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const SUBSCRIBE_PLAN = gql`
-	mutation SubscribePlan($paymentMethodId: String!,$customerId: String!, $priceId: String!,) {
-		subscribe(paymentMethodId: $paymentMethodId, customerId: $customerId, priceId: $priceId)
+	mutation SubscribePlan($paymentMethodId: String!,$customerId: String!, $priceId: String!, $objectId: ID, $type: String) {
+		subscribe(paymentMethodId: $paymentMethodId, customerId: $customerId, priceId: $priceId, objectId: $objectId, type: $type)
 	}
 `
 

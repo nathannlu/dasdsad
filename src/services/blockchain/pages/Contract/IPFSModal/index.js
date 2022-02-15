@@ -35,7 +35,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
 					<ImportLink id={id} setIsModalOpen={setIsModalOpen}  />
 
 					{/* uploads to ipfs with us */}
-					<Payment contract={contract} />
+					<Payment contractId={id} contract={contract} />
 					<Upload id={id} setIsModalOpen={setIsModalOpen} />
 
 				</StepWizard>

@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { SUBSCRIBE_PLAN, CHARGE, GET_PRODUCT_PRICES, CREATE_PAYMENT_INTENT, GET_USER_SUBSCRIPTIONS, STOP_USER_SUBSCRIPTION } from '../billing.gql';
 
-export const useSubscribePlan = ({ paymentMethodId, priceId, customerId, onCompleted, onError }) => {
+export const useSubscribePlan = ({ paymentMethodId, priceId, customerId, type, objectId, onCompleted, onError }) => {
 	const [subscribe, { ...mutationResult }] = useMutation(SUBSCRIBE_PLAN, {
-		variables: { paymentMethodId, priceId, customerId },
+		variables: { paymentMethodId, priceId, customerId, type, objectId },
 		onCompleted,
 		onError
 	})
