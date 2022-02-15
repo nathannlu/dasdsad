@@ -57,12 +57,12 @@ const Payment = props => {
 
 					<Stack direction="row">
 						<Button fullWidth variant="contained" onClick={() => {
-							{/*
 							generateImages();
 							props.nextStep()
-							*/}
 
+							{/*
 							setIsCheckoutModalOpen(true)
+							*/}
 							posthog.capture('User clicked on "Generate collection" button');
 						}}>
 							Generate collection
@@ -76,6 +76,7 @@ const Payment = props => {
 					</Button>
 				</Stack>
 
+				{/*
 				<Elements stripe={stripePromise}>
 					<PaymentModal
 						isModalOpen={isCheckoutModalOpen}
@@ -83,6 +84,7 @@ const Payment = props => {
 						setIsModalOpen={setIsCheckoutModalOpen}
 					/>
 				</Elements>
+				*/}
 			</Stack>
 		</Fade>
 	)

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CollectionProvider } from '../../provider';
 import { Link, Fade, Container, Tabs, Tab, Stack, Box, Typography, Grid, Navbar, Button } from 'ds/components';
 import config from 'config'
 import { Elements } from '@stripe/react-stripe-js';
@@ -6,6 +7,8 @@ import {loadStripe} from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
 import { useGenerator } from 'services/generator/controllers/generator';
 import PaymentModal from 'services/generator/pages/New/05_Payment/PaymentModal';
+
+import Model from '../New/Model';
 
 
 const Collection = () => {
@@ -18,14 +21,14 @@ const Collection = () => {
 	
 	return (
 		<>
+		<CollectionProvider>
 		<Navbar />
 		<Fade in>
 			<Stack sx={{
 				display: 'flex',
 				backgroundColor: 'white',
 				transition: '.2s all',
-				marginTop: '65px',
-				minHeight: '100vh',
+				mt: 4,
 			}}>
 				<Grid container>
 					<Grid md={6} item p={4}>
@@ -38,16 +41,21 @@ const Collection = () => {
 									Re-generate your collection, download, or deploy to a blockchain.
 								</Typography>
 							</Box>
+
+							{/*
 							<Link to="/generator">
 								<Button variant="contained" size="small">
 									Edit
 								</Button>
 							</Link>
+							*/}
 						</Stack>
 
+						{/*
 						<Box py={2}>
 							<Traits editing={false} />
 						</Box>
+						*/}
 
 						<Stack direction="row" gap={2}>
 							{done || start ? (
@@ -93,6 +101,7 @@ const Collection = () => {
 				</Elements>
 			</Stack>
 		</Fade>
+		</CollectionProvider>
 		</>
 	)
 };

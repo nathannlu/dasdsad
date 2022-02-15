@@ -52,7 +52,21 @@ const Generating = () => {
 				)}
 			</Stack>
 
+			<Stack gap={2}>
+				<Link to="/login?redirect=generator/collections">
+					<Button variant="contained">
+						Log in to download
+					</Button>
+				</Link>
 
+
+				<Typography gutterBottom variant="body">
+					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/ambition_so" target="_blank">Twitter</a>
+				</Typography>
+			</Stack>
+
+
+			{/*
 			<Stack gap={2}>
 				<Button disabled={!done} onClick={save} variant="contained">
 					Download
@@ -62,6 +76,7 @@ const Generating = () => {
 					Shill your collection in our <a target="_blank" style={{color: 'blue'}} href="https://discord.gg/ZMputCvjVe">Discord</a> and check out our <a style={{color: 'blue'}} href="https://twitter.com/ambition_so" target="_blank">Twitter</a>
 				</Typography>
 			</Stack>
+			*/}
 
 			{/*done && (
 			<Link to="/upload" style={{textDecoration: 'none', color: 'inherit'}}>

@@ -9,6 +9,7 @@ const Login = props => {
 		loginForm: { email, password },
 		handleRedirect,
 		handleLoginError,
+		redirect,
 	} = useLoginForm();
 
 	const [login, { loading }] = useLogin({
@@ -57,7 +58,7 @@ const Login = props => {
 						</Typography>
 
 						<Typography variant="body1">
-							Need an account? <Link className="link" to="/signup">Create an account</Link>
+							Need an account? <Link className="link" to={redirect ? `/signup?redirect=${redirect}` : "/signup"}>Create an account</Link>
 						</Typography>
 						<MetamaskButton />
 

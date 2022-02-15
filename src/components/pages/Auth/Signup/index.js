@@ -11,7 +11,8 @@ const Signup = props => {
 	const {
 		signupForm: { email, name, password },
 		onCompleted,
-		handleSignupError
+		handleSignupError,
+		redirect
 	} = useSignupForm();
 
 	const [register, { loading }] = useRegister({
@@ -167,7 +168,7 @@ const Signup = props => {
 
 						<Stack direction="row" justifyContent="center">
 							<Typography variant="body1">
-								Already have an account? <Link className="link" to="/login">Log in</Link>
+								Already have an account? <Link className="link" to={redirect ? `/login?redirect=${redirect}` : "/login"}>Log in</Link>
 							</Typography>
 						</Stack>
 					</Stack>

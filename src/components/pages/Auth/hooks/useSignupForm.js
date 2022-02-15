@@ -8,6 +8,8 @@ export const useSignupForm = () => {
 	const { isAuthenticated } = useAuth();
 	const { addToast } = useToast();
 	const history = useHistory();
+	const searchParams = new URLSearchParams(location.search);
+	const redirect = searchParams.get("redirect");
 	const { form: signupForm } = useForm({
 		email: {
 			default: '',
@@ -35,7 +37,7 @@ export const useSignupForm = () => {
 			message: "Success! Login with your new account"
 		});
 
-		history.push('/login');
+		history.push(redirect ? `/login?redirect=${redirect}` : '/login');
 	}
 
 	const handleSignupError = (err) => {
@@ -57,5 +59,6 @@ export const useSignupForm = () => {
 		handleRedirect,
 		handleSignupError,
 		onCompleted,
+		redirect,
 	}
 }

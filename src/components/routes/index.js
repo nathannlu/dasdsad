@@ -7,8 +7,10 @@ import Signup from 'components/pages/Auth/Signup';
 import Login from 'components/pages/Auth/Login';
 import ForgotPassword from 'components/pages/Auth/ForgotPassword';
 import Reset from 'components/pages/Auth/Reset';
-
 import Generator from 'services/generator';
+
+import New from 'services/generator/pages/New';
+import Collection from 'services/generator/pages/Collection';
 
 import AppRoutes from 'services/routes';
 
@@ -25,7 +27,18 @@ const GlobalRoutes = () => {
 		{ path: '/login', component: Login },
 		{ path: '/signup', component: Signup },
 
-		{ path: '/generator', component: Generator },
+//		{ path: '/generator', component: Generator },
+
+		{
+			path: '/generator',
+			component: New,
+			exact: true
+		},
+		{
+			path: '/generator/collection',
+			component: Collection,
+			private: true,
+		},
 
 
 
