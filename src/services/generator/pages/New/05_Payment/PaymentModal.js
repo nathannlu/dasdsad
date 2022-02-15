@@ -23,24 +23,13 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 		onPaymentError,
 	} = usePaymentForm();
 
-	const onCompleted = data => {
-		console.log(data)
-		setIsModalOpen(false);
-				//save();
-			//save image
-		generateImages();
-		nextStep();
-
-		onPaymentSuccess(data);
-	}
-
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
 			setIsModalOpen(false);
-					//save();
+			save();
 				//save image
-			generateImages();
-			nextStep();
+//			generateImages();
+//			nextStep();
 
 			onPaymentSuccess(data);
 

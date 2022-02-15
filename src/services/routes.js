@@ -4,7 +4,7 @@ import { RouteBuilder } from 'components/routes/RouteBuilder';
 import { CircularProgress, Stack } from 'ds/components'
 import Layout from 'components/layout/Layout';
 
-import Generator from 'services/generator';
+//import Generator from 'services/generator';
 import Blockchain from 'services/blockchain';
 import Website from 'services/website';
 

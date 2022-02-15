@@ -7,7 +7,7 @@ import Signup from 'components/pages/Auth/Signup';
 import Login from 'components/pages/Auth/Login';
 import ForgotPassword from 'components/pages/Auth/ForgotPassword';
 import Reset from 'components/pages/Auth/Reset';
-import Generator from 'services/generator';
+//import Generator from 'services/generator';
 
 import New from 'services/generator/pages/New';
 import Collection from 'services/generator/pages/Collection';
@@ -35,7 +35,7 @@ const GlobalRoutes = () => {
 			exact: true
 		},
 		{
-			path: '/generator/collection',
+			path: '/generator/download',
 			component: Collection,
 			private: true,
 		},

@@ -53,7 +53,7 @@ const Generating = () => {
 			</Stack>
 
 			<Stack gap={2}>
-				<Link to="/login?redirect=generator/collections">
+				<Link to="/login?redirect=generator/download">
 					<Button variant="contained">
 						Log in to download
 					</Button>

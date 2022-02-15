@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { CollectionProvider } from '../../provider';
 import { Link, Fade, Container, Tabs, Tab, Stack, Box, Typography, Grid, Navbar, Button } from 'ds/components';
+import { CircularProgress } from '@mui/material'
 import config from 'config'
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
 import { useGenerator } from 'services/generator/controllers/generator';
+import { useMetadata } from 'services/generator/controllers/metadata';
 import PaymentModal from 'services/generator/pages/New/05_Payment/PaymentModal';
 
 import Model from '../New/Model';
@@ -15,20 +17,18 @@ const Collection = () => {
 	const [settings, setSettings] = useState('layers')
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 
-	const { save, start, done, progress, zipProgress, listenToWorker, generateImages } = useGenerator();
+	const { settingsForm: { size } } = useMetadata();
+	const { save, start, done, progress, zipProgress, listenToWorker, generateImages, downloaded } = useGenerator();
 
 	useEffect(listenToWorker,[])
 	
 	return (
 		<>
-		<CollectionProvider>
-		<Navbar />
 		<Fade in>
 			<Stack sx={{
 				display: 'flex',
 				backgroundColor: 'white',
 				transition: '.2s all',
-				mt: 4,
 			}}>
 				<Grid container>
 					<Grid md={6} item p={4}>
@@ -57,30 +57,55 @@ const Collection = () => {
 						</Box>
 						*/}
 
+						<Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
+							<CircularProgress variant="determinate" value={Math.round((progress / size.value) * 100)} size={100} />
+							<Box
+								sx={{
+									top: 0,
+									left: 0,
+									bottom: 0,
+									right: 0,
+									position: 'absolute',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+								}}
+							>
+								<Typography variant="h6" component="div" color="text.secondary">
+									{`${Math.round((progress / size.value) * 100)}%`}
+								</Typography>
+							</Box>
+							{zipProgress !== null && (
+								<>
+									Zipping... {Math.round(zipProgress)}%
+								</>
+							)}
+						</Stack>
+
 						<Stack direction="row" gap={2}>
-							{done || start ? (
-								<Link to="/upload">
+							<Button disabled={!done} onClick={() => {
+								setIsCheckoutModalOpen(true);
+							}} variant="outlined">
+								Download collection
+							</Button>
+							{downloaded && (
+								<Link to="/smart-contracts">
 									<Button variant="contained">
 										Deploy NFT
 									</Button>
 								</Link>
-							):null}
-							{done || start ? (
-								<Button disabled={!done} onClick={() => {
-									setIsCheckoutModalOpen(true);
-								}} variant="outlined">
-									Download collection
-								</Button>
-							) : (
-								<Button onClick={generateImages} variant="outlined">
-									Generate collection
-								</Button>
 							)}
+
+							{/*
+							<Button onClick={generateImages} variant="outlined">
+								Generate collection
+							</Button>
+							*/}
 						</Stack>
 					</Grid>
 
-					<Grid 
-						md={6} 
+					<Grid
+						md={6}
 						alignItems="center" 
 						justifyItems="center" 
 						item 
@@ -101,9 +126,15 @@ const Collection = () => {
 				</Elements>
 			</Stack>
 		</Fade>
-		</CollectionProvider>
 		</>
 	)
 };
 
-export default Collection
+const Main = () => (
+	<CollectionProvider>
+		<Collection />
+	</CollectionProvider>
+);
+
+
+export default Main
