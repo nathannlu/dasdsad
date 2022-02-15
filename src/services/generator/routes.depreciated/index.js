@@ -4,7 +4,7 @@ import { CircularProgress, Stack } from 'ds/components'
 
 //const Dashboard = lazy(() => import("services/generator/pages/Dashboard"))
 const New = lazy(() => import("services/generator/pages/New"))
-//const Collection = lazy(() => import("services/generator/pages/Collection"))
+const Collection = lazy(() => import("services/generator/pages/Collection"))
 
 
 const GeneratorRoutes = () => {
@@ -22,13 +22,11 @@ const GeneratorRoutes = () => {
 			component: New,
 			exact: true
 		},
-		/*
 		{
-			path: '/collections/:id',
+			path: '/generator/collection',
 			component: Collection,
 			private: true,
 		},
-		*/
 	];
 
 	return (

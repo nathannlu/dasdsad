@@ -14,6 +14,9 @@ export const useLoginForm = () => {
 	const { isAuthenticated } = useAuth();
 	const { addToast } = useToast();
 	const history = useHistory();
+	const searchParams = new URLSearchParams(location.search);
+	const redirect = searchParams.get("redirect");
+
 //	const { query: {layers} } = useLayerManager();
 //	const { settingsForm } = useMetadata();
 	/*
@@ -45,7 +48,11 @@ export const useLoginForm = () => {
 	}
 
 	const handleRedirect = () => {
-		history.push('/dashboard');
+		// Check for redirect param
+
+		history.push(redirect ?? "/dashboard");
+
+//		history.push('/dashboard');
 	}
 
 	const handleLoginSuccess = async () => {
@@ -82,7 +89,7 @@ export const useLoginForm = () => {
 
 	// Handle existing JWT token
 	useEffect(() => {
-		if(isAuthenticated) {
+		if (location.pathname == '/login' && isAuthenticated) {
 			handleRedirect();
 		}
 	}, [isAuthenticated])
@@ -91,6 +98,7 @@ export const useLoginForm = () => {
 		loginForm,
 		handleRedirect,
 		handleLoginError,
-		handleLoginSuccess
+		handleLoginSuccess,
+		redirect
 	}
 }

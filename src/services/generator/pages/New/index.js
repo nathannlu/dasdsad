@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CollectionProvider } from '../../provider';
 import { useToast } from 'ds/hooks/useToast';
 import { Stack, IconButton, Divider, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
 import { AppBar, Toolbar } from '@mui/material';
@@ -26,6 +27,7 @@ const Generator = () => {
 
 
 	return (
+		<CollectionProvider>
 		<Fade in>
 			<Grid 
 				container
@@ -92,6 +94,7 @@ const Generator = () => {
 				): null}
 			</Grid>
 		</Fade>
+		</CollectionProvider>
 	)
 };
 

@@ -22,6 +22,7 @@ export const GeneratorProvider = ({children}) => {
 	const [progress, setProgress] = useState(0);
 	const [zipProgress, setZipProgress] = useState(null);
 	const [generatedZip, setGeneratedZip] = useState('');
+	const [downloaded, setDownloaded] = useState(false);
 
 
 	// This will need to talk to web worker
@@ -51,6 +52,7 @@ export const GeneratorProvider = ({children}) => {
 
 	const save = () => {
 		FileSaver.saveAs(generatedZip, 'sample.zip')
+		setDownloaded(true);
 		posthog.capture('User downloaded collection');
 	}
 
@@ -107,6 +109,7 @@ export const GeneratorProvider = ({children}) => {
 		progress,
 		zipProgress,
 		start,
+		downloaded,
 	}
 		
 	return (
