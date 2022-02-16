@@ -27,7 +27,6 @@ const Generator = () => {
 
 
 	return (
-		<CollectionProvider>
 		<Fade in>
 			<Grid 
 				container
@@ -94,7 +93,6 @@ const Generator = () => {
 				): null}
 			</Grid>
 		</Fade>
-		</CollectionProvider>
 	)
 };
 

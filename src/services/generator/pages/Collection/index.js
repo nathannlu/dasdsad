@@ -130,11 +130,4 @@ const Collection = () => {
 	)
 };
 
-const Main = () => (
-	<CollectionProvider>
-		<Collection />
-	</CollectionProvider>
-);
-
-
-export default Main
+export default Collection 
