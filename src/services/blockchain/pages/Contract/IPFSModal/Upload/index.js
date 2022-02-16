@@ -56,11 +56,11 @@ const Confirmation = props => {
 	return (
 		<Stack gap={2}>
 			<Box>
-				Your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${imagesUrl}/0.png`} target="_blank">ipfs://{imagesUrl}/</a>. Please verify the content is correct.
+				Your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${imagesUrl}/1.png`} target="_blank">ipfs://{imagesUrl}/</a>. Please verify the content is correct.
 			</Box>
 
 			<Box>
-				Metadata for your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/0`} target="_blank">{ipfsUrl}</a>. Please verify the content is correct.
+				Metadata for your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/1`} target="_blank">{ipfsUrl}</a>. Please verify the content is correct.
 			</Box>
 
 			<Button variant="contained" onClick={() => setBaseUri({variables: {baseUri: ipfsUrl, id: props.id}})}>

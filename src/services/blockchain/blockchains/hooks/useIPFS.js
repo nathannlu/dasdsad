@@ -86,7 +86,13 @@ export const useIPFS = () => {
 					// Parse JSON and modify
 					const jsonMetadata = JSON.parse(evt.target.result)
 					const tokenId = file.name.split('.')[0]
-					jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.png`
+
+					if(jsonMetadata.properties?.files[0]?.type == 'image/webp') {
+						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`
+						
+					} else {
+						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.png`
+					}
 
 					// Attach JSON to formdata
 					const metadataFile = new Blob([JSON.stringify(jsonMetadata)])
