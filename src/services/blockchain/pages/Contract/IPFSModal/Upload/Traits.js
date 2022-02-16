@@ -21,7 +21,7 @@ const Traits = props => {
 		<>
 		{uploadedFiles.length < 1 ? (
 			<Box>
-				<Dropzone accept={['image/png', 'video/mp4']} multiple onDrop={acceptedFiles => handleImagesUpload(acceptedFiles)}>
+				<Dropzone accept={['image/png', 'image/webp', 'video/mp4']} multiple onDrop={acceptedFiles => handleImagesUpload(acceptedFiles)}>
 					{({getRootProps, getInputProps}) => (
 						<Box sx={{
 							alignItems:'center', 
