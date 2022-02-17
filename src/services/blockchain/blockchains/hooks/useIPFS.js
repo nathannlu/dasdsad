@@ -96,14 +96,14 @@ export const useIPFS = () => {
 
 					// Attach JSON to formdata
 					const metadataFile = new Blob([JSON.stringify(jsonMetadata)])
-					data.append('file', metadataFile, `/metadata/${tokenId}`)
+					data.append('file', metadataFile, `/metadata/${tokenId}.json`)
 
 					resolve(data)
 				};
 				fileReader.readAsText(file);
 
 			} else {
-				data.append('file', file, '/metadata/metadata')
+				data.append('file', file, '/metadata/metadata.json')
 				resolve(data)
 			}
 		})
