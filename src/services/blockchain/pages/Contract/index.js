@@ -25,6 +25,8 @@ const Upload = (props) => {
 	const [soldCount, setSoldCount] = useState(null)
 	const [airdropList, setAirdropList] = useState('');
 	const [whitelistAddresses,setWhitelistAddresses] = useState('');
+	const [maxPerMintCount, setMaxPerMintCount] = useState('');
+	const [newPrice, setNewPrice] = useState('');
 	
 	const [setWhitelist] = useSetWhitelist({})
 
@@ -49,6 +51,7 @@ const Upload = (props) => {
 		withdraw,
 		mint,
 		presaleMint,
+		setMaxPerMint,
 		openSales,
 		openPresale,
 		updateBaseUri,
@@ -57,7 +60,8 @@ const Upload = (props) => {
 		presaleState,
 		getPresaleState,
 		airdrop,
-		setWhitelist: setContractWhitelist
+		setWhitelist: setContractWhitelist,
+		setCost,
 	} = useWeb3()
 
 	useEffect(() => {
@@ -354,6 +358,45 @@ const Upload = (props) => {
 									<UploadIcon />
 								</Button>
 							</Stack>
+
+						</Stack>
+
+						<Stack gap={1}>
+							<Typography variant="small">
+								Set the max per mint
+							</Typography>
+							<Stack direction="row">
+								<TextField 
+									size="small"
+									placeholder="5" 
+									onChange={e => setMaxPerMintCount(e.target.value)}
+								/>
+								<Button size="small" variant="contained" onClick={() => {
+									setMaxPerMint(contract.address, maxPerMintCount)
+								}}>
+									<UploadIcon />
+								</Button>
+							</Stack>
+						</Stack>
+
+						<Stack gap={1}>
+							<Typography variant="small">
+								Update NFT cost
+							</Typography>
+							<Stack direction="row">
+								<TextField 
+									size="small"
+									placeholder="5" 
+									onChange={e => setNewPrice(e.target.value)}
+								/>
+								{contract.nftCollection.currency}
+
+								<Button size="small" variant="contained" onClick={() => {
+									setCost(contract.address, newPrice)
+								}}>
+									<UploadIcon />
+								</Button>
+							</Stack>
 						</Stack>
 
 
@@ -398,6 +441,7 @@ const Upload = (props) => {
 									rows={7}
 									size="small"
 									onChange={e => setWhitelistAddresses(e.target.value)}
+									placeholder={`0x123\n0x456\n0x789`}
 								/>
 								<Box>
 									<Button size="small" variant="contained" onClick={() => {

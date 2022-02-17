@@ -233,6 +233,69 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
+	const setMaxPerMint = async (contractAddress, count) => {
+		const contract = await retrieveContract(contractAddress)
+
+		contract.methods.setMaxPerMint(parseInt(count)).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.once("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: `Successfully set max per mint`
+			})
+		})
+	}
+
+	const setCost = async (contractAddress, price) => {
+		const contract = await retrieveContract(contractAddress)
+		const priceInWei = Web3.utils.toWei(price);
+
+		contract.methods.setCost(priceInWei).send({ from: account, value: 0 }, err => {
+			if (err) {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			} else {
+				addToast({
+					severity: 'info',
+					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
+				})
+			}
+		})
+		.on('error', err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		})
+		.once("confirmation", () => {
+			addToast({
+				severity: 'success',
+				message: `Successfully set cost to mint`
+			})
+		})
+	}
+
+
+
 	const airdrop = async (contractAddress, list) => {
 		const contract = await retrieveContract(contractAddress)
 
@@ -547,6 +610,8 @@ export const Web3Provider = ({ children }) => {
 				setWhitelist,
                 getPrice,
                 getMaximumSupply,
+				setMaxPerMint,
+				setCost,
 				getTotalMinted
 			}}
 		>
