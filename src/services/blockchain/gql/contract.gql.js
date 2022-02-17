@@ -46,6 +46,14 @@ export const UPDATE_CONTRACT = gql`
 	}
 `
 
+export const DELETE_CONTRACT = gql`
+	mutation DeleteContract($id: ID!) {
+		deleteContract(id: $id)	{
+			id
+		}
+	}
+`
+
 export const GET_CONTRACTS = gql`
 	query GetContracts {
 		getContracts {
@@ -114,4 +122,7 @@ export const SET_WHITELIST = gql`
 		}
 	}
 `
+
+
+
 

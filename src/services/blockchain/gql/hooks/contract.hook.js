@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI, UPDATE_CONTRACT, SET_WHITELIST, GET_CONTRACT } from '../contract.gql';
+import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI, UPDATE_CONTRACT, SET_WHITELIST, GET_CONTRACT, DELETE_CONTRACT } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
 
@@ -15,6 +15,22 @@ export const useCreateContract = ({ onCompleted, onError }) => {
 	})
 
 	return [ createContract, { ...mutationResult }]
+};
+
+export const useDeleteContract = ({ onCompleted, onError }) => {
+	const { contracts, setContracts } = useContract();
+	const [deleteContract, { ...mutationResult }] = useMutation(DELETE_CONTRACT, {
+		onCompleted: data => {
+			const newContract = contracts.filter(c => c.id !== data?.deleteContract.id)
+
+			setContracts(newContract)
+			
+			onCompleted &&onCompleted(data);
+		},
+		onError
+	})
+
+	return [ deleteContract, { ...mutationResult }]
 };
 
 export const useGetContracts = async ({ onCompleted, onError }) => {

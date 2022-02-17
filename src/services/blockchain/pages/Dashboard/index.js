@@ -1,10 +1,41 @@
-import React from 'react';
-import { Container, Button, Link, Box, Typography, Stack, Card, Grid, Fade } from 'ds/components';
+import React, { useState } from 'react';
+import { Menu, MenuItem, Container, Button, IconButton, Link, Box, Typography, Stack, Card, Grid, Fade } from 'ds/components';
+import { Chip } from '@mui/material';
+import { useToast } from 'ds/hooks/useToast';
 import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
 import { useContract } from 'services/blockchain/provider';
+import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 const Dashboard = () => {
 	const { contracts } = useContract();
+	const { addToast } = useToast();
+	const [deleteContract] = useDeleteContract({
+		onCompleted: data => {
+			addToast({
+				severity: 'success',
+				message: 'Successfully deleted contract'
+			})
+		},
+		onError: (err) => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		}
+	})
+
+  const [anchorEl, setAnchorEl] = useState(null);
+	const [open, setOpen] = useState('');
+  const handleClick = (event, id) => {
+		setOpen(id)
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+		setOpen(null)
+    setAnchorEl(null);
+  };
+
 	
 	return (
 		<Fade in>
@@ -44,33 +75,56 @@ const Dashboard = () => {
 						<Grid container>
 							{contracts.map((contract, i) => (
 							<Grid key={i} p={1} item xs={3}>
-								<Link to={`/smart-contracts/${contract.id}`}>
 									<Card variant="outlined">
-										<Box sx={{ bgcolor: 'grey.100', p:5}}>
+								<Link to={`/smart-contracts/${contract.id}`}>
+										<Box sx={{ bgcolor: 'grey.100'}}>
 											<img 
 												style={{width: '100%'}}
-												src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61f8e07dada6650c668f1147_smart-contract.png"
+												src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/620886113653fa7c2d6386a2_Contract%20(right%20side%20view).png"
 											/>
 										</Box>
-										<Box sx={{
+								</Link>
+										<Stack sx={{
 											bgcolor: 'white',
 											p: 2
 										}}>
-											<Stack direction="row" gap={2}>
-												<Typography>
-													{contract.name}
-												</Typography>
+											<Stack direction="row" alignItems="center" gap={1}>
+												<Box>
+													{{
+														ethereum: <img style={{width: '25px', borderRadius: 9999}} src="https://opensea.io/static/images/logos/ethereum.png" />,
+														polygon: <img style={{width: '25px', borderRadius: 9999}} src="https://opensea.io/static/images/logos/polygon.svg" />,
+													}[contract.blockchain]}
+												</Box>
+												<Box>
+													<Typography>
+														{contract.name}
+													</Typography>
+												</Box>
 
-												<Button
-													size="small"
-													variant="contained"
-												>
-													View Contract
-												</Button>
+												<Box sx={{ml: 'auto'}}>
+													<IconButton 
+														aria-controls={open ? `${contract.id}-menu` : undefined}
+														onClick={e => handleClick(e, contract.id)}
+													>
+														<MoreHorizIcon />
+													</IconButton>
+													<Menu
+														id={`${contract.id}-menu`}
+														anchorEl={anchorEl}
+														open={open == contract.id}
+														onClose={handleClose}
+														anchorOrigin={{vertical: 'bottom',horizontal: 'right'}}
+														transformOrigin={{vertical: 'top',horizontal: 'right'}}
+													>
+														<MenuItem onClick={() => {
+															deleteContract({variables: {id: contract.id}})
+															handleClose()
+														}}>Delete</MenuItem>
+													</Menu>
+												</Box>
 											</Stack>
-										</Box>
+										</Stack>
 									</Card>
-								</Link>
 							</Grid>
 							))}
 						</Grid>
