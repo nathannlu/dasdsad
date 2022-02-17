@@ -87,7 +87,7 @@ export const useIPFS = () => {
 					const jsonMetadata = JSON.parse(evt.target.result)
 					const tokenId = file.name.split('.')[0]
 
-					if(jsonMetadata.properties?.files[0]?.type == 'image/webp') {
+					if(jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type == 'image/webp') {
 						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`
 						
 					} else {
