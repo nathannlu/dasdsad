@@ -7,6 +7,8 @@ import { useContract } from 'services/blockchain/provider';
 import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
+import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
+
 const Dashboard = () => {
 	const { contracts } = useContract();
 	const { addToast } = useToast();
@@ -76,17 +78,32 @@ const Dashboard = () => {
 							{contracts.map((contract, i) => (
 							<Grid key={i} p={1} item xs={3}>
 									<Card variant="outlined">
-								<Link to={`/smart-contracts/${contract.id}`}>
-										<Box sx={{ bgcolor: 'grey.100'}}>
-											<img 
-												style={{width: '100%'}}
-												src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/620886113653fa7c2d6386a2_Contract%20(right%20side%20view).png"
-											/>
-										</Box>
-								</Link>
+										<Link to={`/smart-contracts/${contract.id}`}>
+
+											
+
+											<Box sx={{ bgcolor: 'grey.100', position: 'relative'}}>
+												{!contract?.address && (
+													<Box sx={{position: 'absolute', top: 0, right: 0}} p={2}>
+														<Chip
+															size="small"
+															icon={<WarningAmberIcon />} 
+															color="warning" 
+															label="Set up required" 
+														/>
+													</Box>
+												)}
+
+												<img 
+													style={{width: '100%'}}
+													src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/620886113653fa7c2d6386a2_Contract%20(right%20side%20view).png"
+												/>
+											</Box>
+										</Link>
 										<Stack sx={{
 											bgcolor: 'white',
-											p: 2
+											px: 2,
+											py: 1
 										}}>
 											<Stack direction="row" alignItems="center" gap={1}>
 												<Box>
