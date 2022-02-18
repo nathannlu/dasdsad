@@ -9,24 +9,29 @@ const Details = ({contract}) => {
 	const [price, setPrice] = useState();
 
 	const {
+		getPublicContractVariables,
+
 		contractState,
 		getContractState,
+		getBalance,
 		presaleState,
 		getPresaleState,
 	} = useWeb3()
 
+
 	useEffect(() => {
 		(async () => {
-			const b = await getBalance(contract.address)
-			setBalance(b);
+			const {
+				supply,
+				maxSupply,
+				costInEth,
+				balanceInEth
+			} = await getPublicContractVariables(contract.address);
 
-			const nftsSold = b / contract.nftCollection.price
-
-			if(b == 0) {
-				setSoldCount(0)
-			} else {
-				setSoldCount(nftsSold)
-			}
+//			const b = await getBalance(contract.address)
+			setBalance(balanceInEth);
+			setPrice(costInEth);
+			setSoldCount(supply)
 
 			// Get sales status
 			await getContractState(contract.address);

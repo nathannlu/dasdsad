@@ -379,6 +379,38 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
+	const getPublicContractVariables = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress)
+
+		const balance = await web3.eth.getBalance(contractAddress)
+		const balanceInEth = web3.utils.fromWei(balance)
+		const baseTokenUri = await contract.methods.baseTokenURI().call()
+		const open = await contract.methods.open().call();
+		const presaleOpen = await contract.methods.presaleOpen().call();
+		const maxPerMint = await contract.methods.maxPerMint().call();
+		const cost = await contract.methods.cost().call();
+		const costInEth = web3.utils.fromWei(cost)
+		const supply = await contract.methods.supply().call();
+		const totalSupply = await contract.methods.totalSupply().call();
+		const owner = await contract.methods.owner().call();
+
+		return {
+			balance,
+			balanceInEth,
+			baseTokenUri,
+			open,
+			presaleOpen,
+			maxPerMint,
+			cost,
+			constInEth,
+			supply,
+			totalSupply,
+			owner,
+		}
+	}
+
+
+
 	const withdraw = async (contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
 		contract.methods.withdraw().send({ from: account, value: 0 }, err => {
@@ -426,6 +458,8 @@ export const Web3Provider = ({ children }) => {
 		if (true) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
 
+			console.log(contract)
+
 			return contract;
 		}
 	}
@@ -435,6 +469,7 @@ export const Web3Provider = ({ children }) => {
 		const web3 = window.web3
 		const contract = await retrieveContract(contractAddress)
 		return contract.methods.baseTokenURI().call()
+
 	}
 
 	const getPrice = async (contractAddress) => {
@@ -612,7 +647,8 @@ export const Web3Provider = ({ children }) => {
                 getMaximumSupply,
 				setMaxPerMint,
 				setCost,
-				getTotalMinted
+				getTotalMinted,
+				getPublicContractVariables
 			}}
 		>
 			{ children }

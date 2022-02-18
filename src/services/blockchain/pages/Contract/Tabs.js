@@ -26,11 +26,13 @@ const View = ({id, contract}) => {
           <Tab label="Embed" value="embed" />
         </Tabs>
       </Box>
-			{{
-				"details": <Details id={id} contract={contract} />,
-				"action": <Action id={id} contract={contract} />,
-				"embed": <Embed id={id} contract={contract} />
-			}[value]}
+			<Box py={2}>
+				{{
+					"details": <Details id={id} contract={contract} />,
+					"action": <Action id={id} contract={contract} />,
+					"embed": <Embed id={id} contract={contract} />
+				}[value]}
+			</Box>
     </Box>
   );
 }

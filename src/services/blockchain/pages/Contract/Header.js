@@ -40,7 +40,7 @@ const Header = ({contract}) => {
 			{contract?.address && (
 				<Stack direction="column" gap={2}>
 					<Box>
-						<Box sx={{
+						<Stack sx={{
 							px:1,
 							py:.5,
 							bgcolor: 'grey.100', 
@@ -49,7 +49,7 @@ const Header = ({contract}) => {
 							borderRadius: 2,
 						}}>
 							{contract.address ? contract.address : null}
-						</Box>
+						</Stack>
 					</Box>
 					<Box>
 						<a href="https://opensea.io/get-listed/step-two" target="_blank">
