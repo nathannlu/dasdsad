@@ -37,9 +37,10 @@ const Embed = () => {
                     display='flex'
                     flexDirection='column'
                     height='100vh'
+                    padding='1em'
                 >
                     {!isSwitch ? (
-                        <Stack direction='row' spacing={1}>
+                        <Stack direction='row' spacing={1} sx={{width: '100%'}}>
                             <LoadingButton
                                 variant='contained'
                                 loading={isMinting}
@@ -116,8 +117,10 @@ const Embed = () => {
                     <Box
                         display='flex'
                         justifyContent='space-between'
+                        width='100%'
+                        mt='.5em'
                     >
-                        <Typography fontSize='10pt'>
+                        <Typography fontSize='12pt' sx={{ color: 'rgba(0,0,0,0.5)', fontWeight: 600 }}>
                             {currentSupply}/{maxSupply}
                         </Typography>
                         <Box 
