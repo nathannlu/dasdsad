@@ -17,6 +17,8 @@ export const useEmbed = () => {
     const [isSwitch, setIsSwitch] = useState(true);
     const [isMinting, setIsMinting] = useState(false);
     const [contract, setContract] = useState(null);
+    const [backgroundImage, setBackgroundImage] = useState('https://i.postimg.cc/xjbYKKgg/Screenshot-5.png');
+    const [textColor, setTextColor] = useState('black');
     const [count, setCount] = useState(1);
     useGetContract({
         address: contractAddress,
@@ -35,6 +37,10 @@ export const useEmbed = () => {
         const urlParams = new URLSearchParams(search);
         const contractAddress = urlParams.get('contract');
         const chainId = urlParams.get('chainId');
+        const bgImage = urlParams.get('bgImage');
+        const textColor = urlParams.get('color');
+        setTextColor(textColor);
+        setBackgroundImage(bgImage);
         setContractAddress(contractAddress);
         setChainId(chainId);
     }, [search])
@@ -116,6 +122,8 @@ export const useEmbed = () => {
         isMinting,
         contract,
         count,
+        backgroundImage,
+        textColor,
         setCount,
         onMint,
         onSwitch,
