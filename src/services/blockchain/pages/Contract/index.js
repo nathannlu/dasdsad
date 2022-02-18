@@ -86,10 +86,11 @@ const Upload = (props) => {
 
                 setEmbedCode(`<iframe
                 src="https://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${c.address}&chainId=${chainId}"
-                width="350px"
-                height="100px"
+                width="400px"
+                height="115px"
                 frameborder="0"
                 scrolling="no"
+                style='border-radius: 10px'
             />`);
 
 				const b = await getBalance(c.address)
@@ -515,10 +516,11 @@ const Upload = (props) => {
                                 <Box>
                                     <iframe
                                         src={`https://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${contract.address}&chainId=${embedChainId}`}
-                                        width="350px"
-                                        height="100px"
-                                        frameBorder="0"
+                                        width="400px"
+                                        height="115px"
+                                        frameborder="0"
                                         scrolling="no"
+                                        borderRadius='10px'
                                     />
                                 </Box>
                             </Box>
