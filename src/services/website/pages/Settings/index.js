@@ -191,9 +191,6 @@ const Settings = () => {
                                                 textTransform: 'none',
                                                 '&.Mui-selected': {outline: 'none'}
                                             }}
-                                            icon={<DoDisturbIcon color='error' fontSize="small"/>}
-                                            iconPosition="end"
-                                            disabled
                                         />
                                     </Tabs>
                                 </Box>
@@ -413,6 +410,19 @@ const Settings = () => {
                                             </Button>
                                         </>
                                     )}
+                                </Box>
+                            )}
+                            {tabValue === 'domain' && (
+                                <Box
+                                    display='flex'
+                                    flexDirection='column'
+                                    padding='2em'
+                                    alignItems='flex-start'
+                                >
+                                    <Typography fontSize='18pt' fontWeight='700' sx={{ mb: '.5em' }}>
+                                        Custom Domains
+                                    </Typography>
+                                    
                                 </Box>
                             )}
                             <Box
