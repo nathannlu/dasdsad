@@ -1172,7 +1172,7 @@ contract ambitionNFT is ERC721, Ownable {
 
     // ------ Mint! ------
 
-    function mintNFTs(uint32 count) external payable preMintChecks(count) {
+    function mint(uint32 count) external payable preMintChecks(count) {
         require(open == true, "Mint not open");
         performMint(count);
     }
