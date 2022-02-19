@@ -11,7 +11,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Embed = () => {   
     const { loadWeb3, loadBlockchainData } = useWeb3();
-    const { contract, prefix, price, maxSupply, currentSupply, isSwitch, isMinting, count, onMint, onSwitch, setCount } = useEmbed();
+    const { contract, prefix, price, maxSupply, currentSupply, isSwitch, isMinting, count, backgroundImage, textColor, onMint, onSwitch, setCount } = useEmbed();
 
     useEffect(() => {
 		(async () => {
@@ -29,7 +29,9 @@ const Embed = () => {
                 zIndex: 1100,
                 top: 0,
                 width: '100%',
-                bgcolor: 'white'
+                bgcolor: 'white',
+                backgroundImage: `url('${backgroundImage}')`,
+                objectFit: 'cover',
             }}
         >
             {maxSupply != -1 && contract ? (
@@ -37,9 +39,10 @@ const Embed = () => {
                     display='flex'
                     flexDirection='column'
                     height='100vh'
+                    padding='1em'
                 >
                     {!isSwitch ? (
-                        <Stack direction='row' spacing={1}>
+                        <Stack direction='row' spacing={1} sx={{width: '100%'}}>
                             <LoadingButton
                                 variant='contained'
                                 loading={isMinting}
@@ -60,9 +63,23 @@ const Embed = () => {
                             >
                                 <TextField 
                                     type='number'
-                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 1, max: contract.nftCollection.size }} 
+                                    inputProps={{ 
+                                        inputMode: 'numeric', 
+                                        pattern: '[0-9]*', 
+                                        min: 1, 
+                                        max: contract.nftCollection.size,
+                                    }} 
                                     value={count}
                                     onChange={(e) => setCount(e.target.value)}
+                                    sx={{
+                                        input: {
+                                            borderColor: `${textColor}`,
+                                            color: `${textColor}`,
+                                        },
+                                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                                            borderColor: `${textColor}`,
+                                        },
+                                    }}
                                 />
                                 <ButtonGroup
                                     orientation="vertical"
@@ -72,7 +89,10 @@ const Embed = () => {
                                         key="one" 
                                         variable='contained' 
                                         size='small' 
-                                        sx={{ padding: 0 }}
+                                        sx={{ 
+                                            padding: 0,
+                                            color: `${textColor}`
+                                        }}
                                         onClick={() => {
                                             if (count < contract.nftCollection.size) {
                                                 setCount(prevCount => prevCount + 1);
@@ -85,7 +105,10 @@ const Embed = () => {
                                         key="two" 
                                         variable='contained' 
                                         size='small' 
-                                        sx={{ padding: 0 }}
+                                        sx={{ 
+                                            padding: 0,
+                                            color: `${textColor}`
+                                        }}
                                         onClick={() => {
                                             if (count > 1) {
                                                 setCount(prevCount => prevCount - 1);
@@ -116,8 +139,10 @@ const Embed = () => {
                     <Box
                         display='flex'
                         justifyContent='space-between'
+                        width='100%'
+                        mt='.5em'
                     >
-                        <Typography fontSize='10pt'>
+                        <Typography fontSize='12pt' sx={{ color: `${textColor}`, fontWeight: 600 }}>
                             {currentSupply}/{maxSupply}
                         </Typography>
                         <Box 
@@ -128,7 +153,8 @@ const Embed = () => {
                                 fontSize='10pt'
                                 color='rgba(0,0,0,0.4)'
                                 sx={{
-                                    mr: '.25em'
+                                    mr: '.25em',
+                                    color: `${textColor}`
                                 }}
                             >
                                 Powered by
