@@ -68,31 +68,61 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
 		const priceInWei = Web3.utils.toWei(price);
 
-		await contract.methods.mintNFTs(count).send({ from: account, value: priceInWei }, err => {
-			if (err) {
+		if (contract.methods.mintNFTs) {
+			await contract.methods.mintNFTs(count).send({ from: account, value: priceInWei }, err => {
+				if (err) {
+					addToast({
+						severity: 'error',
+						message: err.message
+					})
+				} else {
+					addToast({
+						severity: 'info',
+						message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+					})
+				}
+			})
+			.on('error', err => {
 				addToast({
 					severity: 'error',
 					message: err.message
 				})
-			} else {
+			})
+			.once("confirmation", () => {
 				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+					severity: 'success',
+					message: 'NFT successfully minted.'
 				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
 			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: 'NFT successfully minted.'
+		}
+		if (contract.methods.mint) {
+			await contract.methods.mint(count).send({ from: account, value: priceInWei }, err => {
+				if (err) {
+					addToast({
+						severity: 'error',
+						message: err.message
+					})
+				} else {
+					addToast({
+						severity: 'info',
+						message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+					})
+				}
 			})
-		})
+			.on('error', err => {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			})
+			.once("confirmation", () => {
+				addToast({
+					severity: 'success',
+					message: 'NFT successfully minted.'
+				})
+			})
+		}
+
 	}
 
 	// compare array buffers
