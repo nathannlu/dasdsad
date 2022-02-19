@@ -90,7 +90,6 @@ const Upload = (props) => {
                 height="115px"
                 frameborder="0"
                 scrolling="no"
-                style='border-radius: 10px'
             />`);
 
 				const b = await getBalance(c.address)

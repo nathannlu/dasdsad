@@ -58,13 +58,21 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 									})
 								}}
 								variant="contained"
+								disabled={true}
 							>
-								Deploy to blockchain
+								{/*Deploy to blockchain*/}
+								Temporarily unavailable
 							</Button>
 						</Box>
+						<Typography variant="body">
+							We are working on a planned maintenance. This feature will return on Feb 20, 2022.
+						</Typography>
+
+
 					</Stack>
 				</StepContent>
 			</Step>
+
 		</Stepper>
 	)
 }

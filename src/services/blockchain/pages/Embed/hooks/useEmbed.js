@@ -17,9 +17,9 @@ export const useEmbed = () => {
     const [isSwitch, setIsSwitch] = useState(true);
     const [isMinting, setIsMinting] = useState(false);
     const [contract, setContract] = useState(null);
+    const [count, setCount] = useState(1);
     const [backgroundImage, setBackgroundImage] = useState('https://i.postimg.cc/xjbYKKgg/Screenshot-5.png');
     const [textColor, setTextColor] = useState('black');
-    const [count, setCount] = useState(1);
     useGetContract({
         address: contractAddress,
         onCompleted: data => {
