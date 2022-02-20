@@ -107,7 +107,7 @@ export const useEmbed = () => {
 				setIsMinting(true);
 
 				if (isPublicSale) {
-					await mint((price * count).toString(), contractAddress, count);
+					await mint(contractAddress, count);
 					setIsMinting(false);
 					return;
 				}
