@@ -3,78 +3,34 @@ import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
-import { Chip } from '@mui/material';
-import { WarningAmber as WarningAmberIcon, SwapVert as SwapVertIcon, Payment as PaymentIcon, Upload as UploadIcon } from '@mui/icons-material';
 
 import IPFSModal from './IPFSModal';
 import NotComplete from './NotComplete';
-//import Complete from './Action';
 import Header from './Header';
 import Tabs from './Tabs';
 
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LockIcon from '@mui/icons-material/Lock';
-
-import { useToast } from 'ds/hooks/useToast';
 
 const Upload = (props) => {
 	const [contract, setContract] = useState({});
-	const { id } = useParams();
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { addToast } = useToast();
-
-	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
-
+	const { id } = useParams();
 	const { contracts } = useContract();
 	const {
 		loadWeb3,
 		loadBlockchainData,
 	} = useWeb3()
+	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
 
 	useEffect(() => {
 		(async () => {
 			await loadWeb3();
 			await loadBlockchainData();
-		})()
-	}, [])
 
-	useEffect(() => {
-		if(contracts.length > 0) {
-			(async () => {
+			if(contracts.length > 0) {
 				const c = contracts.find(c => c.id == id)
 				setContract(c)
-
-				/*
-                let chainId;
-                if (c.blockchain === 'ethereum') chainId = '0x1'
-                else if (c.blockchain === 'rinkeby') chainId = '0x4'
-                else if (c.blockchain === 'polygon') chainId = '0x89'
-                else if (c.blockchain === 'mumbai') chainId = '0x13881'
-                setEmbedChainId(chainId);
-
-                setEmbedCode(`<iframe
-                src="https://${window.location.hostname.indexOf('localhost') === -1 ? window.location.hostname : `${window.location.hostname}:3000`}/smart-contracts/embed?contract=${c.address}&chainId=${chainId}"
-                width="350px"
-                height="100px"
-                frameborder="0"
-                scrolling="no"
-            />`);
-
-				setPrice(c.nftCollection.price);
-
-
-				let list = [];
-				for (let i = 0; i < nftsSold; i++) {
-					const o = await checkOwner(i, c.address)
-					setOwners(prevState => {
-						prevState.push(o)
-						return [...prevState]
-					})
-				}
-				*/
-
-			})()
-		}
+			}
+		})()
 	},[contracts])
 
 	return (
