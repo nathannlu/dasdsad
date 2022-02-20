@@ -19,6 +19,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import DomainIcon from '@mui/icons-material/Domain';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningIcon from '@mui/icons-material/Warning';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const Settings = () => {
     const { website } = useWebsite();
@@ -47,6 +48,7 @@ const Settings = () => {
         onDomainNameChange,
         onDeleteDomain,
         handleAddDomain,
+        onVerifyDomain,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -497,6 +499,11 @@ const Settings = () => {
                                                                 </Button>
                                                             </TableCell>
                                                             <TableCell>
+                                                                <IconButton
+                                                                    onClick={() => onVerifyDomain(website.domains[idx].domain)}
+                                                                >
+                                                                    <ReplayIcon />
+                                                                </IconButton>
                                                                 <IconButton
                                                                     onClick={() => onDeleteDomain(website.domains[idx].domain)}
                                                                 >

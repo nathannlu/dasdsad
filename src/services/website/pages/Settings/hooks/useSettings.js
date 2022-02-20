@@ -55,12 +55,6 @@ const useSettings = () => {
 		})
     })
     const [verifyDns] = useVerifyDns({
-        websiteId: website._id,
-        domain: domainName,
-        onCompleted: data => {
-            console.log(data)
-            console.log("finished verifying dns")
-        },
         onError: err => addToast({
 			severity: 'error',
 			message: err.message
@@ -68,6 +62,10 @@ const useSettings = () => {
     })
     const [removeCustomDomain] = useRemoveCustomDomain({
         domain: domainName,
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
     })
 
     // Set favicon image and remove unused images on load
@@ -166,7 +164,6 @@ const useSettings = () => {
     }
 
     const onAddDomain = async (domain) => {
-        // Add custom domain
         const domainList = website.domains.map((domain) => domain.name);
         if (domainList.indexOf(domain) == -1) {
             await addCustomDomain();
@@ -176,6 +173,10 @@ const useSettings = () => {
     const onDeleteDomain = async (domain) => {
         setDomainName(domain);
         await removeCustomDomain({variables: { websiteId: website._id, domain }})
+    }
+
+    const onVerifyDomain = async (domain) => {
+        await verifyDns({variables: {websiteId: website._id, domain}});
     }
 
     return {
@@ -206,6 +207,7 @@ const useSettings = () => {
         onDomainNameChange,
         onDeleteDomain,
         handleAddDomain,
+        onVerifyDomain,
     }
 }
 

@@ -280,7 +280,7 @@ export const useAddCustomDomain = ({ websiteId, domain, onError }) => {
 	return [ addCustomDomain ];
 };
 
-export const useRemoveCustomDomain = ({ domain }) => {
+export const useRemoveCustomDomain = ({ domain, onError }) => {
     const { website, setWebsite } = useWebsite();
 
 	const [removeCustomDomain] = useMutation(REMOVE_CUSTOM_DOMAIN, {
@@ -292,18 +292,18 @@ export const useRemoveCustomDomain = ({ domain }) => {
             newWebsite.domains = newDomains;
             setWebsite(newWebsite);
 		},
-		onError: err => {
-            // do nothing
-        }
+		onError
 	})
 
 	return [ removeCustomDomain ];
 };
 
-export const useVerifyDns = ({ websiteId, domain, onCompleted, onError }) => {
+export const useVerifyDns = ({ onError }) => {
 	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
-        variables: { websiteId, domain },
-		onCompleted,
+		onCompleted: data => {
+            console.log('verified: ', data.verifyDns)
+            location.reload(); // Is it possible to get the variables from here? lool
+		},
         onError
 	})
 
