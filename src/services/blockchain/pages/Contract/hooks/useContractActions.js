@@ -62,7 +62,6 @@ export const useContractActions = (contractAddress) => {
 
 	// Update base URI
 	const updateBaseUri = async (baseUri = actionForm.newMetadataUrl.value) => {
-		console.log(baseUri);
 
 		contract.methods.setBaseURI(baseUri).send({
 			from: account,
@@ -82,7 +81,8 @@ export const useContractActions = (contractAddress) => {
 	}
 
 	const setCost = async (price = actionForm.newPrice.value) => {
-		const priceInWei = Web3.utils.toWei(price);
+		const web3 = window.web3;
+		const priceInWei = web3.utils.toWei(price);
 
 		contract.methods.setCost(priceInWei).send({ 
 			from: account,
