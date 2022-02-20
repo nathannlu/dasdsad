@@ -3,24 +3,26 @@ import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
 
-
-
 export const ContractContext = React.createContext({})
 
 export const useContract = () => useContext(ContractContext)
 
 export const ContractProvider = ({ children }) => {
-	const [loading, setLoading] = useState(true)
 	const { addToast } = useToast()
 	const { getNetworkID, setNetwork } = useWeb3()
+
+	const [loading, setLoading] = useState(true)
 	const [activeStep, setActiveStep] = useState(0);
 	const [start, setStart] = useState(false);
 	const [error, setError] = useState(false);
+
 	const [contracts, setContracts] = useState([]);
+	const [contract, setContract] = useState({});
+
+
 	const [selectInput, setSelectInput] = useState('ethereum');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedJson, setUploadedJson] = useState([]);
-
 	const [imagesUrl, setImagesUrl] = useState('')
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
@@ -100,8 +102,12 @@ export const ContractProvider = ({ children }) => {
 		setUploadedFiles,
 		uploadedJson,
 		setUploadedJson,
+
 		contracts,
 		setContracts,
+		contract,
+		setContract,
+
 		loading,
 		setLoading,
 		activeStep,

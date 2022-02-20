@@ -91,6 +91,20 @@ export const useSetWhitelist = ({ onCompleted, onError }) => {
 
 	const [setWhitelist, { ...mutationResult }] = useMutation(SET_WHITELIST, {
 		onCompleted: async data => {
+			const updated = data.setWhitelist
+			
+			// Find obj in arr and updated
+			setContracts(prevState => {
+				const newState = prevState.map(contract => {
+					if (contract.id == updated.id) {
+						return {...contract, nftCollection: updated.nftCollection};
+					}
+
+					return contract;
+				})
+
+				return newState
+			})
 			
 			onCompleted && onCompleted(data)
 		},

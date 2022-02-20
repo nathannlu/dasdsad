@@ -52,10 +52,8 @@ const Header = ({contract}) => {
 						</Stack>
 					</Box>
 					<Box>
-						<a href="https://opensea.io/get-listed/step-two" target="_blank">
-							<Button>
-								Connect with OpenSea
-							</Button>
+						<a style={{color: 'blue'}} href="https://opensea.io/get-listed/step-two" target="_blank">
+							Connect with OpenSea &rarr;
 						</a>
 					</Box>
 				</Stack>

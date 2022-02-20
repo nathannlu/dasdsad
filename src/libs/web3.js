@@ -15,8 +15,6 @@ export const useWeb3 = () => useContext(Web3Context)
 export const Web3Provider = ({ children }) => {
 	const [account, setAccount] = useState(null); // eth address
 	const [loading, setLoading] = useState(false);
-    const [contractState, setContractState] = useState(false);
-    const [presaleState, setPresaleState] = useState(false);
 	const { addToast } = useToast();
 
 	// Checks if browser has Ethereum extension installed
@@ -142,241 +140,11 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-	const openSales = async (contractAddress, status = true) => {
-		const contract = await retrieveContract(contractAddress)
-
-		contract.methods.setOpen(status).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-            getContractState(contractAddress);
-			addToast({
-				severity: 'success',
-				message: `Sales are now ${status ? 'open' : 'closed'}.`
-			})
-		})
-	}
-	const openPresale = async (contractAddress, status = true) => {
-		const contract = await retrieveContract(contractAddress)
-
-		contract.methods.setPresaleOpen(status).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-            getPresaleState(contractAddress);
-			addToast({
-				severity: 'success',
-				message: `Pre sales are now ${status ? 'open' : 'closed'}.`
-			})
-		})
-	}
-
-	const setWhitelist = async (contractAddress, root) => {
-		const contract = await retrieveContract(contractAddress)
-
-		contract.methods.setPreSaleAddresses(root).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: `Successfully set whitelist addresses`
-			})
-		})
-	}
-
-	const setMaxPerMint = async (contractAddress, count) => {
-		const contract = await retrieveContract(contractAddress)
-
-		contract.methods.setMaxPerMint(parseInt(count)).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: `Successfully set max per mint`
-			})
-		})
-	}
-
-	const setCost = async (contractAddress, price) => {
-		const contract = await retrieveContract(contractAddress)
-		const priceInWei = Web3.utils.toWei(price);
-
-		contract.methods.setCost(priceInWei).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: `Successfully set cost to mint`
-			})
-		})
-	}
-
-
-
-	const airdrop = async (contractAddress, list) => {
-		const contract = await retrieveContract(contractAddress)
-
-		contract.methods.airdrop(list).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: `Successfully airdropped users`
-			})
-		})
-	}
-
-    const getContractState = async (contractAddress) => {
-        const contract = await retrieveContract(contractAddress);
-        const state = await contract.methods.open().call();
-        setContractState(state);
-        return state; // false - closed, true - open
-    }
-    const getPresaleState = async (contractAddress) => {
-        const contract = await retrieveContract(contractAddress);
-        const state = await contract.methods.presaleOpen().call();
-        setPresaleState(state);
-        return state; // false - closed, true - open
-    }
 
 	const checkOwner = async (id, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
-        console.log(contract.methods);
 		const owner = await contract.methods.ownerOf(id).call();
-        console.log(owner);
 		return owner
-	}
-
-	// Update base URI
-	const updateBaseUri = async (baseUri, contractAddress) => {
-		const contract = await retrieveContract(contractAddress)
-		console.log(baseUri);
-
-		contract.methods.setBaseURI(baseUri).send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: 'Successfully updated baseUri.'
-			})
-		})
 	}
 
 	const getPublicContractVariables = async (contractAddress) => {
@@ -402,7 +170,7 @@ export const Web3Provider = ({ children }) => {
 			presaleOpen,
 			maxPerMint,
 			cost,
-			constInEth,
+			costInEth,
 			supply,
 			totalSupply,
 			owner,
@@ -410,67 +178,16 @@ export const Web3Provider = ({ children }) => {
 	}
 
 
-
-	const withdraw = async (contractAddress) => {
-		const contract = await retrieveContract(contractAddress)
-		contract.methods.withdraw().send({ from: account, value: 0 }, err => {
-			if (err) {
-				addToast({
-					severity: 'error',
-					message: err.message
-				})
-			} else {
-				addToast({
-					severity: 'info',
-					message: 'Sending transaction to Ethereum. This might take a couple of seconds...'
-				})
-			}
-
-		})
-		.on('error', err => {
-			addToast({
-				severity: 'error',
-				message: err.message
-			})
-		})
-		.once("confirmation", () => {
-			addToast({
-				severity: 'success',
-				message: 'Funds are deposited to your account'
-			})
-		})
-	}
-
-	const getBalance = async (contractAddress) => {
-		const web3 = window.web3
-
-		if (contractAddress) {
-			const balance = await web3.eth.getBalance(contractAddress)
-			const balanceInEth = web3.utils.fromWei(balance)
-
-			return balanceInEth
-		}
-	}
-
-	const retrieveContract = async (contractAddress) => {
+	const retrieveContract = contractAddress => {
 		const web3 = window.web3;
 
 		if (true) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
 
-			console.log(contract)
-
 			return contract;
 		}
 	}
 
-
-	const getBaseTokenURI = async (contractAddress) => {
-		const web3 = window.web3
-		const contract = await retrieveContract(contractAddress)
-		return contract.methods.baseTokenURI().call()
-
-	}
 
 	const getPrice = async (contractAddress) => {
 		const web3 = window.web3
@@ -620,15 +337,8 @@ export const Web3Provider = ({ children }) => {
 			value={{
 				loadWeb3,
 				loadBlockchainData,
-				airdrop,
 				mint,
-				presaleMint,
-				openSales,
-				openPresale,
-				updateBaseUri,
 				retrieveContract,
-				withdraw,
-				getBalance,
 				account,
 				signNonce,
 				checkOwner,
@@ -638,16 +348,10 @@ export const Web3Provider = ({ children }) => {
 
 				loading,
 				payInEth,
-                contractState,
-                getContractState,
-                presaleState,
-                getPresaleState,
-				setWhitelist,
                 getPrice,
                 getMaximumSupply,
-				setMaxPerMint,
-				setCost,
 				getTotalMinted,
+
 				getPublicContractVariables
 			}}
 		>

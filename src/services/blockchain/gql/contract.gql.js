@@ -119,6 +119,14 @@ export const SET_WHITELIST = gql`
 	mutation SetWhitelist($whitelist: [String!]!, $id: ID!) {
 		setWhitelist(whitelist: $whitelist, id: $id)	{
 			id
+			nftCollection {
+				price
+				currency
+				size
+				royalty
+				baseUri
+				whitelist
+			}
 		}
 	}
 `
