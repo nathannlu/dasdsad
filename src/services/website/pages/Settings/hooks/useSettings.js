@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useWebsite } from 'services/website/provider';
-import { useDeleteWebsite, useSetWebsiteFavicon, useUpdateWebsiteSEO, useVerifyDns, useAddCustomDomain, useRemoveCustomDomain } from 'services/website/gql/hooks/website.hook'
+import { useDeleteWebsite, useSetWebsiteFavicon, useUpdateWebsiteSEO, useVerifyDns, useAddCustomDomain, useRemoveCustomDomain, useSetCustomDomain } from 'services/website/gql/hooks/website.hook'
 import { useToast } from 'ds/hooks/useToast';
 
 const useSettings = () => {
@@ -14,6 +14,7 @@ const useSettings = () => {
     const [styleSaveStatus, setStyleSaveStatus] = useState(false);
     const [seoSaveStatus, setSeoSaveStatus] = useState(false);
     const [showDomainModal, setShowDomainModal] = useState(false);
+    const [domainIsActive, setDomainIsActive] = useState(false);
     const [domainName, setDomainName] = useState('');
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
@@ -55,6 +56,7 @@ const useSettings = () => {
 		})
     })
     const [verifyDns] = useVerifyDns({
+        domain: domainName,
         onError: err => addToast({
 			severity: 'error',
 			message: err.message
@@ -62,6 +64,14 @@ const useSettings = () => {
     })
     const [removeCustomDomain] = useRemoveCustomDomain({
         domain: domainName,
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [setCustomDomain] = useSetCustomDomain({
+        domain: domainName,
+        isActive: domainIsActive,
         onError: err => addToast({
 			severity: 'error',
 			message: err.message
@@ -172,11 +182,18 @@ const useSettings = () => {
 
     const onDeleteDomain = async (domain) => {
         setDomainName(domain);
-        await removeCustomDomain({variables: { websiteId: website._id, domain }})
+        await removeCustomDomain({variables: {websiteId: website._id, domain}});
     }
 
     const onVerifyDomain = async (domain) => {
+        setDomainName(domain);
         await verifyDns({variables: {websiteId: website._id, domain}});
+    }
+
+    const onMakeDefault = async (domain) => {
+        setDomainName(domain);
+        setDomainIsActive(false);
+        await setCustomDomain({variables: {websiteId: website._id, domain, isActive: false}});
     }
 
     return {
@@ -208,6 +225,7 @@ const useSettings = () => {
         onDeleteDomain,
         handleAddDomain,
         onVerifyDomain,
+        onMakeDefault,
     }
 }
 

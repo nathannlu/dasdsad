@@ -49,6 +49,7 @@ const Settings = () => {
         onDeleteDomain,
         handleAddDomain,
         onVerifyDomain,
+        onMakeDefault,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -486,26 +487,41 @@ const Settings = () => {
                                                                 )}
                                                             </TableCell>
                                                             <TableCell>
-                                                                <Button
-                                                                    variant='contained'
-                                                                    startIcon={<HomeIcon />}
-                                                                    sx={{
-                                                                        backgroundColor: 'rgb(234,234,234)',
-                                                                        color: 'rgb(163,163,163)'
-                                                                    }}
-                                                                    size='small'
-                                                                >
-                                                                    Make Default
-                                                                </Button>
+                                                                {website.customDomain === domain.domain ? (
+                                                                    <Button
+                                                                        variant='contained'
+                                                                        startIcon={<HomeIcon style={{ color: 'white' }} />}
+                                                                        sx={{
+                                                                            backgroundColor: 'rgb(67,75,84)',
+                                                                            color: 'white'
+                                                                        }}
+                                                                        size='small'
+                                                                    >
+                                                                        Default
+                                                                    </Button>
+                                                                ) : (
+                                                                    <Button
+                                                                        variant='contained'
+                                                                        startIcon={<HomeIcon />}
+                                                                        sx={{
+                                                                            backgroundColor: 'rgb(234,234,234)',
+                                                                            color: 'rgb(163,163,163)'
+                                                                        }}
+                                                                        size='small'
+                                                                        onClick={() => onMakeDefault(domain.domain)}
+                                                                    >
+                                                                        Make Default
+                                                                    </Button>
+                                                                )}
                                                             </TableCell>
                                                             <TableCell>
                                                                 <IconButton
-                                                                    onClick={() => onVerifyDomain(website.domains[idx].domain)}
+                                                                    onClick={() => onVerifyDomain(domain.domain)}
                                                                 >
                                                                     <ReplayIcon />
                                                                 </IconButton>
                                                                 <IconButton
-                                                                    onClick={() => onDeleteDomain(website.domains[idx].domain)}
+                                                                    onClick={() => onDeleteDomain(domain.domain)}
                                                                 >
                                                                     <DeleteOutlineIcon color='error'/>
                                                                 </IconButton>

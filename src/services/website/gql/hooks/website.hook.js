@@ -147,32 +147,6 @@ export const useDeletePage = ({ onCompleted, onError }) => {
 	return [ deletePage, { data }];
 };
 
-export const useSetCustomDomain = ({title, customDomain, onCompleted, onError}) => {
-	const { setWebsite } = useWebsite();
-
-	const [setCustomDomain, { ...mutationResult }] = useMutation(SET_CUSTOM_DOMAIN, {
-		variables: { title, customDomain },
-		onCompleted: data => {
-			const customDomain = data.setCustomDomain.customDomain;
-		
-			setWebsite(prevState => {
-				const updatedDomain = { ...prevState }
-				updatedDomain.customDomain = customDomain;
-				updatedDomain.isCustomDomainActive = false;
-			
-				return {...updatedDomain}
-			})
-
-			if (onCompleted) {
-				onCompleted(data?.setCustomDomain);
-			}
-		},
-		onError
-	})
-
-	return [setCustomDomain, { ...mutationResult }];
-};
-
 export const useSetContractAddress = ({ onCompleted, onError }) => {
 	const { setWebsite } = useWebsite();
 
@@ -280,10 +254,11 @@ export const useAddCustomDomain = ({ websiteId, domain, onError }) => {
 	return [ addCustomDomain ];
 };
 
-export const useRemoveCustomDomain = ({ domain, onError }) => {
+export const useRemoveCustomDomain = ({ websiteId, domain, onError }) => {
     const { website, setWebsite } = useWebsite();
 
 	const [removeCustomDomain] = useMutation(REMOVE_CUSTOM_DOMAIN, {
+        variables: { websiteId, domain },
 		onCompleted: data => {
             let newWebsite = {...website};
             let newDomains = [...newWebsite.domains];
@@ -298,14 +273,35 @@ export const useRemoveCustomDomain = ({ domain, onError }) => {
 	return [ removeCustomDomain ];
 };
 
-export const useVerifyDns = ({ onError }) => {
+export const useVerifyDns = ({ domain, onError }) => {
 	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
 		onCompleted: data => {
-            console.log('verified: ', data.verifyDns)
-            location.reload(); // Is it possible to get the variables from here? lool
+            let newWebsite = {...website};
+            let newDomains = [...newWebsite.domains];
+            const indexOfVerified = newDomains.findIndex(x => x.domain === domain);
+            newDomains[indexOfVerified].isActive = data.verifyDns;
+            newWebsite.domains = newDomains;
+            setWebsite(newWebsite);
 		},
         onError
 	})
 
 	return [verifyDns, { ...mutationResult }];
+};
+
+export const useSetCustomDomain = ({ websiteId, domain, isActive, onError }) => {
+	const { website, setWebsite } = useWebsite();
+
+	const [setCustomDomain, { ...mutationResult }] = useMutation(SET_CUSTOM_DOMAIN, {
+		variables: { websiteId, domain },
+		onCompleted: data => {
+            let newWebsite = {...website};
+            newWebsite.customDomain = data.setCustomDomain;
+            newWebsite.isCustomDomainActive = isActive;
+			setWebsite(newWebsite);
+		},
+		onError
+	})
+
+	return [setCustomDomain, { ...mutationResult }];
 };
