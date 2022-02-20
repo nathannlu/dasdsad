@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box, Typography } from 'ds/components';
-import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack } from '@mui/material';
+import { Button, Box, Typography, Table, TableBody, TableCell, TableRow } from 'ds/components';
+import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack, TableContainer, Paper, Switch, FormGroup, FormControlLabel } from '@mui/material';
 import { useWebsite } from 'services/website/provider';
 import { Widget } from "@uploadcare/react-widget";
 import useSettings from './hooks/useSettings';
 import useSEOForm from './hooks/useSEOForm';
+import ConfirmationDialog from './ConfirmationDialog'
+import AddDomainModal from './AddDomainModal'
 import Navbar from './Navbar';
 import WebIcon from '@mui/icons-material/Web';
 import ArticleIcon from '@mui/icons-material/Article';
 import HomeIcon from '@mui/icons-material/Home';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
-import ConfirmationDialog from './ConfirmationDialog'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
+import DomainIcon from '@mui/icons-material/Domain';
+import CheckIcon from '@mui/icons-material/Check';
+import WarningIcon from '@mui/icons-material/Warning';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const Settings = () => {
     const { website } = useWebsite();
@@ -34,6 +40,15 @@ const Settings = () => {
         styleSaveStatus,
         seoSaveStatus,
         setSeoSaveStatus,
+        showDomainModal,
+        setShowDomainModal,
+        onAddDomain,
+        domainName,
+        onDomainNameChange,
+        onDeleteDomain,
+        handleAddDomain,
+        onVerifyDomain,
+        onMakeDefault,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -62,6 +77,13 @@ const Settings = () => {
                 confirmationData={confirmationData}
                 onProceed={onProceedDelete}
                 setConfirmationState={setConfirmationState}
+            />
+            <AddDomainModal 
+                showDomainModal={showDomainModal}
+                setShowDomainModal={setShowDomainModal}
+                onChange={onAddDomain}
+                domainName={domainName}
+                onDomainNameChange={onDomainNameChange}
             />
             {website && website.seo && (
                 <Box
@@ -191,9 +213,6 @@ const Settings = () => {
                                                 textTransform: 'none',
                                                 '&.Mui-selected': {outline: 'none'}
                                             }}
-                                            icon={<DoDisturbIcon color='error' fontSize="small"/>}
-                                            iconPosition="end"
-                                            disabled
                                         />
                                     </Tabs>
                                 </Box>
@@ -413,6 +432,119 @@ const Settings = () => {
                                             </Button>
                                         </>
                                     )}
+                                </Box>
+                            )}
+                            {tabValue === 'domain' && (
+                                <Box
+                                    display='flex'
+                                    flexDirection='column'
+                                    padding='2em'
+                                    alignItems='flex-start'
+                                >
+                                    <Typography fontSize='18pt' fontWeight='700' sx={{ mb: '.5em' }}>
+                                        Custom Domains
+                                    </Typography>
+                                    <Box
+                                        display='flex'
+                                        flexDirection='column'
+                                        width='100%'
+                                    >
+                                        <Box
+                                            display='flex'
+                                            justifyContent='flex-end'
+                                            width='100%'
+                                        >
+                                            <Button
+                                                variant='contained'
+                                                size='small'
+                                                startIcon={<AddIcon />}
+                                                onClick={handleAddDomain}
+                                            >
+                                                Add Domain
+                                            </Button>
+                                        </Box>
+                                        <TableContainer component={Paper} sx={{ mt: '1em' }}>
+                                            <Table sx={{ minWidth: 700 }} aria-label='Transaction List' >
+                                                <TableBody>
+                                                    {website.domains.map((domain, idx) => (
+                                                        <TableRow key={idx}>
+                                                            <TableCell>
+                                                                <DomainIcon style={{ color: 'rgb(130, 130, 130)' }}/>
+                                                            </TableCell>
+                                                            <TableCell>{domain.domain}</TableCell>
+                                                            <TableCell>
+                                                                {domain.isActive ? (
+                                                                    <Stack direction='row' spacing={1} alignItems='center'> 
+                                                                        <CheckIcon fontSize='14pt' style={{ color: 'green' }}/>
+                                                                        <Typography fontSize='10pt'>Verified</Typography>
+                                                                    </Stack>
+                                                                ) : (
+                                                                    <Stack direction='row' spacing={1} alignItems='center'> 
+                                                                        <WarningIcon fontSize='14pt' style={{ color: 'yellow' }}/>
+                                                                        <Typography fontSize='10pt'>Issue</Typography>
+                                                                    </Stack>
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {website.customDomain === domain.domain ? (
+                                                                    <Button
+                                                                        variant='contained'
+                                                                        startIcon={<HomeIcon style={{ color: 'white' }} />}
+                                                                        sx={{
+                                                                            backgroundColor: 'rgb(67,75,84)',
+                                                                            color: 'white'
+                                                                        }}
+                                                                        size='small'
+                                                                    >
+                                                                        Default
+                                                                    </Button>
+                                                                ) : (
+                                                                    <Button
+                                                                        variant='contained'
+                                                                        startIcon={<HomeIcon />}
+                                                                        sx={{
+                                                                            backgroundColor: 'rgb(234,234,234)',
+                                                                            color: 'rgb(163,163,163)'
+                                                                        }}
+                                                                        size='small'
+                                                                        onClick={() => onMakeDefault(domain.domain)}
+                                                                    >
+                                                                        Make Default
+                                                                    </Button>
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <IconButton
+                                                                    onClick={() => onVerifyDomain(domain.domain)}
+                                                                >
+                                                                    <ReplayIcon />
+                                                                </IconButton>
+                                                                <IconButton
+                                                                    onClick={() => onDeleteDomain(domain.domain)}
+                                                                >
+                                                                    <DeleteOutlineIcon color='error'/>
+                                                                </IconButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
+                                    {/* <Typography fontSize='18pt' fontWeight='700' sx={{ mt: '2em', mb: '.5em' }}>
+                                        Publish Pages
+                                    </Typography>
+                                    <Box
+                                        display='flex'
+                                        flexDirection='column'
+                                        width='100%'
+                                    >
+                                        <FormGroup>
+                                            {website.pages.map((page, idx) => (
+                                                <FormControlLabel key={idx} control={<Switch />} label={page.name} />
+                                            ))}
+                                        </FormGroup>
+                                    </Box> */}
                                 </Box>
                             )}
                             <Box

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useWebsite } from 'services/website/provider';
-import { useDeleteWebsite, useSetWebsiteFavicon, useUpdateWebsiteSEO } from 'services/website/gql/hooks/website.hook'
+import { useDeleteWebsite, useSetWebsiteFavicon, useUpdateWebsiteSEO, useVerifyDns, useAddCustomDomain, useRemoveCustomDomain, useSetCustomDomain } from 'services/website/gql/hooks/website.hook'
 import { useToast } from 'ds/hooks/useToast';
 
 const useSettings = () => {
@@ -13,6 +13,9 @@ const useSettings = () => {
     const [displayImage, setDisplayImage] = useState('https://dummyimage.com/215x215');
     const [styleSaveStatus, setStyleSaveStatus] = useState(false);
     const [seoSaveStatus, setSeoSaveStatus] = useState(false);
+    const [showDomainModal, setShowDomainModal] = useState(false);
+    const [domainIsActive, setDomainIsActive] = useState(false);
+    const [domainName, setDomainName] = useState('');
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
 		onError: err => addToast({
@@ -40,6 +43,36 @@ const useSettings = () => {
             })
         },
 		onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [addCustomDomain] = useAddCustomDomain({
+        websiteId: website._id,
+        domain: domainName,
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [verifyDns] = useVerifyDns({
+        domain: domainName,
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [removeCustomDomain] = useRemoveCustomDomain({
+        domain: domainName,
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [setCustomDomain] = useSetCustomDomain({
+        domain: domainName,
+        isActive: domainIsActive,
+        onError: err => addToast({
 			severity: 'error',
 			message: err.message
 		})
@@ -131,6 +164,38 @@ const useSettings = () => {
         setSeoSaveStatus(true);
     }
 
+    const onDomainNameChange = (e) => {
+        setDomainName(e.target.value);
+    }
+
+    const handleAddDomain = () => {
+        setDomainName('');
+        setShowDomainModal(true);
+    }
+
+    const onAddDomain = async (domain) => {
+        const domainList = website.domains.map((domain) => domain.name);
+        if (domainList.indexOf(domain) == -1) {
+            await addCustomDomain();
+        }
+    }
+
+    const onDeleteDomain = async (domain) => {
+        setDomainName(domain);
+        await removeCustomDomain({variables: {websiteId: website._id, domain}});
+    }
+
+    const onVerifyDomain = async (domain) => {
+        setDomainName(domain);
+        await verifyDns({variables: {websiteId: website._id, domain}});
+    }
+
+    const onMakeDefault = async (domain) => {
+        setDomainName(domain);
+        setDomainIsActive(false);
+        await setCustomDomain({variables: {websiteId: website._id, domain, isActive: false}});
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -152,6 +217,15 @@ const useSettings = () => {
         setStyleSaveStatus,
         seoSaveStatus,
         setSeoSaveStatus,
+        showDomainModal,
+        setShowDomainModal,
+        onAddDomain,
+        domainName,
+        onDomainNameChange,
+        onDeleteDomain,
+        handleAddDomain,
+        onVerifyDomain,
+        onMakeDefault,
     }
 }
 

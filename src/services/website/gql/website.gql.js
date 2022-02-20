@@ -11,6 +11,8 @@ export const CREATE_WEBSITE = gql`
                 name
                 data
             }
+            customDomain
+            isCustomDomainActive
             domains {
                 domain
                 isActive	
@@ -49,6 +51,8 @@ export const GET_WEBSITES = gql`
                 name
                 data
             }
+            customDomain
+            isCustomDomainActive
             domains {
                 domain
                 isActive	
@@ -85,6 +89,8 @@ export const GET_PUBLISHED = gql`
                 name
                 data
             }
+            customDomain
+            isCustomDomainActive
             domains {
                 domain
                 isActive	
@@ -132,18 +138,10 @@ export const ADD_PAGE = gql`
 		}
 	}
 `
-export const SET_CUSTOM_DOMAIN = gql`
-	mutation SetCustomDomain($title: String!, $customDomain: String!) {
-		setCustomDomain(title: $title, customDomain: $customDomain) {
-			customDomain	
-			isCustomDomainActive
-		}
-	}
-`
 
 export const VERIFY_DNS = gql`
-	mutation VerifyDns($title: String!) {
-		verifyDns(title: $title)
+	mutation VerifyDns($websiteId: String!, $domain: String!) {
+		verifyDns(websiteId: $websiteId, domain: $domain)
 	}
 `
 
@@ -192,4 +190,22 @@ export const SET_WEBSITE_SUBSCRIPTION = gql`
             isSubscribed
         }
     }
+`
+
+export const ADD_CUSTOM_DOMAIN = gql`
+	mutation AddCustomDomain($websiteId: String!, $domain: String!) {
+		addCustomDomain(websiteId: $websiteId, domain: $domain)
+	}
+`
+
+export const REMOVE_CUSTOM_DOMAIN = gql`
+	mutation RemoveCustomDomain($websiteId: String!, $domain: String!) {
+		removeCustomDomain(websiteId: $websiteId, domain: $domain)
+	}
+`
+
+export const SET_CUSTOM_DOMAIN = gql`
+	mutation SetCustomDomain($websiteId: String!, $domain: String!, $isActive: Boolean!) {
+		setCustomDomain(websiteId: $websiteId, domain: $domain, isActive: $isActive)
+	}
 `

@@ -15,6 +15,8 @@ import { BUILD_WEBSITE,
     SET_WEBSITE_FAVICON,
     UPDATE_WEBSITE_SEO,
     SET_WEBSITE_SUBSCRIPTION,
+    ADD_CUSTOM_DOMAIN,
+    REMOVE_CUSTOM_DOMAIN,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -145,41 +147,6 @@ export const useDeletePage = ({ onCompleted, onError }) => {
 	return [ deletePage, { data }];
 };
 
-export const useSetCustomDomain = ({title, customDomain, onCompleted, onError}) => {
-	const { setWebsite } = useWebsite();
-
-	const [setCustomDomain, { ...mutationResult }] = useMutation(SET_CUSTOM_DOMAIN, {
-		variables: { title, customDomain },
-		onCompleted: data => {
-			const customDomain = data.setCustomDomain.customDomain;
-		
-			setWebsite(prevState => {
-				const updatedDomain = { ...prevState }
-				updatedDomain.customDomain = customDomain;
-				updatedDomain.isCustomDomainActive = false;
-			
-				return {...updatedDomain}
-			})
-
-			if (onCompleted) {
-				onCompleted(data?.setCustomDomain);
-			}
-		},
-		onError
-	})
-
-	return [setCustomDomain, { ...mutationResult }];
-};
-
-export const useVerifyDns = ({title, onCompleted}) => {
-	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
-		variables: { title },
-		onCompleted
-	})
-
-	return [verifyDns, { ...mutationResult }];
-};
-
 export const useSetContractAddress = ({ onCompleted, onError }) => {
 	const { setWebsite } = useWebsite();
 
@@ -261,5 +228,80 @@ export const useSetWebsiteSubscription = ({ onError }) => {
 		}
 	})
 
-	return [setWebsiteSubscription];
-}
+	return [ setWebsiteSubscription ];
+};
+
+export const useAddCustomDomain = ({ websiteId, domain, onError }) => {
+    const { website, setWebsite } = useWebsite();
+
+	const [addCustomDomain] = useMutation(ADD_CUSTOM_DOMAIN, {
+        variables: { websiteId, domain },
+		onCompleted: data => {
+            let newWebsite = {...website};
+            const newDomain = {
+                domain,
+                isActive: data.addCustomDomain,
+                __typename: "Domain",
+            }
+            let newDomains = [...newWebsite.domains];
+            newDomains.push(newDomain);
+            newWebsite.domains = newDomains;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+	return [ addCustomDomain ];
+};
+
+export const useRemoveCustomDomain = ({ websiteId, domain, onError }) => {
+    const { website, setWebsite } = useWebsite();
+
+	const [removeCustomDomain] = useMutation(REMOVE_CUSTOM_DOMAIN, {
+        variables: { websiteId, domain },
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newDomains = [...newWebsite.domains];
+            const indexOfDeleted = newDomains.findIndex(x => x.domain === domain);
+            newDomains.splice(indexOfDeleted, 1);
+            newWebsite.domains = newDomains;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+	return [ removeCustomDomain ];
+};
+
+export const useVerifyDns = ({ domain, onError }) => {
+	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newDomains = [...newWebsite.domains];
+            const indexOfVerified = newDomains.findIndex(x => x.domain === domain);
+            newDomains[indexOfVerified].isActive = data.verifyDns;
+            newWebsite.domains = newDomains;
+            setWebsite(newWebsite);
+		},
+        onError
+	})
+
+	return [verifyDns, { ...mutationResult }];
+};
+
+export const useSetCustomDomain = ({ websiteId, domain, isActive, onError }) => {
+	const { website, setWebsite } = useWebsite();
+
+	const [setCustomDomain, { ...mutationResult }] = useMutation(SET_CUSTOM_DOMAIN, {
+		variables: { websiteId, domain },
+		onCompleted: data => {
+            let newWebsite = {...website};
+            newWebsite.customDomain = data.setCustomDomain;
+            newWebsite.isCustomDomainActive = isActive;
+			setWebsite(newWebsite);
+		},
+		onError
+	})
+
+	return [setCustomDomain, { ...mutationResult }];
+};
