@@ -31,6 +31,7 @@ const Upload = (props) => {
 				setContract(c)
 			}
 		})()
+
 	},[contracts])
 
 	return (
@@ -53,6 +54,7 @@ const Upload = (props) => {
 							<Tabs id={id} contract={contract} />
 						)}
 					</Stack>
+
 
 					<IPFSModal id={id} contract={contract} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
 				</Container>
