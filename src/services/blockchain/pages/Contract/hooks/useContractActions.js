@@ -176,15 +176,39 @@ export const useContractActions = (contractAddress) => {
 
 	// Mint NFT
 	const mint = async (count = 1) => {
-		const cost = await contract.methods.cost().call();
+		const { methods } = contract;
+		const price = await methods.cost().call();
 
-		await contract.methods.mintNFTs(count).send({ 
+		// Support depreciated method
+		methods.mintNFTs(count).estimateGas({
 			from: account,
-			value: cost
-		}, err => err ? onTxnError(err) : onTxnInfo())
-		.once('error', err => onTxnError(err))
-		.once("confirmation", () => onTxnSuccess())
+			value: price
+		}, (err, gasAmount) => {
+			if(!err && gasAmount !== undefined) {
+				methods.mintNFTs(count).send({ 
+					from: account,
+					value: price
+				}, err => err ? onTxnError(err) : onTxnInfo())
+				.once('error', err => onTxnError(err))
+				.once("confirmation", () => onTxnSuccess())
+			}
+		})
+
+		methods.mint(count).estimateGas({
+			from: account,
+			value: price
+		}, (err, gasAmount) => {
+			if(!err && gasAmount !== undefined) {
+				methods.mint(count).send({ 
+					from: account,
+					value: price
+				}, err => err ? onTxnError(err) : onTxnInfo())
+				.once('error', err => onTxnError(err))
+				.once("confirmation", () => onTxnSuccess())
+			}
+		})
 	}
+	
 
 	return {
 		actionForm,
