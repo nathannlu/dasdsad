@@ -15,6 +15,8 @@ import { BUILD_WEBSITE,
     SET_WEBSITE_FAVICON,
     UPDATE_WEBSITE_SEO,
     SET_WEBSITE_SUBSCRIPTION,
+    ADD_CUSTOM_DOMAIN,
+    REMOVE_CUSTOM_DOMAIN,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -171,15 +173,6 @@ export const useSetCustomDomain = ({title, customDomain, onCompleted, onError}) 
 	return [setCustomDomain, { ...mutationResult }];
 };
 
-export const useVerifyDns = ({title, onCompleted}) => {
-	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
-		variables: { title },
-		onCompleted
-	})
-
-	return [verifyDns, { ...mutationResult }];
-};
-
 export const useSetContractAddress = ({ onCompleted, onError }) => {
 	const { setWebsite } = useWebsite();
 
@@ -261,5 +254,58 @@ export const useSetWebsiteSubscription = ({ onError }) => {
 		}
 	})
 
-	return [setWebsiteSubscription];
-}
+	return [ setWebsiteSubscription ];
+};
+
+export const useAddCustomDomain = ({ websiteId, domain, onError }) => {
+    const { website, setWebsite } = useWebsite();
+
+	const [addCustomDomain] = useMutation(ADD_CUSTOM_DOMAIN, {
+        variables: { websiteId, domain },
+		onCompleted: data => {
+            let newWebsite = {...website};
+            const newDomain = {
+                domain,
+                isActive: data.addCustomDomain,
+                __typename: "Domain",
+            }
+            let newDomains = [...newWebsite.domains];
+            newDomains.push(newDomain);
+            newWebsite.domains = newDomains;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+	return [ addCustomDomain ];
+};
+
+export const useRemoveCustomDomain = ({ domain }) => {
+    const { website, setWebsite } = useWebsite();
+
+	const [removeCustomDomain] = useMutation(REMOVE_CUSTOM_DOMAIN, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newDomains = [...newWebsite.domains];
+            const indexOfDeleted = newDomains.findIndex(x => x.domain === domain);
+            newDomains.splice(indexOfDeleted, 1);
+            newWebsite.domains = newDomains;
+            setWebsite(newWebsite);
+		},
+		onError: err => {
+            // do nothing
+        }
+	})
+
+	return [ removeCustomDomain ];
+};
+
+export const useVerifyDns = ({ websiteId, domain, onCompleted, onError }) => {
+	const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
+        variables: { websiteId, domain },
+		onCompleted,
+        onError
+	})
+
+	return [verifyDns, { ...mutationResult }];
+};

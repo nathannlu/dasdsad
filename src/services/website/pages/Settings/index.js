@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box, Typography } from 'ds/components';
-import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack } from '@mui/material';
+import { Button, Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, Menu, MenuItem, ListItemText, ListItemIcon } from 'ds/components';
+import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack, TableContainer, Paper } from '@mui/material';
 import { useWebsite } from 'services/website/provider';
 import { Widget } from "@uploadcare/react-widget";
 import useSettings from './hooks/useSettings';
 import useSEOForm from './hooks/useSEOForm';
+import ConfirmationDialog from './ConfirmationDialog'
+import AddDomainModal from './AddDomainModal'
 import Navbar from './Navbar';
 import WebIcon from '@mui/icons-material/Web';
 import ArticleIcon from '@mui/icons-material/Article';
 import HomeIcon from '@mui/icons-material/Home';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
-import ConfirmationDialog from './ConfirmationDialog'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
+import SettingsIcon from '@mui/icons-material/Settings';
+import DomainIcon from '@mui/icons-material/Domain';
+import CheckIcon from '@mui/icons-material/Check';
+import WarningIcon from '@mui/icons-material/Warning';
 
 const Settings = () => {
     const { website } = useWebsite();
@@ -34,6 +40,13 @@ const Settings = () => {
         styleSaveStatus,
         seoSaveStatus,
         setSeoSaveStatus,
+        showDomainModal,
+        setShowDomainModal,
+        onAddDomain,
+        domainName,
+        onDomainNameChange,
+        onDeleteDomain,
+        handleAddDomain,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -62,6 +75,13 @@ const Settings = () => {
                 confirmationData={confirmationData}
                 onProceed={onProceedDelete}
                 setConfirmationState={setConfirmationState}
+            />
+            <AddDomainModal 
+                showDomainModal={showDomainModal}
+                setShowDomainModal={setShowDomainModal}
+                onChange={onAddDomain}
+                domainName={domainName}
+                onDomainNameChange={onDomainNameChange}
             />
             {website && website.seo && (
                 <Box
@@ -422,7 +442,73 @@ const Settings = () => {
                                     <Typography fontSize='18pt' fontWeight='700' sx={{ mb: '.5em' }}>
                                         Custom Domains
                                     </Typography>
-                                    
+                                    <Box
+                                        display='flex'
+                                        flexDirection='column'
+                                        width='100%'
+                                    >
+                                        <Box
+                                            display='flex'
+                                            justifyContent='flex-end'
+                                            width='100%'
+                                        >
+                                            <Button
+                                                variant='contained'
+                                                size='small'
+                                                startIcon={<AddIcon />}
+                                                onClick={handleAddDomain}
+                                            >
+                                                Add Domain
+                                            </Button>
+                                        </Box>
+                                        <TableContainer component={Paper} sx={{ mt: '1em' }}>
+                                            <Table sx={{ minWidth: 700 }} aria-label='Transaction List' >
+                                                <TableBody>
+                                                    {website.domains.map((domain, idx) => (
+                                                        <TableRow key={idx}>
+                                                            <TableCell>
+                                                                <DomainIcon style={{ color: 'rgb(130, 130, 130)' }}/>
+                                                            </TableCell>
+                                                            <TableCell>{domain.domain}</TableCell>
+                                                            <TableCell>
+                                                                {domain.isActive ? (
+                                                                    <Stack direction='row' spacing={1} alignItems='center'> 
+                                                                        <CheckIcon fontSize='14pt' style={{ color: 'green' }}/>
+                                                                        <Typography fontSize='10pt'>Verified</Typography>
+                                                                    </Stack>
+                                                                ) : (
+                                                                    <Stack direction='row' spacing={1} alignItems='center'> 
+                                                                        <WarningIcon fontSize='14pt' style={{ color: 'yellow' }}/>
+                                                                        <Typography fontSize='10pt'>Issue</Typography>
+                                                                    </Stack>
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Button
+                                                                    variant='contained'
+                                                                    startIcon={<HomeIcon />}
+                                                                    sx={{
+                                                                        backgroundColor: 'rgb(234,234,234)',
+                                                                        color: 'rgb(163,163,163)'
+                                                                    }}
+                                                                    size='small'
+                                                                >
+                                                                    Make Default
+                                                                </Button>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <IconButton
+                                                                    onClick={() => onDeleteDomain(website.domains[idx].domain)}
+                                                                >
+                                                                    <DeleteOutlineIcon color='error'/>
+                                                                </IconButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
                                 </Box>
                             )}
                             <Box

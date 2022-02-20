@@ -142,8 +142,8 @@ export const SET_CUSTOM_DOMAIN = gql`
 `
 
 export const VERIFY_DNS = gql`
-	mutation VerifyDns($title: String!) {
-		verifyDns(title: $title)
+	mutation VerifyDns($websiteId: String!, $domain: String!) {
+		verifyDns(websiteId: $websiteId, domain: $domain)
 	}
 `
 
@@ -192,4 +192,16 @@ export const SET_WEBSITE_SUBSCRIPTION = gql`
             isSubscribed
         }
     }
+`
+
+export const ADD_CUSTOM_DOMAIN = gql`
+	mutation AddCustomDomain($websiteId: String!, $domain: String!) {
+		addCustomDomain(websiteId: $websiteId, domain: $domain)
+	}
+`
+
+export const REMOVE_CUSTOM_DOMAIN = gql`
+	mutation RemoveCustomDomain($websiteId: String!, $domain: String!) {
+		removeCustomDomain(websiteId: $websiteId, domain: $domain)
+	}
 `
