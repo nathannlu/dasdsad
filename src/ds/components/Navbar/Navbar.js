@@ -36,6 +36,8 @@ const Navbar = ({ pageName }) => {
 							anchorEl={anchorEl}
 							open={open}
 							onClose={()=>setAnchorEl(null)}
+							anchorOrigin={{vertical: 'bottom',horizontal: 'right'}}
+							transformOrigin={{vertical: 'top',horizontal: 'right'}}
 						>
 							<MenuItem component={Link} to="/billing">
                                 <ListItemIcon>

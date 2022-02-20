@@ -290,6 +290,19 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "count",
+          "type": "uint32"
+        }
+      ],
+      "name": "mintNFTs",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "name",
       "outputs": [
@@ -83602,7 +83615,7 @@
   },
   "networks": {},
   "schemaVersion": "3.3.2",
-  "updatedAt": "2022-02-19T00:06:28.198Z",
+  "updatedAt": "2022-02-20T08:02:00.928Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
