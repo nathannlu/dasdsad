@@ -41,7 +41,11 @@ export const FeatureAProps = {
 	background: {
 		value: '#fff',
 		_type: 'textfield',
-	}
+	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
+	},
 };
 
 
@@ -104,7 +108,11 @@ export const FeatureBProps = {
 	background: {
 		value: '#fff',
 		_type: 'textfield',
-	}
+	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
+	},
 };
 
 
@@ -152,6 +160,10 @@ export const FeatureCProps = {
 	background: {
 		value: '#fff',
 		_type: 'textfield',
-	}
+	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
+	},
 };
 
