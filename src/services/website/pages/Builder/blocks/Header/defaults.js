@@ -72,6 +72,10 @@ export const HeaderBProps = {
 		value: '#fff',
 		_type: 'textfield',
 	},
+	backgroundImage: {
+		value: '',
+		_type: 'image',
+	},
 	color: {
 		value: '#000',
 		_type: 'textfield',
