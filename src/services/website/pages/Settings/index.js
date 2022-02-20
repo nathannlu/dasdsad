@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, Menu, MenuItem, ListItemText, ListItemIcon } from 'ds/components';
-import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack, TableContainer, Paper } from '@mui/material';
+import { Button, Box, Typography, Table, TableBody, TableCell, TableRow } from 'ds/components';
+import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack, TableContainer, Paper, Switch, FormGroup, FormControlLabel } from '@mui/material';
 import { useWebsite } from 'services/website/provider';
 import { Widget } from "@uploadcare/react-widget";
 import useSettings from './hooks/useSettings';
@@ -15,7 +15,6 @@ import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
-import SettingsIcon from '@mui/icons-material/Settings';
 import DomainIcon from '@mui/icons-material/Domain';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -532,6 +531,20 @@ const Settings = () => {
                                             </Table>
                                         </TableContainer>
                                     </Box>
+                                    {/* <Typography fontSize='18pt' fontWeight='700' sx={{ mt: '2em', mb: '.5em' }}>
+                                        Publish Pages
+                                    </Typography>
+                                    <Box
+                                        display='flex'
+                                        flexDirection='column'
+                                        width='100%'
+                                    >
+                                        <FormGroup>
+                                            {website.pages.map((page, idx) => (
+                                                <FormControlLabel key={idx} control={<Switch />} label={page.name} />
+                                            ))}
+                                        </FormGroup>
+                                    </Box> */}
                                 </Box>
                             )}
                             <Box
