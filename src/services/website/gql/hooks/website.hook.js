@@ -267,6 +267,12 @@ export const useRemoveCustomDomain = ({ websiteId, domain, onError }) => {
             const indexOfDeleted = newDomains.findIndex(x => x.domain === domain);
             newDomains.splice(indexOfDeleted, 1);
             newWebsite.domains = newDomains;
+
+            if (website.customDomain === domain) {
+                newWebsite.customDomain = '';
+                newWebsite.isCustomDomainActive = false;
+            }
+
             setWebsite(newWebsite);
 		},
 		onError

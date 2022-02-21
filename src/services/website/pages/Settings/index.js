@@ -50,6 +50,7 @@ const Settings = () => {
         onVerifyDomain,
         onMakeDefault,
         onPublishPage,
+        onDomainState,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -452,9 +453,14 @@ const Settings = () => {
                                     >
                                         <Box
                                             display='flex'
-                                            justifyContent='flex-end'
+                                            justifyContent={website.domains.length > 0 ? 'space-between' : 'flex-end'}
                                             width='100%'
                                         >
+                                            {website.domains.length > 0 && (
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Switch checked={website.isCustomDomainActive} onChange={onDomainState}/>} label='Enable Custom Domain' />
+                                                </FormGroup>
+                                            )}
                                             <Button
                                                 variant='contained'
                                                 size='small'

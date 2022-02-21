@@ -225,6 +225,25 @@ const useSettings = () => {
         }     
     }
 
+    const onDomainState = async () => {
+       try {
+            const curDomain = website.customDomain;
+            if (!curDomain.length) throw new Error('Please set a default custom domain first');
+            
+            const curState = website.isCustomDomainActive;
+            setDomainName(curDomain);
+            setDomainIsActive(!curState);
+            await setCustomDomain({variables: {websiteId: website._id, domain: curDomain, isActive: !curState}});
+       }
+       catch (err) {
+            console.log(err);
+            addToast({
+                severity: 'error',
+                message: err.message
+            })
+        }
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -256,6 +275,7 @@ const useSettings = () => {
         onVerifyDomain,
         onMakeDefault,
         onPublishPage,
+        onDomainState,
     }
 }
 
