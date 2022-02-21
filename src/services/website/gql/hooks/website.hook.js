@@ -305,7 +305,7 @@ export const useSetCustomDomain = ({ websiteId, domain, isActive, onError }) => 
 		onCompleted: data => {
             let newWebsite = {...website};
             newWebsite.customDomain = data.setCustomDomain;
-            newWebsite.isCustomDomainActive = isActive;
+            newWebsite.isCustomDomainActive = !newWebsite.isCustomDomainActive;
 			setWebsite(newWebsite);
 		},
 		onError
