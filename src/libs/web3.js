@@ -192,19 +192,42 @@ export const Web3Provider = ({ children }) => {
 	}
 
 	const getPublicContractVariables = async (contractAddress) => {
-		const contract = await retrieveContract(contractAddress)
+        if (!contractAddress) return;
 
-		const balance = await web3.eth.getBalance(contractAddress)
-		const balanceInEth = web3.utils.fromWei(balance)
-		const baseTokenUri = await contract.methods.baseTokenURI().call()
+        console.log(contractAddress)
+
+		const contract = await retrieveContract(contractAddress);
+
+		const balance = await window.web3.eth.getBalance(contractAddress);
+        console.log('balance', balance);
+		const balanceInEth = window.web3.utils.fromWei(balance);
+        console.log('balanceInEth', balanceInEth);
+		const baseTokenUri = await contract.methods.baseTokenURI().call();
+        console.log('baseTokenUri', baseTokenUri);
 		const open = await contract.methods.open().call();
-		const presaleOpen = await contract.methods.presaleOpen().call();
+        console.log('open', open);
+
+        let presaleOpen = false; // Temporary, presaleOpen is not working
+		try {
+            presaleOpen = await contract.methods.presaleOpen().call();
+        }
+        catch (err) {
+            //console.log(err);
+        }
+        console.log('presaleOpen', presaleOpen);
+
 		const maxPerMint = await contract.methods.maxPerMint().call();
+        console.log('maxPerMint', maxPerMint);
 		const cost = await contract.methods.cost().call();
-		const costInEth = web3.utils.fromWei(cost)
+        console.log('cost', cost);
+		const costInEth = window.web3.utils.fromWei(cost);
+        console.log('costInEth', costInEth);
 		const supply = await contract.methods.supply().call();
+        console.log('supply', supply);
 		const totalSupply = await contract.methods.totalSupply().call();
+        console.log('totalSupply', totalSupply);
 		const owner = await contract.methods.owner().call();
+        console.log('owner', owner);
 
 		return {
 			balance,
@@ -221,18 +244,14 @@ export const Web3Provider = ({ children }) => {
 		}
 	}
 
-
-	const retrieveContract = contractAddress => {
+	const retrieveContract = (contractAddress) => {
 		const web3 = window.web3;
-
-		if (true) {
+		if (web3.eth) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
 			console.log(contract)
-
 			return contract;
 		}
 	}
-
 
 	const getPrice = async (contractAddress) => {
 		const web3 = window.web3
@@ -390,6 +409,7 @@ export const Web3Provider = ({ children }) => {
                 getNetworkID,
                 setNetwork,
                 compareNetwork,
+                presaleMint,
 
 				loading,
 				payInEth,
