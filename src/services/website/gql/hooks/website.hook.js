@@ -317,6 +317,7 @@ export const useAddPageToPublish = ({onError}) => {
             let newPublish = [...newWebsite.published];
             newPublish.push(data.addPageToPublish);
             newWebsite.published = newPublish;
+            newWebsite.isPublished = true;
 			setWebsite(newWebsite);
 		},
 		onError
@@ -335,6 +336,7 @@ export const useRemovePageFromPublish = ({onError}) => {
             const indexOfDeleted = newPublish.findIndex(page => page.name === data.removePageFromPublish.name);
             newPublish.splice(indexOfDeleted, 1);
             newWebsite.published = newPublish;
+            if (!newPublish.length) newWebsite.isPublished = false;
             setWebsite(newWebsite);
 		},
 		onError

@@ -250,7 +250,7 @@ const Settings = () => {
                                             <Chip label='Not Subscribed' size="small" sx={{ mr: '.5em' }}/>
                                         )}
                                         {website.isPublished ? (
-                                            <Chip label='Subscribed' size="small" color='success'/>
+                                            <Chip label='Published' size="small" color='success'/>
                                         ) : (
                                             <Chip label='Not Published' size="small" />
                                         )}
