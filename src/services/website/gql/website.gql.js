@@ -218,3 +218,12 @@ export const ADD_PAGE_TO_PUBLISH = gql`
         }
 	}
 `
+
+export const REMOVE_PAGE_FROM_PUBLISH = gql`
+	mutation RemovePageFromPublish($websiteId: String!, $pageIdx: Int!) {
+		removePageFromPublish(websiteId: $websiteId, pageIdx: $pageIdx) {
+            name
+            data
+        }
+	}
+`

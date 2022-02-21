@@ -18,6 +18,7 @@ import { BUILD_WEBSITE,
     ADD_CUSTOM_DOMAIN,
     REMOVE_CUSTOM_DOMAIN,
     ADD_PAGE_TO_PUBLISH,
+    REMOVE_PAGE_FROM_PUBLISH,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -322,4 +323,22 @@ export const useAddPageToPublish = ({onError}) => {
 	})
 
     return [addPageToPublish, { ...mutationResult }];
+}
+
+export const useRemovePageFromPublish = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [removePageFromPublish, { ...mutationResult }] = useMutation(REMOVE_PAGE_FROM_PUBLISH, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newPublish = [...newWebsite.published];
+            const indexOfDeleted = newPublish.findIndex(page => page.name === data.removePageFromPublish.name);
+            newPublish.splice(indexOfDeleted, 1);
+            newWebsite.published = newPublish;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [removePageFromPublish, { ...mutationResult }];
 }

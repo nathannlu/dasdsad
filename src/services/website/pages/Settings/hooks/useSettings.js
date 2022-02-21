@@ -4,6 +4,7 @@ import { useDeleteWebsite, useSetWebsiteFavicon,
     useUpdateWebsiteSEO, useVerifyDns, 
     useAddCustomDomain, useRemoveCustomDomain, 
     useSetCustomDomain, useAddPageToPublish,
+    useRemovePageFromPublish,
 } from 'services/website/gql/hooks/website.hook'
 import { useToast } from 'ds/hooks/useToast';
 
@@ -82,6 +83,12 @@ const useSettings = () => {
 		})
     })
     const [addPageToPublish] = useAddPageToPublish({
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [removePageFromPublish] = useRemovePageFromPublish({
         onError: err => addToast({
 			severity: 'error',
 			message: err.message
@@ -212,10 +219,9 @@ const useSettings = () => {
         const indexOfPublished = website.published.findIndex(page => page.name === pageName);
 
         if (indexOfPublished === -1) {
-            console.log('add publish');
             await addPageToPublish({variables: {websiteId: website._id, pageIdx}});
         } else {
-            console.log('remove publish');
+            await removePageFromPublish({variables: {websiteId: website._id, pageIdx}});
         }     
     }
 
