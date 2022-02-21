@@ -38,10 +38,11 @@ const Embed = ({ contract, id }) => {
 					? window.location.hostname
 					: `${window.location.hostname}:3000`
 			}/smart-contracts/embed?contract=${contract.address}&chainId=${chainId}"
-			width="350px"
-			height="100px"
+			width="100%"
+			height="115px"
 			frameborder="0"
 			scrolling="no"
+            style="border-radius: 10px; width: 350px"
 		/>`);
 	}, [contract]);
 

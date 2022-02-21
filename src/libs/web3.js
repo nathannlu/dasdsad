@@ -192,19 +192,29 @@ export const Web3Provider = ({ children }) => {
 	}
 
 	const getPublicContractVariables = async (contractAddress) => {
-		const contract = await retrieveContract(contractAddress)
+		const contract = await retrieveContract(contractAddress);
 
-		const balance = await web3.eth.getBalance(contractAddress)
-		const balanceInEth = web3.utils.fromWei(balance)
-		const baseTokenUri = await contract.methods.baseTokenURI().call()
+		const balance = await window.web3.eth.getBalance(contractAddress);
+		const balanceInEth = window.web3.utils.fromWei(balance);
+		const baseTokenUri = await contract.methods.baseTokenURI().call();
 		const open = await contract.methods.open().call();
-		const presaleOpen = await contract.methods.presaleOpen().call();
+
+        let presaleOpen = false; // Temporary, presaleOpen is not working
+		try {
+            presaleOpen = await contract.methods.presaleOpen().call();
+        }
+        catch (err) {
+            console.log(err);
+        }
+
 		const maxPerMint = await contract.methods.maxPerMint().call();
 		const cost = await contract.methods.cost().call();
-		const costInEth = web3.utils.fromWei(cost)
+		const costInEth = window.web3.utils.fromWei(cost);
 		const supply = await contract.methods.supply().call();
 		const totalSupply = await contract.methods.totalSupply().call();
 		const owner = await contract.methods.owner().call();
+
+        console.log(presaleOpen);
 
 		return {
 			balance,
@@ -221,18 +231,14 @@ export const Web3Provider = ({ children }) => {
 		}
 	}
 
-
 	const retrieveContract = contractAddress => {
 		const web3 = window.web3;
-
-		if (true) {
+		if (web3.eth) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
 			console.log(contract)
-
 			return contract;
 		}
 	}
-
 
 	const getPrice = async (contractAddress) => {
 		const web3 = window.web3
@@ -390,6 +396,7 @@ export const Web3Provider = ({ children }) => {
                 getNetworkID,
                 setNetwork,
                 compareNetwork,
+                presaleMint,
 
 				loading,
 				payInEth,
