@@ -62,17 +62,19 @@ export const Web3Provider = ({ children }) => {
 	}
 
 	// Mint NFT
-	const mint = async (price, contractAddress, count = 1) => {
+	const mint = async (contractAddress, count = 1) => {
 		const contract = await retrieveContract(contractAddress)
-		const priceInWei = Web3.utils.toWei(price);
+		const price = await contract.methods.cost().call();
+
+//		const priceInWei = Web3.utils.toWei(price);
 
 		// Support depreciated method
 		contract.methods.mintNFTs(count).estimateGas({
 			from: account,
 			value: price
 		}, (err, gasAmount) => {
-			if(!err && gasAmount !== undefined) {
-				contract.methods.mintNFTs(count).send({ from: account, value: priceInWei }, err => {
+			if(gasAmount !== undefined) {
+				contract.methods.mintNFTs(count).send({ from: account, value: price }, err => {
 					if (err) {
 						addToast({
 							severity: 'error',
@@ -102,11 +104,11 @@ export const Web3Provider = ({ children }) => {
 
 		contract.methods.mint(count).estimateGas({
 			from: account,
-			value: price
+			value: price * count
 		}, (err, gasAmount) => {
 
 			if(!err && gasAmount !== undefined) {
-				contract.methods.mint(count).send({ from: account, value: priceInWei }, err => {
+				contract.methods.mint(count).send({ from: account, value: price * count }, err => {
 					if (err) {
 						addToast({
 							severity: 'error',
@@ -225,6 +227,7 @@ export const Web3Provider = ({ children }) => {
 
 		if (true) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
+			console.log(contract)
 
 			return contract;
 		}

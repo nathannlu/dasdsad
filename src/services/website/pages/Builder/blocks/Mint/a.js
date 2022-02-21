@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Fade } from "ds/components";
+import { Fade } from "@material-ui/core";
 import { useWeb3 } from 'libs/web3';
 
 

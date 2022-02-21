@@ -4,7 +4,7 @@ import { Fade } from "@material-ui/core";
 const Template = props => {
 	return (
 		<Fade in={true}>
-			<section className="text-gray-600 body-font" style={{background: props.background.value}}>
+			<section className="text-gray-600 body-font" style={{background: props.background.value, color: props.color.value}}>
 				<div className="container px-5 py-24 mx-auto">
 					<div className="flex flex-wrap w-full mb-20">
 						<div className="lg:w-1/2 w-full mb-6 lg:mb-0">
@@ -21,7 +21,7 @@ const Template = props => {
 								<div className="bg-gray-100 p-6 rounded-lg">
 									<img className="h-40 rounded w-full object-cover object-center mb-6" src={item.image.value} alt="content" />
 									<h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">{item.subtitle.value}</h3>
-									<h2 className="text-lg text-gray-900 font-medium title-font mb-4">{item.title.value}</h2>
+									<h2 className="text-lg font-medium title-font mb-4">{item.title.value}</h2>
 									<p className="leading-relaxed text-base">{item.content.value}</p>
 								</div>
 							</div>

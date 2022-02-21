@@ -5,6 +5,7 @@ import { useWeb3 } from 'libs/web3';
 export const useContractDetails = (contractAddress) => {
 	const [balance, setBalance] = useState(null)
 	const [soldCount, setSoldCount] = useState(null)
+	const [size, setSize] = useState(null);
 	const [price, setPrice] = useState();
 	const [isPresaleOpen, setIsPresaleOpen] = useState(false);
 	const [isPublicSaleOpen, setIsPublicSaleOpen] = useState(false);
@@ -21,6 +22,7 @@ export const useContractDetails = (contractAddress) => {
 			const {
 				supply,
 				maxSupply,
+				totalSupply,
 				costInEth,
 				balanceInEth,
 				presaleOpen,
@@ -36,6 +38,7 @@ export const useContractDetails = (contractAddress) => {
 			setIsPublicSaleOpen(open);
 			setMetadataUrl(baseTokenUri);
 			setMax(maxPerMint);
+			setSize(totalSupply);
 		})();
 	}, [contractAddress])
 
@@ -46,6 +49,7 @@ export const useContractDetails = (contractAddress) => {
 		balance,
 		soldCount,
 		price,
+		size,
 		isPresaleOpen,
 		isPublicSaleOpen,
 	}

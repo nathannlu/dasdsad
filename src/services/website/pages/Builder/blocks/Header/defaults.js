@@ -15,6 +15,10 @@ export const HeaderAProps = {
 		value: '#fff',
 		_type: 'textfield',
 	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
+	},
 	button: {
 		_type: 'button',
 		value: {
@@ -67,7 +71,15 @@ export const HeaderBProps = {
 	background: {
 		value: '#fff',
 		_type: 'textfield',
-	}
+	},
+	backgroundImage: {
+		value: '',
+		_type: 'image',
+	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
+	},
 };
 
 export const HeaderCProps = {
@@ -85,6 +97,10 @@ export const HeaderCProps = {
 	},
 	background: {
 		value: '#fff',
+		_type: 'textfield',
+	},
+	color: {
+		value: '#000',
 		_type: 'textfield',
 	},
 	button: {

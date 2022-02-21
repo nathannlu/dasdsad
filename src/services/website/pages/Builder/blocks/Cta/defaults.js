@@ -23,5 +23,9 @@ export const CtaAProps = {
 	background: {
 		value: '#fff',
 		_type: 'textfield',
+	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
 	}
 }

@@ -72,6 +72,10 @@ export const ContentAProps = {
 	background: {
 		value: '#fff',
 		_type: 'textfield',
+	},
+	color: {
+		value: '#000',
+		_type: 'textfield',
 	}
 };
 
@@ -164,6 +168,10 @@ export const ContentBProps = {
 	},
 	background: {
 		value: '#fff',
+		_type: 'textfield',
+	},
+	color: {
+		value: '#000',
 		_type: 'textfield',
 	}
 }

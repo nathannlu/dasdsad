@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from 'ds/hooks/useToast';
 import { useForm } from 'ds/hooks/useForm';
 import { useWeb3 } from 'libs/web3';
@@ -9,7 +9,7 @@ import { useSetWhitelist } from "services/blockchain/gql/hooks/contract.hook.js"
 export const useContractActions = (contractAddress) => {
 	const { addToast } = useToast();
 	const { retrieveContract, account } = useWeb3();
-	const contract = retrieveContract(contractAddress)
+	const [contract, setContract] = useState({});
 	const [setWhitelist] = useSetWhitelist({});
 	const { form: actionForm  } = useForm({
 		airdropList: {
@@ -209,6 +209,10 @@ export const useContractActions = (contractAddress) => {
 		})
 	}
 	
+	useEffect(() => {
+		const c = retrieveContract(contractAddress)
+		setContract(c)
+	}, [contractAddress])
 
 	return {
 		actionForm,
