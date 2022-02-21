@@ -6,150 +6,185 @@ import { useToast } from "ds/hooks/useToast";
 import { useContractDetails } from "services/blockchain/pages/Contract/hooks/useContractDetails";
 
 export const useEmbed = () => {
-	const { addToast } = useToast();
-	const { search } = useLocation();
-	const [contractAddress, setContractAddress] = useState("");
-
-	const { mint, getNetworkID, setNetwork, presaleMint } = useWeb3();
-	const {
+    const { addToast } = useToast();
+    const { search } = useLocation();
+    const { account, loadWeb3, loadBlockchainData, getNetworkID, compareNetwork, mint, presaleMint } = useWeb3();
+    const [buttonState, setButtonState] = useState(0); // 0 Connect Wallet, 1 Mint, 2 Switch Network, 3 Locked
+	const [contractAddress, setContractAddress] = useState('');
+    const [chainId, setChainId] = useState('');
+    const [bgImage, setBgImage] = useState('');
+    const [textColor, setTextColor] = useState('');
+    const [prefix, setPrefix] = useState('');
+    const [isMinting, setIsMinting] = useState(false);
+    const [mintCount, setMintCount] = useState(1);
+    const [contract, setContract] = useState(null);
+    const {
 		max,
 		metadataUrl,
 		balance,
 		soldCount,
-		price: cost,
+		price,
 		size,
 		isPresaleOpen,
 		isPublicSaleOpen,
 	} = useContractDetails(contractAddress);
 
-	const [isPublicSale, setIsPublicSale] = useState(false);
-	const [isPreSale, setIsPreSale] = useState(false);
-
-	const [chainId, setChainId] = useState("");
-	const [price, setPrice] = useState(-1);
-	const [maxSupply, setMaxSupply] = useState(-1);
-	const [currentSupply, setCurrentSupply] = useState(-1);
-	const [prefix, setPrefix] = useState("");
-	const [isSwitch, setIsSwitch] = useState(true);
-	const [isMinting, setIsMinting] = useState(false);
-	const [contract, setContract] = useState(null);
-	const [count, setCount] = useState(1);
-	const [backgroundImage, setBackgroundImage] = useState(
-		"https://i.postimg.cc/xjbYKKgg/Screenshot-5.png"
-	);
-	const [textColor, setTextColor] = useState("black");
-	useGetContract({
+    useGetContract({
 		address: contractAddress,
-		onCompleted: (data) => {
+		onCompleted: data => {
 			setContract(data.getContract);
 		},
-		onError: (err) =>
-			addToast({
+		onError: err => {
+            console.log(err);
+            addToast({
 				severity: "error",
 				message: err.message,
-			}),
+			})
+        }	
 	});
 
-	// Get query params (ANOTHER CHECK WE COULD ADD IS IF THE CONTRACT ADDRESS IS DEPLOYED ON OUR WEBSITE)
-	useEffect(() => {
-		if (!search) return;
-		const urlParams = new URLSearchParams(search);
-		const contractAddress = urlParams.get("contract");
-		const chainId = urlParams.get("chainId");
-		const bgImage = urlParams.get("bgImage");
-		const textColor = urlParams.get("color");
-		setTextColor(textColor);
-		setBackgroundImage(bgImage);
-		setContractAddress(contractAddress);
-		setChainId(chainId);
-	}, [search]);
+    // Load web3
+    useEffect(() => {
+        (async () => {
+			await loadWeb3();
+		})()
+    }, [])
 
-	useEffect(() => {
-		if (!chainId.length) return;
+    // Get all query params
+    useEffect(() => {
+        if (!search) return;
 
-		// Check if chain ID is right
-		if (getNetworkID() === chainId) {
-			setIsSwitch(false);
-		} else {
-			setIsSwitch(true);
-		}
+        const urlParams = new URLSearchParams(search);
 
-		// Set Prefix for mint button
-		if (chainId == "0x1" || chainId == "0x4") setPrefix("ETH");
-		else if (chainId == "0x89" || chainId == "0x13881") setPrefix("MATIC");
+        const a = urlParams.get("contract");
+		const b = urlParams.get("chainId");
+		const c = urlParams.get("bgImage");
+		const d = urlParams.get("color");
 
-		// Set price, supply for mint button
-		(async () => {
-			try {
-				setPrice(cost);
-				setCurrentSupply(soldCount);
-				setMaxSupply(size);
-				setIsPreSale(isPresaleOpen);
-				setIsPublicSale(isPublicSaleOpen);
-			} catch (e) {
-				console.log(e);
-			}
+        a && setContractAddress(a);
+		b && setChainId(b);
+        c && setTextColor(c);
+		d && setBgImage(d);
+
+        if (b === "0x1" || b === "0x4") setPrefix("ETH");
+		else if (b === "0x89" || b === "0x13881") setPrefix("MATIC");
+
+    }, [search])
+
+    // Check if connected to wallet
+    useEffect(() => {
+        if (!account || !account.length) return;
+        if (getNetworkID() !== chainId) setButtonState(2);
+        else setButtonState(1);
+    }, [account])
+
+    // Check for network change
+    useEffect(() => {
+        if (!chainId || !chainId.length) return;
+        (async () => {
+            window.ethereum.on("chainChanged", async (_chainId) => {
+                if (chainId !== _chainId) setButtonState(2);
+                else setButtonState(1);
+            });
 		})();
-	}, [chainId, cost, soldCount, size, isPresaleOpen, isPublicSaleOpen]);
+    }, [chainId])
 
-	const onMint = async () => {
-		if (
-			price == -1 ||
-			currentSupply == -1 ||
-			maxSupply == -1 ||
-			!contract ||
-			count <= 0
-		)
-			return;
+    // Connect to wallet
+    const onConnectWallet = async () => {
+        try {
+            await loadBlockchainData();
+        }
+        catch (e) {
+            console.log(e);
+            addToast({
+				severity: "error",
+				message: err.message,
+			})
+        }
+    }
 
-		if (getNetworkID() === chainId) {
-			try {
-				setIsMinting(true);
+    // Switch Networks
+    const onSwitch = async () => {
+        try {
+            if (!chainId || !chainId.length) throw new Error('Switch Button, cannot find chain Id');
 
-				if (isPublicSale) {
-					await mint(contractAddress, count);
+            await compareNetwork(chainId, () => {
+                setButtonState(1);
+            })
+        }
+        catch (e) {
+            console.log(e);
+            addToast({
+				severity: "error",
+				message: err.message,
+			})
+        }
+    }
+
+    // Mint NFT
+    const onMint = async () => {
+        try {
+            if (!price || 
+                !max || 
+                !max.length || 
+                !contractAddress || 
+                !contractAddress.length || 
+                !chainId || 
+                !chainId.length ||
+                mintCount <= 0 ||
+                !contract) return;
+
+            await compareNetwork(chainId, async () => {
+                setIsMinting(true);
+    
+                if (isPublicSaleOpen) {
+					await mint(contractAddress, mintCount);
 					setIsMinting(false);
 					return;
 				}
 
-				if (isPreSale) {
+				if (isPresaleOpen) {
 					await presaleMint(
-						(price * count).toString(),
+						(price * mintCount).toString(),
 						contractAddress,
 						contract.nftCollection.whitelist,
-						count
+						mintCount
 					);
 					setIsMinting(false);
 				}
-			} catch (e) {
-				setIsMinting(false);
-				console.log(e);
-			}
-		} else {
-			location.reload();
-		}
-	};
+            })
+        }
+        catch (err) {
+            setIsMinting(false);
+            console.log(e);
+            addToast({
+				severity: "error",
+				message: err.message,
+			})
+        }
+    }
 
-	const onSwitch = async () => {
-		const res = await setNetwork(chainId);
-		if (res === "prompt_successful") {
-			setIsSwitch(false);
-		}
-	};
+    return {
+        buttonState,
+        textColor,
+        bgImage,
+        prefix,
+        isMinting,
+        mintCount,
+        setButtonState,
+        onConnectWallet,
+        onSwitch,
+        onMint,
+        setMintCount,
 
-	return {
-		prefix,
+        contract,
+        max,
+		metadataUrl,
+		balance,
+		soldCount,
 		price,
-		maxSupply,
-		currentSupply,
-		isSwitch,
-		isMinting,
-		contract,
-		count,
-		backgroundImage,
-		textColor,
-		setCount,
-		onMint,
-		onSwitch,
-	};
-};
+		size,
+		isPresaleOpen,
+		isPublicSaleOpen,
+    }
+}

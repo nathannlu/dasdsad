@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Button, IconButton } from 'ds/components';
-import { Stack, TextField, ButtonGroup, CircularProgress } from '@mui/material';
+import { Stack, TextField, ButtonGroup } from '@mui/material';
 import { LoadingButton  } from '@mui/lab';
 import { useEmbed } from './hooks/useEmbed'
+import { useWeb3 } from 'libs/web3';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import DiamondIcon from '@mui/icons-material/Diamond';
 
-const Embed = () => {
-    const { contract, buttonState, textColor, bgImage, price, prefix, soldCount, size, isMinting, mintCount, metadataUrl, max, onConnectWallet, onSwitch, onMint, setMintCount } = useEmbed();
+const Embed = () => {   
+    const { loadWeb3, loadBlockchainData } = useWeb3();
+    const { contract, prefix, price, maxSupply, currentSupply, isSwitch, isMinting, count, backgroundImage, textColor, onMint, onSwitch, setCount } = useEmbed();
+
+    useEffect(() => {
+		(async () => {
+			await loadWeb3();
+            await loadBlockchainData();
+		})()
+	}, [])
 
     return (
         <Box
@@ -22,45 +30,30 @@ const Embed = () => {
                 top: 0,
                 width: '100%',
                 bgcolor: 'white',
-                backgroundImage: `url('${bgImage}')`,
+                backgroundImage: `url('${backgroundImage}')`,
                 objectFit: 'cover',
             }}
         >
-            {contract && metadataUrl.length > 0 ? (
+            {maxSupply != -1 && contract ? (
                 <Box
                     display='flex'
                     flexDirection='column'
                     height='100vh'
                     padding='1em'
                 >
-                    {buttonState === 0 && (
-                        <Button
-                            variant='contained'
-                            startIcon={<AccountBalanceWalletIcon />}
-                            sx={{
-                                bgcolor: 'rgb(238,72,0)',
-                                "&:hover": {
-                                    bgcolor: "rgb(212, 66, 2)"
-                                }
-                            }}
-                            onClick={onConnectWallet}
-                        >
-                            Connect Wallet
-                        </Button>
-                    )}
-                    {buttonState === 1 && (
+                    {!isSwitch ? (
                         <Stack direction='row' spacing={1} sx={{width: '100%'}}>
                             <LoadingButton
                                 variant='contained'
                                 loading={isMinting}
                                 loadingIndicator='Minting...'
-                                startIcon={<DiamondIcon />}
+                                startIcon={<DoneAllIcon />}
+                                onClick={onMint}
                                 sx={{
                                     flex: '1'
                                 }}
-                                onClick={onMint}
                             >
-                                Mint {(price * mintCount).toString().substring(0, 5)} {prefix}
+                                Mint {(price * count).toString().substring(0, 5)} {prefix}
                             </LoadingButton>
                             <Box
                                 width='100px'
@@ -76,8 +69,8 @@ const Embed = () => {
                                         min: 1, 
                                         max: contract.nftCollection.size,
                                     }} 
-                                    value={mintCount}
-                                    onChange={(e) => setMintCount(e.target.value)}
+                                    value={count}
+                                    onChange={(e) => setCount(e.target.value)}
                                     sx={{
                                         input: {
                                             borderColor: `${textColor}`,
@@ -101,8 +94,8 @@ const Embed = () => {
                                             color: `${textColor}`
                                         }}
                                         onClick={() => {
-                                            if (mintCount < contract.nftCollection.size && mintCount <= max) {
-                                                setMintCount(prevCount => prevCount + 1);
+                                            if (count < contract.nftCollection.size) {
+                                                setCount(prevCount => prevCount + 1);
                                             }
                                         }}
                                     >
@@ -117,8 +110,8 @@ const Embed = () => {
                                             color: `${textColor}`
                                         }}
                                         onClick={() => {
-                                            if (mintCount > 1) {
-                                                setMintCount(prevCount => prevCount - 1);
+                                            if (count > 1) {
+                                                setCount(prevCount => prevCount - 1);
                                             }
                                         }}
                                     >
@@ -127,33 +120,31 @@ const Embed = () => {
                                 </ButtonGroup>
                             </Box>
                         </Stack>
-                    )}
-                    {buttonState === 2 && (
+                    ) : (
                         <Button
                             variant='contained'
                             startIcon={<CompareArrowsIcon />}
+                            onClick={onSwitch}
                             sx={{
                                 bgcolor: 'darkgray',
                                 "&:hover": {
                                     bgcolor: "gray"
                                 }
                             }}
-                            onClick={onSwitch}
+                            
                         >
                             Switch Network
                         </Button>
                     )}
                     <Box
                         display='flex'
-                        justifyContent={buttonState === 1 ? 'space-between' : 'flex-end'}
+                        justifyContent='space-between'
                         width='100%'
                         mt='.5em'
                     >
-                        {buttonState === 1 && (
-                            <Typography fontSize='12pt' sx={{ color: `${textColor}`, fontWeight: 600 }}>
-                                {soldCount}/{size}
-                            </Typography>
-                        )}
+                        <Typography fontSize='12pt' sx={{ color: `${textColor}`, fontWeight: 600 }}>
+                            {currentSupply}/{maxSupply}
+                        </Typography>
                         <Box 
                             display='flex'
                             alignItems='center'
@@ -179,10 +170,9 @@ const Embed = () => {
                     display='flex'
                     flexDirection='column'
                     alignItems='center'
-                    justifyContent='center'
                     height='100vh'
                 >
-                    <CircularProgress />
+                    Something wrong occured
                 </Box>
             )}
         </Box>
