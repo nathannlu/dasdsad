@@ -209,3 +209,21 @@ export const SET_CUSTOM_DOMAIN = gql`
 		setCustomDomain(websiteId: $websiteId, domain: $domain, isActive: $isActive)
 	}
 `
+
+export const ADD_PAGE_TO_PUBLISH = gql`
+	mutation AddPageToPublish($websiteId: String!, $pageIdx: Int!) {
+		addPageToPublish(websiteId: $websiteId, pageIdx: $pageIdx) {
+            name
+            data
+        }
+	}
+`
+
+export const REMOVE_PAGE_FROM_PUBLISH = gql`
+	mutation RemovePageFromPublish($websiteId: String!, $pageIdx: Int!) {
+		removePageFromPublish(websiteId: $websiteId, pageIdx: $pageIdx) {
+            name
+            data
+        }
+	}
+`

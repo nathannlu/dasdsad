@@ -17,6 +17,8 @@ import { BUILD_WEBSITE,
     SET_WEBSITE_SUBSCRIPTION,
     ADD_CUSTOM_DOMAIN,
     REMOVE_CUSTOM_DOMAIN,
+    ADD_PAGE_TO_PUBLISH,
+    REMOVE_PAGE_FROM_PUBLISH,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -265,6 +267,12 @@ export const useRemoveCustomDomain = ({ websiteId, domain, onError }) => {
             const indexOfDeleted = newDomains.findIndex(x => x.domain === domain);
             newDomains.splice(indexOfDeleted, 1);
             newWebsite.domains = newDomains;
+
+            if (website.customDomain === domain) {
+                newWebsite.customDomain = '';
+                newWebsite.isCustomDomainActive = false;
+            }
+
             setWebsite(newWebsite);
 		},
 		onError
@@ -297,7 +305,7 @@ export const useSetCustomDomain = ({ websiteId, domain, isActive, onError }) => 
 		onCompleted: data => {
             let newWebsite = {...website};
             newWebsite.customDomain = data.setCustomDomain;
-            newWebsite.isCustomDomainActive = isActive;
+            newWebsite.isCustomDomainActive = !newWebsite.isCustomDomainActive;
 			setWebsite(newWebsite);
 		},
 		onError
@@ -305,3 +313,40 @@ export const useSetCustomDomain = ({ websiteId, domain, isActive, onError }) => 
 
 	return [setCustomDomain, { ...mutationResult }];
 };
+
+export const useAddPageToPublish = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [addPageToPublish, { ...mutationResult }] = useMutation(ADD_PAGE_TO_PUBLISH, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newPublish = [...newWebsite.published];
+            newPublish.push(data.addPageToPublish);
+            newWebsite.published = newPublish;
+            newWebsite.isPublished = true;
+			setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [addPageToPublish, { ...mutationResult }];
+}
+
+export const useRemovePageFromPublish = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [removePageFromPublish, { ...mutationResult }] = useMutation(REMOVE_PAGE_FROM_PUBLISH, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newPublish = [...newWebsite.published];
+            const indexOfDeleted = newPublish.findIndex(page => page.name === data.removePageFromPublish.name);
+            newPublish.splice(indexOfDeleted, 1);
+            newWebsite.published = newPublish;
+            if (!newPublish.length) newWebsite.isPublished = false;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [removePageFromPublish, { ...mutationResult }];
+}

@@ -49,6 +49,8 @@ const Settings = () => {
         handleAddDomain,
         onVerifyDomain,
         onMakeDefault,
+        onPublishPage,
+        onDomainState,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -196,8 +198,8 @@ const Settings = () => {
                                             disabled
                                         />
                                         <Tab 
-                                            label="Analytics" 
-                                            value='analytics'
+                                            label="Custom" 
+                                            value='custom'
                                             sx={{
                                                 textTransform: 'none',
                                                 '&.Mui-selected': {outline: 'none'}
@@ -249,7 +251,7 @@ const Settings = () => {
                                             <Chip label='Not Subscribed' size="small" sx={{ mr: '.5em' }}/>
                                         )}
                                         {website.isPublished ? (
-                                            <Chip label='Subscribed' size="small" color='success'/>
+                                            <Chip label='Published' size="small" color='success'/>
                                         ) : (
                                             <Chip label='Not Published' size="small" />
                                         )}
@@ -451,9 +453,14 @@ const Settings = () => {
                                     >
                                         <Box
                                             display='flex'
-                                            justifyContent='flex-end'
+                                            justifyContent={website.domains.length > 0 ? 'space-between' : 'flex-end'}
                                             width='100%'
                                         >
+                                            {website.domains.length > 0 && (
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Switch checked={website.isCustomDomainActive} onChange={onDomainState}/>} label='Enable Custom Domain' />
+                                                </FormGroup>
+                                            )}
                                             <Button
                                                 variant='contained'
                                                 size='small'
@@ -492,7 +499,10 @@ const Settings = () => {
                                                                         startIcon={<HomeIcon style={{ color: 'white' }} />}
                                                                         sx={{
                                                                             backgroundColor: 'rgb(67,75,84)',
-                                                                            color: 'white'
+                                                                            color: 'white',
+                                                                            "&:hover": {
+                                                                                backgroundColor: "rgb(67,75,84)"
+                                                                            }
                                                                         }}
                                                                         size='small'
                                                                     >
@@ -504,7 +514,10 @@ const Settings = () => {
                                                                         startIcon={<HomeIcon />}
                                                                         sx={{
                                                                             backgroundColor: 'rgb(234,234,234)',
-                                                                            color: 'rgb(163,163,163)'
+                                                                            color: 'rgb(163,163,163)',
+                                                                            "&:hover": {
+                                                                                backgroundColor: "rgb(234,234,234)"
+                                                                            }
                                                                         }}
                                                                         size='small'
                                                                         onClick={() => onMakeDefault(domain.domain)}
@@ -531,7 +544,7 @@ const Settings = () => {
                                             </Table>
                                         </TableContainer>
                                     </Box>
-                                    {/* <Typography fontSize='18pt' fontWeight='700' sx={{ mt: '2em', mb: '.5em' }}>
+                                    <Typography fontSize='18pt' fontWeight='700' sx={{ mt: '2em', mb: '.5em' }}>
                                         Publish Pages
                                     </Typography>
                                     <Box
@@ -541,10 +554,10 @@ const Settings = () => {
                                     >
                                         <FormGroup>
                                             {website.pages.map((page, idx) => (
-                                                <FormControlLabel key={idx} control={<Switch />} label={page.name} />
+                                                <FormControlLabel key={idx} control={<Switch checked={website.published.findIndex(p => p.name === page.name) === -1 ? false : true} onChange={() => onPublishPage(idx)}/>} label={page.name} />
                                             ))}
                                         </FormGroup>
-                                    </Box> */}
+                                    </Box>
                                 </Box>
                             )}
                             <Box
