@@ -196,8 +196,8 @@ const Settings = () => {
                                             disabled
                                         />
                                         <Tab 
-                                            label="Analytics" 
-                                            value='analytics'
+                                            label="Custom" 
+                                            value='custom'
                                             sx={{
                                                 textTransform: 'none',
                                                 '&.Mui-selected': {outline: 'none'}
@@ -492,7 +492,10 @@ const Settings = () => {
                                                                         startIcon={<HomeIcon style={{ color: 'white' }} />}
                                                                         sx={{
                                                                             backgroundColor: 'rgb(67,75,84)',
-                                                                            color: 'white'
+                                                                            color: 'white',
+                                                                            "&:hover": {
+                                                                                backgroundColor: "rgb(67,75,84)"
+                                                                            }
                                                                         }}
                                                                         size='small'
                                                                     >
@@ -504,7 +507,10 @@ const Settings = () => {
                                                                         startIcon={<HomeIcon />}
                                                                         sx={{
                                                                             backgroundColor: 'rgb(234,234,234)',
-                                                                            color: 'rgb(163,163,163)'
+                                                                            color: 'rgb(163,163,163)',
+                                                                            "&:hover": {
+                                                                                backgroundColor: "rgb(234,234,234)"
+                                                                            }
                                                                         }}
                                                                         size='small'
                                                                         onClick={() => onMakeDefault(domain.domain)}

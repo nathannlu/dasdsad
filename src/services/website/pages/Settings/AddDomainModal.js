@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField, Button } from 'ds/components';
-import { Dialog, DialogTitle, DialogActions, DialogContent, Typography, Stack } from '@mui/material';
+import { Dialog, DialogTitle, DialogActions, DialogContent, Typography, Stack, IconButton } from '@mui/material';
 import { useToast } from 'ds/hooks/useToast';
 import { useWebsite } from 'services/website/provider';
 import InfoIcon from '@mui/icons-material/Info';
@@ -48,41 +48,51 @@ const AddDomainModal = ({showDomainModal, setShowDomainModal, onChange, domainNa
                     Make sure your domain's CNAME or Alias is connected to our website
                 </Typography>
                 <Stack direction='row' spacing={10}>
-                    <Stack>
-                        <Stack direction='row' spacing={1} alignItems='center' mb='1em'>
+                    <Stack justifyContent='center'>
+                        <Stack direction='row' spacing={1} alignItems='center' mb='.25em'>
                             <InfoIcon fontSize='14pt'/>
                             <Typography fontSize='10pt'>
                                 example.com
                             </Typography>
                         </Stack>
-                        <Stack direction='row' spacing={1} mt='.5em' alignItems='center' mb='1.5em'>
+                        <Stack direction='row' spacing={1} mt='.5em' alignItems='center' mb='1em'>
                             <InfoIcon fontSize='14pt'/>
                             <Typography fontSize='10pt'>
                                 www.example.com
                             </Typography>
                         </Stack>
                     </Stack>
-                    <Stack>
-                        <Typography fontSize='10pt' mb='1em'>
+                    <Stack justifyContent='center'>
+                        <Typography fontSize='10pt' mb='1.25em'>
                             ~~&gt;
                         </Typography>
-                        <Typography fontSize='10pt' mb='1.5em'>
+                        <Typography fontSize='10pt' mb='1em'>
                             ~~&gt;
                         </Typography>
                     </Stack>
                     <Stack>
-                        <Stack direction='row' spacing={1} alignItems='center' mb='1em'>
+                        <Stack direction='row' spacing={1} alignItems='center'>
                             <Typography fontSize='10pt'>
                                 3.17.229.36
                             </Typography>
-                            <ContentCopyIcon fontSize='14pt' style={{ color: 'rgb(160, 160, 160)' }} onClick={() => handleCopy(0)}/>
+                            <IconButton
+                                onClick={() => handleCopy(0)}
+                                size='small'
+                            >
+                                <ContentCopyIcon fontSize='14pt' style={{ color: 'rgb(160, 160, 160)' }}/>
+                            </IconButton>
                         </Stack>
                         {website && (
-                            <Stack direction='row' spacing={1} mt='.5em' alignItems='center' mb='1.5em'>
+                            <Stack direction='row' spacing={1} mt='.5em' alignItems='center' mb='1em'>
                                 <Typography fontSize='10pt'>
                                     {website.title}.ambition.so
                                 </Typography>
-                                <ContentCopyIcon fontSize='14pt' style={{ color: 'rgb(160, 160, 160)' }} onClick={() => handleCopy(1)}/>
+                                <IconButton
+                                    onClick={() => handleCopy(1)}
+                                    size='small'
+                                >
+                                    <ContentCopyIcon fontSize='14pt' style={{ color: 'rgb(160, 160, 160)' }}/>
+                                </IconButton>
                             </Stack>
                         )}
                     </Stack>
