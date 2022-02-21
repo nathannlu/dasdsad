@@ -17,6 +17,8 @@ import AppRoutes from 'services/routes';
 // Published Website Route
 import Published from 'components/Published'; 
 
+import Embed from 'services/blockchain/pages/Embed'; 
+
 
 const GlobalRoutes = () => {
 	const routes = [
@@ -38,6 +40,11 @@ const GlobalRoutes = () => {
 			path: '/generator/download',
 			component: Collection,
 			private: true,
+		},
+		{
+			path: '/smart-contracts/embed',
+			component: Embed,
+			exact: true 
 		},
 
 
