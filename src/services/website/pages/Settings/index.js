@@ -49,6 +49,7 @@ const Settings = () => {
         handleAddDomain,
         onVerifyDomain,
         onMakeDefault,
+        onPublishPage,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -537,7 +538,7 @@ const Settings = () => {
                                             </Table>
                                         </TableContainer>
                                     </Box>
-                                    {/* <Typography fontSize='18pt' fontWeight='700' sx={{ mt: '2em', mb: '.5em' }}>
+                                    <Typography fontSize='18pt' fontWeight='700' sx={{ mt: '2em', mb: '.5em' }}>
                                         Publish Pages
                                     </Typography>
                                     <Box
@@ -547,10 +548,10 @@ const Settings = () => {
                                     >
                                         <FormGroup>
                                             {website.pages.map((page, idx) => (
-                                                <FormControlLabel key={idx} control={<Switch />} label={page.name} />
+                                                <FormControlLabel key={idx} control={<Switch checked={website.published.findIndex(p => p.name === page.name) === -1 ? false : true} onChange={() => onPublishPage(idx)}/>} label={page.name} />
                                             ))}
                                         </FormGroup>
-                                    </Box> */}
+                                    </Box>
                                 </Box>
                             )}
                             <Box

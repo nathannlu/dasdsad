@@ -17,6 +17,7 @@ import { BUILD_WEBSITE,
     SET_WEBSITE_SUBSCRIPTION,
     ADD_CUSTOM_DOMAIN,
     REMOVE_CUSTOM_DOMAIN,
+    ADD_PAGE_TO_PUBLISH,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -305,3 +306,20 @@ export const useSetCustomDomain = ({ websiteId, domain, isActive, onError }) => 
 
 	return [setCustomDomain, { ...mutationResult }];
 };
+
+export const useAddPageToPublish = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [addPageToPublish, { ...mutationResult }] = useMutation(ADD_PAGE_TO_PUBLISH, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            let newPublish = [...newWebsite.published];
+            newPublish.push(data.addPageToPublish);
+            newWebsite.published = newPublish;
+			setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [addPageToPublish, { ...mutationResult }];
+}

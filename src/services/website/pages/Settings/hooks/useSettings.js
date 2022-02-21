@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useWebsite } from 'services/website/provider';
-import { useDeleteWebsite, useSetWebsiteFavicon, useUpdateWebsiteSEO, useVerifyDns, useAddCustomDomain, useRemoveCustomDomain, useSetCustomDomain } from 'services/website/gql/hooks/website.hook'
+import { useDeleteWebsite, useSetWebsiteFavicon, 
+    useUpdateWebsiteSEO, useVerifyDns, 
+    useAddCustomDomain, useRemoveCustomDomain, 
+    useSetCustomDomain, useAddPageToPublish,
+} from 'services/website/gql/hooks/website.hook'
 import { useToast } from 'ds/hooks/useToast';
 
 const useSettings = () => {
@@ -77,11 +81,18 @@ const useSettings = () => {
 			message: err.message
 		})
     })
+    const [addPageToPublish] = useAddPageToPublish({
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
 
-    // Set favicon image and remove unused images on load
     useEffect(() => {
         if (!Object.keys(website).length) return;
         const update = async () => {
+
+            // Set images and remove unused images
             setFaviconImage(website.favicon ? website.favicon : "https://dummyimage.com/25x25");
             setDisplayImage(website.seo.image);
             const faviconUUID = website.favicon.substring(website.favicon.indexOf(".com/") + 5, website.favicon.length - 1);
@@ -196,6 +207,18 @@ const useSettings = () => {
         await setCustomDomain({variables: {websiteId: website._id, domain, isActive: false}});
     }
 
+    const onPublishPage = async (pageIdx) => {
+        const pageName = website.pages[pageIdx].name;
+        const indexOfPublished = website.published.findIndex(page => page.name === pageName);
+
+        if (indexOfPublished === -1) {
+            console.log('add publish');
+            await addPageToPublish({variables: {websiteId: website._id, pageIdx}});
+        } else {
+            console.log('remove publish');
+        }     
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -226,6 +249,7 @@ const useSettings = () => {
         handleAddDomain,
         onVerifyDomain,
         onMakeDefault,
+        onPublishPage,
     }
 }
 
