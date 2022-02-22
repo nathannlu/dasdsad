@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Box, Typography, Table, TableBody, TableCell, TableRow } from 'ds/components';
-import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack, TableContainer, Paper, Switch, FormGroup, FormControlLabel } from '@mui/material';
+import { Tabs, Tab, CircularProgress, Divider, Chip, IconButton, TextField, Autocomplete, Stack, TableContainer, Paper, Switch, FormGroup, FormControlLabel, Menu, MenuItem } from '@mui/material';
 import { useWebsite } from 'services/website/provider';
 import { Widget } from "@uploadcare/react-widget";
 import useSettings from './hooks/useSettings';
@@ -19,6 +19,8 @@ import DomainIcon from '@mui/icons-material/Domain';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningIcon from '@mui/icons-material/Warning';
 import ReplayIcon from '@mui/icons-material/Replay';
+import EditIcon from '@mui/icons-material/Edit';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 const Settings = () => {
     const { website } = useWebsite();
@@ -51,6 +53,18 @@ const Settings = () => {
         onMakeDefault,
         onPublishPage,
         onDomainState,
+        contracts,
+        contractAnchor,
+        openContractAnchor,
+        onCloseContractAnchor,
+        setContractAnchor,
+        onSwitchContract,
+        customSaveStatus,
+        customHead,
+        customBody,
+        onCustomHeadChange,
+        onCustomBodyChange,
+        onSaveCustom,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -187,26 +201,12 @@ const Settings = () => {
                                             }}
                                         />
                                         <Tab 
-                                            label="Plugins" 
-                                            value='plugins'
-                                            sx={{
-                                                textTransform: 'none',
-                                                '&.Mui-selected': {outline: 'none'}
-                                            }}
-                                            icon={<DoDisturbIcon color='error' fontSize="small"/>}
-                                            iconPosition="end"
-                                            disabled
-                                        />
-                                        <Tab 
                                             label="Custom" 
                                             value='custom'
                                             sx={{
                                                 textTransform: 'none',
                                                 '&.Mui-selected': {outline: 'none'}
                                             }}
-                                            icon={<DoDisturbIcon color='error' fontSize="small"/>}
-                                            iconPosition="end"
-                                            disabled
                                         />
                                         <Tab 
                                             label="Domain &#38; Publish" 
@@ -229,19 +229,19 @@ const Settings = () => {
                                     <Typography fontSize='18pt' fontWeight='700' sx={{ mb: '.5em' }}>
                                         General Information
                                     </Typography>
-                                    <Box display='flex' sx={{mb: '.5em'}} alignItems='center'>
+                                    <Stack direction='row' sx={{mb: '.5em'}} alignItems='center' spacing={1}>
                                         <Typography fontSize='10pt' sx={{mr: '.5em'}}>
                                             Website ID:
                                         </Typography>
                                         <Chip label={website._id} size="small" sx={{ bgcolor: 'gray.200' }}/>
-                                    </Box>
-                                    <Box display='flex' sx={{mb: '.5em'}} alignItems='center'>
+                                    </Stack>
+                                    <Stack direction='row' sx={{mb: '.5em'}} alignItems='center' spacing={1}>
                                         <Typography fontSize='10pt' sx={{mr: '.5em'}}>
                                             Owner ID:
                                         </Typography>
                                         <Chip label={website.author} size="small" sx={{ bgcolor: 'gray.200' }}/>
-                                    </Box>
-                                    <Box display='flex' sx={{ mb: '.5em' }} alignItems='center'>
+                                    </Stack>
+                                    <Stack direction='row' sx={{mb: '.5em'}} alignItems='center' spacing={1}>
                                         <Typography fontSize='10pt' sx={{mr: '.5em'}}>
                                             Status: 
                                         </Typography>
@@ -255,13 +255,36 @@ const Settings = () => {
                                         ) : (
                                             <Chip label='Not Published' size="small" />
                                         )}
-                                    </Box>
-                                    <Box display='flex' sx={{mb: '.5em'}} alignItems='center'>
+                                    </Stack>
+                                    <Stack direction='row' sx={{mb: '.5em'}} alignItems='center' spacing={1}>
                                         <Typography fontSize='10pt' sx={{mr: '.5em'}}>
                                             Connected Contract:
                                         </Typography>
-                                        <Chip label={website.settings && website.settings.connectedContractAddress} size="small" />
-                                    </Box>
+                                        <Chip label={website.settings && website.settings.connectedContractAddress} size="small" sx={{ml: '.5em'}}/>
+                                        <IconButton onClick={(e) => setContractAnchor(e.currentTarget)}>
+                                            <EditIcon fontSize='5pt' />
+                                        </IconButton>
+                                        <Menu
+                                            anchorEl={contractAnchor}
+                                            open={openContractAnchor}
+                                            onClose={onCloseContractAnchor}
+                                        >
+                                            <MenuItem disableRipple={true}>
+                                                Choose Contract Address
+                                            </MenuItem>
+                                            <Divider />
+                                            {contracts && contracts.map((contract, idx) => (
+                                                <MenuItem key={idx} onClick={() => onSwitchContract(contract)}>
+                                                    <Stack direction='row' spacing={1}>
+                                                        <NewspaperIcon fontSize='12pt' />
+                                                        <Typography fontSize='10pt'>
+                                                            {contract.address}
+                                                        </Typography>
+                                                    </Stack>
+                                                </MenuItem>
+                                            ))}
+                                        </Menu>
+                                    </Stack>
                                 </Box>
                             )}
                             {tabValue === 'style' && (
@@ -436,6 +459,52 @@ const Settings = () => {
                                     )}
                                 </Box>
                             )}
+                            {tabValue === 'custom' && (
+                                <Box
+                                    display='flex'
+                                    flexDirection='column'
+                                    padding='2em'
+                                    alignItems='flex-start'
+                                >
+                                    <Typography fontSize='18pt' fontWeight='700' sx={{ mb: '.5em' }}>
+                                        Custom Code
+                                    </Typography>
+                                    <Box
+                                        display='flex'
+                                        flexDirection='column'
+                                        width='100%'
+                                    >
+                                        <Stack spacing={3}>
+                                            <Stack spacing={1}>
+                                                <Typography fontSize='10pt'>
+                                                    {'<head>'} custom HTML code:
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='<script src="https://www.googletagmanager.com/gtag/js?id=UA-XXX-X"></script>'
+                                                    size='small'
+                                                    rows={4}
+                                                    multiline
+                                                    value={customHead}
+                                                    onChange={onCustomHeadChange}
+                                                />
+                                            </Stack>
+                                            <Stack spacing={1}>
+                                                <Typography fontSize='10pt'>
+                                                    {'</body>'} custom HTML code:
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='<script src="https://www.googletagmanager.com/gtag/js?id=UA-XXX-X"></script>'
+                                                    size='small'
+                                                    rows={4}
+                                                    multiline
+                                                    value={customBody}
+                                                    onChange={onCustomBodyChange}
+                                                />
+                                            </Stack>
+                                        </Stack>
+                                    </Box>
+                                </Box>
+                            )}
                             {tabValue === 'domain' && (
                                 <Box
                                     display='flex'
@@ -607,6 +676,17 @@ const Settings = () => {
                                         size='small'
                                         startIcon={<SaveIcon />}
                                         disabled={!seoSaveStatus}
+                                    >
+                                        Save Changes
+                                    </Button>
+                                )}
+                                {tabValue === 'custom' && (
+                                    <Button
+                                        variant='contained'
+                                        onClick={onSaveCustom}
+                                        size='small'
+                                        startIcon={<SaveIcon />}
+                                        disabled={!customSaveStatus}
                                     >
                                         Save Changes
                                     </Button>

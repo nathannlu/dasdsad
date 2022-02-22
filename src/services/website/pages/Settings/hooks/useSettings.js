@@ -4,9 +4,11 @@ import { useDeleteWebsite, useSetWebsiteFavicon,
     useUpdateWebsiteSEO, useVerifyDns, 
     useAddCustomDomain, useRemoveCustomDomain, 
     useSetCustomDomain, useAddPageToPublish,
-    useRemovePageFromPublish,
+    useRemovePageFromPublish, useSetContractAddress,
+    useUpdateWebsiteCustom,
 } from 'services/website/gql/hooks/website.hook'
 import { useToast } from 'ds/hooks/useToast';
+import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 
 const useSettings = () => {
     const { addToast } = useToast();
@@ -21,6 +23,12 @@ const useSettings = () => {
     const [showDomainModal, setShowDomainModal] = useState(false);
     const [domainIsActive, setDomainIsActive] = useState(false);
     const [domainName, setDomainName] = useState('');
+    const [contracts, setContracts] = useState([]);
+    const [contractAnchor, setContractAnchor] = useState(null);
+    const [customSaveStatus, setCustomSaveStatus] = useState(false);
+    const [customHead, setCustomHead] = useState('');
+    const [customBody, setCustomBody] = useState('');
+    const openContractAnchor = Boolean(contractAnchor);
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
 		onError: err => addToast({
@@ -94,17 +102,41 @@ const useSettings = () => {
 			message: err.message
 		})
     })
+    const [setContractAddress] = useSetContractAddress({
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    const [updateWebsiteCustom] = useUpdateWebsiteCustom({
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    useGetContracts({
+		onCompleted: data => {
+            const availableContracts =  data.getContracts.filter((contract) => contract.address);
+            if (!availableContracts.length) return;
+            setContracts(availableContracts);
+		}
+	})
 
     useEffect(() => {
         if (!Object.keys(website).length) return;
         const update = async () => {
-
             // Set images and remove unused images
             setFaviconImage(website.favicon ? website.favicon : "https://dummyimage.com/25x25");
             setDisplayImage(website.seo.image);
             const faviconUUID = website.favicon.substring(website.favicon.indexOf(".com/") + 5, website.favicon.length - 1);
             const displayUUID = website.seo.image.substring(website.seo.image.indexOf(".com/") + 5, website.seo.image.length - 1);
             removeUnusedImages([faviconUUID, displayUUID], true);
+
+            // Set Custom Codes
+            if (website.custom) {
+                setCustomHead(website.custom.head);
+                setCustomBody(website.custom.body);
+            }
         }
         update();
     }, [website])
@@ -244,6 +276,38 @@ const useSettings = () => {
         }
     }
 
+    const onCloseContractAnchor = () => {
+        setContractAnchor(null);
+    }
+
+    const onSwitchContract = async (contract) => {
+        await setContractAddress({variables: {websiteId: website._id, address: contract.address}});
+        onCloseContractAnchor();
+    }
+
+    const onCustomHeadChange = (e) => {
+        setCustomHead(e.target.value);
+        setCustomSaveStatus(true);
+    }
+
+    const onCustomBodyChange = (e) => {
+        setCustomBody(e.target.value);
+        setCustomSaveStatus(true);
+    }
+
+    const onSaveCustom = async () => {
+        const newCustom = {
+            head: customHead,
+            body: customBody
+        }
+        await updateWebsiteCustom({variables: {websiteId: website._id, data: newCustom}});
+        addToast({
+            severity: 'success',
+            message: "Updated Website's Custom Code"
+        })
+        setCustomSaveStatus(false);
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -276,6 +340,18 @@ const useSettings = () => {
         onMakeDefault,
         onPublishPage,
         onDomainState,
+        contracts,
+        contractAnchor,
+        openContractAnchor,
+        onCloseContractAnchor,
+        setContractAnchor,
+        onSwitchContract,
+        customSaveStatus,
+        customHead,
+        customBody,
+        onCustomHeadChange,
+        onCustomBodyChange,
+        onSaveCustom,
     }
 }
 

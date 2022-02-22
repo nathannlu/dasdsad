@@ -35,6 +35,10 @@ export const CREATE_WEBSITE = gql`
                 name
                 data
             }
+            custom {
+                head
+                body
+            }
         }
     }
 `
@@ -75,6 +79,10 @@ export const GET_WEBSITES = gql`
                 name
                 data
             }
+            custom {
+                head
+                body
+            }
         }
     }
 `
@@ -113,6 +121,10 @@ export const GET_PUBLISHED = gql`
                 name
                 data
             }
+            custom {
+                head
+                body
+            }
         }
     }
 `
@@ -148,15 +160,6 @@ export const VERIFY_DNS = gql`
 export const DELETE_PAGE = gql`
 	mutation DeletePage($websiteTitle: String!, $uid: ID!) {
 		deletePage(websiteTitle: $websiteTitle, uid: $uid)
-	}
-`
-
-export const SET_CONTRACT_ADDRESS = gql`
-	mutation SetContractAddress($title: String!, $contractAddress: String!, $priceInEth: String!) {
-		setContractAddress(title: $title, contractAddress: $contractAddress, priceInEth: $priceInEth) {
-			contractAddress
-			priceInEth
-		}
 	}
 `
 
@@ -226,4 +229,19 @@ export const REMOVE_PAGE_FROM_PUBLISH = gql`
             data
         }
 	}
+`
+
+export const SET_CONTRACT_ADDRESS = gql`
+	mutation SetContractAddress($websiteId: String!, $address: String!) {
+		setContractAddress(websiteId: $websiteId, address: $address)
+	}
+`
+
+export const UPDATE_WEBSITE_CUSTOM = gql`
+mutation UpdateWebsiteCustom($websiteId: String!, $data: CustomInput!) {
+    updateWebsiteCustom(websiteId: $websiteId, data: $data) {
+        head
+        body
+    }
+}
 `

@@ -9,7 +9,6 @@ import { BUILD_WEBSITE,
     UPDATE_PAGE_DATA, 
     SET_CUSTOM_DOMAIN, 
     VERIFY_DNS, 
-    SET_CONTRACT_ADDRESS, 
     GET_PUBLISHED, 
     DELETE_WEBSITE,
     SET_WEBSITE_FAVICON,
@@ -19,6 +18,8 @@ import { BUILD_WEBSITE,
     REMOVE_CUSTOM_DOMAIN,
     ADD_PAGE_TO_PUBLISH,
     REMOVE_PAGE_FROM_PUBLISH,
+    SET_CONTRACT_ADDRESS,
+    UPDATE_WEBSITE_CUSTOM,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -147,32 +148,6 @@ export const useDeletePage = ({ onCompleted, onError }) => {
 	})
 
 	return [ deletePage, { data }];
-};
-
-export const useSetContractAddress = ({ onCompleted, onError }) => {
-	const { setWebsite } = useWebsite();
-
-	const [setContractAddress, { ...mutationResult }] = useMutation(SET_CONTRACT_ADDRESS, {
-		onCompleted: data => {
-			const contractAddress = data.setContractAddress.contractAddress;
-			const priceInEth = data.setContractAddress.priceInEth;
-		
-			setWebsite(prevState => {
-				const updatedWebsite = { ...prevState }
-				updatedWebsite.contractAddress = contractAddress;
-				updatedWebsite.priceInEth = priceInEth;
-			
-				return {...updatedWebsite}
-			})
-
-			if (onCompleted) {
-				onCompleted(data?.setContractAddress);
-			}
-		},
-		onError
-	})
-
-	return [setContractAddress, { ...mutationResult }];
 };
 
 export const useBuildWebsite = ({ title, onCompleted }) => {
@@ -349,4 +324,41 @@ export const useRemovePageFromPublish = ({onError}) => {
 	})
 
     return [removePageFromPublish, { ...mutationResult }];
+}
+
+export const useSetContractAddress = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [setContractAddress, { ...mutationResult }] = useMutation(SET_CONTRACT_ADDRESS, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            const newObj = {
+                connectedContractAddress: data.setContractAddress
+            }
+            newWebsite.settings = newObj;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [setContractAddress, { ...mutationResult }];
+}
+
+export const useUpdateWebsiteCustom = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [updateWebsiteCustom, { ...mutationResult }] = useMutation(UPDATE_WEBSITE_CUSTOM, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            const newCustom = {
+                head: data.updateWebsiteCustom.head,
+                body: data.updateWebsiteCustom.body
+            }
+            newWebsite.custom = newCustom;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [updateWebsiteCustom, { ...mutationResult }];
 }

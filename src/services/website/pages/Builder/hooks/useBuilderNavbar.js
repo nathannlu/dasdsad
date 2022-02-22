@@ -23,6 +23,13 @@ const useBuilderNavbar = () => {
     })
 
     const onPublish = (e) => {
+        if (!website.isSubscribed) {
+            addToast({
+                severity: 'error',
+                message: 'Your website must be subscribed'
+            })
+            return;
+        }
         setMenuAnchor(e.currentTarget);
     }
 
