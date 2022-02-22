@@ -231,8 +231,6 @@ export const WebsiteProvider = ({ children }) => {
             }
             await updateWebsiteSEO({ variables: { websiteId: website._id, data: defaultData } });
         }
-
-        // Gotta add add publish to database :)
     }
 
 	return (

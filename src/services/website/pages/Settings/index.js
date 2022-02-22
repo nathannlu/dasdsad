@@ -59,6 +59,12 @@ const Settings = () => {
         onCloseContractAnchor,
         setContractAnchor,
         onSwitchContract,
+        customSaveStatus,
+        customHead,
+        customBody,
+        onCustomHeadChange,
+        onCustomBodyChange,
+        onSaveCustom,
     } = useSettings();
     const { title, previewTitle, 
         description, keywords, 
@@ -195,26 +201,12 @@ const Settings = () => {
                                             }}
                                         />
                                         <Tab 
-                                            label="Plugins" 
-                                            value='plugins'
-                                            sx={{
-                                                textTransform: 'none',
-                                                '&.Mui-selected': {outline: 'none'}
-                                            }}
-                                            icon={<DoDisturbIcon color='error' fontSize="small"/>}
-                                            iconPosition="end"
-                                            disabled
-                                        />
-                                        <Tab 
                                             label="Custom" 
                                             value='custom'
                                             sx={{
                                                 textTransform: 'none',
                                                 '&.Mui-selected': {outline: 'none'}
                                             }}
-                                            icon={<DoDisturbIcon color='error' fontSize="small"/>}
-                                            iconPosition="end"
-                                            disabled
                                         />
                                         <Tab 
                                             label="Domain &#38; Publish" 
@@ -467,6 +459,52 @@ const Settings = () => {
                                     )}
                                 </Box>
                             )}
+                            {tabValue === 'custom' && (
+                                <Box
+                                    display='flex'
+                                    flexDirection='column'
+                                    padding='2em'
+                                    alignItems='flex-start'
+                                >
+                                    <Typography fontSize='18pt' fontWeight='700' sx={{ mb: '.5em' }}>
+                                        Custom Code
+                                    </Typography>
+                                    <Box
+                                        display='flex'
+                                        flexDirection='column'
+                                        width='100%'
+                                    >
+                                        <Stack spacing={3}>
+                                            <Stack spacing={1}>
+                                                <Typography fontSize='10pt'>
+                                                    {'<head>'} custom HTML code:
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='<script src="https://www.googletagmanager.com/gtag/js?id=UA-XXX-X"></script>'
+                                                    size='small'
+                                                    rows={4}
+                                                    multiline
+                                                    value={customHead}
+                                                    onChange={onCustomHeadChange}
+                                                />
+                                            </Stack>
+                                            <Stack spacing={1}>
+                                                <Typography fontSize='10pt'>
+                                                    {'</body>'} custom HTML code:
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='<script src="https://www.googletagmanager.com/gtag/js?id=UA-XXX-X"></script>'
+                                                    size='small'
+                                                    rows={4}
+                                                    multiline
+                                                    value={customBody}
+                                                    onChange={onCustomBodyChange}
+                                                />
+                                            </Stack>
+                                        </Stack>
+                                    </Box>
+                                </Box>
+                            )}
                             {tabValue === 'domain' && (
                                 <Box
                                     display='flex'
@@ -638,6 +676,17 @@ const Settings = () => {
                                         size='small'
                                         startIcon={<SaveIcon />}
                                         disabled={!seoSaveStatus}
+                                    >
+                                        Save Changes
+                                    </Button>
+                                )}
+                                {tabValue === 'custom' && (
+                                    <Button
+                                        variant='contained'
+                                        onClick={onSaveCustom}
+                                        size='small'
+                                        startIcon={<SaveIcon />}
+                                        disabled={!customSaveStatus}
                                     >
                                         Save Changes
                                     </Button>

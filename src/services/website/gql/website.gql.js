@@ -35,6 +35,10 @@ export const CREATE_WEBSITE = gql`
                 name
                 data
             }
+            custom {
+                head
+                body
+            }
         }
     }
 `
@@ -75,6 +79,10 @@ export const GET_WEBSITES = gql`
                 name
                 data
             }
+            custom {
+                head
+                body
+            }
         }
     }
 `
@@ -112,6 +120,10 @@ export const GET_PUBLISHED = gql`
             published {
                 name
                 data
+            }
+            custom {
+                head
+                body
             }
         }
     }
@@ -223,4 +235,13 @@ export const SET_CONTRACT_ADDRESS = gql`
 	mutation SetContractAddress($websiteId: String!, $address: String!) {
 		setContractAddress(websiteId: $websiteId, address: $address)
 	}
+`
+
+export const UPDATE_WEBSITE_CUSTOM = gql`
+mutation UpdateWebsiteCustom($websiteId: String!, $data: CustomInput!) {
+    updateWebsiteCustom(websiteId: $websiteId, data: $data) {
+        head
+        body
+    }
+}
 `

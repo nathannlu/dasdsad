@@ -19,6 +19,7 @@ import { BUILD_WEBSITE,
     ADD_PAGE_TO_PUBLISH,
     REMOVE_PAGE_FROM_PUBLISH,
     SET_CONTRACT_ADDRESS,
+    UPDATE_WEBSITE_CUSTOM,
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -341,4 +342,23 @@ export const useSetContractAddress = ({onError}) => {
 	})
 
     return [setContractAddress, { ...mutationResult }];
+}
+
+export const useUpdateWebsiteCustom = ({onError}) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [updateWebsiteCustom, { ...mutationResult }] = useMutation(UPDATE_WEBSITE_CUSTOM, {
+		onCompleted: data => {
+            let newWebsite = {...website};
+            const newCustom = {
+                head: data.updateWebsiteCustom.head,
+                body: data.updateWebsiteCustom.body
+            }
+            newWebsite.custom = newCustom;
+            setWebsite(newWebsite);
+		},
+		onError
+	})
+
+    return [updateWebsiteCustom, { ...mutationResult }];
 }
