@@ -136,14 +136,11 @@ export const useEmbed = () => {
 
             await compareNetwork(chainId, async () => {
                 setIsMinting(true);
-    
+                
                 if (isPublicSaleOpen) {
 					await mint(contractAddress, mintCount);
 					setIsMinting(false);
-					return;
-				}
-
-				if (isPresaleOpen) {
+				} else if (isPresaleOpen) {
 					await presaleMint(
 						(price * mintCount).toString(),
 						contractAddress,
@@ -151,7 +148,9 @@ export const useEmbed = () => {
 						mintCount
 					);
 					setIsMinting(false);
-				}
+				} else {
+                    throw new Error('Public sale and Presale is not open');
+                }
             })
         }
         catch (err) {
