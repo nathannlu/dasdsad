@@ -4,9 +4,10 @@ import { useDeleteWebsite, useSetWebsiteFavicon,
     useUpdateWebsiteSEO, useVerifyDns, 
     useAddCustomDomain, useRemoveCustomDomain, 
     useSetCustomDomain, useAddPageToPublish,
-    useRemovePageFromPublish,
+    useRemovePageFromPublish, useSetContractAddress,
 } from 'services/website/gql/hooks/website.hook'
 import { useToast } from 'ds/hooks/useToast';
+import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 
 const useSettings = () => {
     const { addToast } = useToast();
@@ -21,6 +22,9 @@ const useSettings = () => {
     const [showDomainModal, setShowDomainModal] = useState(false);
     const [domainIsActive, setDomainIsActive] = useState(false);
     const [domainName, setDomainName] = useState('');
+    const [contracts, setContracts] = useState([]);
+    const [contractAnchor, setContractAnchor] = useState(null);
+    const openContractAnchor = Boolean(contractAnchor);
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
 		onError: err => addToast({
@@ -94,6 +98,19 @@ const useSettings = () => {
 			message: err.message
 		})
     })
+    const [setContractAddress] = useSetContractAddress({
+        onError: err => addToast({
+			severity: 'error',
+			message: err.message
+		})
+    })
+    useGetContracts({
+		onCompleted: data => {
+            const availableContracts =  data.getContracts.filter((contract) => contract.address);
+            if (!availableContracts.length) return;
+            setContracts(availableContracts);
+		}
+	})
 
     useEffect(() => {
         if (!Object.keys(website).length) return;
@@ -244,6 +261,15 @@ const useSettings = () => {
         }
     }
 
+    const onCloseContractAnchor = () => {
+        setContractAnchor(null);
+    }
+
+    const onSwitchContract = async (contract) => {
+        await setContractAddress({variables: {websiteId: website._id, address: contract.address}});
+        onCloseContractAnchor();
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -276,6 +302,12 @@ const useSettings = () => {
         onMakeDefault,
         onPublishPage,
         onDomainState,
+        contracts,
+        contractAnchor,
+        openContractAnchor,
+        onCloseContractAnchor,
+        setContractAnchor,
+        onSwitchContract,
     }
 }
 

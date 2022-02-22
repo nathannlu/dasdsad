@@ -151,15 +151,6 @@ export const DELETE_PAGE = gql`
 	}
 `
 
-export const SET_CONTRACT_ADDRESS = gql`
-	mutation SetContractAddress($title: String!, $contractAddress: String!, $priceInEth: String!) {
-		setContractAddress(title: $title, contractAddress: $contractAddress, priceInEth: $priceInEth) {
-			contractAddress
-			priceInEth
-		}
-	}
-`
-
 export const BUILD_WEBSITE = gql`
 	query BuildWebsite($title: String!) {
 		buildWebsite(title: $title)
@@ -225,5 +216,11 @@ export const REMOVE_PAGE_FROM_PUBLISH = gql`
             name
             data
         }
+	}
+`
+
+export const SET_CONTRACT_ADDRESS = gql`
+	mutation SetContractAddress($websiteId: String!, $address: String!) {
+		setContractAddress(websiteId: $websiteId, address: $address)
 	}
 `
