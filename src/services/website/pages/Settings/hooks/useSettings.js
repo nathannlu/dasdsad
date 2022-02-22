@@ -221,7 +221,7 @@ const useSettings = () => {
         if (indexOfPublished === -1) {
             await addPageToPublish({variables: {websiteId: website._id, pageIdx}});
         } else {
-            await removePageFromPublish({variables: {websiteId: website._id, pageIdx}});
+            await removePageFromPublish({variables: {websiteId: website._id, pageIdx: indexOfPublished}});
         }     
     }
 
