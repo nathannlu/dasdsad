@@ -3,11 +3,10 @@ import { Typography, Stack, Box, Grid, IconButton } from 'ds/components';
 import { Edit as EditIcon, CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { useTrait } from 'services/generator/controllers/traits';
-
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
 const TraitsDisplay = ({index, editing}) => {
-	const { query: {layers, selected}} = useLayerManager();
+	const { query: {layers}, actions: {setSelected} } = useLayerManager();
 	const { deleteTrait } = useTrait();
 
 	// @TODO tidy up
@@ -22,7 +21,7 @@ const TraitsDisplay = ({index, editing}) => {
 						{image.type == 'image/png' ? (
 							<img
 								src={image.preview} 
-								onClick={() => setSelectedImage(i)}
+								onClick={() => setSelected(i)}
 								style={{borderRadius: '4px', width: '100%'}}
 							/>
 						): null}

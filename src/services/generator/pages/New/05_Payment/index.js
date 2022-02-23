@@ -36,7 +36,7 @@ const Payment = props => {
 
 					<Stack direction="row">
 						<Link to="/login?redirect=generator/download">
-							<Button fullWidth variant="contained" style={{backgroundColor: 'rgb(218,57,147)', color: 'white'}} onClick={() => {
+							<Button fullWidth variant="contained" style={{backgroundColor: 'rgb(25,26,36)', color: 'white'}} onClick={() => {
 								posthog.capture('User clicked on "Login to Generate Collection" button');
 							}}>
 								Login to Generate Collection

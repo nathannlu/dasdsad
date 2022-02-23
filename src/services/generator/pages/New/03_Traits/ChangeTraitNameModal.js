@@ -45,10 +45,10 @@ const ChangeTraitNameModal = ({isModalOpen, setIsModalOpen, editTrait}) => {
 							Trait name
 						</FormLabel>
 
-						<Stack direction="row">
+						<Stack direction="row" spacing={1}>
 							<TextField fullWidth size="small" {...newTraitNameForm.name} />
 							<Button type="submit" variant="contained" size="small">
-								Done
+								Edit
 							</Button>
 						</Stack>
 					</Box>

@@ -3,8 +3,8 @@ import { Box, Typography, Button, Dialog, DialogContent, DialogContentText, Dial
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useLayerManager } from 'services/generator/controllers/manager';
 
-const RenderModal = () => {
-    const { generateImages, canvasRef, renderModalState, setRenderModalState } = useGenerator();
+const RenderModal = ({renderModalState, setRenderModalState}) => {
+    const { canvasRef } = useGenerator();
     const { query: { layers }} = useLayerManager();
 
     useEffect(() => {

@@ -8,7 +8,7 @@ import JSZip from 'jszip';
 import posthog from 'posthog-js';
 
 export const GeneratorProvider = ({children}) => {
-	const [renderModalState, setRenderModalState] = useState();
+	const [renderModalState, setRenderModalState] = useState(false);
 	const [metadataType, setMetadataType] = useState('eth');
 	const canvasRef = useRef();
 

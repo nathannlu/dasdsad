@@ -6,7 +6,6 @@ import posthog from 'posthog-js';
 const initialLayersState = [
 	{
 		name: 'Background',
-		weight: 100,
 		images: [],
 	}
 ];
