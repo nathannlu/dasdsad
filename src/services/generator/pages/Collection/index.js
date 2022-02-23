@@ -56,7 +56,7 @@ const Collection = () => {
 						*/}
 
 						<Stack alignItems="center" justifyContent="center" sx={{ position: 'relative' }}>
-							<CircularProgress variant="determinate" value={Math.round((progress / size.value) * 100)} size={100} />
+							{/* <CircularProgress variant="determinate" value={Math.round((progress / size.value) * 100)} size={100} />
 							<Box
 								sx={{
 									top: 0,
@@ -77,7 +77,7 @@ const Collection = () => {
 								<>
 									Zipping... {Math.round(zipProgress)}%
 								</>
-							)}
+							)} */}
 						</Stack>
 
 						<Stack direction="row" gap={2}>

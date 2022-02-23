@@ -53,7 +53,10 @@ const Generating = () => {
 
 			<Stack gap={2}>
 				<Link to="/login?redirect=generator/download">
-					<Button variant="contained">
+					<Button variant="contained" sx={{
+						bgColor: 'rgb(220, 220, 220)',
+						color: 'black'
+					}}>
 						Log in to download
 					</Button>
 				</Link>

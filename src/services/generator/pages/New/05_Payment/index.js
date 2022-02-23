@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import config from 'config';
-import { useMetadata } from 'services/generator/controllers/metadata';
-import { useGenerator } from 'services/generator/controllers/generator';
 import { Fade, Box, Stack, Button, Typography } from 'ds/components';
 import { Chip } from '@mui/material'
-import {loadStripe} from '@stripe/stripe-js';
 import posthog from 'posthog-js';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Payment = props => {
 	const [fadeIn, setFadeIn] = useState(false);
-	const { generateImages } = useGenerator();
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 
 	useEffect(() => {
@@ -40,12 +35,11 @@ const Payment = props => {
 					</Box>
 
 					<Stack direction="row">
-						<Button fullWidth variant="contained" onClick={() => {
-							generateImages();
+						<Button fullWidth variant="contained" sx={{backgroundColor: rgb(220, 220, 220)}} onClick={() => {
 							props.nextStep()
 							posthog.capture('User clicked on "Generate collection" button');
 						}}>
-							Generate collection
+							Login to Generate
 						</Button>
 					</Stack>
 				</Stack>

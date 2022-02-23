@@ -14,15 +14,9 @@ export const GeneratorProvider = ({children}) => {
 	const { addToast } = useToast()
 
 	const generateImages = async () => {
+		if(!validateForm()) return;
 
-		// Runs check
-		if(validateForm()) {
-			addToast({
-				severity: 'info',
-				message: 'Generating collection. This will take a some time...'
-			})
-			
-		}
+		
 	};
 
 	const validateForm = () => {
