@@ -21,12 +21,24 @@ const Traits = props => {
 				</Box>
 				<T editing={true} />
 			</Stack>
-
 			<Stack justifyContent="space-between" direction="row">
-				<Button onClick={() => props.previousStep()}>
+				<Button 
+					onClick={() => props.previousStep()}
+					variant='contained'
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Prev
 				</Button>
-				<Button onClick={() => validateLayerTraits() && props.nextStep()}>
+				<Button 
+					onClick={() => validateLayerTraits() && props.nextStep()}
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Next
 				</Button>
 			</Stack>

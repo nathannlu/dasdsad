@@ -3,8 +3,7 @@ import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, IconButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useCharge } from 'gql/hooks/billing.hook';
-import { usePaymentForm } from '../hooks/usePaymentForm';
-
+import { usePaymentForm } from '../New/hooks/usePaymentForm';
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
 import useMediaQuery from '@mui/material/useMediaQuery';

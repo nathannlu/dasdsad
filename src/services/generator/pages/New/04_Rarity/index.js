@@ -52,12 +52,24 @@ const Rarity = props => {
 					)).reverse()}
 				</Box>
 			</Stack>
-			
 			<Stack justifyContent="space-between" direction="row">
-				<Button onClick={() => props.previousStep()}>
+				<Button 
+					onClick={() => props.previousStep()}
+					variant='contained'
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Prev
 				</Button>
-				<Button onClick={() => props.nextStep()}>
+				<Button 
+					onClick={() => props.nextStep()}
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Next
 				</Button>
 			</Stack>

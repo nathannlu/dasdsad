@@ -38,7 +38,13 @@ const Settings = props => {
 			</Stack>
 
 			<Box sx={{alignSelf: 'flex-end', justifySelf: 'flex-end'}} >
-				<Button onClick={() => validateCollectionSize() && props.nextStep()}>
+				<Button 
+					onClick={() => validateCollectionSize() && props.nextStep()}
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Next
 				</Button>
 			</Box>

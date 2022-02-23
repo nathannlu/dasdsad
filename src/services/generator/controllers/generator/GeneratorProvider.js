@@ -10,6 +10,7 @@ import posthog from 'posthog-js';
 export const GeneratorProvider = ({children}) => {
 	const [renderModalState, setRenderModalState] = useState(false);
 	const [metadataType, setMetadataType] = useState('eth');
+	const [isGenerating, setIsGenerating] = useState(false);
 	const canvasRef = useRef();
 
 	// Generator Information
@@ -49,11 +50,13 @@ export const GeneratorProvider = ({children}) => {
 		canvasRef,
 		renderModalState,
 		metadataType,
+		isGenerating,
 
 		validateForm,
 		generateImages,
 		setRenderModalState,
 		setMetadataType,
+		setIsGenerating,
 	}
 		
 	return (

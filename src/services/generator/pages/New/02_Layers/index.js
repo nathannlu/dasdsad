@@ -9,24 +9,36 @@ const Layers = props => {
 	
 	return (
 		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
-		<Stack gap={2}>
-			<Box>
-				<Chip sx={{opacity: .8, mb: 1}} label={"Step 2/4"} />
-				<Typography variant="h2">
-					Create layers
-				</Typography>
-				<Typography variant="body">
-					Add a layer here to get started.
-				</Typography>
-			</Box>
-			<L />
-		</Stack>
-
+			<Stack gap={2}>
+				<Box>
+					<Chip sx={{opacity: .8, mb: 1}} label={"Step 2/4"} />
+					<Typography variant="h2">
+						Create layers
+					</Typography>
+					<Typography variant="body">
+						Add a layer here to get started.
+					</Typography>
+				</Box>
+				<L />
+			</Stack>
 			<Stack justifyContent="space-between" direction="row">
-				<Button onClick={() => props.previousStep()}>
+				<Button 
+					onClick={() => props.previousStep()}
+					variant='contained'
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Prev
 				</Button>
-				<Button onClick={() => validateLayers() && props.nextStep()}>
+				<Button 
+					onClick={() => validateLayers() && props.nextStep()}
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Next
 				</Button>
 			</Stack>

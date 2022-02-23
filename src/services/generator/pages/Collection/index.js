@@ -7,7 +7,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
-import PaymentModal from 'services/generator/pages/New/05_Payment/PaymentModal';
+import PaymentModal from './PaymentModal';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import Model from '../New/Model';
 import RenderModal from './RenderModal'
@@ -32,119 +32,148 @@ const Collection = () => {
 					<Grid container>
 						<RenderModal renderModalState={renderModalState} setRenderModalState={setRenderModalState}/>
 						<Grid md={6} item p={4}>
-							<Stack
-								spacing={8}
-								height='100%'
-							>
-								<Stack spacing={1}>
-									<Typography variant="h3">
-										Your collection
-									</Typography>
-									<Typography variant="body">
-										Generate your collection, download, or deploy to a blockchain.
-									</Typography>
-								</Stack>
-								<Stack spacing={2}>
-									<Stack 
-										borderRadius='10px'
-										backgroundColor='white'
-										padding='2em'
-										sx={{
-											boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);'
-										}}
-									>
-										<Typography variant="h4">
-											Generation Summary
+							{layers[0]?.images?.length ? (
+								<Stack
+									spacing={8}
+									height='100%'
+								>
+									<Stack spacing={1}>
+										<Typography variant="h3">
+											Your collection
 										</Typography>
 										<Typography variant="body">
-											A general summary of your NFT collection.
+											Generate download, or deploy your collection to a blockchain.
 										</Typography>
-										<Stack spacing={1.5} padding='1em'>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
-												<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
-													<Typography fontSize='14pt'>
-														Name: 
-													</Typography>
-													<Typography fontSize='12pt'>
-														{!name?.value?.length ? 'n/a' : name?.value}
-													</Typography>
-												</Stack>
-											</Stack>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
-												<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
-													<Typography fontSize='14pt'>
-														Description: 
-													</Typography>
-													<Typography fontSize='12pt'>
-														{!description?.value?.length ? 'n/a' : description?.value}
-													</Typography>
-												</Stack>
-											</Stack>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
-												<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
-													<Typography fontSize='14pt'>
-														Layers: 
-													</Typography>
-													{layers?.map((layer, idx) => (
-														<Typography key={idx} fontSize='12pt'>
-															{layer.name}
+									</Stack>
+									<Stack spacing={2}>
+										<Stack 
+											borderRadius='10px'
+											backgroundColor='white'
+											padding='2em'
+											sx={{
+												boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);'
+											}}
+										>
+											<Typography variant="h4">
+												Generation Summary
+											</Typography>
+											<Typography variant="body">
+												A general summary of your NFT collection.
+											</Typography>
+											<Stack spacing={1.5} padding='1em'>
+												<Stack direction='row' spacing={2} alignItems='center'>
+													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
+													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
+														<Typography fontSize='14pt'>
+															Name: 
 														</Typography>
-													))}
+														<Typography fontSize='12pt'>
+															{!name?.value?.length ? 'n/a' : name?.value}
+														</Typography>
+													</Stack>
 												</Stack>
-											</Stack>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
-												<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
-													<Typography fontSize='14pt'>
-														Metadata Type: 
-													</Typography>
-													<FormControl>
-														<RadioGroup row value={metadataType} onChange={(e) => setMetadataType(e.target.value)}>
-															<FormControlLabel sx={{ ml: '.75em', mr: 0 }} value="eth" control={<Radio sx={{'&.MuiRadio-root': {padding: 0, mr: '.5em'}}}/>} label="ETH" />
-															<FormControlLabel sx={{ ml: '.75em', mr: 0 }} value="sol" control={<Radio sx={{'&.MuiRadio-root': {padding: 0, mr: '.5em'}}}/>} label="SOL" />
-														</RadioGroup>
-													</FormControl>
+												<Stack direction='row' spacing={2} alignItems='center'>
+													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
+													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
+														<Typography fontSize='14pt'>
+															Description: 
+														</Typography>
+														<Typography fontSize='12pt'>
+															{!description?.value?.length ? 'n/a' : description?.value}
+														</Typography>
+													</Stack>
 												</Stack>
-											</Stack>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
-												<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
-													<Typography fontSize='14pt'>
-														Collection Count: 
-													</Typography>
-													<Typography fontSize='12pt'>
-														{size?.value} Unique Images
-													</Typography>
+												<Stack direction='row' spacing={2} alignItems='center'>
+													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
+													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
+														<Typography fontSize='14pt'>
+															Layers: 
+														</Typography>
+														<Stack direction='row' spacing={2}>
+															{layers?.map((layer, idx) => (
+																<Typography key={idx} fontSize='12pt'>
+																	{layer.name}
+																</Typography>
+															))}
+														</Stack>
+													</Stack>
 												</Stack>
-											</Stack>
-											<Stack direction='row' spacing={2} alignItems='center'>
-												<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
-												<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
-													<Typography fontSize='14pt'>
-														Dimensions: 
-													</Typography>
-													<Typography fontSize='12pt'>
-														{layers[0]?.images[0]?.image?.naturalWidth} x {layers[0]?.images[0]?.image?.naturalHeight}
-													</Typography>
+												<Stack direction='row' spacing={2} alignItems='center'>
+													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
+													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
+														<Typography fontSize='14pt'>
+															Metadata Type: 
+														</Typography>
+														<FormControl>
+															<RadioGroup row value={metadataType} onChange={(e) => setMetadataType(e.target.value)}>
+																<FormControlLabel sx={{ ml: '.75em', mr: 0 }} value="eth" control={<Radio sx={{'&.MuiRadio-root': {padding: 0, mr: '.5em'}}}/>} label="ETH" />
+																<FormControlLabel sx={{ ml: '.75em', mr: 0 }} value="sol" control={<Radio sx={{'&.MuiRadio-root': {padding: 0, mr: '.5em'}}}/>} label="SOL" />
+															</RadioGroup>
+														</FormControl>
+													</Stack>
+												</Stack>
+												<Stack direction='row' spacing={2} alignItems='center'>
+													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
+													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
+														<Typography fontSize='14pt'>
+															Collection Count: 
+														</Typography>
+														<Typography fontSize='12pt'>
+															{size?.value} Unique Images
+														</Typography>
+													</Stack>
+												</Stack>
+												<Stack direction='row' spacing={2} alignItems='center'>
+													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
+													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
+														<Typography fontSize='14pt'>
+															Dimensions: 
+														</Typography>
+														<Typography fontSize='12pt'>
+															{layers[0]?.images[0]?.image?.naturalWidth} x {layers[0]?.images[0]?.image?.naturalHeight}
+														</Typography>
+													</Stack>
 												</Stack>
 											</Stack>
 										</Stack>
+										<Button 
+											variant="contained"
+											onClick={generateImages}
+											style={{
+												backgroundColor: 'rgb(25,26,36)',
+											}}
+											mt='2em'
+										>
+											Generate Collection
+										</Button>
 									</Stack>
-									<Button 
-										variant="contained"
-										onClick={generateImages}
-										style={{
-											backgroundColor: 'rgb(25,26,36)',
-										}}
-										mt='2em'
-									>
-										Generate Collection
-									</Button>
 								</Stack>
-							</Stack>	
+							) : (
+								<Stack
+									justifyContent='center'
+									alignItems='center'
+									spacing={2}
+									height='100%'
+								>
+									<Typography fontSize='36pt' sx={{ lineHeight: '20pt' }}>
+										Something wrong occured 😥
+									</Typography>
+									<Typography fontSize='12pt'>
+										Please re-configure your nft collection.
+									</Typography>
+									<Link to='/generator' sx={{ marginTop: '2em' }}>
+										<Button
+											variant='contained'
+											style={{
+												backgroundColor: 'rgb(25,26,36)',
+												color: 'white'
+											}}
+										>
+											Go Back
+										</Button>
+									</Link>
+								</Stack>
+							)}	
 						</Grid>
 						<Grid
 							md={6}
