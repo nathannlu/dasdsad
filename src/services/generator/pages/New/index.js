@@ -16,15 +16,12 @@ import Model from './Model';
 
 import CloseIcon from '@mui/icons-material/Close';
 
-
 const Generator = () => {
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const [activeStep, setActiveStep] = useState(1);
 	const isLastStep = activeStep == 5 || activeStep == 6;
 	const history = useHistory();
-
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
-
 
 	return (
 		<Fade in>

@@ -19,11 +19,9 @@ export const useNewTraitNameForm = ({editTrait, isModalOpen, setIsModalOpen}) =>
 		}
 	})
 
-
 	const onSubmit = e => {
 		e.preventDefault();
 		updateTrait(editTrait, {name: newTraitNameForm.name.value})
-
 		setIsModalOpen(false)
 	}
 

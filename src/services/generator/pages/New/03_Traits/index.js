@@ -4,14 +4,7 @@ import { useValidateForm } from '../hooks/useValidateForm'
 import { Chip } from '@mui/material';
 import T from './Traits';
 
-
 const Traits = props => {
-	/*
-	const {
-		query: { layers, selected },
-		actions: { setSelected }
-	} = useLayerManager();
-	*/
 	const { validateLayerTraits } = useValidateForm();
 
 	return (
@@ -26,33 +19,6 @@ const Traits = props => {
 						Give your NFT collection unique characteristics. Please make sure all your images have the same dimensions.
 					</Typography>
 				</Box>
-
-				{/*
-				<Box>
-					{layers.map((layer, i) => (
-						<Accordion 
-							key={i}
-							expanded={selected == i} 
-							onChange={e => { 
-								setSelected(i)
-							}}
-						>
-							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>
-								<Stack gap={1} direction="row" sx={{opacity: .8}} alignItems="center">
-									<LayersIcon />
-									<Typography variant="h6">
-										{layer.name}
-									</Typography>
-								</Stack>
-							</AccordionSummary>
-
-							<AccordionDetails>
-								<Content index={i} />
-							</AccordionDetails>
-						</Accordion>
-					))}
-				</Box>
-				*/}
 				<T editing={true} />
 			</Stack>
 

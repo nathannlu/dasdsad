@@ -3,10 +3,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Stack, Box, Button, Card, Typography, TextField, IconButton  } from 'ds/components';
 import { Chip } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, Layers as LayersIcon } from '@mui/icons-material'
-
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { useNewLayerForm } from '../hooks/useNewLayerForm';
-
 
 const layerStyle = {
 	border:  '1px solid rgba(255, 255, 255, 1)',
@@ -27,7 +25,6 @@ const Layers = () => {
 	} = useLayerManager();
 	const { newLayerForm, onSubmit } = useNewLayerForm();
 
-	
 	return (
 			<Stack gap={2}>
 				<DragDropContext onDragEnd={onDragEnd}>

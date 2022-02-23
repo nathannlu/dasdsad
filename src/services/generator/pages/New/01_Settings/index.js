@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Stack, Grid, Box,Button, Typography, TextField, FormLabel } from 'ds/components';
+import React from 'react';
+import { Stack, Box,Button, Typography, TextField, FormLabel } from 'ds/components';
 import { Chip } from '@mui/material';
 import { useMetadata } from 'services/generator/controllers/metadata';
-
 import { useValidateForm } from '../hooks/useValidateForm'
-
-
 
 const Settings = props => {
 	const { settingsForm } = useMetadata();

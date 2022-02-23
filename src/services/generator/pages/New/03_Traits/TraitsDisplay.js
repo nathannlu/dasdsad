@@ -6,7 +6,6 @@ import { useTrait } from 'services/generator/controllers/traits';
 
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
-
 const TraitsDisplay = ({index, editing}) => {
 	const { query: {layers, selected}} = useLayerManager();
 	const { deleteTrait } = useTrait();
@@ -14,7 +13,6 @@ const TraitsDisplay = ({index, editing}) => {
 	// @TODO tidy up
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editTrait, setEditTrait] = useState(null);
-
 
 	return (
 		<Stack gap={2} direction="row" sx={{flexWrap: 'wrap'}}>
@@ -84,8 +82,6 @@ const TraitsDisplay = ({index, editing}) => {
 					):null}
 				</Grid>
 			))}
-		
-
 			<ChangeTraitNameModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} editTrait={editTrait} />
 		</Stack>
 	)

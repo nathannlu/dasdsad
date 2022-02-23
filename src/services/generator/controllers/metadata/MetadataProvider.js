@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { MetadataContext } from './MetadataContext';
 import { useForm } from 'ds/hooks/useForm';
 
-
 export const MetadataProvider = ({children}) => {
 	const { form: settingsForm, setFormState: updateSettingsForm } = useForm({
 		name: {
@@ -35,4 +34,3 @@ export const MetadataProvider = ({children}) => {
 		</MetadataContext.Provider>
 	)
 }
-

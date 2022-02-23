@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Stack, Slider } from 'ds/components';
-import { Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Chip, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { useTrait } from 'services/generator/controllers/traits';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -22,7 +22,7 @@ const Content = ({ layer }) => {
 			</TableHead>
 			<TableBody>
 				{layer.images?.map((image,i) => (
-					<TableRow>
+					<TableRow key={i}>
 						<TableCell 
 							sx={smallerThanMobile ? {width:'50px'}: {}}
 						>

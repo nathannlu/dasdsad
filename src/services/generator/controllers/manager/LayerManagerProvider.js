@@ -35,15 +35,12 @@ export const LayerManagerProvider = ({children}) => {
 	const updateLayers = (index, updatedLayer) => {
 		setLayers(prevState => {
 			prevState[index] = {...prevState[index], ...updatedLayer};
-
 			return [...prevState]
 		});
 	}
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
-
-
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
 		setSelected(endIndex)

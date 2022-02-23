@@ -1,9 +1,8 @@
 import React from 'react';
-import { Stack, FormLabel, TextField, Modal,  Box, Typography, Button } from 'ds/components';
+import { Stack, FormLabel, TextField, Modal, Box, Typography, Button } from 'ds/components';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { useTrait } from 'services/generator/controllers/traits';
 import { useNewTraitNameForm } from '../hooks/useNewTraitNameForm';
-
 
 const ChangeTraitNameModal = ({isModalOpen, setIsModalOpen, editTrait}) => {
 	const { query: { layers, selected }} = useLayerManager();

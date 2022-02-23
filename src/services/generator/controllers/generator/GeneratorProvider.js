@@ -7,54 +7,23 @@ import FileSaver from 'file-saver';
 import JSZip from 'jszip';
 import posthog from 'posthog-js';
 
-import Worker from "services/generator/pages/New/workers/generator.worker.js";
-const worker = new Worker();
-
-
 export const GeneratorProvider = ({children}) => {
 	const { settingsForm } = useMetadata();
 	const { query: { layers }} = useLayerManager();
 	const { name, description, size } = settingsForm;
 	const { addToast } = useToast()
 
-	const [start,setStart] = useState(false);
-	const [done, setDone] = useState(false);
-	const [progress, setProgress] = useState(0);
-	const [zipProgress, setZipProgress] = useState(null);
-	const [generatedZip, setGeneratedZip] = useState('');
-	const [downloaded, setDownloaded] = useState(false);
-
-
-	// This will need to talk to web worker
 	const generateImages = async () => {
-		setDone(false);
-		setProgress(null);
-		setZipProgress(null);
 
 		// Runs check
 		if(validateForm()) {
-			setStart(true);
 			addToast({
 				severity: 'info',
 				message: 'Generating collection. This will take a some time...'
 			})
-			worker.postMessage({
-				message:'generate',
-				settings: {
-					name: name.value,
-					description: description.value
-				},
-				layers: [...layers],
-				count: size.value
-			})
+			
 		}
 	};
-
-	const save = () => {
-		FileSaver.saveAs(generatedZip, 'sample.zip')
-		setDownloaded(true);
-		posthog.capture('User downloaded collection');
-	}
 
 	const validateForm = () => {
 		if (size.value.length < 1) {
@@ -75,41 +44,11 @@ export const GeneratorProvider = ({children}) => {
 		}
 		return true;
 	}
-
-
-	const listenToWorker = () => {
-		worker.onmessage = (message) => {
-			if (message.data.message == 'output') {
-				setGeneratedZip(message.data.content);
-
-				addToast({
-					severity: 'success',
-					message: 'Finished generation!'
-				})
-				setDone(true);
-				setStart(false);
-			}
-			
-			if (message.data.message == 'progress') {
-				setProgress(++message.data.progress)
-			}
-			if (message.data.message == 'zip_progress') {
-				setZipProgress(message.data.zipProgress)
-			}
-		}
-	}
 	
 
 	const value = {
-		listenToWorker,
-		save,
 		validateForm,
 		generateImages,
-		done,
-		progress,
-		zipProgress,
-		start,
-		downloaded,
 	}
 		
 	return (

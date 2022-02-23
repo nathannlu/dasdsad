@@ -9,7 +9,6 @@ export const usePaymentForm = (planId) => {
 	const stripe = useStripe();
 	const elements = useElements();
 	const { settingsForm: { size }} = useMetadata();
-
 	const { addToast } = useToast();
 	const { form: paymentForm } = useForm({
 		nameOnCard: {
@@ -23,8 +22,6 @@ export const usePaymentForm = (planId) => {
 			rules: [],
 		}
 	})
-
-
 
 	const createPaymentMethod = async () => {
 		const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -77,8 +74,7 @@ export const usePaymentForm = (planId) => {
 		console.log(err.message)
 	}
 
-	const setPaidCookie = () => {
-		
+	const setPaidCookie = () => {	
 		// store email as a cookie in browser
 
 		// store a hashed stripe transaction id

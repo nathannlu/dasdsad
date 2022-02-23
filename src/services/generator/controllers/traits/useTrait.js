@@ -12,7 +12,6 @@ export const useTrait = () => {
 	const [selectedImage, setSelectedImage] = useState(0);
 	const { addToast } = useToast();
 
-
 	const addTrait = async (acceptedFiles) => {
 		let newFiles = []
 

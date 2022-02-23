@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, Stack, Button, Typography, Slider } from 'ds/components';
 import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, Layers as LayersIcon } from '@mui/icons-material';
 import { useLayerManager } from 'services/generator/controllers/manager';
-
 import Content from './Content';
-
 
 const Rarity = props => {
 	const {
@@ -13,7 +11,6 @@ const Rarity = props => {
 		actions: { setSelected }
 	} = useLayerManager();
 
-	
 	return (
 		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 			<Stack gap={2}>
@@ -27,10 +24,9 @@ const Rarity = props => {
 					</Typography>
 				</Box>
 
-
 				<Box>
 					{layers.map((layer, i) => (
-						<Accordion expanded={selected == i} onChange={e => { 
+						<Accordion key={i} expanded={selected == i} onChange={e => { 
 							setSelected(i);
 						}}>
 							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>

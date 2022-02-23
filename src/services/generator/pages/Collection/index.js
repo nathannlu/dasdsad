@@ -5,18 +5,16 @@ import { CircularProgress } from '@mui/material'
 import config from 'config'
 import { Elements } from '@stripe/react-stripe-js';
 import {loadStripe} from '@stripe/stripe-js';
-const stripePromise = loadStripe(config.stripe.publicKey);
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
 import PaymentModal from 'services/generator/pages/New/05_Payment/PaymentModal';
-
 import Model from '../New/Model';
 
+const stripePromise = loadStripe(config.stripe.publicKey);
 
 const Collection = () => {
 	const [settings, setSettings] = useState('layers')
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
-
 	const { settingsForm: { size } } = useMetadata();
 	const { save, start, done, progress, zipProgress, listenToWorker, generateImages, downloaded } = useGenerator();
 
