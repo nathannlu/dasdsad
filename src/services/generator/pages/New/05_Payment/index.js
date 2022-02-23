@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Fade, Box, Stack, Button, Typography } from 'ds/components';
+import { Link, Fade, Box, Stack, Button, Typography } from 'ds/components';
 import { Chip } from '@mui/material'
 import posthog from 'posthog-js';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -35,12 +35,13 @@ const Payment = props => {
 					</Box>
 
 					<Stack direction="row">
-						<Button fullWidth variant="contained" sx={{backgroundColor: rgb(220, 220, 220)}} onClick={() => {
-							props.nextStep()
-							posthog.capture('User clicked on "Generate collection" button');
-						}}>
-							Login to Generate
-						</Button>
+						<Link to="/login?redirect=generator/download">
+							<Button fullWidth variant="contained" style={{backgroundColor: 'rgb(218,57,147)', color: 'white'}} onClick={() => {
+								posthog.capture('User clicked on "Login to Generate Collection" button');
+							}}>
+								Login to Generate Collection
+							</Button>
+						</Link>
 					</Stack>
 				</Stack>
 

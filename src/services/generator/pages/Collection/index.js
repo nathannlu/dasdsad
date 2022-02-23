@@ -16,9 +16,9 @@ const Collection = () => {
 	const [settings, setSettings] = useState('layers')
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const { settingsForm: { size } } = useMetadata();
-	const { save, start, done, progress, zipProgress, listenToWorker, generateImages, downloaded } = useGenerator();
+	//const { save, start, done, progress, zipProgress, listenToWorker, generateImages, downloaded } = useGenerator();
 
-	useEffect(listenToWorker,[])
+	//useEffect(listenToWorker,[])
 	
 	return (
 		<>
@@ -80,7 +80,7 @@ const Collection = () => {
 							)} */}
 						</Stack>
 
-						<Stack direction="row" gap={2}>
+						{/* <Stack direction="row" gap={2}>
 							<Button disabled={!done} onClick={() => {
 								setIsCheckoutModalOpen(true);
 							}} variant="outlined">
@@ -94,12 +94,12 @@ const Collection = () => {
 								</Link>
 							)}
 
-							{/*
+							
 							<Button onClick={generateImages} variant="outlined">
 								Generate collection
 							</Button>
-							*/}
-						</Stack>
+							
+						</Stack> */}
 					</Grid>
 
 					<Grid
