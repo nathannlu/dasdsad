@@ -41,7 +41,6 @@ const Actions = ({ id, contract }) => {
 			maxPerMintCount,
 			newPrice,
 			newMetadataUrl,
-			withdraw
 		},
 		updateBaseUri,
 		setMaxPerMint,
@@ -52,6 +51,7 @@ const Actions = ({ id, contract }) => {
 		setMerkleRoot,
 		presaleMint,
 		mint,
+		withdraw
 	} = useContractActions(contract.address);
 	const [selectedUpdate, setSelectedUpdate] = useState('metadata')
 
