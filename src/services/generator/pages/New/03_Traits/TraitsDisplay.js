@@ -36,11 +36,11 @@ const TraitsDisplay = ({index, editing}) => {
 
 						<Stack justifyContent="space-between" alignItems="center" direction="row">
 							<Stack direction="column">
-								<Typography variant="small" sx={{fontSize: '12px', fontWeight: 'bold'}}>
+								<Typography variant="small" sx={{fontSize: '12px', fontWeight: 'bold', color: 'white', mt: '.25em'}}>
 									Trait name
 								</Typography>
 
-								<Typography variant="small">
+								<Typography variant="small" color='white'>
 									{image.name}
 								</Typography>
 							</Stack>
@@ -51,6 +51,7 @@ const TraitsDisplay = ({index, editing}) => {
 									padding: '3px',
 									height: '30px',
 									width: '30px',
+									color: 'white',
 								}}
 								onClick={() => {
 									setEditTrait(i)
