@@ -9,15 +9,14 @@ import posthog from 'posthog-js';
 
 export const GeneratorProvider = ({children}) => {
 	const [renderModalState, setRenderModalState] = useState(false);
-	const [metadataType, setMetadataType] = useState('eth');
 	const [isGenerating, setIsGenerating] = useState(false);
 	const canvasRef = useRef();
 
 	// Generator Information
 	const { settingsForm } = useMetadata();
 	const { query: { layers }} = useLayerManager();
-	const { name, description, size } = settingsForm;
-	const { addToast } = useToast()
+	const { name, description, size, metadata } = settingsForm;
+	const { addToast } = useToast();
 
 	const generateImages = async () => {
 		if(!validateForm()) return;
@@ -49,13 +48,11 @@ export const GeneratorProvider = ({children}) => {
 	const value = {
 		canvasRef,
 		renderModalState,
-		metadataType,
 		isGenerating,
 
 		validateForm,
 		generateImages,
 		setRenderModalState,
-		setMetadataType,
 		setIsGenerating,
 	}
 		

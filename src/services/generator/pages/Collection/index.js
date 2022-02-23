@@ -17,9 +17,9 @@ const stripePromise = loadStripe(config.stripe.publicKey);
 
 const Collection = () => {
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
-	const { settingsForm: { size, name, description } } = useMetadata();
+	const { settingsForm: { size, name, description }, metadataType } = useMetadata();
 	const { query: { layers }} = useLayerManager();
-	const { generateImages, metadataType, setMetadataType, renderModalState, setRenderModalState  } = useGenerator();
+	const { generateImages, renderModalState, setRenderModalState } = useGenerator();
 
 	return (
 		<>
@@ -32,7 +32,7 @@ const Collection = () => {
 					<Grid container>
 						<RenderModal renderModalState={renderModalState} setRenderModalState={setRenderModalState}/>
 						<Grid md={6} item p={4}>
-							{layers[0]?.images?.length ? (
+							{true ? ( //layers[0]?.images?.length
 								<Stack
 									spacing={8}
 									height='100%'
@@ -104,12 +104,9 @@ const Collection = () => {
 														<Typography fontSize='14pt'>
 															Metadata Type: 
 														</Typography>
-														<FormControl>
-															<RadioGroup row value={metadataType} onChange={(e) => setMetadataType(e.target.value)}>
-																<FormControlLabel sx={{ ml: '.75em', mr: 0 }} value="eth" control={<Radio sx={{'&.MuiRadio-root': {padding: 0, mr: '.5em'}}}/>} label="ETH" />
-																<FormControlLabel sx={{ ml: '.75em', mr: 0 }} value="sol" control={<Radio sx={{'&.MuiRadio-root': {padding: 0, mr: '.5em'}}}/>} label="SOL" />
-															</RadioGroup>
-														</FormControl>
+														<Typography fontSize='12pt'>
+															{metadataType?.toUpperCase()}
+														</Typography>
 													</Stack>
 												</Stack>
 												<Stack direction='row' spacing={2} alignItems='center'>
@@ -127,7 +124,7 @@ const Collection = () => {
 													<InfoOutlinedIcon fontSize='10pt' style={{ color: 'rgb(180, 180, 180)' }}/>
 													<Stack direction='row' justifyContent='space-between' alignItems='center' width='100%'>
 														<Typography fontSize='14pt'>
-															Dimensions: 
+															Dimension: 
 														</Typography>
 														<Typography fontSize='12pt'>
 															{layers[0]?.images[0]?.image?.naturalWidth} x {layers[0]?.images[0]?.image?.naturalHeight}
