@@ -12,7 +12,7 @@ const layerStyle = {
 	py:1,
 	px:2,
 	cursor: 'pointer',
-	background: 'rgba(0,0,0,.53)',
+	background: 'rgb(25,26,36)',
 	backdropFilter: 'blur(3px)',
 	color: 'white'
 }
@@ -51,17 +51,17 @@ const Layers = () => {
 								>
 									<Stack direction="row" sx={{opacity: .8}} alignItems="center">
 										<LayersIcon />
-										<Box sx={{flex: 1}}>
+										<Box sx={{flex: 1}} ml='.5em'>
 											{item.name}
 										</Box>
-										<IconButton onClick={() => deleteLayer(i)}>
+										<IconButton onClick={() => deleteLayer(i)} style={{ color: 'white' }}>
 											<DeleteIcon />
 										</IconButton>
 									</Stack>
 								</Card>
 								)}
 							</Draggable>
-						))}
+						)).reverse()}
 						{provided.placeholder}
 
 						</Stack>

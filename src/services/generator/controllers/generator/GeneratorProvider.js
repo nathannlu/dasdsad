@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useToast } from 'ds/hooks/useToast';
 import { GeneratorContext } from './GeneratorContext';
 import { useMetadata } from 'services/generator/controllers/metadata';
@@ -8,6 +8,11 @@ import JSZip from 'jszip';
 import posthog from 'posthog-js';
 
 export const GeneratorProvider = ({children}) => {
+	const [renderModalState, setRenderModalState] = useState();
+	const [metadataType, setMetadataType] = useState('eth');
+	const canvasRef = useRef();
+
+	// Generator Information
 	const { settingsForm } = useMetadata();
 	const { query: { layers }} = useLayerManager();
 	const { name, description, size } = settingsForm;
@@ -15,8 +20,8 @@ export const GeneratorProvider = ({children}) => {
 
 	const generateImages = async () => {
 		if(!validateForm()) return;
+		setRenderModalState(true);
 
-		
 	};
 
 	const validateForm = () => {
@@ -41,8 +46,14 @@ export const GeneratorProvider = ({children}) => {
 	
 
 	const value = {
+		canvasRef,
+		renderModalState,
+		metadataType,
+
 		validateForm,
 		generateImages,
+		setRenderModalState,
+		setMetadataType,
 	}
 		
 	return (

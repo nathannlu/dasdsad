@@ -20,11 +20,20 @@ const Traits = (props) => {
 					onChange={e => { 
 						setSelected(i)
 					}}
+					sx={{
+						backgroundColor: 'rgb(25,26,36)',
+						border:  '1px solid rgba(255, 255, 255, 1)',
+						backdropFilter: 'blur(3px)',
+						borderRadius: 2,
+					}}
 				>
-					<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>
+					<AccordionSummary 
+						id={i} 
+						expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}
+					>
 						<Stack gap={1} direction="row" sx={{opacity: .8}} alignItems="center">
-							<LayersIcon />
-							<Typography variant="h6">
+							<LayersIcon style={{ color: 'white' }} />
+							<Typography variant="h6" color='white'>
 								{layer.name}
 							</Typography>
 						</Stack>
