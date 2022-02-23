@@ -17,12 +17,23 @@ export const LayerManagerProvider = ({children}) => {
 	const { addToast } = useToast();
 
 	const addLayer = (newLayer) => {
-		setLayers(prevState => {
-			prevState.push(newLayer)
-			return [...prevState];
-		})
+		try {
+			const indexOfNewLayer = layers.findIndex((layer) => layer.name === newLayer.name);
+			if (indexOfNewLayer !== -1) throw new Error('You cannot add layer with the same name');
 
-		posthog.capture('User added layer to their collection');
+			setLayers(prevState => {
+				prevState.push(newLayer)
+				return [...prevState];
+			})
+
+			posthog.capture('User added layer to their collection');
+		}
+		catch (err) {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		}
 	}
 
 	const deleteLayer = (index) => {
