@@ -43,7 +43,7 @@ const Traits = (props) => {
 						<Content editing={props.editing} index={i} />
 					</AccordionDetails>
 				</Accordion>
-			))}
+			)).reverse()}
 		</Box>
 	)
 };

@@ -26,13 +26,20 @@ const Rarity = props => {
 
 				<Box>
 					{layers.map((layer, i) => (
-						<Accordion key={i} expanded={selected == i} onChange={e => { 
-							setSelected(i);
-						}}>
-							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>
+						<Accordion 
+							key={i} 
+							expanded={selected == i} 
+							onChange={e => { 
+								setSelected(i);
+							}}
+							sx={{
+								backgroundColor: 'rgb(25,26,36)'
+							}}
+						>
+							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}>
 								<Stack gap={1} direction="row" sx={{opacity: .8}} alignItems="center">
-									<LayersIcon />
-									<Typography variant="h6">
+									<LayersIcon style={{ color: 'white' }} />
+									<Typography variant="h6" color='white'>
 										{layer.name}
 									</Typography>
 								</Stack>
@@ -42,7 +49,7 @@ const Rarity = props => {
 								<Content layer={layer} />
 							</AccordionDetails>
 						</Accordion>
-					))}
+					)).reverse()}
 				</Box>
 			</Stack>
 			

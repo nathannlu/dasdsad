@@ -12,10 +12,10 @@ const Content = ({ layer }) => {
 		<Table aria-label="simple table">
 			<TableHead>
 				<TableRow>
-					<TableCell sx={{fontWeight: 'bold'}}>
+					<TableCell sx={{fontWeight: 'bold', color: 'white', border: 'none'}}>
 						Trait name
 					</TableCell>
-					<TableCell sx={{fontWeight: 'bold'}}>
+					<TableCell sx={{fontWeight: 'bold', color: 'white', border: 'none'}}>
 						Rarity
 					</TableCell>
 				</TableRow>
@@ -25,6 +25,9 @@ const Content = ({ layer }) => {
 					<TableRow key={i}>
 						<TableCell 
 							sx={smallerThanMobile ? {width:'50px'}: {}}
+							style={{
+								border: 'none'
+							}}
 						>
 							{image.type == 'image/png' ? (
 								<img 
@@ -40,16 +43,24 @@ const Content = ({ layer }) => {
 							): null}
 							<Box
 								sx={smallerThanMobile ? {fontSize:'10px'}: {}}
+								color='white'
 							>
 								{image.name}
 							</Box>
 						</TableCell>
 
-						<TableCell>
+						<TableCell
+							style={{
+								border: 'none'
+							}}
+						>
 							<Stack alignItems="center" direction="row">
 								<Chip 
 									sx={smallerThanMobile ? {fontSize:'10px'}: {}}
 									label="Rare" 
+									style={{
+										color: 'white'
+									}}
 								/>
 								<Slider
 									name="weight"
@@ -64,6 +75,9 @@ const Content = ({ layer }) => {
 								<Chip
 									sx={smallerThanMobile ? {fontSize:'10px'}: {}}
 									label="Common" 
+									style={{
+										color: 'white'
+									}}
 								/>
 							</Stack>
 						</TableCell>
