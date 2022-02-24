@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
+import { useContractDetails } from './hooks/useContractDetails';
 
 import IPFSModal from './IPFSModal';
 import NotComplete from './NotComplete';
@@ -18,6 +19,7 @@ const Upload = (props) => {
 	const {
 		loadWeb3,
 		loadBlockchainData,
+		compareNetwork,
 	} = useWeb3()
 	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
 
@@ -29,6 +31,14 @@ const Upload = (props) => {
 			if(contracts.length > 0) {
 				const c = contracts.find(c => c.id == id)
 				setContract(c)
+
+				let chainId;
+				if (c.blockchain === "ethereum") chainId = "0x1";
+				else if (c.blockchain === "rinkeby") chainId = "0x4";
+				else if (c.blockchain === "polygon") chainId = "0x89";
+				else if (c.blockchain === "mumbai") chainId = "0x13881";
+
+				compareNetwork(chainId)
 			}
 		})()
 

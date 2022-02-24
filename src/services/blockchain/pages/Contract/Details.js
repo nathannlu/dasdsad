@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Stack, Box, Grid, Typography, Button, Divider } from "ds/components";
-import { Chip } from "@mui/material";
+import { Chip, Skeleton } from "@mui/material";
 import { useWeb3 } from "libs/web3";
 import { useContractDetails } from "./hooks/useContractDetails";
 
@@ -12,7 +12,8 @@ const Details = ({ contract }) => {
 		isPublicSaleOpen,
 		isPresaleOpen,
 		max,
-		metadataUrl
+		metadataUrl,
+		loading
 	} = useContractDetails(contract.address);
 
 	return (
@@ -26,32 +27,32 @@ const Details = ({ contract }) => {
 					Balance:
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{balance} {contract.nftCollection.currency}
+					{loading ? <Skeleton width={60} /> : balance + contract.nftCollection.currency }
 				</Grid>
 				<Grid item xs={6}>
 					NFTs sold:
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{soldCount}
+					{loading ? <Skeleton width={60} /> : soldCount }
 				</Grid>
 				<Grid item xs={6}>
 					Price per NFT:
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{price} {contract.nftCollection.currency}
+					{loading ? <Skeleton width={60} /> : price + contract.nftCollection.currency }
 				</Grid>
 				<Grid item xs={6}>
 					Collection size:
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{contract?.nftCollection ? contract?.nftCollection?.size : null}
+					{loading ? <Skeleton width={60} /> : contract.nftCollection.size }
 				</Grid>
 
 				<Grid item xs={6}>
 					Pre sales status:
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{isPresaleOpen ? (
+					{loading ? <Skeleton width={60} /> : isPresaleOpen ? (
 						<Chip label="Open" color="success" size="small" />
 					) : (
 						<Chip label="Closed" color="error" size="small" />
@@ -62,7 +63,7 @@ const Details = ({ contract }) => {
 					Public sales status:
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{isPublicSaleOpen ? (
+					{loading ?  <Skeleton width={60} /> : isPublicSaleOpen ? (
 						<Chip label="Open" color="success" size="small" />
 					) : (
 						<Chip label="Closed" color="error" size="small" />
@@ -73,13 +74,13 @@ const Details = ({ contract }) => {
 					Metadata URL
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{metadataUrl}
+					{loading ? <Skeleton width={60} /> : metadataUrl }
 				</Grid>
 				<Grid item xs={6}>
 					Max per mint
 				</Grid>
 				<Grid sx={{ fontWeight: "bold" }} item xs={6}>
-					{max}
+					{loading ? <Skeleton width={60} /> : max }
 				</Grid>
 
 			</Grid>

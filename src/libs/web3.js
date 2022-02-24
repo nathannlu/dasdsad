@@ -194,53 +194,56 @@ export const Web3Provider = ({ children }) => {
 	const getPublicContractVariables = async (contractAddress) => {
         if (!contractAddress) return;
 
-        console.log(contractAddress)
 
-		const contract = await retrieveContract(contractAddress);
-
-		const balance = await window.web3.eth.getBalance(contractAddress);
-        console.log('balance', balance);
-		const balanceInEth = window.web3.utils.fromWei(balance);
-        console.log('balanceInEth', balanceInEth);
-		const baseTokenUri = await contract.methods.baseTokenURI().call();
-        console.log('baseTokenUri', baseTokenUri);
-		const open = await contract.methods.open().call();
-        console.log('open', open);
-
-        let presaleOpen = false; // Temporary, presaleOpen is not working
 		try {
-            presaleOpen = await contract.methods.presaleOpen().call();
-        }
-        catch (err) {
-            //console.log(err);
-        }
-        console.log('presaleOpen', presaleOpen);
+			const contract = await retrieveContract(contractAddress);
 
-		const maxPerMint = await contract.methods.maxPerMint().call();
-        console.log('maxPerMint', maxPerMint);
-		const cost = await contract.methods.cost().call();
-        console.log('cost', cost);
-		const costInEth = window.web3.utils.fromWei(cost);
-        console.log('costInEth', costInEth);
-		const supply = await contract.methods.supply().call();
-        console.log('supply', supply);
-		const totalSupply = await contract.methods.totalSupply().call();
-        console.log('totalSupply', totalSupply);
-		const owner = await contract.methods.owner().call();
-        console.log('owner', owner);
+			const balance = await window.web3.eth.getBalance(contractAddress);
+					console.log('balance', balance);
+			const balanceInEth = window.web3.utils.fromWei(balance);
+					console.log('balanceInEth', balanceInEth);
+			const baseTokenUri = await contract.methods.baseTokenURI().call();
+					console.log('baseTokenUri', baseTokenUri);
+			const open = await contract.methods.open().call();
+					console.log('open', open);
 
-		return {
-			balance,
-			balanceInEth,
-			baseTokenUri,
-			open,
-			presaleOpen,
-			maxPerMint,
-			cost,
-			costInEth,
-			supply,
-			totalSupply,
-			owner,
+					let presaleOpen = false; // Temporary, presaleOpen is not working
+			try {
+							presaleOpen = await contract.methods.presaleOpen().call();
+					}
+					catch (err) {
+							//console.log(err);
+					}
+					console.log('presaleOpen', presaleOpen);
+
+			const maxPerMint = await contract.methods.maxPerMint().call();
+					console.log('maxPerMint', maxPerMint);
+			const cost = await contract.methods.cost().call();
+					console.log('cost', cost);
+			const costInEth = window.web3.utils.fromWei(cost);
+					console.log('costInEth', costInEth);
+			const supply = await contract.methods.supply().call();
+					console.log('supply', supply);
+			const totalSupply = await contract.methods.totalSupply().call();
+					console.log('totalSupply', totalSupply);
+			const owner = await contract.methods.owner().call();
+					console.log('owner', owner);
+
+			return {
+				balance,
+				balanceInEth,
+				baseTokenUri,
+				open,
+				presaleOpen,
+				maxPerMint,
+				cost,
+				costInEth,
+				supply,
+				totalSupply,
+				owner,
+			}
+		} catch (e) {
+			console.log(e.message)
 		}
 	}
 

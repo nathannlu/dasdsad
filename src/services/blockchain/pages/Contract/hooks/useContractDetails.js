@@ -11,6 +11,7 @@ export const useContractDetails = (contractAddress) => {
 	const [isPublicSaleOpen, setIsPublicSaleOpen] = useState(false);
 	const [max, setMax] = useState('');
 	const [metadataUrl, setMetadataUrl] = useState('');
+	const [loading, setLoading] = useState(true);
 
 	const {
 		getPublicContractVariables,
@@ -18,29 +19,35 @@ export const useContractDetails = (contractAddress) => {
 
 
 	useEffect(() => {
-		(async () => {
-			const {
-				supply,
-				maxSupply,
-				totalSupply,
-				costInEth,
-				balanceInEth,
-				presaleOpen,
-				open,
-				maxPerMint,
-				baseTokenUri,
-			} = await getPublicContractVariables(contractAddress);
-
-			setBalance(balanceInEth);
-			setPrice(costInEth);
-			setSoldCount(supply)
-			setIsPresaleOpen(presaleOpen);
-			setIsPublicSaleOpen(open);
-			setMetadataUrl(baseTokenUri);
-			setMax(maxPerMint);
-			setSize(totalSupply);
-		})();
+		(async () => await refresh())();
 	}, [contractAddress])
+
+	const refresh = async () => {
+		setLoading(true);
+
+		const {
+			supply,
+			maxSupply,
+			totalSupply,
+			costInEth,
+			balanceInEth,
+			presaleOpen,
+			open,
+			maxPerMint,
+			baseTokenUri,
+		} = await getPublicContractVariables(contractAddress);
+
+		setBalance(balanceInEth);
+		setPrice(costInEth);
+		setSoldCount(supply)
+		setIsPresaleOpen(presaleOpen);
+		setIsPublicSaleOpen(open);
+		setMetadataUrl(baseTokenUri);
+		setMax(maxPerMint);
+		setSize(totalSupply);
+
+		setLoading(false);
+	}
 
 
 	return {
@@ -52,6 +59,9 @@ export const useContractDetails = (contractAddress) => {
 		size,
 		isPresaleOpen,
 		isPublicSaleOpen,
+		loading,
+
+		refresh
 	}
 
 }
