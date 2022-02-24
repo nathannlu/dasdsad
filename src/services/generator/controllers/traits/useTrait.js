@@ -41,8 +41,9 @@ export const useTrait = () => {
 					file: file,
 					rarity: {
 						max: -1,
-						value: -1,
-						percentage: -1
+						value: 50,
+						percentage: -1,
+						weight: 50,
 					}
 				}
 				if (img) {
@@ -77,7 +78,7 @@ export const useTrait = () => {
 		}
 
 		setLayers(prevState => {
-			prevState[selected].images.push(...newFiles)
+			prevState[selected].images.push(...newFiles);
 			return [...prevState]
 		})
 
@@ -98,10 +99,53 @@ export const useTrait = () => {
 		})
 	}
 
-	// updates image weight
+	// updates image max and percentage of all traits
+	const updateTraitRarityMax = () => {
+		let newLayers = [];
+		layers.forEach((layer) => {
+			let newImages = [];
+			let maxVal = 0;
+			layer.images.forEach((image) => {
+				maxVal += image.rarity.value;
+			})
+			layer.images.forEach((image) => {
+				const newImage = {
+					...image,
+					rarity: {
+						...image.rarity,
+						max: maxVal,
+						percentage: image.rarity.value / maxVal * 100
+					}
+				}
+				newImages.push(newImage);
+			})
+			const newLayer = {
+				...layer,
+				images: newImages
+			}
+			newLayers.push(newLayer);
+		})	
+		setLayers(newLayers);
+		return true;
+	}
+
+	// updates image weight and max and percentage
 	const updateTraitRarity = (index, weight) => {
 		setLayers(prevState => {
-			prevState[selected].images[index].weight = weight
+			// Set Value
+			prevState[selected].images[index].rarity.value = weight;
+
+			updateTraitRarityMax();
+			// // Set Max
+			// let max = 0;
+			// prevState[selected].images.forEach((image) => {
+			// 	max += image.rarity.value;
+			// })
+			// prevState[selected].images[index].rarity.max = max;
+
+			// // Set Percentage
+			// prevState[selected].images[index].rarity.percentage = prevState[selected].images[index].rarity.value / prevState[selected].images[index].rarity.max * 100;
+
 			return [...prevState]
 		})
 
@@ -116,5 +160,6 @@ export const useTrait = () => {
 		selectedImage,
 		setSelectedImage,
 		loadImage,
+		updateTraitRarityMax,
 	}
 }

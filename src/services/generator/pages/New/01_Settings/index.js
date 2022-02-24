@@ -52,6 +52,12 @@ const Settings = props => {
 								boxShadow: '0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);'
 							}}
 						>
+							<Typography variant="h4">
+								Configuration
+							</Typography>
+							<Typography variant="body">
+								This configuration is for the SOL metadata only.
+							</Typography>
 							<Stack direction='row' spacing={1}>
 								<Box>
 									<FormLabel>Symbol</FormLabel>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Stack, Slider } from 'ds/components';
 import { Chip, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { useTrait } from 'services/generator/controllers/traits';
@@ -7,13 +7,16 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 const Content = ({ layer }) => {
 	const { updateTraitRarity } = useTrait();
 	const smallerThanMobile = useMediaQuery(theme => theme.breakpoints.down('sm'));
-	
+
 	return (
 		<Table aria-label="simple table">
 			<TableHead>
 				<TableRow>
 					<TableCell sx={{fontWeight: 'bold', color: 'white', border: 'none'}}>
 						Trait name
+					</TableCell>
+					<TableCell sx={{fontWeight: 'bold', color: 'white', border: 'none'}}>
+						Percentage
 					</TableCell>
 					<TableCell sx={{fontWeight: 'bold', color: 'white', border: 'none'}}>
 						Rarity
@@ -48,7 +51,14 @@ const Content = ({ layer }) => {
 								{image.name}
 							</Box>
 						</TableCell>
-
+						<TableCell
+							style={{
+								border: 'none',
+								color: 'white'
+							}}
+						>
+							{image.rarity.percentage.toFixed(2)}%
+						</TableCell>
 						<TableCell
 							style={{
 								border: 'none'
@@ -64,12 +74,12 @@ const Content = ({ layer }) => {
 								/>
 								<Slider
 									name="weight"
-									defaultValue={30}
-									min={10}
-									max={50}
-									step={10}
+									defaultValue={50}
+									min={1}
+									max={100}
+									step={1}
 									marks
-									value={image.weight}
+									value={image.rarity.value}
 									onChange={e => updateTraitRarity(i, e.target.value)}
 								/>
 								<Chip

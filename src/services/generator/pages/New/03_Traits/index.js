@@ -3,9 +3,11 @@ import { Stack, Button, Box, Typography } from 'ds/components';
 import { useValidateForm } from '../hooks/useValidateForm'
 import { Chip } from '@mui/material';
 import T from './Traits';
+import { useTrait } from 'services/generator/controllers/traits';
 
 const Traits = props => {
 	const { validateLayerTraits } = useValidateForm();
+	const { updateTraitRarityMax } = useTrait();
 
 	return (
 		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
@@ -33,7 +35,7 @@ const Traits = props => {
 					Prev
 				</Button>
 				<Button 
-					onClick={() => validateLayerTraits() && props.nextStep()}
+					onClick={() => validateLayerTraits() && updateTraitRarityMax() && props.nextStep()}
 					style={{
 						backgroundColor: 'rgb(25,26,36)',
 						color: 'white'
