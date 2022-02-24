@@ -58,12 +58,12 @@ const Settings = props => {
 							<Typography variant="body">
 								This configuration is for the SOL metadata only.
 							</Typography>
-							<Stack direction='row' spacing={1}>
-								<Box>
+							<Stack direction='row' spacing={1} width='100%'>
+								<Box flex='1'>
 									<FormLabel>Symbol</FormLabel>
 									<TextField {...settingsForm.symbol} fullWidth />
 								</Box>
-								<Box>
+								<Box flex='1'>
 									<FormLabel>Seller Fee Basis Points</FormLabel>
 									<TextField {...settingsForm.sellerFeeBasisPoints} fullWidth />
 								</Box>
@@ -72,12 +72,12 @@ const Settings = props => {
 								<FormLabel>External URL</FormLabel>
 								<TextField {...settingsForm.externalUrl} fullWidth />
 							</Box>
-							<Stack direction='row' spacing={1}>
-								<Box>
+							<Stack direction='row' spacing={1} width='100%'>
+								<Box flex='1'>
 									<FormLabel>Creator Address</FormLabel>
 									<TextField {...settingsForm.creatorAddress} fullWidth />
 								</Box>
-								<Box>
+								<Box flex='1'>
 									<FormLabel>Creator Share</FormLabel>
 									<TextField {...settingsForm.creatorShare} fullWidth />
 								</Box>
