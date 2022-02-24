@@ -24,7 +24,8 @@ export function Content({index, editing}) {
 							<div style={{padding: '64px'}} {...getRootProps()} >
 								<input {...getInputProps()} />
 								<p style={{opacity: .5, textAlign: 'center', color: 'white'}}>
-									Drag 'n' drop files here. This layer supports image/png{index == 0 ? ", video/mp4" : ""}.
+									Drag 'n' drop files here. This layer supports image/png.
+									{/* {index == 0 ? ", video/mp4" : ""} */}
 								</p>
 							</div>
 						</Box>
