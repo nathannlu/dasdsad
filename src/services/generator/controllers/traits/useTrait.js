@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { toBase64 } from 'utils/imageData';
 import { useToast } from 'ds/hooks/useToast';
+import { useGenerator } from 'services/generator/controllers/generator';
 import posthog from 'posthog-js';
 
 export const useTrait = () => {
@@ -10,6 +11,7 @@ export const useTrait = () => {
 		actions: { setLayers }
 	} = useLayerManager()
 	const [selectedImage, setSelectedImage] = useState(0);
+	const { imageDimension, setImageDimension } = useGenerator();
 	const { addToast } = useToast();
 
 	const loadImage = (imageObjUrl) => {
@@ -47,6 +49,12 @@ export const useTrait = () => {
 					}
 				}
 				if (img) {
+					if (!Object.keys(imageDimension).length) {
+						setImageDimension({
+							width: img.naturalWidth,
+							height: img.naturalHeight
+						})
+					}
 					resolve(newFile);
 				}
 			}
@@ -61,20 +69,20 @@ export const useTrait = () => {
 
 		for (let i = 0; i < acceptedFiles.length; i++) {
 			const trait = await createTrait(acceptedFiles[i]);
-			if(trait.type == 'image/png' || trait.type == 'video/mp4') {
+			if(trait.type == 'image/png') { //if(trait.type == 'image/png' || trait.type == 'video/mp4') {
 				newFiles.push(trait);
 			} else {
 				addToast({
 					severity: 'error',
-					message: 'We only support .png and .mp4 files'
+					message: 'We only support .png files' //.mp4
 				});
 			}
-			if(trait.type == 'video/mp4') {
-				addToast({
-					severity: 'success',
-					message: 'Added video! Just a heads up having a video will take longer to generate your collection.'
-				});
-			}
+			// if(trait.type == 'video/mp4') {
+			// 	addToast({
+			// 		severity: 'success',
+			// 		message: 'Added video! Just a heads up having a video will take longer to generate your collection.'
+			// 	});
+			// }
 		}
 
 		setLayers(prevState => {
@@ -99,7 +107,6 @@ export const useTrait = () => {
 		})
 	}
 
-	// updates image max and percentage of all traits
 	const updateTraitRarityMax = () => {
 		let newLayers = [];
 		layers.forEach((layer) => {
@@ -129,23 +136,10 @@ export const useTrait = () => {
 		return true;
 	}
 
-	// updates image weight and max and percentage
 	const updateTraitRarity = (index, weight) => {
 		setLayers(prevState => {
-			// Set Value
 			prevState[selected].images[index].rarity.value = weight;
-
 			updateTraitRarityMax();
-			// // Set Max
-			// let max = 0;
-			// prevState[selected].images.forEach((image) => {
-			// 	max += image.rarity.value;
-			// })
-			// prevState[selected].images[index].rarity.max = max;
-
-			// // Set Percentage
-			// prevState[selected].images[index].rarity.percentage = prevState[selected].images[index].rarity.value / prevState[selected].images[index].rarity.max * 100;
-
 			return [...prevState]
 		})
 

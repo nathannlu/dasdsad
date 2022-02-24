@@ -22,9 +22,6 @@ const Traits = (props) => {
 					}}
 					sx={{
 						backgroundColor: 'rgb(25,26,36)',
-						border:  '1px solid rgba(255, 255, 255, 1)',
-						backdropFilter: 'blur(3px)',
-						borderRadius: 2,
 					}}
 				>
 					<AccordionSummary 

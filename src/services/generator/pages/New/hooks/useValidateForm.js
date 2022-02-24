@@ -4,63 +4,73 @@ import { useLayerManager } from 'services/generator/controllers/manager';
 
 export const useValidateForm = () => {
 	const { addToast } = useToast()
-	const { settingsForm } = useMetadata();
+	const { settingsForm: { size } } = useMetadata();
 	const { query: { layers } } = useLayerManager();
 
 	const validateCollectionSize = () => {
-		if (settingsForm.size.value.length < 1) {
-			addToast({
-				severity: 'error',
-				message: 'Collection Size value cannot be left empty'
-			})
-			return false;
-		} else if (settingsForm.size.value < 10) {
-			addToast({
-				severity: 'error',
-				message: 'Collection Size value cannot be less than 10'
-			})
-			return false;
-		} else {
-			return true
+		try {
+			if (size.value.length < 1) throw new Error('Collection Size value cannot be left empty');
+			if (size.value < 10) throw new Error('Collection Size value cannot be less than 10');
+
+			return true;
 		}
+		catch (err) {
+			addToast({
+				severity: 'error',
+				message: err.message
+			});
+		}
+
+		return false;
 	}
 
 	const validateLayers = () => {
-		if(layers.length < 1) {
-			addToast({
-				severity: 'error',
-				message: 'Layers cannot be left empty. Try adding "Background"'
-			})
-			return false;
-		} else {
+		try {
+			if (layers.length < 1) throw new Error('Layers cannot be left empty. Try adding "Background"');
+
 			return true;
 		}
+		catch (err) {
+			addToast({
+				severity: 'error',
+				message: err.message
+			});
+		}
+
+		return false;
 	}
 
 	const validateLayerTraits = () => {
-		let videoCount = 0;
-		for(let i = 0; i < layers.length; i++) {
-			if(layers[i].images.length == 0) {
-				addToast({
-					severity: 'error',
-					message: `Layer '${layers[i].name}' cannot have 0 traits. Please add a trait or remove the layer`
-				});
-				return false;
-			}
-			if(layers[i].images.includes(file => file.type =='video/mp4')) {
-				videoCount++;
-			}
-		}
+		try {
+			let videoCount = 0;
 
-		if(videoCount > 1) {
+			layers.forEach((layer) => {
+				if (layer.images.length == 0) throw new Error(`Layer '${layer.name}' cannot have 0 traits. Please add a trait or remove the layer`);
+				if (layer.images.includes(file => file.type =='video/mp4')) videoCount++;
+			})
+
+			if(videoCount > 1) throw new Error(`Video can exist in one layer only! You have videos in ${2} layers.`);
+
+			let possibleCombination = 1;
+			layers.forEach((layer) => {
+				const imgSize = layer.images.length;
+				possibleCombination *= imgSize;
+			})
+
+			if (possibleCombination < size.value) {
+				throw new Error(`Possible combination is under the desired collection count (${possibleCombination}/${size.value})`);
+			}
+
+			return true;
+		}
+		catch (err) {
 			addToast({
 				severity: 'error',
-				message: `Video can exist in one layer only! You have videos in ${2} layers.`
+				message: err.message
 			});
-			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	return {

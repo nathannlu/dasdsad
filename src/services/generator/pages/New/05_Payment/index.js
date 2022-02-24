@@ -46,7 +46,13 @@ const Payment = props => {
 				</Stack>
 
 				<Stack justifyContent="space-between" direction="row">
-					<Button onClick={() => props.previousStep()}>
+					<Button 
+						onClick={() => props.previousStep()}
+						style={{
+							backgroundColor: 'rgb(25,26,36)',
+							color: 'white'
+						}}
+					>
 						Prev
 					</Button>
 				</Stack>
