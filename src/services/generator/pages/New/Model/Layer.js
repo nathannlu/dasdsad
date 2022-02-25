@@ -5,7 +5,7 @@ import { useLayerManager } from 'services/generator/controllers/manager';
 import { defaultCss, baseCss, selectedCss, compiledImgCss } from './styles';
 
 const Layer = ({activeStep, index}) => {
-	const {query: { layers, selected, selectedImage }, actions: { startPreview }} = useLayerManager();
+	const {query: { layers, selected, selectedImage }, actions: { setSelectedImage }} = useLayerManager();
 	const isSelectedLayer = selected == index;
 	const cssByStep = {
 		1: baseCss,
@@ -16,12 +16,18 @@ const Layer = ({activeStep, index}) => {
 		6: compiledImgCss
 	}//[activeStep]
 
-    useEffect(() => {
-        if (activeStep == null) return;
-        if (activeStep === 5) {
-            startPreview();
-        }
-    }, [activeStep])
+    // Preview
+    // useEffect(() => {
+    //     if (activeStep == null) return;
+    //     if (activeStep === 5) {
+    //         const ChangeLayer = () => {
+    //             const curLayer = layers[index];
+    //             setSelectedImage(Math.floor(Math.random() * layers[index].images.length));
+    //         }
+    //         const id = setInterval(ChangeLayer, 1000);
+    //         return () => clearInterval(id);
+    //     }
+    // }, [activeStep])
 
     return (
 		<Box sx={{
@@ -56,16 +62,16 @@ const Layer = ({activeStep, index}) => {
 						>
 							{{
 								'image/png': (<img
-									src={layers[index]?.images[selectedImage]?.preview}
+									src={layers[index]?.images[activeStep != 5 ? selectedImage : Math.floor(Math.random() * layers[index].images.length)]?.preview}
 									style={{width: '100%', height: '100%', objectFit: 'cover'}}
 								/>),
 								'video/mp4': (
 									<video width="100%" loop autoPlay muted>
-										<source src={layers[index]?.images[selectedImage]?.preview} type="video/mp4" />
+										<source src={layers[index]?.images[activeStep != 5 ? selectedImage : Math.floor(Math.random() * layers[index].images.length)]?.preview} type="video/mp4" />
 											Sorry, your browser doesn't support embedded videos.
 									</video>
 								)
-							}[layers[index]?.images[selectedImage]?.type]}
+							}[layers[index]?.images[activeStep != 5 ? selectedImage : Math.floor(Math.random() * layers[index].images.length)]?.type]}
 						</motion.div>
 					</AnimatePresence>
 				</motion.div>
