@@ -67,7 +67,7 @@ export const LayerManagerProvider = ({children}) => {
 	};
 
 	// Layer drag & drop handler
-	const onDragEnd = result => {
+	const onDragEnd = (result) => {
 		if (!result.destination) {
 			return;
 		}

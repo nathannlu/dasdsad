@@ -56,7 +56,16 @@ const Model = ({activeStep, isLastStep}) => {
 							borderRadius: '7px',
 						}}
 					>
-						<img
+                        <AnimatePresence>
+                            {layers.map((layer, i) => (
+                                <Layer
+                                    activeStep={activeStep}
+                                    index={i}
+                                    key={i}
+                                />
+                            ))}
+                        </AnimatePresence>
+						{/* <img
 							style={{
 								width: '200px',
 								height: '200px',
@@ -72,7 +81,7 @@ const Model = ({activeStep, isLastStep}) => {
 							<Typography sx={{opacity: .7}} variant="body">
 								($297,223.68)
 							</Typography>
-						</Stack>
+						</Stack> */}
 					</motion.div>
 
 					<motion.div 
@@ -84,7 +93,16 @@ const Model = ({activeStep, isLastStep}) => {
 							borderRadius: '7px',
 						}}
 					>
-						<img
+                        <AnimatePresence>
+                            {layers.map((layer, i) => (
+                                <Layer
+                                    activeStep={activeStep}
+                                    index={i}
+                                    key={i}
+                                />
+                            ))}
+                        </AnimatePresence>
+						{/* <img
 							style={{
 								width: '200px',
 								height: '200px',
@@ -100,7 +118,7 @@ const Model = ({activeStep, isLastStep}) => {
 							<Typography sx={{opacity: .7}} variant="body">
 								($197,223.68)
 							</Typography>
-						</Stack>
+						</Stack> */}
 					</motion.div>
 				</Stack>
 

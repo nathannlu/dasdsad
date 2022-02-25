@@ -30,7 +30,7 @@ const Payment = props => {
 							Preview
 						</Typography>
 						<Typography variant="body">
-							Check if your NFT collection is set!
+							Look to the right and check if your NFT collection is set!!
 						</Typography>
 					</Box>
 
