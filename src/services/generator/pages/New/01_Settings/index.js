@@ -13,7 +13,7 @@ const Settings = props => {
 		<Stack justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 			<Stack gap={2}>
 				<Box md={3} item>
-					<Chip sx={{opacity: .8, mb: 1}} label="Step 1/4" />
+					<Chip sx={{opacity: .8, mb: 1}} label="Step 1/5" />
 					<Typography variant="h2">
 						Metadata &amp; collection
 					</Typography>

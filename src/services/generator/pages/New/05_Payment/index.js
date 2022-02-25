@@ -25,12 +25,12 @@ const Payment = props => {
 			<Stack justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 				<Stack gap={2}>
 					<Box>
-						<Chip sx={{opacity: .8, mb: 1}} label={"Step 4/4"} />
+						<Chip sx={{opacity: .8, mb: 1}} label={"Step 5/5"} />
 						<Typography variant="h2">
-							Last step
+							Preview
 						</Typography>
 						<Typography variant="body">
-							Ready to launch the next BAYC?
+							Check if your NFT collection is set!
 						</Typography>
 					</Box>
 

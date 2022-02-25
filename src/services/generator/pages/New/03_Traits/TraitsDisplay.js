@@ -6,7 +6,7 @@ import { useTrait } from 'services/generator/controllers/traits';
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
 const TraitsDisplay = ({index, editing}) => {
-	const { query: {layers}, actions: {setSelected} } = useLayerManager();
+	const { query: {layers}, actions: {setSelectedImage} } = useLayerManager();
 	const { deleteTrait } = useTrait();
 
 	// @TODO tidy up
@@ -21,7 +21,7 @@ const TraitsDisplay = ({index, editing}) => {
 						{image.type == 'image/png' ? (
 							<img
 								src={image.preview} 
-								onClick={() => setSelected(i)}
+								onClick={() => setSelectedImage(i)}
 								style={{borderRadius: '4px', width: '100%'}}
 							/>
 						): null}

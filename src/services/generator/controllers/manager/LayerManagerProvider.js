@@ -12,6 +12,7 @@ const initialLayersState = [
 
 export const LayerManagerProvider = ({children}) => {
 	const [layers, setLayers] = useState(initialLayersState);
+    const [selectedImage, setSelectedImage] = useState(0);
 	const [selected, setSelected] = useState(0);
 	const { addToast } = useToast();
 
@@ -75,8 +76,8 @@ export const LayerManagerProvider = ({children}) => {
 	}
 
 	const value = {
-		query: { layers, selected },
-		actions: { addLayer, deleteLayer, updateLayers, setLayers, setSelected, reorder, onDragEnd }
+		query: { layers, selected, selectedImage },
+		actions: { addLayer, deleteLayer, updateLayers, setLayers, setSelected, reorder, onDragEnd, setSelectedImage }
 	}
 		
 	return (

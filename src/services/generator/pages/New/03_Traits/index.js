@@ -13,7 +13,7 @@ const Traits = props => {
 		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 			<Stack gap={2}>
 				<Box>
-					<Chip sx={{opacity: .8, mb: 1}} label={"Step 3/4"} />
+					<Chip sx={{opacity: .8, mb: 1}} label={"Step 3/5"} />
 					<Typography variant="h2">
 						Add traits
 					</Typography>

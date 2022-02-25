@@ -153,12 +153,12 @@ export const GeneratorProvider = ({children}) => {
 				if (!hashList.includes(currentHash)) {
 					hashList.push(currentHash);
 					await saveCanvas(curRenderIndex);
-					if (size.value >= 1000 && (curRenderIndex == size.value || curRenderIndex % 1000 == 0)) {
-						setIsAutoSave(true);
-						setIsDownloading(true);
-						await autoSave(chunkCount++);
-						setIsDownloading(false);
-					}
+					// if (size.value >= 1000 && (curRenderIndex == size.value || curRenderIndex % 1000 == 0)) {
+					// 	setIsAutoSave(true);
+					// 	setIsDownloading(true);
+					// 	await autoSave(chunkCount++);
+					// 	setIsDownloading(false);
+					// }
 					let nftJson = {
 						name: `${name.value} #${curRenderIndex}`,
 						description: description.value,                
