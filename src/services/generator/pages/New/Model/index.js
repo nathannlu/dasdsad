@@ -46,81 +46,82 @@ const Model = ({activeStep, isLastStep}) => {
 			</AnimatePresence>
 
 			<Box sx={{position: smallerThanTablet ? 'static' : 'fixed'}}>
-				<Stack gap={50} alignItems="center" direction="row" sx={{zIndex: 10}}>
-					<motion.div 
-						custom={1}
-						initial={{opacity: 0}} 
-						animate={controls}
-						style={{
-							background: 'white',
-							borderRadius: '7px',
-						}}
-					>
-                        <AnimatePresence>
-                            {layers.map((layer, i) => (
-                                <Layer
-                                    activeStep={activeStep}
-                                    index={i}
-                                    key={i}
-                                />
-                            ))}
-                        </AnimatePresence>
-						{/* <img
-							style={{
-								width: '200px',
-								height: '200px',
-								borderRadius: '7px'
-							}}
-							src="https://www.larvalabs.com/cryptopunks/cryptopunk3100.png"
-						/>
-						<Stack alignItems="center" p={1} gap={1} direction="row">
-							<img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
-							<Typography sx={{fontWeight: 'bold'}} variant="h5">
-								78
-							</Typography>
-							<Typography sx={{opacity: .7}} variant="body">
-								($297,223.68)
-							</Typography>
-						</Stack> */}
-					</motion.div>
-
-					<motion.div 
-						custom={2}
-						initial={{opacity: 0}} 
-						animate={controls}
-						style={{
-							background: 'white',
-							borderRadius: '7px',
-						}}
-					>
-                        <AnimatePresence>
-                            {layers.map((layer, i) => (
-                                <Layer
-                                    activeStep={activeStep}
-                                    index={i}
-                                    key={i}
-                                />
-                            ))}
-                        </AnimatePresence>
-						{/* <img
-							style={{
-								width: '200px',
-								height: '200px',
-								borderRadius: '7px'
-							}}
-							src="https://www.thestreet.com/.image/t_share/MTgyMDU5NDcwMTc4NzU1NzE1/boredape1.jpg"
-						/>
-						<Stack alignItems="center" p={1} gap={1} direction="row">
-							<img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
-							<Typography sx={{fontWeight: 'bold'}} variant="h5">
-								68	
-							</Typography>
-							<Typography sx={{opacity: .7}} variant="body">
-								($197,223.68)
-							</Typography>
-						</Stack> */}
-					</motion.div>
-				</Stack>
+                {activeStep === 5 && (
+                    <Stack gap={50} alignItems="center" direction="row" sx={{zIndex: 10}}>
+                        <motion.div 
+                            custom={1}
+                            initial={{opacity: 0}} 
+                            animate={controls}
+                            style={{
+                                background: 'white',
+                                borderRadius: '7px',
+                            }}
+                        >
+                            <AnimatePresence>
+                                {layers.map((layer, i) => (
+                                    <Layer
+                                        activeStep={activeStep}
+                                        index={i}
+                                        key={i}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                            {/* <img
+                                style={{
+                                    width: '200px',
+                                    height: '200px',
+                                    borderRadius: '7px'
+                                }}
+                                src="https://www.larvalabs.com/cryptopunks/cryptopunk3100.png"
+                            />
+                            <Stack alignItems="center" p={1} gap={1} direction="row">
+                                <img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
+                                <Typography sx={{fontWeight: 'bold'}} variant="h5">
+                                    78
+                                </Typography>
+                                <Typography sx={{opacity: .7}} variant="body">
+                                    ($297,223.68)
+                                </Typography>
+                            </Stack> */}
+                        </motion.div>
+                        <motion.div 
+                            custom={2}
+                            initial={{opacity: 0}} 
+                            animate={controls}
+                            style={{
+                                background: 'white',
+                                borderRadius: '7px',
+                            }}
+                        >
+                            <AnimatePresence>
+                                {layers.map((layer, i) => (
+                                    <Layer
+                                        activeStep={activeStep}
+                                        index={i}
+                                        key={i}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                            {/* <img
+                                style={{
+                                    width: '200px',
+                                    height: '200px',
+                                    borderRadius: '7px'
+                                }}
+                                src="https://www.thestreet.com/.image/t_share/MTgyMDU5NDcwMTc4NzU1NzE1/boredape1.jpg"
+                            />
+                            <Stack alignItems="center" p={1} gap={1} direction="row">
+                                <img style={{height: '25px'}} src="https://storage.opensea.io/files/accae6b6fb3888cbff27a013729c22dc.svg" />
+                                <Typography sx={{fontWeight: 'bold'}} variant="h5">
+                                    68	
+                                </Typography>
+                                <Typography sx={{opacity: .7}} variant="body">
+                                    ($197,223.68)
+                                </Typography>
+                            </Stack> */}
+                        </motion.div>
+                    </Stack>
+                )}
 
 				<AnimatePresence>
 					{layers.map((layer, i) => (
