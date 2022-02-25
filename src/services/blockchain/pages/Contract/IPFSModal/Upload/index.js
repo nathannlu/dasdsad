@@ -60,7 +60,7 @@ const Confirmation = props => {
 			</Box>
 
 			<Box>
-				Metadata for your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/1`} target="_blank">{ipfsUrl}</a>. Please verify the content is correct.
+				Metadata for your first NFT is stored at <a style={{color: 'blue'}} href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/1.json`} target="_blank">{ipfsUrl}</a>. Please verify the content is correct.
 			</Box>
 
 			<Button variant="contained" onClick={() => setBaseUri({variables: {baseUri: ipfsUrl, id: props.id}})}>
