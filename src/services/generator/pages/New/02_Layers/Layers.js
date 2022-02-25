@@ -3,10 +3,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Stack, Box, Button, Card, Typography, TextField, IconButton  } from 'ds/components';
 import { Chip } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, Layers as LayersIcon } from '@mui/icons-material'
-
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { useNewLayerForm } from '../hooks/useNewLayerForm';
-
 
 const layerStyle = {
 	border:  '1px solid rgba(255, 255, 255, 1)',
@@ -14,7 +12,7 @@ const layerStyle = {
 	py:1,
 	px:2,
 	cursor: 'pointer',
-	background: 'rgba(0,0,0,.53)',
+	background: 'rgb(25,26,36)',
 	backdropFilter: 'blur(3px)',
 	color: 'white'
 }
@@ -27,7 +25,6 @@ const Layers = () => {
 	} = useLayerManager();
 	const { newLayerForm, onSubmit } = useNewLayerForm();
 
-	
 	return (
 			<Stack gap={2}>
 				<DragDropContext onDragEnd={onDragEnd}>
@@ -54,17 +51,17 @@ const Layers = () => {
 								>
 									<Stack direction="row" sx={{opacity: .8}} alignItems="center">
 										<LayersIcon />
-										<Box sx={{flex: 1}}>
+										<Box sx={{flex: 1}} ml='.5em'>
 											{item.name}
 										</Box>
-										<IconButton onClick={() => deleteLayer(i)}>
+										<IconButton onClick={() => deleteLayer(i)} style={{ color: 'white' }}>
 											<DeleteIcon />
 										</IconButton>
 									</Stack>
 								</Card>
 								)}
 							</Draggable>
-						))}
+						)).reverse()}
 						{provided.placeholder}
 
 						</Stack>

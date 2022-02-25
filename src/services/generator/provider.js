@@ -7,7 +7,6 @@ export const CollectionContext = React.createContext({})
 
 export const useCollection = () => useContext(CollectionContext)
 
-
 export const CollectionProvider = ({ children }) => {
 
 	return (

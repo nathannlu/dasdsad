@@ -4,7 +4,6 @@ import { Stack, Typography, Box } from 'ds/components';
 import { AnimatePresence } from "framer-motion"
 import { useLayerManager } from 'services/generator/controllers/manager';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import Layer from './Layer';
 import GradientBackground from './GradientBackground';
 

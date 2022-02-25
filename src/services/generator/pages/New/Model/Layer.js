@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import { Box } from 'ds/components';
 import { useLayerManager } from 'services/generator/controllers/manager';
-import { useTrait } from 'services/generator/controllers/traits'
-
 import { defaultCss, baseCss, selectedCss, compiledImgCss } from './styles';
 
 const Layer = ({activeStep, index}) => {
-	const {query: { layers, selected }} = useLayerManager();
-
-	const { selectedImage } = useTrait();
-
+	const {query: { layers, selected, selectedImage }} = useLayerManager();
 	const isSelectedLayer = selected == index;
 	const cssByStep = {
 		1: baseCss,
@@ -20,7 +15,6 @@ const Layer = ({activeStep, index}) => {
 		5: compiledImgCss,
 		6: compiledImgCss
 	}//[activeStep]
-
 
 	return (
 		<Box sx={{

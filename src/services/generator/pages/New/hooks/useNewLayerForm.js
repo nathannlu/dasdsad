@@ -19,7 +19,6 @@ export const useNewLayerForm = () => {
 		if(newLayerForm.name.value.length > 0) {
 			let obj = {
 				name: newLayerForm.name.value,
-				weight: 100,
 				images: []
 			}
 			addLayer(obj);

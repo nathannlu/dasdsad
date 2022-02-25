@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, Stack, Button, Typography, Slider } from 'ds/components';
 import { Chip, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, Layers as LayersIcon } from '@mui/icons-material';
 import { useLayerManager } from 'services/generator/controllers/manager';
-
 import Content from './Content';
-
 
 const Rarity = props => {
 	const {
@@ -13,12 +11,11 @@ const Rarity = props => {
 		actions: { setSelected }
 	} = useLayerManager();
 
-	
 	return (
 		<Stack gap={2} justifyContent="space-between" sx={{minHeight: '90vh', paddingTop: '120px'}}>
 			<Stack gap={2}>
 				<Box>
-					<Chip sx={{opacity: .8, mb: 1}} label={"Step 4/4"} />
+					<Chip sx={{opacity: .8, mb: 1}} label={"Step 4/5"} />
 					<Typography variant="h2">
 						Edit your rarity
 					</Typography>
@@ -27,16 +24,22 @@ const Rarity = props => {
 					</Typography>
 				</Box>
 
-
 				<Box>
 					{layers.map((layer, i) => (
-						<Accordion expanded={selected == i} onChange={e => { 
-							setSelected(i);
-						}}>
-							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon />}>
+						<Accordion 
+							key={i} 
+							expanded={selected == i} 
+							onChange={e => { 
+								setSelected(i);
+							}}
+							sx={{
+								backgroundColor: 'rgb(25,26,36)'
+							}}
+						>
+							<AccordionSummary id={i} expandIcon={<ExpandMoreIcon style={{ color: 'white' }} />}>
 								<Stack gap={1} direction="row" sx={{opacity: .8}} alignItems="center">
-									<LayersIcon />
-									<Typography variant="h6">
+									<LayersIcon style={{ color: 'white' }} />
+									<Typography variant="h6" color='white'>
 										{layer.name}
 									</Typography>
 								</Stack>
@@ -46,15 +49,27 @@ const Rarity = props => {
 								<Content layer={layer} />
 							</AccordionDetails>
 						</Accordion>
-					))}
+					)).reverse()}
 				</Box>
 			</Stack>
-			
 			<Stack justifyContent="space-between" direction="row">
-				<Button onClick={() => props.previousStep()}>
+				<Button 
+					onClick={() => props.previousStep()}
+					variant='contained'
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Prev
 				</Button>
-				<Button onClick={() => props.nextStep()}>
+				<Button 
+					onClick={() => props.nextStep()}
+					style={{
+						backgroundColor: 'rgb(25,26,36)',
+						color: 'white'
+					}}
+				>
 					Next
 				</Button>
 			</Stack>

@@ -13,11 +13,13 @@ export const defaultCss = {
 export const baseCss = {
 	transform: 'rotateX(45deg) rotateZ(45deg)',
 };
+
 export const selectedCss = isSelectedLayer => ({
 	transform: `rotateX(45deg) rotateZ(45deg) ${isSelectedLayer ? 'scale(1.05)' : ''}`,
 	opacity: isSelectedLayer ? 1 : .5,
 	border: isSelectedLayer ? 'solid 3px #006aff' : 'solid 2px white',
 });
+
 export const compiledImgCss = {
 	transform: '',
 	background: '',

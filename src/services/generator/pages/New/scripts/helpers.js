@@ -5,6 +5,7 @@
 export function randomNumber(min, max) {
  return Math.round(Math.random() * (max - min) + min);
 }
+
 //PICKS A RANDOM INDEX INSIDE AN ARRAY RETURNS IT AND THEN REMOVES IT
 export function pickRandomAndRemove(array) {
   const toPick = randomNumber(0, array.length - 1);
@@ -17,8 +18,6 @@ export function pickRandomAndRemove(array) {
 export function pickRandom(array) {
   return randomNumber(0, array.length - 1);
 }
-
-
 
 // images = [{preview: '', weight: 30}, {preview: '', weight: 10}]
 // takes in layer images
@@ -49,5 +48,3 @@ export const includeWeightedLayer  = (layer) => {
 	}
 	return false;
 };
-
-

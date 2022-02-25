@@ -6,23 +6,34 @@ import posthog from 'posthog-js';
 const initialLayersState = [
 	{
 		name: 'Background',
-		weight: 100,
 		images: [],
 	}
 ];
 
 export const LayerManagerProvider = ({children}) => {
 	const [layers, setLayers] = useState(initialLayersState);
+    const [selectedImage, setSelectedImage] = useState(0);
 	const [selected, setSelected] = useState(0);
 	const { addToast } = useToast();
 
 	const addLayer = (newLayer) => {
-		setLayers(prevState => {
-			prevState.push(newLayer)
-			return [...prevState];
-		})
+		try {
+			const indexOfNewLayer = layers.findIndex((layer) => layer.name === newLayer.name);
+			if (indexOfNewLayer !== -1) throw new Error('You cannot add layer with the same name');
 
-		posthog.capture('User added layer to their collection');
+			setLayers(prevState => {
+				prevState.push(newLayer)
+				return [...prevState];
+			})
+
+			posthog.capture('User added layer to their collection');
+		}
+		catch (err) {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})
+		}
 	}
 
 	const deleteLayer = (index) => {
@@ -35,15 +46,12 @@ export const LayerManagerProvider = ({children}) => {
 	const updateLayers = (index, updatedLayer) => {
 		setLayers(prevState => {
 			prevState[index] = {...prevState[index], ...updatedLayer};
-
 			return [...prevState]
 		});
 	}
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
-
-
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
 		setSelected(endIndex)
@@ -68,8 +76,8 @@ export const LayerManagerProvider = ({children}) => {
 	}
 
 	const value = {
-		query: { layers, selected },
-		actions: { addLayer, deleteLayer, updateLayers, setLayers, setSelected, reorder, onDragEnd }
+		query: { layers, selected, selectedImage },
+		actions: { addLayer, deleteLayer, updateLayers, setLayers, setSelected, reorder, onDragEnd, setSelectedImage }
 	}
 		
 	return (

@@ -3,18 +3,17 @@ import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, IconButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useCharge } from 'gql/hooks/billing.hook';
-import { usePaymentForm } from '../hooks/usePaymentForm';
-
+import { usePaymentForm } from '../New/hooks/usePaymentForm';
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useWeb3 } from 'libs/web3';
 
-const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
+const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
 	const stripe = useStripe();
     const elements = useElements();
 	const { settingsForm  } = useMetadata();
-	const { generateImages, save, start } = useGenerator();
+	const { generateImages } = useGenerator();
 	const { payInEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
 
 	const {
@@ -26,11 +25,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
 			setIsModalOpen(false);
-			save();
-				//save image
-//			generateImages();
-//			nextStep();
-
+			generateImages();
 			onPaymentSuccess(data);
 
 		},
@@ -44,8 +39,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen, nextStep }) => {
 
 		if(settingsForm.coupon.value == 'ch_3KD9JpJUIYorshTC0byzp3BZ') {
 			setIsModalOpen(false);
-			save();
-
+			generateImages();
 		} else {
 			const card = elements.getElement(CardElement);
 			const result = await stripe.createToken(card);

@@ -16,17 +16,16 @@ export function Content({index, editing}) {
 						<Box sx={{
 							alignItems:'center', 
 							justifyContent: 'center',
-							borderRadius: '4px',
-							background: '#F8F8F8',
-							border: '1px solid #C4C4C4',
+							background: 'rgb(43, 45, 61)',
 							cursor: 'pointer',
 							boxShadow: '0 0 10px rgba(0,0,0,.15)',
 							position: 'relative',
 						}}>
-							<div style={{padding: '64px'}} {...getRootProps()}>
+							<div style={{padding: '64px'}} {...getRootProps()} >
 								<input {...getInputProps()} />
-								<p style={{opacity: .5, textAlign: 'center'}}>
-									Drag 'n' drop files here. This layer supports image/png{index == 0 ? ", video/mp4" : ""}.
+								<p style={{opacity: .5, textAlign: 'center', color: 'white'}}>
+									Drag 'n' drop files here. This layer supports image/png.
+									{/* {index == 0 ? ", video/mp4" : ""} */}
 								</p>
 							</div>
 						</Box>

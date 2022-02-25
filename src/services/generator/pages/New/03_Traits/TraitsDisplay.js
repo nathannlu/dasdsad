@@ -3,18 +3,15 @@ import { Typography, Stack, Box, Grid, IconButton } from 'ds/components';
 import { Edit as EditIcon, CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { useTrait } from 'services/generator/controllers/traits';
-
 import ChangeTraitNameModal from './ChangeTraitNameModal';
 
-
 const TraitsDisplay = ({index, editing}) => {
-	const { query: {layers, selected}} = useLayerManager();
+	const { query: {layers}, actions: {setSelectedImage} } = useLayerManager();
 	const { deleteTrait } = useTrait();
 
 	// @TODO tidy up
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editTrait, setEditTrait] = useState(null);
-
 
 	return (
 		<Stack gap={2} direction="row" sx={{flexWrap: 'wrap'}}>
@@ -38,11 +35,11 @@ const TraitsDisplay = ({index, editing}) => {
 
 						<Stack justifyContent="space-between" alignItems="center" direction="row">
 							<Stack direction="column">
-								<Typography variant="small" sx={{fontSize: '12px', fontWeight: 'bold'}}>
+								<Typography variant="small" sx={{fontSize: '12px', fontWeight: 'bold', color: 'white', mt: '.25em'}}>
 									Trait name
 								</Typography>
 
-								<Typography variant="small">
+								<Typography variant="small" color='white'>
 									{image.name}
 								</Typography>
 							</Stack>
@@ -53,6 +50,7 @@ const TraitsDisplay = ({index, editing}) => {
 									padding: '3px',
 									height: '30px',
 									width: '30px',
+									color: 'white',
 								}}
 								onClick={() => {
 									setEditTrait(i)
@@ -84,8 +82,6 @@ const TraitsDisplay = ({index, editing}) => {
 					):null}
 				</Grid>
 			))}
-		
-
 			<ChangeTraitNameModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} editTrait={editTrait} />
 		</Stack>
 	)

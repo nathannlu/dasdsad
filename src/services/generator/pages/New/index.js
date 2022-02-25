@@ -11,20 +11,12 @@ import Layers from './02_Layers';
 import Traits from './03_Traits';
 import Rarity from './04_Rarity';
 import Payment from './05_Payment';
-import Generating from './06_Generating';
 import Model from './Model';
 
-import CloseIcon from '@mui/icons-material/Close';
-
-
 const Generator = () => {
-	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const [activeStep, setActiveStep] = useState(1);
 	const isLastStep = activeStep == 5 || activeStep == 6;
-	const history = useHistory();
-
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
-
 
 	return (
 		<Fade in>
@@ -37,7 +29,6 @@ const Generator = () => {
 					position: 'absolute',
 					zIndex: 1100,
 					top: 0,
-//					paddingTop: '67px'
 				}}
 			>
 				{/*
@@ -70,8 +61,7 @@ const Generator = () => {
 							<Layers />
 							<Traits />
 							<Rarity />
-							<Payment setIsCheckoutModalOpen={setIsCheckoutModalOpen} />
-							<Generating />
+							<Payment />
 						</StepWizard>
 					</Stack>
 				</Grid>
