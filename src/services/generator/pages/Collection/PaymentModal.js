@@ -22,10 +22,14 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
 		onPaymentError,
 	} = usePaymentForm();
 
+    const completedTransaction = () => {
+        setIsModalOpen(false);
+        generateImages();
+    }
+
 	const [ charge, { loading }] = useCharge({
 		onCompleted: data => {
-			setIsModalOpen(false);
-			generateImages();
+			completedTransaction();
 			onPaymentSuccess(data);
 
 		},
@@ -91,7 +95,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
 						<Stack gap={2}>
 							<LoadingButton 
 								startIcon={<LockIcon />} 
-								onClick={() => payInEth(settingsForm.size.value, onCompleted)} 
+								onClick={() => payInEth(settingsForm.size.value, completedTransaction)} 
 								loading={ethPayLoading}
 								variant="contained" 
 								color="black"

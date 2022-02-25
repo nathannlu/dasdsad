@@ -67,7 +67,7 @@ export const LayerManagerProvider = ({children}) => {
 	};
 
 	// Layer drag & drop handler
-	const onDragEnd = result => {
+	const onDragEnd = (result) => {
 		if (!result.destination) {
 			return;
 		}
@@ -75,9 +75,14 @@ export const LayerManagerProvider = ({children}) => {
 		setLayers(items)
 	}
 
+    const startPreview = () => {
+        // setSelectedImage(Math.floor(Math.random() * layers[0].images.length));
+        // setInterval(startPreview, 2000);
+    }
+
 	const value = {
 		query: { layers, selected, selectedImage },
-		actions: { addLayer, deleteLayer, updateLayers, setLayers, setSelected, reorder, onDragEnd, setSelectedImage }
+		actions: { addLayer, deleteLayer, updateLayers, setLayers, setSelected, reorder, onDragEnd, setSelectedImage, startPreview }
 	}
 		
 	return (

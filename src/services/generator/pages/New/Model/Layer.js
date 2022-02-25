@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
 import { Box } from 'ds/components';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import { defaultCss, baseCss, selectedCss, compiledImgCss } from './styles';
 
 const Layer = ({activeStep, index}) => {
-	const {query: { layers, selected, selectedImage }} = useLayerManager();
+	const {query: { layers, selected, selectedImage }, actions: { startPreview }} = useLayerManager();
 	const isSelectedLayer = selected == index;
 	const cssByStep = {
 		1: baseCss,
@@ -16,7 +16,14 @@ const Layer = ({activeStep, index}) => {
 		6: compiledImgCss
 	}//[activeStep]
 
-	return (
+    useEffect(() => {
+        if (activeStep == null) return;
+        if (activeStep === 5) {
+            startPreview();
+        }
+    }, [activeStep])
+
+    return (
 		<Box sx={{
 			'&:not(:first-of-type)': {
 				marginTop: activeStep == 5 || activeStep == 6 ? '-250px' : '-300px'
