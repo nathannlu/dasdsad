@@ -48,9 +48,9 @@ export const Web3Provider = ({ children }) => {
         (async () => {
             if (wallet === 'default' || wallet === 'metamask') {
                 if (window.ethereum) {
-                    // window.ethereum.on("accountsChanged", (_account) => {
-                    //     setAccount(_account[0]);
-                    // });
+                    window.ethereum.on("accountsChanged", (_account) => {
+                        setAccount(_account[0]);
+                    });
                 }
             }
 		})();
@@ -159,7 +159,7 @@ export const Web3Provider = ({ children }) => {
         }
 	}
 
-    
+
 
 	const loadWeb3 = async () => {
 		if (window.ethereum) {
