@@ -16,7 +16,7 @@ const Login = (props) => {
 	})
 	const [verifySignature] = useVerifySignature({
 		onCompleted: async data => {
-			posthog.capture( 'User logged in with metamask', {$set: {
+			posthog.capture('User logged in with metamask', {$set: {
 				publicAddress: account
 			}});
 
@@ -24,27 +24,18 @@ const Login = (props) => {
 		}
 	});
 
-
 	const onClick = async () => {
 		await loadWeb3();
 		await loadBlockchainData();
 
 		// Check if address has nonce
-		const res = await getNonceByAddress()
-		const nonce = res.data.getNonceByAddress
+		const res = await getNonceByAddress();
+		const nonce = res.data.getNonceByAddress;
 
 		// Create a signature from address
 		const { address, signature } = await signNonce({ address: account, nonce });
 		await verifySignature({variables: {address, signature}})
 	}
-
-
-	useEffect(() => {
-		(async() => {
-			await loadWeb3();
-			await loadBlockchainData();
-		})()
-	}, [])
 
 	return (
 		<Button

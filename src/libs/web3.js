@@ -184,7 +184,6 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
-
 	const checkOwner = async (id, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
 		const owner = await contract.methods.ownerOf(id).call();
@@ -271,7 +270,8 @@ export const Web3Provider = ({ children }) => {
         const minted = await contract.methods.supply().call();
 
         return minted;
-		}
+	}
+
     const getMaximumSupply = async (contractAddress) => {
         const web3 = window.web3
 			try {
@@ -287,7 +287,8 @@ export const Web3Provider = ({ children }) => {
 
 				return max2
 			}
-		}
+	}
+
     // Compare current network with target network and switches if it doesn't match
     const compareNetwork = async (targetNetwork, callback) => {
         const curNetwork = getNetworkID();
@@ -397,7 +398,32 @@ export const Web3Provider = ({ children }) => {
 		return [loading]
 	}
 
+    const loadPhantom = async () => {
+        try {
+            const provider = window.solana;
+            if (!provider.isPhantom) throw new Error('Phantom is not installed');
+            const sol = await window.solana.connect();
+            setAccount(sol.publicKey.toString());
+        }
+        catch(err) {
+            addToast({
+                severity: 'error',
+                message: err.message
+            })
+        }
+    }
 
+    const signNoncePhantom = async (nonce) => {
+        const encodedMessage = new TextEncoder().encode(`I am signing my one-time nonce: ${nonce}`);
+        const signature = await window.solana.request({
+            method: "signMessage",
+            params: {
+                message: encodedMessage,
+            },
+        });
+        setAccount(signature.publicKey);
+		return signature
+	}
 
 	return (
 		<Web3Context.Provider
@@ -420,7 +446,10 @@ export const Web3Provider = ({ children }) => {
                 getMaximumSupply,
 				getTotalMinted,
 
-				getPublicContractVariables
+				getPublicContractVariables,
+
+                loadPhantom,
+                signNoncePhantom,
 			}}
 		>
 			{ children }
