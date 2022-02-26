@@ -16,7 +16,7 @@ const Website = props => {
 	const history = useHistory();
 
 	const [createWebsite] = useCreateWebsite({ 
-		title: websiteTitle,
+		title: websiteTitle.toLowerCase(),
 		contractAddress: selectInput,
 		onCompleted: data => {
 			addToast({
