@@ -37,7 +37,7 @@ const RenderModal = ({renderModalState, setRenderModalState}) => {
                     )}
                 </Stack>
                 <Stack padding='1em' marginTop='1em'>
-                    <canvas ref={canvasRef} width={layers[0]?.images[0]?.image?.naturalWidth} height={layers[0]?.images[0]?.image?.naturalHeight}></canvas>
+                    <canvas ref={canvasRef} width={layers[0]?.images[0]?.image?.naturalWidth > 1000 ? 1000 : layers[0]?.images[0]?.image?.naturalWidth} height={layers[0]?.images[0]?.image?.naturalHeight > 1000 ? 1000 : layers[0]?.images[0]?.image?.naturalHeight}></canvas>
                 </Stack>
             </DialogContent>
         </Dialog>
