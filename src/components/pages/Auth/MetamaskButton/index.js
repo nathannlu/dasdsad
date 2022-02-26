@@ -51,11 +51,14 @@ const Login = (props) => {
 			startIcon={<img style={{width:'20px'}} src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" />} 
 			fullWidth 
 			onClick={onClick} 
-			sx={{color: 'white'}} 
 			variant="contained" 
-			color="black"
+            style={{
+                backgroundColor: 'rgb(25,26,36)',
+                color: 'white',
+                textTransform: 'none'
+            }}
 		>
-			Continue with metamask
+			Continue with Metamask
 		</Button>
 	)
 };
