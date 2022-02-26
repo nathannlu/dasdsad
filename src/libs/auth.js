@@ -56,10 +56,10 @@ export const AuthProvider = ({ children }) => {
 		setUser(null);
 		//setWebsite({});
 		setIsAuthenticated(false);
-
         if (wallet === 'phantom') {
             window.solana.disconnect();
         }
+        window.localStorage.setItem('ambition-wallet', '');
 	}
 
 	return (

@@ -8,6 +8,7 @@ import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambiti
 import { useGetNonceByAddress, useVerifySignature, useVerifySignaturePhantom } from 'gql/hooks/users.hook';
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 import posthog from 'posthog-js';
+import { useAuth } from 'libs/auth';
 
 export const Web3Context = createContext({});
 
@@ -20,11 +21,13 @@ export const Web3Provider = ({ children }) => {
 	const { addToast } = useToast();
     const { handleLoginSuccess } = useLoginForm();
     const [getNonceByAddress] = useGetNonceByAddress();
+    const { logout } = useAuth();
     const [verifySignature] = useVerifySignature({
 		onCompleted: async data => {
 			posthog.capture('User logged in with metamask', {$set: {
 				publicAddress: account
 			}});
+            window.localStorage.setItem('ambition-wallet', 'metamask');
             setWallet('metamask');
 			await handleLoginSuccess();
 		}
@@ -34,6 +37,7 @@ export const Web3Provider = ({ children }) => {
 			posthog.capture('User logged in with phantom', {$set: {
 				publicAddress: account
 			}});
+            window.localStorage.setItem('ambition-wallet', 'phantom');
             setWallet('phantom');
 			await handleLoginSuccess();
 		}
@@ -44,13 +48,19 @@ export const Web3Provider = ({ children }) => {
         (async () => {
             if (wallet === 'default' || wallet === 'metamask') {
                 if (window.ethereum) {
-                    window.ethereum.on("accountsChanged", (_account) => {
-                        setAccount(_account[0]);
-                    });
+                    // window.ethereum.on("accountsChanged", (_account) => {
+                    //     setAccount(_account[0]);
+                    // });
                 }
             }
 		})();
     }, [wallet])
+
+    useEffect(() => {
+        const curWallet = localStorage.getItem('ambition-wallet');
+        if (!curWallet || !curWallet.length) logout();
+        setWallet(curWallet);
+    }, [])
 
     const loadWalletProvider = async (walletType) => {
         try {
@@ -58,12 +68,14 @@ export const Web3Provider = ({ children }) => {
                 if (typeof window.ethereum === 'undefined' || (typeof window.web3 === 'undefined')) throw new Error('Metamask is not installed');
                 window.web3 = new Web3(window.ethereum) || new Web3(window.web3.currentProvider);
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                setAccount(accounts[0]);
                 return accounts[0];
             }
             else if (walletType === 'phantom') {
                 const provider = window.solana;
                 if (!provider.isPhantom) throw new Error('Phantom is not installed');
                 const sol = await window.solana.connect();
+                setAccount(sol.publicKey.toString());
                 return sol.publicKey.toString();
             }
             else throw new Error('Wallet not supported');
@@ -146,6 +158,8 @@ export const Web3Provider = ({ children }) => {
             })
         }
 	}
+
+    
 
 	const loadWeb3 = async () => {
 		if (window.ethereum) {
@@ -410,11 +424,22 @@ export const Web3Provider = ({ children }) => {
 	}
 
     // Compare current network with target network and switches if it doesn't match
-    const compareNetwork = async (targetNetwork, callback) => {
+    const compareNetwork = async (targetNetwork, callback = null) => {
+        if (targetNetwork === 'solana' || targetNetwork === 'solanatestnet') {
+            if (callback != null) callback();
+            return;
+        }
+        let target = targetNetwork;
+        if (targetNetwork.indexOf('x') === -1) {
+            if (targetNetwork === "ethereum") target = "0x1";
+            else if (targetNetwork === "rinkeby") target = "0x4";
+            else if (targetNetwork === "polygon") target = "0x89";
+            else if (targetNetwork === "mumbai") target = "0x13881";
+        }
         const curNetwork = getNetworkID();
-        if (curNetwork !== targetNetwork) {
-            const status = await setNetwork(targetNetwork);
-            if (status === 'prompt_successful') callback();
+        if (curNetwork !== target) {
+            const status = await setNetwork(target);
+            if (status === 'prompt_successful' && callback != null) callback();
             else if (status === 'prompt_cancled') {
                 addToast({
                     severity: 'error',
@@ -423,9 +448,8 @@ export const Web3Provider = ({ children }) => {
             }
         }
         else {
-            callback();
+            if (callback != null) callback();
         }
-//            callback();
     }
 
     // Get current network
@@ -521,7 +545,9 @@ export const Web3Provider = ({ children }) => {
 	return (
 		<Web3Context.Provider
 			value={{
+                account,
                 wallet,
+                setAccount,
                 setWallet,
                 loadWalletProvider,
                 loginToWallet,
@@ -530,7 +556,6 @@ export const Web3Provider = ({ children }) => {
 				loadBlockchainData,
 				mint,
 				retrieveContract,
-				account,
 				signNonce,
 				checkOwner,
                 getNetworkID,

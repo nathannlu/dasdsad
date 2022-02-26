@@ -173,6 +173,7 @@ export const useLogin = ({ email, password, onError, onCompleted }) => {
 		onCompleted: data => {
 			if (data?.login) {
 				if (onLoginSuccess) {
+                    window.localStorage.setItem('ambition-wallet', 'default');
                     setWallet('default');
 					onLoginSuccess(data.login);
 				}
