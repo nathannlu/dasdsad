@@ -53,7 +53,7 @@ export const GeneratorProvider = ({children}) => {
 					trait_type: layer.name,
 					value: layer.images[randomIndex].name
 				}
-				ctx.drawImage(layer.images[randomIndex].image, 0, 0, imageDimension.width, imageDimension.height);
+				ctx.drawImage(layer.images[randomIndex].image, 0, 0, imageDimension.width > 1000 ? 1000 : imageDimension.width, imageDimension.height > 1000 ? 1000 : imageDimension.height);
 				resolve(newAttribute);
 			}
 			catch (err) {
