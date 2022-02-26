@@ -20,7 +20,6 @@ const Login = props => {
 		onError: handleLoginError
 	});
 
-
 	return (
 		<Fade in>
 			<Box

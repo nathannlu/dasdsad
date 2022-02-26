@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
 
-
 export const useContractDetails = (contractAddress) => {
 	const [balance, setBalance] = useState(null)
 	const [soldCount, setSoldCount] = useState(null)
@@ -45,10 +44,8 @@ export const useContractDetails = (contractAddress) => {
 		setMetadataUrl(baseTokenUri);
 		setMax(maxPerMint);
 		setSize(totalSupply);
-
 		setLoading(false);
 	}
-
 
 	return {
 		max,

@@ -69,6 +69,7 @@ export const useEmbed = () => {
 
         if (b === "0x1" || b === "0x4") setPrefix("ETH");
 		else if (b === "0x89" || b === "0x13881") setPrefix("MATIC");
+        else if (b === "solana") setPrefix("SOL");
 
     }, [search])
 

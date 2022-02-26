@@ -1,25 +1,152 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
-//import { useWebsite } from 'libs/website';
-//import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/NFTCollectible.json';
 import config from 'config';
 import { MerkleTree } from 'merkletreejs';
 import keccak256 from 'keccak256';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
+import { useGetNonceByAddress, useVerifySignature, useVerifySignaturePhantom } from 'gql/hooks/users.hook';
+import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
+import posthog from 'posthog-js';
 
-export const Web3Context = React.createContext({})
+export const Web3Context = createContext({});
 
-export const useWeb3 = () => useContext(Web3Context)
+export const useWeb3 = () => useContext(Web3Context);
 
 export const Web3Provider = ({ children }) => {
-	const [account, setAccount] = useState(null); // eth address
+    const [wallet, setWallet] = useState('default'); //default, metamask, phantom
+	const [account, setAccount] = useState('');
 	const [loading, setLoading] = useState(false);
 	const { addToast } = useToast();
+    const { handleLoginSuccess } = useLoginForm();
+    const [getNonceByAddress] = useGetNonceByAddress();
+    const [verifySignature] = useVerifySignature({
+		onCompleted: async data => {
+			posthog.capture('User logged in with metamask', {$set: {
+				publicAddress: account
+			}});
+            setWallet('metamask');
+			await handleLoginSuccess();
+		}
+	});
+    const [verifySignaturePhantom] = useVerifySignaturePhantom({
+		onCompleted: async data => {
+			posthog.capture('User logged in with phantom', {$set: {
+				publicAddress: account
+			}});
+            setWallet('phantom');
+			await handleLoginSuccess();
+		}
+	})
 
-	// Checks if browser has Ethereum extension installed
-	// If yes then set up Web3
-	// If no then alert user
+    useEffect(() => {
+        if (!wallet || !wallet.length) return;
+        (async () => {
+            if (wallet === 'default' || wallet === 'metamask') {
+                if (window.ethereum) {
+                    window.ethereum.on("accountsChanged", (_account) => {
+                        setAccount(_account[0]);
+                    });
+                }
+            }
+		})();
+    }, [wallet])
+
+    const loadWalletProvider = async (walletType) => {
+        try {
+            if (walletType === 'metamask') {
+                if (typeof window.ethereum === 'undefined' || (typeof window.web3 === 'undefined')) throw new Error('Metamask is not installed');
+                window.web3 = new Web3(window.ethereum) || new Web3(window.web3.currentProvider);
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                return accounts[0];
+            }
+            else if (walletType === 'phantom') {
+                const provider = window.solana;
+                if (!provider.isPhantom) throw new Error('Phantom is not installed');
+                const sol = await window.solana.connect();
+                return sol.publicKey.toString();
+            }
+            else throw new Error('Wallet not supported');
+        }
+        catch (err) {
+            console.error(err);
+            addToast({
+                severity: 'error',
+                message: err.message
+            })
+        }
+    }
+
+    const loginToWallet = async (walletType) => {
+        try {
+            if (walletType === 'metamask') {
+                const account = await loadWalletProvider(walletType);
+                setAccount(account);
+
+                const res = await getNonceByAddress({variables: {address: account}});
+                const nonce = res.data.getNonceByAddress;
+                const signature = await signNonce(walletType, nonce, account);
+
+                if (!signature) throw new Error('User Rejected Login with Metamask');
+
+                await verifySignature({variables: {address: account, signature}})
+            }
+            else if (walletType === 'phantom') {
+                const account = await loadWalletProvider(walletType);   
+                setAccount(account);
+
+                const res = await getNonceByAddress({variables: {address: account}});
+                const nonce = res.data.getNonceByAddress;
+                const signature = await signNonce(walletType, nonce);
+
+                if (!signature) throw new Error('User Rejected Login with Phantom');
+
+                await verifySignaturePhantom({variables: {address: signature.publicKey, signature: signature.signature}});
+            }
+            else throw new Error('Wallet not supported');
+        }
+        catch (err) {
+            console.error(err);
+            addToast({
+                severity: 'error',
+                message: err.message
+            })
+        }
+    }
+
+    const signNonce = async (walletType, nonce, address = '') => {
+        try {
+            let signature;
+            const message = `I am signing my one-time nonce: ${nonce}`;
+
+            if (walletType === 'metamask') {
+                signature = await window.web3.eth.personal.sign(
+                    window.web3.utils.fromUtf8(message),
+                    address,
+                )
+            }
+            else if (walletType === 'phantom') {
+                const encodedMessage = new TextEncoder().encode(message);
+                signature = await window.solana.request({
+                    method: "signMessage",
+                    params: {
+                        message: encodedMessage,
+                    },
+                });
+            }
+            else throw new Error('Wallet not supported');
+
+            return signature;
+        }
+        catch (err) {
+            console.error(err);
+            addToast({
+                severity: 'error',
+                message: err.message
+            })
+        }
+	}
+
 	const loadWeb3 = async () => {
 		if (window.ethereum) {
 			window.web3 = new Web3(window.ethereum)
@@ -35,6 +162,8 @@ export const Web3Provider = ({ children }) => {
 				message: 'Non-Ethereum browser detected. You should consider trying MetaMask!'
 			})
 		}
+
+        console.log('loadweb3 deployed')
 	};
 	
 	// Load account and load smart contracts
@@ -48,18 +177,9 @@ export const Web3Provider = ({ children }) => {
 			const accounts = await web3.eth.getAccounts()
 			setAccount(accounts[0])
 		}
+
+        console.log('loadBlockchainData deployed')
 	};
-
-	const signNonce = async ({address, nonce}) => {
-		const web3 = window.web3
-
-		const signature = await web3.eth.personal.sign(
-			web3.utils.fromUtf8(`I am signing my one-time nonce: ${nonce}`),
-			address,
-		)
-
-		return ({address, signature})
-	}
 
 	// Mint NFT
 	const mint = async (contractAddress, count = 1) => {
@@ -398,36 +518,14 @@ export const Web3Provider = ({ children }) => {
 		return [loading]
 	}
 
-    const loadPhantom = async () => {
-        try {
-            const provider = window.solana;
-            if (!provider.isPhantom) throw new Error('Phantom is not installed');
-            const sol = await window.solana.connect();
-            setAccount(sol.publicKey.toString());
-        }
-        catch(err) {
-            addToast({
-                severity: 'error',
-                message: err.message
-            })
-        }
-    }
-
-    const signNoncePhantom = async (nonce) => {
-        const encodedMessage = new TextEncoder().encode(`I am signing my one-time nonce: ${nonce}`);
-        const signature = await window.solana.request({
-            method: "signMessage",
-            params: {
-                message: encodedMessage,
-            },
-        });
-        setAccount(signature.publicKey);
-		return signature
-	}
-
 	return (
 		<Web3Context.Provider
 			value={{
+                wallet,
+                setWallet,
+                loadWalletProvider,
+                loginToWallet,
+
 				loadWeb3,
 				loadBlockchainData,
 				mint,
@@ -447,9 +545,6 @@ export const Web3Provider = ({ children }) => {
 				getTotalMinted,
 
 				getPublicContractVariables,
-
-                loadPhantom,
-                signNoncePhantom,
 			}}
 		>
 			{ children }

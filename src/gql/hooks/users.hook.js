@@ -5,6 +5,7 @@ import { useWebsite } from 'services/website/provider';
 import { useQuery, useMutation } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';
 import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE, VERIFY_SIGNATURE_PHANTOM } from '../users.gql'
+import { useWeb3 } from '../../libs/web3';
 
 // Sends password reset email
 export const useForgotPassword = ({ email, onCompleted, onError }) => {
@@ -40,11 +41,14 @@ export const useValidateToken = ({ token, onCompleted, onError }) => {
 	return { ...queryResult }
 };
 
-export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
+export const useGetNonceByAddress = () => {
 	const [getNonceByAddress, { ...mutationResult }] = useMutation(GET_NONCE, {
-		variables: { address },
-		onCompleted,
-		onError
+		onCompleted: data => {
+            
+        },
+		onError: data => {
+
+        }
 	})
 
 	return [ getNonceByAddress, { ...mutationResult }]
@@ -162,11 +166,14 @@ export const useRegister = ({ name, email, password, onCompleted, onError }) => 
 
 export const useLogin = ({ email, password, onError, onCompleted }) => {
 	const { onLoginSuccess } = useAuth();
+    const { setWallet } = useWeb3();
+
 	const [login, { ...mutationResult }] = useMutation(LOGIN, {
 		variables: { email, password},
 		onCompleted: data => {
 			if (data?.login) {
 				if (onLoginSuccess) {
+                    setWallet('default');
 					onLoginSuccess(data.login);
 				}
 
