@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, IconButton } from 'ds/components';
-import { Stack, TextField, ButtonGroup, CircularProgress } from '@mui/material';
+import { Stack, TextField, ButtonGroup, CircularProgress, Menu, MenuList, MenuItem, ListItemIcon, ListItemText, Chip } from '@mui/material';
 import { LoadingButton  } from '@mui/lab';
 import { useEmbed } from './hooks/useEmbed'
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
@@ -10,7 +10,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import DiamondIcon from '@mui/icons-material/Diamond';
 
 const Embed = () => {
-    const { contract, buttonState, textColor, bgImage, price, prefix, soldCount, size, isMinting, mintCount, metadataUrl, max, onConnectWallet, onSwitch, onMint, setMintCount } = useEmbed();
+    const { contract, buttonState, textColor, bgImage, price, prefix, soldCount, size, isMinting, mintCount, metadataUrl, max, chooseWalletState, onConnectWallet, onSwitch, onMint, setMintCount, setChooseWalletState } = useEmbed();
 
     return (
         <Box
@@ -34,19 +34,52 @@ const Embed = () => {
                     padding='1em'
                 >
                     {buttonState === 0 && (
-                        <Button
-                            variant='contained'
-                            startIcon={<AccountBalanceWalletIcon />}
-                            sx={{
-                                bgcolor: 'rgb(238,72,0)',
-                                "&:hover": {
-                                    bgcolor: "rgb(212, 66, 2)"
-                                }
-                            }}
-                            onClick={onConnectWallet}
-                        >
-                            Connect Wallet
-                        </Button>
+                        <>
+                            {!chooseWalletState ? (
+                                <Button
+                                    variant='contained'
+                                    startIcon={<AccountBalanceWalletIcon />}
+                                    sx={{
+                                        bgcolor: 'rgb(238,72,0)',
+                                        "&:hover": {
+                                            bgcolor: "rgb(212, 66, 2)"
+                                        }
+                                    }}
+                                    onClick={() => setChooseWalletState(true)}
+                                >
+                                    Connect Wallet
+                                </Button>
+                            ) : (
+                                <Stack
+                                    direction='row'
+                                    spacing={1}
+                                    justifyContent='center'
+                                >
+                                    <Chip 
+                                        icon={<AccountBalanceWalletIcon fontSize='12pt'/>} 
+                                        label="Metamask" 
+                                        sx={{
+                                            "&:hover": {
+                                                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                                cursor: 'pointer'
+                                            }
+                                        }} 
+                                        onClick={() => onConnectWallet(0)}
+                                    />
+                                    <Chip 
+                                        icon={<AccountBalanceWalletIcon fontSize='12pt'/>} 
+                                        label="Phantom" 
+                                        sx={{
+                                            "&:hover": {
+                                                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                                cursor: 'pointer'
+                                            }
+                                        }} 
+                                        onClick={() => onConnectWallet(1)}
+                                    />
+                                </Stack>
+                            )}
+                        </>
                     )}
                     {buttonState === 1 && (
                         <Stack direction='row' spacing={1} sx={{width: '100%'}}>

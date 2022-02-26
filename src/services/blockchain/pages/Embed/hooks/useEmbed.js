@@ -18,6 +18,7 @@ export const useEmbed = () => {
     const [isMinting, setIsMinting] = useState(false);
     const [mintCount, setMintCount] = useState(1);
     const [contract, setContract] = useState(null);
+    const [chooseWalletState, setChooseWalletState] = useState(false);
     const {
 		max,
 		metadataUrl,
@@ -90,9 +91,14 @@ export const useEmbed = () => {
     }, [chainId])
 
     // Connect to wallet
-    const onConnectWallet = async () => {
+    const onConnectWallet = async (type = 0) => {
         try {
-            await loadBlockchainData();
+            if (type === 0) { // Metamask
+                await loadBlockchainData();
+            }
+            else if (type === 1) { // Phantom
+                console.log('phantom');
+            }
         }
         catch (e) {
             console.log(e);
@@ -122,7 +128,7 @@ export const useEmbed = () => {
     }
 
     // Mint NFT
-    const onMint = async () => {
+    const onMint = async (type = 0) => {
         try {
             if (!price || 
                 !max || 
@@ -137,19 +143,24 @@ export const useEmbed = () => {
             await compareNetwork(chainId, async () => {
                 setIsMinting(true);
                 
-                if (isPublicSaleOpen) {
-					await mint(contractAddress, mintCount);
-					setIsMinting(false);
-				} else if (isPresaleOpen) {
-					await presaleMint(
-						(price * mintCount).toString(),
-						contractAddress,
-						contract.nftCollection.whitelist,
-						mintCount
-					);
-					setIsMinting(false);
-				} else {
-                    throw new Error('Public sale and Presale is not open');
+                if (type === 0) { // Metamask
+                    if (isPublicSaleOpen) {
+                        await mint(contractAddress, mintCount);
+                        setIsMinting(false);
+                    } else if (isPresaleOpen) {
+                        await presaleMint(
+                            (price * mintCount).toString(),
+                            contractAddress,
+                            contract.nftCollection.whitelist,
+                            mintCount
+                        );
+                        setIsMinting(false);
+                    } else {
+                        throw new Error('Public sale and Presale is not open');
+                    }
+                }
+                else if (type === 1) { // Phantom
+                    console.log('phantom mint');
                 }
             })
         }
@@ -170,11 +181,13 @@ export const useEmbed = () => {
         prefix,
         isMinting,
         mintCount,
+        chooseWalletState,
         setButtonState,
         onConnectWallet,
         onSwitch,
         onMint,
         setMintCount,
+        setChooseWalletState,
 
         contract,
         max,
