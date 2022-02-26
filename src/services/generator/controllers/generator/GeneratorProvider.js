@@ -134,6 +134,7 @@ export const GeneratorProvider = ({children}) => {
 
 			let chunkCount = 1;
 			let curRenderIndex = 1;
+            let startCount = 0;
 			let hashList = [];
 			let curMetadata = [];
 
@@ -145,14 +146,14 @@ export const GeneratorProvider = ({children}) => {
 			let t0 = performance.now();
 			let t1;
 
-			while (curRenderIndex - 1 != size.value) {
+			while (startCount != size.value) {
 				setRenderIndex(curRenderIndex);
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				const attributes = await stackLayers(ctx);
 				const currentHash = MD5(JSON.stringify(attributes)).toString();
 				if (!hashList.includes(currentHash)) {
 					hashList.push(currentHash);
-					await saveCanvas(curRenderIndex);
+					await saveCanvas(startCount);
 					// if (size.value >= 1000 && (curRenderIndex == size.value || curRenderIndex % 1000 == 0)) {
 					// 	setIsAutoSave(true);
 					// 	setIsDownloading(true);
@@ -162,8 +163,7 @@ export const GeneratorProvider = ({children}) => {
 					let nftJson = {
 						name: `${name.value} #${curRenderIndex}`,
 						description: description.value,                
-						image: `${curRenderIndex}.png`,
-						edition: renderIndex,
+						image: `${startCount}.png`,
 						attributes: attributes,
 						compiler: "https://ambition.so/"
 					}
@@ -173,15 +173,14 @@ export const GeneratorProvider = ({children}) => {
 							symbol: symbol.value,
 							description: nftJson.description,
 							seller_fee_basis_points: sellerFeeBasisPoints.value,
-							image: `${curRenderIndex}.png`,
-							external_url: `${externalUrl.value}${curRenderIndex}.png`,
-							edition: nftJson.edition,
+							image: `${startCount}.png`,
+							external_url: `${externalUrl.value}${startCount}.png`,
 							attributes: nftJson.attributes,
 							properties: {
 								category: "image",
 								files: [
 									{
-										uri: `${curRenderIndex}.png`,
+										uri: `${startCount}.png`,
 										type: "image/png"
 									}
 								],
@@ -192,7 +191,8 @@ export const GeneratorProvider = ({children}) => {
 					}
 					curMetadata.push(nftJson);
 					curRenderIndex++;
-					if (curRenderIndex - 1 === size.value) {
+                    startCount++;
+					if (startCount === size.value) {
 						setCollectionMetadata(curMetadata);
 						setRenderModalState(false);
 						setIsGenerating(false);
@@ -217,7 +217,7 @@ export const GeneratorProvider = ({children}) => {
 			setDownloadModalState(true);
 			setIsDownloading(true);
 
-			let fileIndex = 1;
+			let fileIndex = 0;
 
 			zip.folder("Metadata").file("metadata.json", JSON.stringify(collectionMetadata, null, 2));
 
@@ -256,7 +256,7 @@ export const GeneratorProvider = ({children}) => {
 			setDownloadModalState(true);
 			setIsDownloading(true);
 
-			let fileIndex = 1;
+			let fileIndex = 0;
 
 			zip.remove("Images"); // delete images first
 
