@@ -34,6 +34,9 @@ module.exports = env => {
 			new webpack.ProvidePlugin({
 				Buffer: ['buffer', 'Buffer'],
 			}),
+            new webpack.DefinePlugin({
+                'process.env.NODE_DEBUG': JSON.stringify('http')
+            })
 	//		new BundleAnalyzerPlugin
 		],
 		module: {
@@ -83,10 +86,10 @@ module.exports = env => {
 				'config': `${__dirname}/src/config`,
 				'core': `${__dirname}/src/core`,
 				'gql': `${__dirname}/src/gql`,
-				'ethereum': `${__dirname}/src/ethereum`,
+				'ethereum': `${__dirname}/src/services/blockchain/blockchains/ethereum`,
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
-				'solana': `${__dirname}/src/solana`,
+				'solana': `${__dirname}/src/services/blockchain/blockchains/solana`,
 			},
 			/*
 			fallback: {

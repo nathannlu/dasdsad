@@ -1,13 +1,13 @@
-import bs58 from 'bs58';
-import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts } from './helpers/accounts';
+import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts, addressToBuffer } from './helpers/accounts';
 import { withdrawV2 } from './helpers/withdraw';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { BN, Program, web3 } from '@project-serum/anchor';
+import bs58 from 'bs58';
 // const BN = require('bn.js');
 
 import {
 	CANDY_MACHINE_PROGRAM_V2_ID
-  } from './helpers/constants';
+} from './helpers/constants';
 
 export const generateSolanaKeypair = () => {
 	return Keypair.generate();	
@@ -22,79 +22,57 @@ export function parseDate(date) {
 	  return Date.now() / 1000;
 	}
 	return Date.parse(date) / 1000;
-  }
+}
 
-export const createSolanaContract = async () => {
-	const env = 'devnet';
-	const totalNFTs = 100
+// This is getting called from useSolana.js
+export const createSolanaContract = async ({privateKey, symbol, size, price, liveDate}) => {
+    console.log('[Ambition] Solana Contract Deployment');
 
-	// const payerWallet = Keypair.fromSecretKey(Uint8Array.from([250,198,88,219,95,186,86,42,141,139,158,202,48,60,49,34,120,169,71,222,72,218,184,243,52,128,63,244,245,30,61,29,0,73,114,112,87,75,67,11,212,182,193,17,29,222,23,63,5,89,155,72,191,85,51,105,87,89,155,55,11,21,29,75]))
-	const payerWallet = Keypair.fromSecretKey(Uint8Array.from([88,82,242,103,248,198,203,230,4,231,160,48,61,3,22,255,61,53,1,91,193,27,97,182,168,226,189,49,39,68,251,10,220,161,8,219,156,30,136,176,146,208,149,125,20,165,119,103,60,196,135,60,112,223,65,171,175,123,182,7,57,56,147,10]));
+    // Check if priate key is byte array or encoded string
+    let secretKey = privateKey;
+    if (typeof privateKey == 'string') {
+        secretKey = bs58.decode(privateKey);
+    }
 
+    const payerWallet = Keypair.fromSecretKey(secretKey);
+    console.log('payerWallet: ', payerWallet);
 
-	console.log('payer wallet:', payerWallet)
+	const parsedPrice = new BN(parsePrice(price));
 
+    console.log('Price:', price, 'ParsedPrice:', parsedPrice, 'IsBN:', BN.isBN(parsedPrice));
 
-	const price = '1';
-	console.log(typeof price);
-	console.log(price);
-	console.log(BN.isBN(price));
+	const anchorProgram = await loadCandyProgramV2(payerWallet, 'devnet');
 
-	let parsedPrice = new BN(parsePrice(price));
+    console.log('anchorProgram:', anchorProgram);
 
-	console.log(BN.isBN(parsedPrice));
-
-	
-	const goLiveDate = '25 Dec 2021 00:00:00 GMT';
-	const anchorProgram = await loadCandyProgramV2(payerWallet, env);
-	const res = await createCandyMachineV2(
-		anchorProgram,
-		payerWallet,		// Need this -- payer wallet
-		payerWallet.publicKey,		// treasuryWallet
-		null,		// splToken
-		{
-			itemsAvailable: new BN(totalNFTs),
+    const res = await createCandyMachineV2(
+        anchorProgram,
+        payerWallet,
+        payerWallet.publicKey,
+        null,
+        {
+			itemsAvailable: new BN(size),
 			uuid: null,
-			symbol: '',
+			symbol: symbol,
 			sellerFeeBasisPoints: null,
 			isMutable: false,
 			maxSupply: new BN(0),
 			retainAuthority: false,
 			gatekeeper: null,
-			goLiveDate: new BN(parseDate(goLiveDate)),
+			goLiveDate: new BN(parseDate(liveDate)),
 			price:parsedPrice,
 			endSettings: null,
 			whitelistMintSettings: null,
 			hiddenSettings: null,
-			// creators:[{address: "127xW67HTbXXzYvwzU4aZaz6vkY7cyPyycmsrLz5Q4cz", verified: true, share: 100}],
-			creators:[{address: "FrF7aE45tLUjTcJ7aCvTSJqN9NBG9FGZWWhuHK7Hm8z5", verified: true, share: 100}],
+			creators:[{address: account, verified: true, share: 100}],
+        }
+    );
 
-		  },
-		// );
-// 		{
-// 			itemsAvailable: new BN(totalNFTs),
-// 			uuid: null,
-// 			retainAuthority: true,
-// //			symbol,
-// //			sellerFeeBasisPoints, //: firstAssetManifest.seller_fee_basis_points,
-// //			isMutable: mutable,
-// 			maxSupply: new BN(0),
-// //			gatekeeper,
-// 			// goLiveDate:  "25 Dec 2021 00:00:00 GMT",
-// //			price,
-// //			endSettings,
-// //			whitelistMintSettings,
-// //			hiddenSettings,
-// 			creators:[{address: "FrF7aE45tLUjTcJ7aCvTSJqN9NBG9FGZWWhuHK7Hm8z5", verified: true, share: 100}]
-			
-// 		},
-);
-
-	console.log(res)
+    console.log(res)
 }
 
 
-export const withDraw = async () => {
+export const withdraw = async () => {
 	const env = 'devnet';
 	const totalNFTs = 100
 

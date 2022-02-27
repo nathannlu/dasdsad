@@ -4,7 +4,7 @@ import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
-import { createSolanaContract } from '../solana';
+import { createSolanaContract } from 'solana';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 import posthog from 'posthog-js';
 
@@ -18,6 +18,14 @@ export const useSolana = () => {
         try {
             console.log(contract); //id symbol nftColleciton.price nftColleciton.size
             console.log(account);
+            createSolanaContract({
+                address: account,
+                privateKey: '5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC',
+                symbol: contract.symbol,
+                size: contract.nftCollection.size,
+                price: contract.nftCollection.price,
+                liveDate: 'now',
+            });
 
         }
         catch (err) {
