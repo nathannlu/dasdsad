@@ -91,26 +91,19 @@ export const Web3Provider = ({ children }) => {
 
     const loginToWallet = async (walletType) => {
         try {
+            const account = await loadWalletProvider(walletType);
+            setAccount(account);
+
+            const res = await getNonceByAddress({variables: {address: account}});
+            const nonce = res.data.getNonceByAddress;
+            const signature = await signNonce(walletType, nonce, account);
+
             if (walletType === 'metamask') {
-                const account = await loadWalletProvider(walletType);
-                setAccount(account);
-
-                const res = await getNonceByAddress({variables: {address: account}});
-                const nonce = res.data.getNonceByAddress;
-                const signature = await signNonce(walletType, nonce, account);
-
                 if (!signature) throw new Error('User Rejected Login with Metamask');
-
+                
                 await verifySignature({variables: {address: account, signature}})
             }
             else if (walletType === 'phantom') {
-                const account = await loadWalletProvider(walletType);   
-                setAccount(account);
-
-                const res = await getNonceByAddress({variables: {address: account}});
-                const nonce = res.data.getNonceByAddress;
-                const signature = await signNonce(walletType, nonce);
-
                 if (!signature) throw new Error('User Rejected Login with Phantom');
 
                 await verifySignaturePhantom({variables: {address: signature.publicKey, signature: signature.signature}});
