@@ -35,7 +35,7 @@ import log from 'loglevel';
 import { AccountLayout, u64 } from '@solana/spl-token';
 import Wallet from '../externals/nodewallet';
 import bs58 from 'bs58';
-
+import { throws } from 'assert';
 /*
 export type AccountAndPubkey = {
   pubkey: string;
@@ -48,12 +48,39 @@ export type AccountAndPubkey = {
 
 // global prototype function
 Object.prototype.toBuffer = function(fn) {
+  
 	if (typeof this == 'string') {
-		console.log(this);
-    const decoded = bs58.decode(this);
+		console.log(this)
+
+    const payerWallet = Keypair.fromSecretKey(Uint8Array.from([88,82,242,103,248,198,203,230,4,231,160,48,61,3,22,255,61,53,1,91,193,27,97,182,168,226,189,49,39,68,251,10,220,161,8,219,156,30,136,176,146,208,149,125,20,165,119,103,60,196,135,60,112,223,65,171,175,123,182,7,57,56,147,10]));
+
+
+
+    // const decoded = bs58.encode(this);
+    const decoded = payerWallet.publicKey.toBuffer();
+    console.log(decoded);
+
+
+    // uint8Array = Uint8Array.from(decoded)
+
 		return decoded;
+    // return uint8Array;
+	//	console.log(fn)
+		
 	}
+
+  // return decoded;
+  
 };
+
+// toBuffer for address
+Object.prototype.addressToBuffer = function(fn) {
+
+  const decoded = bs58.decode(this);
+  return decoded;
+
+};
+
 
 export function getCluster(name) {
   for (const cluster of CLUSTERS) {
@@ -175,6 +202,34 @@ export const createCandyMachineV2 = async function (
     });
   }
 
+  // const config = new PublicKey(configState.program.config);
+  //   const [candyMachine, bump] = await getCandyMachineAddress(
+  //       config,
+  //       configState.program.uuid,
+  //   );
+  //   await anchorProgram.rpc.initializeCandyMachine(
+  //       bump,
+  //       {
+  //           uuid: configState.program.uuid,
+  //           price: new anchor.BN(parsedPrice),
+  //           itemsAvailable: new anchor.BN(Object.keys(configState.items).length),
+  //           goLiveDate: null,
+  //       },
+  //       {
+  //           accounts: {
+  //               candyMachine,
+  //               wallet,
+  //               config: config,
+  //               authority: walletKeyPair.publicKey,
+  //               payer: walletKeyPair.publicKey,
+  //               systemProgram: anchor.web3.SystemProgram.programId,
+  //               rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+  //           },
+  //           signers: [],
+  //           remainingAccounts,
+  //       },
+  //   );
+
 	const r = {
 		candyMachine: candyAccount.publicKey,
     uuid: candyData.uuid,
@@ -199,6 +254,27 @@ export const createCandyMachineV2 = async function (
         ),
       ],
     }),
+    // txId: await anchorProgram.rpc.initializeCandyMachine(candyData, {
+    //   accounts: {
+    //     candyMachine: candyAccount.publicKey,
+    //     wallet: treasuryWallet,
+    //     authority: payerWallet.publicKey,
+    //     payer: payerWallet.publicKey,
+    //     systemProgram: SystemProgram.programId,
+    //     rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+    //   },
+    //   signers: [payerWallet, candyAccount],
+    //   remainingAccounts:
+    //     remainingAccounts.length > 0 ? remainingAccounts : undefined,
+    //   instructions: [
+    //     await createCandyMachineV2Account(
+    //       anchorProgram,
+    //       candyData,
+    //       payerWallet.publicKey,
+    //       candyAccount.publicKey,
+    //     ),
+    //   ],
+    // }),
 	}
 
 	console.log(r)
@@ -621,7 +697,7 @@ export async function loadCandyProgramV2(
     CANDY_MACHINE_PROGRAM_V2_ID,
     provider,
   );
-  log.debug('program id from anchor', program.programId.toBase58());
+  console.log('program id from anchor', program.programId.toBase58());
   return program;
 }
 
@@ -783,3 +859,219 @@ function unsafeResAccounts(
     pubkey: item.pubkey,
   }));
 }
+
+
+// export const mintOneToken = async (
+//   candyMachine: CandyMachineAccount,
+//   payer: anchor.web3.PublicKey,
+// ): Promise<(string | undefined)[]> => {
+//   const mint = anchor.web3.Keypair.generate();
+
+//   const userTokenAccountAddress = (
+//     await getAtaForMint(mint.publicKey, payer)
+//   )[0];
+
+//   const userPayingAccountAddress = candyMachine.state.tokenMint
+//     ? (await getAtaForMint(candyMachine.state.tokenMint, payer))[0]
+//     : payer;
+
+//   const candyMachineAddress = candyMachine.id;
+//   const remainingAccounts = [];
+//   const signers: anchor.web3.Keypair[] = [mint];
+//   const cleanupInstructions = [];
+//   const instructions = [
+//     anchor.web3.SystemProgram.createAccount({
+//       fromPubkey: payer,
+//       newAccountPubkey: mint.publicKey,
+//       space: MintLayout.span,
+//       lamports:
+//         await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(
+//           MintLayout.span,
+//         ),
+//       programId: TOKEN_PROGRAM_ID,
+//     }),
+//     Token.createInitMintInstruction(
+//       TOKEN_PROGRAM_ID,
+//       mint.publicKey,
+//       0,
+//       payer,
+//       payer,
+//     ),
+//     createAssociatedTokenAccountInstruction(
+//       userTokenAccountAddress,
+//       payer,
+//       payer,
+//       mint.publicKey,
+//     ),
+//     Token.createMintToInstruction(
+//       TOKEN_PROGRAM_ID,
+//       mint.publicKey,
+//       userTokenAccountAddress,
+//       payer,
+//       [],
+//       1,
+//     ),
+//   ];
+
+//   if (candyMachine.state.gatekeeper) {
+//     remainingAccounts.push({
+//       pubkey: (
+//         await getNetworkToken(
+//           payer,
+//           candyMachine.state.gatekeeper.gatekeeperNetwork,
+//         )
+//       )[0],
+//       isWritable: true,
+//       isSigner: false,
+//     });
+//     if (candyMachine.state.gatekeeper.expireOnUse) {
+//       remainingAccounts.push({
+//         pubkey: CIVIC,
+//         isWritable: false,
+//         isSigner: false,
+//       });
+//       remainingAccounts.push({
+//         pubkey: (
+//           await getNetworkExpire(
+//             candyMachine.state.gatekeeper.gatekeeperNetwork,
+//           )
+//         )[0],
+//         isWritable: false,
+//         isSigner: false,
+//       });
+//     }
+//   }
+//   if (candyMachine.state.whitelistMintSettings) {
+//     const mint = new anchor.web3.PublicKey(
+//       candyMachine.state.whitelistMintSettings.mint,
+//     );
+
+//     const whitelistToken = (await getAtaForMint(mint, payer))[0];
+//     remainingAccounts.push({
+//       pubkey: whitelistToken,
+//       isWritable: true,
+//       isSigner: false,
+//     });
+
+//     if (candyMachine.state.whitelistMintSettings.mode.burnEveryTime) {
+//       const whitelistBurnAuthority = anchor.web3.Keypair.generate();
+
+//       remainingAccounts.push({
+//         pubkey: mint,
+//         isWritable: true,
+//         isSigner: false,
+//       });
+//       remainingAccounts.push({
+//         pubkey: whitelistBurnAuthority.publicKey,
+//         isWritable: false,
+//         isSigner: true,
+//       });
+//       signers.push(whitelistBurnAuthority);
+//       const exists =
+//         await candyMachine.program.provider.connection.getAccountInfo(
+//           whitelistToken,
+//         );
+//       if (exists) {
+//         instructions.push(
+//           Token.createApproveInstruction(
+//             TOKEN_PROGRAM_ID,
+//             whitelistToken,
+//             whitelistBurnAuthority.publicKey,
+//             payer,
+//             [],
+//             1,
+//           ),
+//         );
+//         cleanupInstructions.push(
+//           Token.createRevokeInstruction(
+//             TOKEN_PROGRAM_ID,
+//             whitelistToken,
+//             payer,
+//             [],
+//           ),
+//         );
+//       }
+//     }
+//   }
+
+//   if (candyMachine.state.tokenMint) {
+//     const transferAuthority = anchor.web3.Keypair.generate();
+
+//     signers.push(transferAuthority);
+//     remainingAccounts.push({
+//       pubkey: userPayingAccountAddress,
+//       isWritable: true,
+//       isSigner: false,
+//     });
+//     remainingAccounts.push({
+//       pubkey: transferAuthority.publicKey,
+//       isWritable: false,
+//       isSigner: true,
+//     });
+
+//     instructions.push(
+//       Token.createApproveInstruction(
+//         TOKEN_PROGRAM_ID,
+//         userPayingAccountAddress,
+//         transferAuthority.publicKey,
+//         payer,
+//         [],
+//         candyMachine.state.price.toNumber(),
+//       ),
+//     );
+//     cleanupInstructions.push(
+//       Token.createRevokeInstruction(
+//         TOKEN_PROGRAM_ID,
+//         userPayingAccountAddress,
+//         payer,
+//         [],
+//       ),
+//     );
+//   }
+//   const metadataAddress = await getMetadata(mint.publicKey);
+//   const masterEdition = await getMasterEdition(mint.publicKey);
+
+//   const [candyMachineCreator, creatorBump] = await getCandyMachineCreator(
+//     candyMachineAddress,
+//   );
+
+//   instructions.push(
+//     await candyMachine.program.instruction.mintNft(creatorBump, {
+//       accounts: {
+//         candyMachine: candyMachineAddress,
+//         candyMachineCreator,
+//         payer: payer,
+//         wallet: candyMachine.state.treasury,
+//         mint: mint.publicKey,
+//         metadata: metadataAddress,
+//         masterEdition,
+//         mintAuthority: payer,
+//         updateAuthority: payer,
+//         tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+//         tokenProgram: TOKEN_PROGRAM_ID,
+//         systemProgram: SystemProgram.programId,
+//         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+//         clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+//         recentBlockhashes: anchor.web3.SYSVAR_SLOT_HASHES_PUBKEY,
+//         instructionSysvarAccount: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
+//       },
+//       remainingAccounts:
+//         remainingAccounts.length > 0 ? remainingAccounts : undefined,
+//     }),
+//   );
+
+//   try {
+//     return (
+//       await sendTransactions(
+//         candyMachine.program.provider.connection,
+//         candyMachine.program.provider.wallet,
+//         [instructions, cleanupInstructions],
+//         [signers, []],
+//       )
+//     ).txs.map(t => t.txid);
+//   } catch (e) {
+//     console.log(e);
+//   }
+
+//   return [];
+// };

@@ -16,6 +16,8 @@ import {
   CONFIG_LINE_SIZE_V2,
 } from './constants';
 import * as anchor from '@project-serum/anchor';
+import { Buffer } from "buffer";
+
 //import { CandyMachineData } from './accounts';
 
 export function createAssociatedTokenAccountInstruction(
