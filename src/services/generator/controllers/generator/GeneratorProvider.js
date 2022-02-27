@@ -191,7 +191,8 @@ export const GeneratorProvider = ({children}) => {
 					}
 					curMetadata.push(nftJson);
 					curRenderIndex++;
-					if (curRenderIndex == size.value) {
+                    startCount++;
+					if (curRenderIndex === size.value) {
 						setCollectionMetadata(curMetadata);
 						setRenderModalState(false);
 						setIsGenerating(false);
