@@ -3,6 +3,7 @@ import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
 import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
+import { useSolana } from 'services/blockchain/blockchains/hooks/useSolana';
 
 export const ContractContext = React.createContext({})
 
@@ -27,6 +28,7 @@ export const ContractProvider = ({ children }) => {
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
 
     const { deployEthereumContract } = useEthereum();
+    const { deploySolanaContract } = useSolana();
 
     const deployContract = async () => {
         try {
@@ -44,7 +46,9 @@ export const ContractProvider = ({ children }) => {
                 })
             }
             else {
-                console.log('deploy solana')
+                await deploySolanaContract({
+                    contract
+                })
             }
         }
         catch (err) {
