@@ -11,9 +11,9 @@ export const useSubscribePlan = ({ paymentMethodId, priceId, customerId, type, o
 	return [subscribe, { ...mutationResult }]
 };
 
-export const useCharge = ({ paymentMethodId, amount, token, onCompleted, onError }) => {
+export const useCharge = ({ paymentMethodId, amount, token, referral, onCompleted, onError }) => {
 	const [charge, { ...mutationResult }] = useMutation(CHARGE, {
-		variables: { paymentMethodId, token, amount },
+		variables: { paymentMethodId, token, amount, referral },
 		onCompleted,
 		onError
 	})

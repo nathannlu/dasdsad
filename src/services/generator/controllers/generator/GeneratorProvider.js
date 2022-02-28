@@ -26,6 +26,7 @@ export const GeneratorProvider = ({children}) => {
 	const { name, description, size, symbol, externalUrl, sellerFeeBasisPoints } = settingsForm;
 	const { addToast } = useToast();
 	const canvasRef = useRef();
+	const [referral, setReferral] = useState('');
 
 	// Get weighted random image index
 	const getLayerImageIndex = (layer) => {
@@ -323,6 +324,15 @@ export const GeneratorProvider = ({children}) => {
 		return false;
 	}
 
+	useEffect(() => {
+		window.rewardful('ready', () => {
+      if (window.Rewardful.referral) {
+				console.log('Current referral ID: ', window.Rewardful.referral);
+        setReferral(window.Rewardful.referral);
+      }
+    })
+	}, [])
+
 	const value = {
 		canvasRef,
 		renderModalState,
@@ -344,6 +354,7 @@ export const GeneratorProvider = ({children}) => {
 		generateJSONMetadata,
 		setDownloadModalState,
 		downloadCollection,
+		referral,
 	}
 		
 	return (
