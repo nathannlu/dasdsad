@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js';
 import { Stack, FormLabel, TextField, Modal, Grid, Box, LoadingButton, IconButton, Card, Typography, Divider, Button, Select, MenuItem } from 'ds/components';
 import { Lock as LockIcon, Close as CloseIcon } from '@mui/icons-material';
@@ -13,7 +13,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
 	const stripe = useStripe();
     const elements = useElements();
 	const { settingsForm  } = useMetadata();
-	const { generateImages } = useGenerator();
+	const { generateImages, referral } = useGenerator();
 	const { payInEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
 
 	const {
@@ -51,16 +51,10 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
 			charge({variables: {
 				token: result.token.id,
 				amount: 10 * settingsForm.size.value,
+				referral,
 			}})
 		}
 	}
-
-	useEffect(() => {
-		(async () => {
-			await loadWeb3();
-			await loadBlockchainData();
-		})()
-	}, [])
 
 	return (
 		<Modal

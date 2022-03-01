@@ -7,8 +7,8 @@ export const SUBSCRIBE_PLAN = gql`
 `
 
 export const CHARGE = gql`
-	mutation Charge($amount: Int!, $token: String!) {
-		charge(amount: $amount, token: $token)
+	mutation Charge($amount: Int!, $token: String!, $referral: String) {
+		charge(amount: $amount, token: $token, referral: $referral)
 	}
 `
 
