@@ -9,6 +9,8 @@ import { ThemeProvider } from 'ds/hooks/useTheme';
 import { ToastManager } from 'ds/hooks/useToast';
 import { CollectionProvider } from 'services/generator/provider'; 
 
+import { ClientWalletProvider } from 'solana/wallet/ClientWallet';
+
 
 import './assets/styles/index.css';
 
@@ -19,7 +21,7 @@ ReactDOM.render(
 				<ToastManager>
 					<Web3Provider>
 						<CollectionProvider>
-							<App />
+								<App />
 						</CollectionProvider>
 					</Web3Provider>
 				</ToastManager>
