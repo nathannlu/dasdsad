@@ -319,12 +319,13 @@ export const createCandyMachineV2 = async function (
 	})
 
 
-	console.log(signature1)
+	console.log(bs58.decode(signature1.signature))
+  // console.log
 
 	let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);
 
-	transaction.addSignature(payerWallet.publicKey, signature1);
-	transaction.addSignature(candyAccount.publicKey, signature2);
+	transaction.addSignature(payerWallet.publicKey, bs58.decode(signature1.signature));
+	transaction.addSignature(candyAccount.publicKey, (signature2));
 
 	let isVerifiedSignature = transaction.verifySignatures();
 	console.log(`The signatures were verifed: ${isVerifiedSignature}`)
