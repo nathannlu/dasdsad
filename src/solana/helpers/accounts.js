@@ -5,7 +5,9 @@ import {
   AccountInfo,
 	Transaction,
 	sendAndConfirmTransaction,
+	sendAndConfirmRawTransaction
 } from '@solana/web3.js';
+const nacl = require('tweetnacl');
 import {
   CANDY_MACHINE,
   CANDY_MACHINE_PROGRAM_ID,
@@ -293,19 +295,71 @@ export const createCandyMachineV2 = async function (
 	*/
 
 
-	const transaction = new Transaction().add(instructions[0]);
+	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
+	const transaction = new Transaction({
+		recentBlockhash: recentBlockhash.blockhash,
+    feePayer: payerWallet.publicKey
+	})
+	transaction.add(instructions[0]);
 	transaction.add(instructions[1]);
 
+
+	let transactionBuffer = transaction.serializeMessage();
+	console.log(transactionBuffer)
+
+//	let signature1 = nacl.sign.detached(transactionBuffer, payerWallet.secretKey);
+
+
+	const sol = await window.solana.connect();
+	const signature1 = await window.solana.request({
+		method: 'signTransaction',
+		params: {
+			message: bs58.encode(transactionBuffer)
+		}
+	})
+
+
+	console.log(signature1)
+
+	let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);
+
+	transaction.addSignature(payerWallet.publicKey, signature1);
+	transaction.addSignature(candyAccount.publicKey, signature2);
+
+	let isVerifiedSignature = transaction.verifySignatures();
+	console.log(`The signatures were verifed: ${isVerifiedSignature}`)
+
+
+
+
+
+// The signatures were verified: true
+
+	let rawTransaction = transaction.serialize();
+
+	const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
+	console.log(asd)
+
+
+
+
+	/*
 	// Sign transaction, broadcast, and confirm
 	const signature = await sendAndConfirmTransaction(
 		anchorProgram.provider.connection,
 		transaction,
 		[payerWallet, candyAccount],
 	);
+	*/
 
-	console.log('SIGNATURE', signature);
+//	let signature = nacl.sign.detached(transactionBuffer, payer.secretKey);
+
+
+//	console.log('SIGNATURE', signature);
 
 //	console.log('the txn', finished)
+
+
 
   return r
 };

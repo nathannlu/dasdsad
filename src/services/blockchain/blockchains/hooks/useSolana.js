@@ -105,6 +105,7 @@ export const useSolana = () => {
 					await connection.getMinimumBalanceForRentExemption(size),
 				programId: CANDY_MACHINE_PROGRAM_V2_ID,
 			}),
+
 			await anchorProgram.instruction.initializeCandyMachine(candyData, {
 				accounts: {
 					candyMachine: candyAccount.publicKey,
