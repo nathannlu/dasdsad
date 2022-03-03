@@ -3,6 +3,8 @@ import {
   PublicKey,
   SystemProgram,
   AccountInfo,
+	Transaction,
+	sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import {
   CANDY_MACHINE,
@@ -36,6 +38,8 @@ import { AccountLayout, u64 } from '@solana/spl-token';
 import Wallet from '../externals/nodewallet';
 import bs58 from 'bs58';
 import { throws } from 'assert';
+
+import { sendTransactionWithRetryWithKeypair } from './transactions';
 /*
 export type AccountAndPubkey = {
   pubkey: string;
@@ -233,7 +237,7 @@ export const createCandyMachineV2 = async function (
 	const r = {
 		candyMachine: candyAccount.publicKey,
     uuid: candyData.uuid,
-    txId: await anchorProgram.rpc.initializeCandyMachine(candyData, {
+    txId: await anchorProgram.instruction.initializeCandyMachine(candyData, {
       accounts: {
         candyMachine: candyAccount.publicKey,
         wallet: treasuryWallet,
@@ -242,17 +246,7 @@ export const createCandyMachineV2 = async function (
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
-      signers: [payerWallet, candyAccount],
-      remainingAccounts:
-        remainingAccounts.length > 0 ? remainingAccounts : undefined,
-      instructions: [
-        await createCandyMachineV2Account(
-          anchorProgram,
-          candyData,
-          payerWallet.publicKey,
-          candyAccount.publicKey,
-        ),
-      ],
+//      signers: [payerWallet, candyAccount],
     }),
     // txId: await anchorProgram.rpc.initializeCandyMachine(candyData, {
     //   accounts: {
@@ -277,7 +271,42 @@ export const createCandyMachineV2 = async function (
     // }),
 	}
 
-	console.log(r)
+	const instructions = [
+		await createCandyMachineV2Account(
+			anchorProgram,
+			candyData,
+			payerWallet.publicKey,
+			candyAccount.publicKey,
+		),
+		r.txId
+	]
+
+	/*
+	const finished = (
+		await sendTransactionWithRetryWithKeypair(
+			anchorProgram.provider.connection,
+			payerWallet,
+			instructions,
+      [payerWallet, candyAccount],
+		)
+	).txid;
+	*/
+
+
+	const transaction = new Transaction().add(instructions[0]);
+	transaction.add(instructions[1]);
+
+	// Sign transaction, broadcast, and confirm
+	const signature = await sendAndConfirmTransaction(
+		anchorProgram.provider.connection,
+		transaction,
+		[payerWallet, candyAccount],
+	);
+
+	console.log('SIGNATURE', signature);
+
+//	console.log('the txn', finished)
+
   return r
 };
 
