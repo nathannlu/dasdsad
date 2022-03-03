@@ -105,19 +105,23 @@ export const useSolana = () => {
 					await connection.getMinimumBalanceForRentExemption(size),
 				programId: CANDY_MACHINE_PROGRAM_V2_ID,
 			}),
-		];
-
-    instructions.push(
 			await anchorProgram.instruction.initializeCandyMachine(candyData, {
 				accounts: {
-
+					candyMachine: candyAccount.publicKey,
+					wallet: from.publicKey,
+					authority: from.publicKey,
+					payer: from.publicKey,
+					systemProgram: SystemProgram.programId,
+					rent: anchor.web3.SYSVAR_RENT_PUBKEY,
 				},
-			remainingAccounts:
-				remainingAccounts.length > 0 ? remainingAccounts : undefined,
+				remainingAccounts: remainingAccounts.length > 0 ? remainingAccounts : undefined,
 			})
-    );
+		]
 
-		const transaction = new Transaction().add(...instructions);
+
+
+		const transaction = new Transaction().add(instructions[0]);
+		transaction.add(instructions[1])
 
 		console.log('tx',transaction)
 
