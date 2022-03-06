@@ -5,7 +5,7 @@ import {
   AccountInfo,
 	Transaction,
 	sendAndConfirmTransaction,
-	sendAndConfirmRawTransaction
+	sendAndConfirmRawTransaction,
 } from '@solana/web3.js';
 const nacl = require('tweetnacl');
 import {
@@ -41,6 +41,8 @@ import Wallet from '../externals/nodewallet';
 import bs58 from 'bs58';
 import { throws } from 'assert';
 
+import { BN, Program } from '@project-serum/anchor';
+
 import { sendTransactionWithRetryWithKeypair } from './transactions';
 /*
 export type AccountAndPubkey = {
@@ -58,25 +60,19 @@ Object.prototype.toBuffer = function(fn) {
 	if (typeof this == 'string') {
 		console.log(this)
 
-    const payerWallet = Keypair.fromSecretKey(Uint8Array.from([88,82,242,103,248,198,203,230,4,231,160,48,61,3,22,255,61,53,1,91,193,27,97,182,168,226,189,49,39,68,251,10,220,161,8,219,156,30,136,176,146,208,149,125,20,165,119,103,60,196,135,60,112,223,65,171,175,123,182,7,57,56,147,10]));
+//    const payerWallet = Keypair.fromSecretKey(Uint8Array.from([88,82,242,103,248,198,203,230,4,231,160,48,61,3,22,255,61,53,1,91,193,27,97,182,168,226,189,49,39,68,251,10,220,161,8,219,156,30,136,176,146,208,149,125,20,165,119,103,60,196,135,60,112,223,65,171,175,123,182,7,57,56,147,10]));
 
 
 
-    // const decoded = bs58.encode(this);
-    const decoded = payerWallet.publicKey.toBuffer();
+    const decoded = bs58.decode(this);
+//    const decoded = payerWallet.publicKey.toBuffer();
     console.log(decoded);
 
 
     // uint8Array = Uint8Array.from(decoded)
 
-		return decoded;
-    // return uint8Array;
-	//	console.log(fn)
-		
+		return decoded
 	}
-
-  // return decoded;
-  
 };
 
 // toBuffer for address
@@ -185,6 +181,8 @@ export const createCandyMachineV2 = async function (
 ) {
   const candyAccount = Keypair.generate();
   candyData.uuid = uuidFromConfigPubkey(candyAccount.publicKey);
+	const sol = await window.solana.connect();
+	const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer())
 
   if (!candyData.creators || candyData.creators.length === 0) {
     throw new Error(`Invalid config, there must be at least one creator.`);
@@ -208,92 +206,30 @@ export const createCandyMachineV2 = async function (
     });
   }
 
-  // const config = new PublicKey(configState.program.config);
-  //   const [candyMachine, bump] = await getCandyMachineAddress(
-  //       config,
-  //       configState.program.uuid,
-  //   );
-  //   await anchorProgram.rpc.initializeCandyMachine(
-  //       bump,
-  //       {
-  //           uuid: configState.program.uuid,
-  //           price: new anchor.BN(parsedPrice),
-  //           itemsAvailable: new anchor.BN(Object.keys(configState.items).length),
-  //           goLiveDate: null,
-  //       },
-  //       {
-  //           accounts: {
-  //               candyMachine,
-  //               wallet,
-  //               config: config,
-  //               authority: walletKeyPair.publicKey,
-  //               payer: walletKeyPair.publicKey,
-  //               systemProgram: anchor.web3.SystemProgram.programId,
-  //               rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-  //           },
-  //           signers: [],
-  //           remainingAccounts,
-  //       },
-  //   );
-
 	const r = {
 		candyMachine: candyAccount.publicKey,
     uuid: candyData.uuid,
     txId: await anchorProgram.instruction.initializeCandyMachine(candyData, {
       accounts: {
         candyMachine: candyAccount.publicKey,
-        wallet: treasuryWallet,
-        authority: payerWallet.publicKey,
-        payer: payerWallet.publicKey,
+        wallet:   payerPublicAddress,
+        authority:  payerPublicAddress,
+        payer:   payerPublicAddress,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
-//      signers: [payerWallet, candyAccount],
     }),
-    // txId: await anchorProgram.rpc.initializeCandyMachine(candyData, {
-    //   accounts: {
-    //     candyMachine: candyAccount.publicKey,
-    //     wallet: treasuryWallet,
-    //     authority: payerWallet.publicKey,
-    //     payer: payerWallet.publicKey,
-    //     systemProgram: SystemProgram.programId,
-    //     rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-    //   },
-    //   signers: [payerWallet, candyAccount],
-    //   remainingAccounts:
-    //     remainingAccounts.length > 0 ? remainingAccounts : undefined,
-    //   instructions: [
-    //     await createCandyMachineV2Account(
-    //       anchorProgram,
-    //       candyData,
-    //       payerWallet.publicKey,
-    //       candyAccount.publicKey,
-    //     ),
-    //   ],
-    // }),
 	}
 
 	const instructions = [
 		await createCandyMachineV2Account(
 			anchorProgram,
 			candyData,
-			payerWallet.publicKey,
+			payerPublicAddress,
 			candyAccount.publicKey,
 		),
 		r.txId
 	]
-
-	/*
-	const finished = (
-		await sendTransactionWithRetryWithKeypair(
-			anchorProgram.provider.connection,
-			payerWallet,
-			instructions,
-      [payerWallet, candyAccount],
-		)
-	).txid;
-	*/
-
 
 	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
 	const transaction = new Transaction({
@@ -310,7 +246,6 @@ export const createCandyMachineV2 = async function (
 //	let signature1 = nacl.sign.detached(transactionBuffer, payerWallet.secretKey);
 
 
-	const sol = await window.solana.connect();
 	const signature1 = await window.solana.request({
 		method: 'signTransaction',
 		params: {
@@ -329,8 +264,6 @@ export const createCandyMachineV2 = async function (
 
 	let isVerifiedSignature = transaction.verifySignatures();
 	console.log(`The signatures were verifed: ${isVerifiedSignature}`)
-
-
 
 
 
@@ -769,13 +702,21 @@ export async function loadCandyProgramV2(
 
   const walletWrapper = new Wallet(walletKeyPair);
 	console.log('wallet wrapper', walletWrapper)
+
   const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
   });
+
+	console.log(provider)
+//	const solProvider = window.solana;
+//	console.log(solProvider)
+
   const idl = await anchor.Program.fetchIdl(
     CANDY_MACHINE_PROGRAM_V2_ID,
     provider,
   );
+
+
   const program = new anchor.Program(
     idl,
     CANDY_MACHINE_PROGRAM_V2_ID,
