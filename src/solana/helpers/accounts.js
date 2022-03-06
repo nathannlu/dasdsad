@@ -234,7 +234,7 @@ export const createCandyMachineV2 = async function (
 	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
 	const transaction = new Transaction({
 		recentBlockhash: recentBlockhash.blockhash,
-    feePayer: payerWallet.publicKey
+    feePayer: payerPublicAddress
 	})
 	transaction.add(instructions[0]);
 	transaction.add(instructions[1]);
