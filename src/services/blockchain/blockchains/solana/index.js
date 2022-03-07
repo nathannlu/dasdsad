@@ -25,7 +25,7 @@ export function parseDate(date) {
 }
 
 // This is getting called from useSolana.js
-export const createSolanaContract = async ({privateKey, symbol, size, price, liveDate}) => {
+export const createSolanaContract = async ({address, privateKey, symbol, size, price, liveDate}) => {
     console.log('[Ambition] Solana Contract Deployment');
 
     // Check if priate key is byte array or encoded string
@@ -64,7 +64,7 @@ export const createSolanaContract = async ({privateKey, symbol, size, price, liv
 			endSettings: null,
 			whitelistMintSettings: null,
 			hiddenSettings: null,
-			creators:[{address: account, verified: true, share: 100}],
+			creators:[{address: address, verified: true, share: 100}],
         }
     );
 

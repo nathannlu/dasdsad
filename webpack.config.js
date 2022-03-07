@@ -90,6 +90,7 @@ module.exports = env => {
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
 				'solana': `${__dirname}/src/services/blockchain/blockchains/solana`,
+                'stream': require.resolve("stream-browserify")
 			},
 			/*
 			fallback: {
