@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import AppWithProvider from './App'
+import App from './App'
 
 import { AuthorizedApolloProvider } from 'libs/apollo';
 import { Web3Provider } from 'libs/web3';

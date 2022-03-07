@@ -89,7 +89,7 @@ module.exports = env => {
 				'ethereum': `${__dirname}/src/services/blockchain/blockchains/ethereum`,
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
-				'solana': `${__dirname}/src/services/blockchain/blockchains/solana`,
+				'solana': `${__dirname}/src/solana`,
                 'stream': require.resolve("stream-browserify")
 			},
 			fallback: {
