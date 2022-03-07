@@ -9,6 +9,10 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 
+
+import { createSolanaContract } from 'solana';
+
+
 const Dashboard = () => {
 	const { contracts } = useContract();
 	const { addToast } = useToast();
@@ -42,9 +46,13 @@ const Dashboard = () => {
 	return (
 		<Fade in>
 			<Container sx={{pt: 4}}>
+							<Button onClick={createSolanaContract}>
+								Create solana contract
+							</Button>
 				{contracts.length > 0 ? (
 					<Stack gap={2}>
 						<Stack direction="row" alignItems="center">
+
 							<Box>
 								<Typography variant="h4">
 									Your contracts

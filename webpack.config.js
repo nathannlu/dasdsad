@@ -92,16 +92,16 @@ module.exports = env => {
 				'solana': `${__dirname}/src/services/blockchain/blockchains/solana`,
                 'stream': require.resolve("stream-browserify")
 			},
-			/*
 			fallback: {
+				/*
 				util: require.resolve('util/'),
 				assert: require.resolve('assert/'),
 				buffer: require.resolve('buffer/'),
 				process: require.resolve('process/browser'),
+				*/
 				stream: require.resolve("stream-browserify"),
-				zlib: require.resolve("browserify-zlib")
+//				zlib: require.resolve("browserify-zlib")
 			}
-			*/
 		},
 		devServer: {
 			port: process.env.PORT || '3000',

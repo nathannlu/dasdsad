@@ -46,9 +46,7 @@ export const ContractProvider = ({ children }) => {
                 })
             }
             else {
-                await deploySolanaContract({
-                    contract
-                })
+				await deploySolanaContract();
             }
         }
         catch (err) {

@@ -55,9 +55,6 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 								Deploy to blockchain
 							</Button>
 						</Box>
-
-
-
 					</Stack>
 				</StepContent>
 			</Step>
