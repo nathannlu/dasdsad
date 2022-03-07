@@ -24,10 +24,10 @@ export function parseDate(date) {
 	return Date.parse(date) / 1000;
   }
 
-export const createSolanaContract = async ({address, symbol, size, price, liveDate, creators}) => {
+export const createSolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators}) => {
     console.log('[Ambition] Solana Contract Deployment');
 
-	const env = 'devnet';
+	const env = 'testnet';
 
 	const parsedPrice = new BN(parsePrice(price));
     
@@ -41,11 +41,11 @@ export const createSolanaContract = async ({address, symbol, size, price, liveDa
 		anchorProgram,  // AnchorProgram
 		address,        // Treasury
 		null,           // SplToken
-        null,           // CandyData
+        //null,           // CandyData
 		{
 			itemsAvailable: new BN(size),
 			uuid: null,
-			symbol: symbol,
+			symbol,
 			sellerFeeBasisPoints: null,
 			isMutable: false,
 			maxSupply: new BN(0),
@@ -55,11 +55,17 @@ export const createSolanaContract = async ({address, symbol, size, price, liveDa
 			price: parsedPrice,
 			endSettings: null,
 			whitelistMintSettings: null,
-			hiddenSettings: null,
+            hiddenSettings: null,
+			// hiddenSettings: {
+            //     name: name + ' ',
+            //     uri,
+            //     hash: null
+            // },
 			creators,
-		  },
+        },
     );
-	console.log(res)
+	
+    return res;
 }
 
 export const withdraw = async () => {

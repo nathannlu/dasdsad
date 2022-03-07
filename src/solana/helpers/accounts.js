@@ -203,9 +203,9 @@ import {
     }
   
       const r = {
-          candyMachine: candyAccount.publicKey,
-      uuid: candyData.uuid,
-      txId: await anchorProgram.instruction.initializeCandyMachine(candyData, {
+        candyMachine: candyAccount.publicKey,
+        uuid: candyData.uuid,
+        txId: await anchorProgram.instruction.initializeCandyMachine(candyData, {
         accounts: {
           candyMachine: candyAccount.publicKey,
           wallet:   payerPublicAddress,
@@ -253,22 +253,24 @@ import {
   
       let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);
   
-      console.log('inside candy machine', sol.publicKey.toString());
+      console.log('signature2', signature2)
 
-      transaction.addSignature(sol.publicKey.toString(), bs58.decode(signature1.signature));
+      transaction.addSignature(sol.publicKey, bs58.decode(signature1.signature));
       transaction.addSignature(candyAccount.publicKey, (signature2));
   
       let isVerifiedSignature = transaction.verifySignatures();
+
       console.log(`The signatures were verifed: ${isVerifiedSignature}`)
   
   // The signatures were verified: true
   
       let rawTransaction = transaction.serialize();
   
+      console.log('serialized transaction', rawTransaction);
+
       const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
-      console.log(asd)
-  
-  
+
+      console.log('sendAndConfirmRawTransaction', asd)
   
   
       /*

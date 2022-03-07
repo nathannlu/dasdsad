@@ -3321,10 +3321,10 @@
     "@solana/wallet-adapter-tokenpocket" "^0.4.2"
     "@solana/wallet-adapter-torus" "^0.11.10"
 
-"@solana/web3.js@^1.17.0", "@solana/web3.js@^1.2.0", "@solana/web3.js@^1.20.0", "@solana/web3.js@^1.21.0", "@solana/web3.js@^1.30.2", "@solana/web3.js@^1.31.0", "@solana/web3.js@^1.34.0", "@solana/web3.js@^1.5.0":
-  "integrity" "sha512-3bDawFFI0KcvgI8Ae4N4hdQ8+Bg9gu6q+IkhPrYxOF6RYnB3U+9A4u+DhHZWLvTvgoTyesi/m5HzlleKtFEqRQ=="
-  "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.35.1.tgz"
-  "version" "1.35.1"
+"@solana/web3.js@^1.17.0", "@solana/web3.js@^1.2.0", "@solana/web3.js@^1.20.0", "@solana/web3.js@^1.21.0", "@solana/web3.js@^1.30.2", "@solana/web3.js@^1.31.0", "@solana/web3.js@^1.34.0", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.5.0":
+  "integrity" "sha512-RNT1451iRR7TyW7EJKMCrH/0OXawIe4zVm0DWQASwXlR/u1jmW6FrmH0lujIh7cGTlfOVbH+2ZU9AVUPLBFzwA=="
+  "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.36.0.tgz"
+  "version" "1.36.0"
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@ethersproject/sha2" "^5.5.0"
@@ -4969,6 +4969,7 @@
   "version" "1.1.0"
 
 "@zondax/filecoin-signing-tools@github:Digital-MOB-Filecoin/filecoin-signing-tools-js":
+  "integrity" "sha512-u1sHMBQXGiGHv8S3LkdKs0mH1erEbD4QoHWwCZns0BuQaKlpxbdxN8ikHCQOBPT6FzSHadwhf3cTSWxVl3DGig=="
   "resolved" "git+ssh://git@github.com/Digital-MOB-Filecoin/filecoin-signing-tools-js.git#8f8e92157cac2556d35cab866779e9a8ea8a4e25"
   "version" "0.2.0"
   dependencies:

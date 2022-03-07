@@ -14,19 +14,20 @@ export const useSolana = () => {
 	const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
 	const { addToast } = useToast();
 
-	const deploySolanaContract = async ({contract}) => {
+	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators}) => {
         try {
-            console.log(contract); //id symbol nftColleciton.price nftColleciton.size
-            console.log(account);
-            createSolanaContract({
-                address: account,
-                privateKey: '5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC',
-                symbol: contract.symbol,
-                size: contract.nftCollection.size,
-                price: contract.nftCollection.price,
-                liveDate: 'now',
+            const res = await createSolanaContract({
+                uri,
+                name,
+                address, 
+                symbol, 
+                size, 
+                price, 
+                liveDate, 
+                creators
             });
 
+            console.log(res);
         }
         catch (err) {
             console.error(err);

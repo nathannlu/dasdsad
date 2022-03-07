@@ -26,6 +26,7 @@ export const ContractProvider = ({ children }) => {
 	const [imagesUrl, setImagesUrl] = useState('')
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const { account } = useWeb3();
 
     const { deployEthereumContract } = useEthereum();
     const { deploySolanaContract } = useSolana();
@@ -46,7 +47,16 @@ export const ContractProvider = ({ children }) => {
                 })
             }
             else {
-				await deploySolanaContract();
+				await deploySolanaContract({
+                    uri: contract.nftCollection.baseUri,
+                    name: contract.name,
+                    address: account, 
+                    symbol: contract.symbol, 
+                    size: contract.nftCollection.size, 
+                    price: contract.nftCollection.price, 
+                    liveDate: 'now',
+                    creators: [ {address: account, verified: true, share: 100} ]
+                });
             }
         }
         catch (err) {
