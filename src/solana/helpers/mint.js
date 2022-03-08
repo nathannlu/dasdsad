@@ -1,4 +1,4 @@
-import { PublicKey, Keypair, createAccount, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
+import { PublicKey, Keypair, createAccount, LAMPORTS_PER_SOL, SystemProgram, Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js';
 import { sendTransactionWithRetryWithKeypair } from './transactions';
 import { loadWalletKey, loadCandyProgramV2, getTokenWallet, getMetadata, getMasterEdition, getCandyMachineCreator } from './accounts';
 import { MintLayout, Token } from '@solana/spl-token';
@@ -7,9 +7,10 @@ import {
   TOKEN_METADATA_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from './constants';
-
+import bs58 from 'bs58';
 import { createAssociatedTokenAccountInstruction } from './instructions';
 // import { sendTransactionWithRetryWithKeypair } from '../helpers/transactions';
+const nacl = require('tweetnacl');
 
 export async function mintV2(
     keypair,
@@ -19,8 +20,8 @@ export async function mintV2(
   ) {
     keypair = Uint8Array.from([88,82,242,103,248,198,203,230,4,231,160,48,61,3,22,255,61,53,1,91,193,27,97,182,168,226,189,49,39,68,251,10,220,161,8,219,156,30,136,176,146,208,149,125,20,165,119,103,60,196,135,60,112,223,65,171,175,123,182,7,57,56,147,10]);
     console.log(keypair);
-    candyMachineAddress = new PublicKey('5YCUZV8eTHoxgDDmwekGrdUyRPQd13zv9ALucEVjd2He');
-    env = "devnet";
+    candyMachineAddress = new PublicKey('CoTGLeczBHoQqLhVsMfkXVZ17FyvsQvthD8c8kjUXB5m');
+    env = "testnet";
     const mint = Keypair.generate();
   
     const userKeyPair = loadWalletKey(keypair, env);
@@ -29,13 +30,18 @@ export async function mintV2(
       userKeyPair.publicKey,
       mint.publicKey,
     );
+
+    const sol = await window.solana.connect();
+    const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
   
     const candyMachine = await anchorProgram.account.candyMachine.fetch(
       candyMachineAddress,
     );
   
+    let transferAuthority;
+    let whitelistBurnAuthority;
     const remainingAccounts = [];
-    const signers = [mint, userKeyPair];
+    const signers = [mint];
     const cleanupInstructions = [];
     const instructions = [
       anchor.web3.SystemProgram.createAccount({
@@ -86,7 +92,7 @@ export async function mintV2(
       });
   
       if (candyMachine.data.whitelistMintSettings.mode.burnEveryTime) {
-        const whitelistBurnAuthority = anchor.web3.Keypair.generate();
+        whitelistBurnAuthority = anchor.web3.Keypair.generate();
   
         remainingAccounts.push({
           pubkey: mint,
@@ -127,7 +133,7 @@ export async function mintV2(
   
     let tokenAccount;
     if (candyMachine.tokenMint) {
-      const transferAuthority = anchor.web3.Keypair.generate();
+      transferAuthority = anchor.web3.Keypair.generate();
   
       tokenAccount = await getTokenWallet(
         userKeyPair.publicKey,
@@ -201,21 +207,69 @@ export async function mintV2(
       }),
     );
   
-    const finished = (
-      await sendTransactionWithRetryWithKeypair(
-        anchorProgram.provider.connection,
-        userKeyPair,
-        instructions,
-        signers,
-      )
-    ).txid;
+    // const finished = (
+    //   await sendTransactionWithRetryWithKeypair(
+    //     anchorProgram.provider.connection,
+    //     userKeyPair,
+    //     instructions,
+    //     signers,
+    //   )
+    // ).txid;
   
-    await sendTransactionWithRetryWithKeypair(
-      anchorProgram.provider.connection,
-      userKeyPair,
-      cleanupInstructions,
-      [],
-    );
-  
+    // await sendTransactionWithRetryWithKeypair(
+    //   anchorProgram.provider.connection,
+    //   userKeyPair,
+    //   cleanupInstructions,
+    //   [],
+    // );
+
+    console.log("minting");
+    let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
+    const transaction = new Transaction({
+      recentBlockhash: recentBlockhash.blockhash,
+      feePayer: payerPublicAddress
+    });
+
+    for (let i = 0; i < instructions.length; i++) {
+      transaction.add(instructions[i]);
+    }
+
+    let transactionBuffer = transaction.serializeMessage();
+
+    const payerSignature = await window.solana.request({
+      method: 'signTransaction',
+      params: {
+        message: bs58.encode(transactionBuffer)
+      }
+    })
+
+    let mintSignature = nacl.sign.detached(transactionBuffer, mint.secretKey);
+
+    transaction.addSignature(userKeyPair.publicKey, bs58.decode(payerSignature.signature));
+
+    console.log(mintSignature, mint.publicKey);
+    transaction.addSignature(mint.publicKey, mintSignature);
+
+
+    console.log(userKeyPair.publicKey.toString());
+    // if(transferAuthority){
+      // const transferSignature = nacl.sign.detached(transactionBuffer, transferAuthority.secretKey);
+      // transaction.addSignature(transferAuthority.publicKey, (transferSignature));
+    // }
+
+    // if(whitelistBurnAuthority){
+      // const whiteListSignature = nacl.sign.detached(transactionBuffer, whitelistBurnAuthority.secretKey);
+      // transaction.addSignature(whitelistBurnAuthority.publicKey, (whiteListSignature));
+    // }
+    
+
+    let isVerifiedSignature = transaction.verifySignatures();
+	  console.log(`The signatures were verifed: ${isVerifiedSignature}`)
+
+    let rawTransaction = transaction.serialize();
+
+    const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
+	  console.log(asd)
+
     return 0;
   }

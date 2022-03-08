@@ -10,7 +10,7 @@ test('deploySolana', async () => {
 
      const { deploySolanaContract, generateKeypair } = useSolana();
 
-    // expect( await deploySolanaContract("/root/ambition/devnet.json ")).toBeDefined();
+    // expect( await deploySolanaContract("/root/ambition/testnet.json ")).toBeDefined();
     expect( await deploySolanaContract(keypair)).toBeDefined();
 
 });

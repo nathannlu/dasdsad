@@ -703,7 +703,8 @@ export async function loadCandyProgramV2(
   const walletWrapper = new Wallet(walletKeyPair);
 	console.log('wallet wrapper', walletWrapper)
 
-  const provider = new anchor.Provider(solConnection, walletWrapper, {
+  console.log("null wallet");
+  const provider = new anchor.Provider(solConnection, null, {
     preflightCommitment: 'recent',
   });
 
