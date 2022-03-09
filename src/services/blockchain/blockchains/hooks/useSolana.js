@@ -5,6 +5,7 @@ import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
 import { createSolanaContract } from 'solana';
+import { mintV2 } from 'solana/helpers/mint.js';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 import posthog from 'posthog-js';
 
@@ -16,18 +17,19 @@ export const useSolana = () => {
 
 	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators}) => {
         try {
-            const res = await createSolanaContract({
-                uri,
-                name,
-                address, 
-                symbol, 
-                size, 
-                price, 
-                liveDate, 
-                creators
-            });
+            mintV2();
+            // const res = await createSolanaContract({
+            //     uri,
+            //     name,
+            //     address, 
+            //     symbol, 
+            //     size, 
+            //     price, 
+            //     liveDate, 
+            //     creators
+            // });
 
-            console.log(res);
+            // console.log(res);
         }
         catch (err) {
             console.error(err);

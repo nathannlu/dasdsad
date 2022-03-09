@@ -3,6 +3,7 @@ import { sendTransactionWithRetryWithKeypair } from './transactions';
 import { loadWalletKey, loadCandyProgramV2, getTokenWallet, getMetadata, getMasterEdition, getCandyMachineCreator } from './accounts';
 import { MintLayout, Token } from '@solana/spl-token';
 import * as anchor from '@project-serum/anchor';
+import bs58 from 'bs58'
 import {
   TOKEN_METADATA_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -17,10 +18,14 @@ export async function mintV2(
     candyMachineAddress,
     rpcUrl,
   ) {
-    keypair = Uint8Array.from([88,82,242,103,248,198,203,230,4,231,160,48,61,3,22,255,61,53,1,91,193,27,97,182,168,226,189,49,39,68,251,10,220,161,8,219,156,30,136,176,146,208,149,125,20,165,119,103,60,196,135,60,112,223,65,171,175,123,182,7,57,56,147,10]);
+
+    const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC');
+    console.log('decoded', decoded);
+
+    keypair = Uint8Array.from(decoded);
     console.log(keypair);
-    candyMachineAddress = new PublicKey('5YCUZV8eTHoxgDDmwekGrdUyRPQd13zv9ALucEVjd2He');
-    env = "devnet";
+    candyMachineAddress = new PublicKey('6gxFyFrrw71xmaAbuykcuP9GG794df68A1CyjkFAGTr7'); // one of the signer from transaction
+    env = "testnet";
     const mint = Keypair.generate();
   
     const userKeyPair = loadWalletKey(keypair, env);
@@ -29,7 +34,7 @@ export async function mintV2(
       userKeyPair.publicKey,
       mint.publicKey,
     );
-  
+
     const candyMachine = await anchorProgram.account.candyMachine.fetch(
       candyMachineAddress,
     );

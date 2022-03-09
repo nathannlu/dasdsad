@@ -40,6 +40,9 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 
     console.log('uri', uri)
 
+    const livedatelol = new BN(parseDate(liveDate));
+    console.log(livedatelol)
+
     // Get Cache Data from URL
     let cacheData;
     var xhr = new XMLHttpRequest();
@@ -76,7 +79,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			hiddenSettings: {
                 name: name + ' ',
                 uri: 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/0.json',
-                hash: MD5(cacheData).toString()
+                hash: cacheData
             },
 			creators,
         },
