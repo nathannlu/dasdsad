@@ -142,15 +142,17 @@ export const useIPFS = () => {
 			message: "Deploying metadata to IPFS... this may take a long time depending on your collection size"
 		});
 
-        let cacheContent = {
-            items: {}
-        }
+        let cacheContent = [];
 
 		// Update metadata
 		for (let i = 0; i < folder.length; i++) {
 			await updateAndSaveJson(folder[i], data);
-            if (contract.blockchain.indexOf('solana') != -1) {
-                await updateCacheContent(folder[i], cacheContent, i);
+            if (contract.blockchain.indexOf('solana') != -1 && folder[i].name !== 'metadata.json') {
+                //await updateCacheContent(folder[i], cacheContent, i);
+                cacheContent.push({
+                    'mint_num': i + 1,
+                    "uri": `https://ipfs.io/ipfs/${imagesUrl}`
+                })
             }
 		}
 

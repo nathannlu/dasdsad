@@ -201,6 +201,8 @@ import {
         isWritable: false,
       });
     }
+
+    console.log('initializing candy machine from anchor program')
   
       const r = {
         candyMachine: candyAccount.publicKey,
@@ -216,6 +218,8 @@ import {
         },
       }),
       }
+
+      console.log('creating candy machine account')
   
       const instructions = [
           await createCandyMachineV2Account(
@@ -226,6 +230,8 @@ import {
           ),
           r.txId
       ]
+
+      console.log('recent block hash')
   
       let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
       const transaction = new Transaction({
@@ -237,7 +243,7 @@ import {
   
   
       let transactionBuffer = transaction.serializeMessage();
-      console.log(transactionBuffer)
+      console.log('tbuffer', transactionBuffer)
   
   //	let signature1 = nacl.sign.detached(transactionBuffer, payerWallet.secretKey);
   
@@ -248,7 +254,7 @@ import {
           }
       })
   
-      console.log(bs58.decode(signature1.signature))
+      console.log('signature1', bs58.decode(signature1.signature))
     // console.log
   
       let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);

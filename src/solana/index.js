@@ -3,6 +3,7 @@ import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts } from './
 import { withdrawV2 } from './helpers/withdraw';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { BN, Program, web3 } from '@project-serum/anchor';
+import MD5 from 'crypto-js/md5'
 // const BN = require('bn.js');
 
 import {
@@ -37,11 +38,28 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 
     console.log('anchorProgram:', anchorProgram);
 
+    console.log('uri', uri)
+
+    // Get Cache Data from URL
+    let cacheData;
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                cacheData = JSON.parse(xhr.responseText);
+            }
+            else {
+                console.log(xhr);
+            }
+        }
+    };
+    xhr.open('GET', 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/cache.json', true); //https://gateway.pinata.cloud/ipfs/QmQpPTfRwoA2ov3YNpZqxftWJNjhJzbihZon7itxhvyDoM/cache.json
+    xhr.send();
+
 	const res = await createCandyMachineV2(
 		anchorProgram,  // AnchorProgram
 		address,        // Treasury
 		null,           // SplToken
-        //null,           // CandyData
 		{
 			itemsAvailable: new BN(size),
 			uuid: null,
@@ -55,11 +73,11 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			price: parsedPrice,
 			endSettings: null,
 			whitelistMintSettings: null,
-			// hiddenSettings: {
-            //     name: name + ' ',
-            //     uri,
-            //     hash: null
-            // },
+			hiddenSettings: {
+                name: name + ' ',
+                uri: 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/0.json',
+                hash: MD5(cacheData).toString()
+            },
 			creators,
         },
     );
