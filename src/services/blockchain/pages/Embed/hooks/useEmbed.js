@@ -64,8 +64,8 @@ export const useEmbed = () => {
 
         a && setContractAddress(a);
 		b && setChainId(b);
-        c && setTextColor(c);
-		d && setBgImage(d);
+        c && setBgImage(c);
+		d && setTextColor(d);
 
         if (b === "0x1" || b === "0x4") setPrefix("ETH");
 		else if (b === "0x89" || b === "0x13881") setPrefix("MATIC");
