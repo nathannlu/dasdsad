@@ -32,7 +32,7 @@ export const GeneratorProvider = ({children}) => {
 	const getLayerImageIndex = (layer) => {
         let weights = [];
         layer.images.forEach((image, idx) => {
-            weights.push(parseInt(image.rarity.percentage) + (weights[idx - 1] || 0));
+            weights.push(parseInt(image.rarity.value) + (weights[idx - 1] || 0));
         });
         const random = Math.random() * layer.images[0].rarity.max;
 		let randomIndex = 0;
