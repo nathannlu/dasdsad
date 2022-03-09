@@ -110,27 +110,6 @@ export const useIPFS = () => {
 		})
 	}
 
-    const updateCacheContent = async (file, cacheContent, index) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.onload = (evt) => {
-                if(file.name !== 'metadata.json') {
-                    const jsonMetadata = JSON.parse(evt.target.result);
-                    cacheContent.items[index] = {
-                        link: `https://ipfs.io/ipfs/${imagesUrl}`,
-                        imageLink: `https://ipfs.io/ipfs/${imagesUrl}/${index}.png`,
-                        name: jsonMetadata.name.substring(0, jsonMetadata.name.indexOf('#') + 1) + index
-                    }
-                    resolve();
-                }
-                else {
-                    resolve();
-                }
-            }
-            fileReader.readAsText(file);
-        })
-    }
-
 	const pinMetadata = async (callback) => {
 		const folder = uploadedJson;
         let data = new FormData();
@@ -142,26 +121,25 @@ export const useIPFS = () => {
 			message: "Deploying metadata to IPFS... this may take a long time depending on your collection size"
 		});
 
-        let cacheContent = [];
+        //let cacheContent = [];
 
 		// Update metadata
 		for (let i = 0; i < folder.length; i++) {
 			await updateAndSaveJson(folder[i], data);
-            if (contract.blockchain.indexOf('solana') != -1 && folder[i].name !== 'metadata.json') {
-                //await updateCacheContent(folder[i], cacheContent, i);
-                cacheContent.push({
-                    'mint_num': i + 1,
-                    "uri": `https://ipfs.io/ipfs/${imagesUrl}`
-                })
-            }
+            // if (contract.blockchain.indexOf('solana') != -1 && folder[i].name !== 'metadata.json') {
+            //     cacheContent.push({
+            //         'mint_num': i + 1,
+            //         "uri": `https://ipfs.io/ipfs/${imagesUrl}`
+            //     })
+            // }
 		}
 
         const metadata = JSON.stringify({
             name: user.id + '_metadata',
         });
 
-        const cacheContentData = new Blob([JSON.stringify(cacheContent)])
-        data.append('file', cacheContentData, `/metadata/cache.json`)
+        //const cacheContentData = new Blob([JSON.stringify(cacheContent)])
+        //data.append('file', cacheContentData, `/metadata/cache.json`)
 		data.append('pinataMetadata', metadata);
 
 		const opt = {

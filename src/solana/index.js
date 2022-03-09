@@ -79,7 +79,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			hiddenSettings: {
                 name: name + ' ',
                 uri: 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/0.json',
-                hash: cacheData
+                hash: []
             },
 			creators,
         },

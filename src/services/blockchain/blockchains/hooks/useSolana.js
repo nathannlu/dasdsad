@@ -17,17 +17,17 @@ export const useSolana = () => {
 
 	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators}) => {
         try {
-            mintV2();
-            // const res = await createSolanaContract({
-            //     uri,
-            //     name,
-            //     address, 
-            //     symbol, 
-            //     size, 
-            //     price, 
-            //     liveDate, 
-            //     creators
-            // });
+            //mintV2();
+            const res = await createSolanaContract({
+                uri,
+                name,
+                address, 
+                symbol, 
+                size, 
+                price, 
+                liveDate, 
+                creators
+            });
 
             // console.log(res);
         }
