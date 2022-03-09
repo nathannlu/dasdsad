@@ -239,9 +239,8 @@ export const createCandyMachineV2 = async function (
 	transaction.add(instructions[0]);
 	transaction.add(instructions[1]);
 
-
 	let transactionBuffer = transaction.serializeMessage();
-	console.log(transactionBuffer)
+	console.log(transactionBuffer);
 
 //	let signature1 = nacl.sign.detached(transactionBuffer, payerWallet.secretKey);
 

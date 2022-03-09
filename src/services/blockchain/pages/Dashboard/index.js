@@ -12,6 +12,7 @@ import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 
 import { createSolanaContract } from 'solana';
 import { mintV2 } from 'solana/helpers/mint.js';
+import { withdrawV2 } from 'solana/helpers/withdraw.js';
 
 const Dashboard = () => {
 	const { contracts } = useContract();
@@ -51,6 +52,9 @@ const Dashboard = () => {
 							</Button>
 							<Button onClick={mintV2}>
 								Mint
+							</Button>
+							<Button onClick={withdrawV2}>
+								Withdraw
 							</Button>
 				{contracts.length > 0 ? (
 					<Stack gap={2}>
