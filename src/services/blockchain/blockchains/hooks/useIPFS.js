@@ -15,7 +15,7 @@ export const useIPFS = () => {
 		uploadedJson,
 		setStart,
 		setActiveStep,
-		setError
+		setError,
 	} = useContract()
 	const { addToast } = useToast();
 	const { user } = useAuth();
@@ -109,6 +109,22 @@ export const useIPFS = () => {
 		})
 	}
 
+    const updateCacheContent = async (file, cacheContent, index) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.onload = (evt) => {
+                const jsonMetadata = JSON.parse(evt.target.result);
+                cacheContent.items[index] = {
+                    link: `https://ipfs.io/ipfs/${imagesUrl}`,
+                    imageLink: `https://ipfs.io/ipfs/${imagesUrl}/${index}.png`,
+                    name: jsonMetadata.name
+                }
+                resolve();
+            }
+            fileReader.readAsText(file);
+        })
+    }
+
 	const pinMetadata = async (callback) => {
 		const folder = uploadedJson;
         let data = new FormData();
@@ -120,15 +136,22 @@ export const useIPFS = () => {
 			message: "Deploying metadata to IPFS... this may take a long time depending on your collection size"
 		});
 
+        let cacheContent = {
+            items: {}
+        }
+
 		// Update metadata
 		for (let i = 0; i < folder.length; i++) {
-			await updateAndSaveJson(folder[i], data)
+			await updateAndSaveJson(folder[i], data);
+            await updateCacheContent(folder[i], cacheContent, i);
 		}
 
         const metadata = JSON.stringify({
             name: user.id + '_metadata',
         });
 
+        const cacheContentData = new Blob([JSON.stringify(cacheContent)])
+        data.append('file', cacheContentData, `/metadata/cache.json`)
 		data.append('pinataMetadata', metadata);
 
 		const opt = {
@@ -146,8 +169,9 @@ export const useIPFS = () => {
 				severity: 'success',
 				message: 'Added json metadata to IPFS under URL: ipfs://' + res.data.IpfsHash
 			})
-			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/')
-			setMetadataUrl(res.data.IpfsHash)
+            console.log('Json Metadata: ', res.data.IpfsHash);
+			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/');
+			setMetadataUrl(res.data.IpfsHash);
 		} 
         catch(e) {
 			addToast({

@@ -55,7 +55,6 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			price: parsedPrice,
 			endSettings: null,
 			whitelistMintSettings: null,
-            hiddenSettings: null,
 			// hiddenSettings: {
             //     name: name + ' ',
             //     uri,
