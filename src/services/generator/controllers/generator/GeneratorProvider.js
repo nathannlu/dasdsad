@@ -174,14 +174,14 @@ export const GeneratorProvider = ({children}) => {
 							symbol: symbol.value,
 							description: nftJson.description,
 							seller_fee_basis_points: sellerFeeBasisPoints.value,
-							image: `${startCount}.png`,
+							image: nftJson.image,
 							external_url: `${externalUrl.value}${startCount}.png`,
 							attributes: nftJson.attributes,
 							properties: {
 								category: "image",
 								files: [
 									{
-										uri: `${startCount}.png`,
+										uri: nftJson.image,
 										type: "image/png"
 									}
 								],
