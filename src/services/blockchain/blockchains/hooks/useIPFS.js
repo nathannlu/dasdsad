@@ -16,6 +16,7 @@ export const useIPFS = () => {
 		setStart,
 		setActiveStep,
 		setError,
+        contract,
 	} = useContract()
 	const { addToast } = useToast();
 	const { user } = useAuth();
@@ -113,13 +114,18 @@ export const useIPFS = () => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.onload = (evt) => {
-                const jsonMetadata = JSON.parse(evt.target.result);
-                cacheContent.items[index] = {
-                    link: `https://ipfs.io/ipfs/${imagesUrl}`,
-                    imageLink: `https://ipfs.io/ipfs/${imagesUrl}/${index}.png`,
-                    name: jsonMetadata.name
+                if(file.name !== 'metadata.json') {
+                    const jsonMetadata = JSON.parse(evt.target.result);
+                    cacheContent.items[index] = {
+                        link: `https://ipfs.io/ipfs/${imagesUrl}`,
+                        imageLink: `https://ipfs.io/ipfs/${imagesUrl}/${index}.png`,
+                        name: jsonMetadata.name.substring(0, jsonMetadata.name.indexOf('#') + 1) + index
+                    }
+                    resolve();
                 }
-                resolve();
+                else {
+                    resolve();
+                }
             }
             fileReader.readAsText(file);
         })
@@ -143,7 +149,9 @@ export const useIPFS = () => {
 		// Update metadata
 		for (let i = 0; i < folder.length; i++) {
 			await updateAndSaveJson(folder[i], data);
-            await updateCacheContent(folder[i], cacheContent, i);
+            if (contract.blockchain.indexOf('solana') != -1) {
+                await updateCacheContent(folder[i], cacheContent, i);
+            }
 		}
 
         const metadata = JSON.stringify({

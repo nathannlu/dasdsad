@@ -74,12 +74,12 @@ import {
   };
   
   // toBuffer for address
-  Object.prototype.addressToBuffer = function(fn) {
+//   Object.prototype.addressToBuffer = function(fn) {
   
-    const decoded = bs58.decode(this);
-    return decoded;
+//     const decoded = bs58.decode(this);
+//     return decoded;
   
-  };
+//   };
   
   
   export function getCluster(name) {
