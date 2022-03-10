@@ -52,6 +52,7 @@ function App() {
 	}, [start]);
 	*/
 
+
 	useGetCurrentUser();
 	initGA()
 	initPosthog()
