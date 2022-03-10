@@ -12,11 +12,17 @@ import Traits from './03_Traits';
 import Rarity from './04_Rarity';
 import Payment from './05_Payment';
 import Model from './Model';
+import ReactGA from 'react-ga';
 
 const Generator = () => {
 	const [activeStep, setActiveStep] = useState(1);
 	const isLastStep = activeStep == 5 || activeStep == 6;
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
+
+    useEffect(() => {
+        ReactGA.initialize('G-MPG5PD892Z');
+        ReactGA.pageview(window.location.pathname);
+    }, [])
 
 	return (
 		<Fade in>
