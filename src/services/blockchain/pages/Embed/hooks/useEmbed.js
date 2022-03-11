@@ -9,7 +9,7 @@ import { mintV2 } from 'solana/helpers/mint.js';
 export const useEmbed = () => {
     const { addToast } = useToast();
     const { search } = useLocation();
-    const { account, loadWeb3, loadBlockchainData, getNetworkID, compareNetwork, mint, presaleMint } = useWeb3();
+    const { account, loadWalletProvider, loginToWallet, getNetworkID, compareNetwork, mint, presaleMint, contractVarsState } = useWeb3();
     const [buttonState, setButtonState] = useState(0); // 0 Connect Wallet, 1 Mint, 2 Switch Network, 3 Locked
 	const [contractAddress, setContractAddress] = useState('');
     const [chainId, setChainId] = useState('');
@@ -29,12 +29,22 @@ export const useEmbed = () => {
 		size,
 		isPresaleOpen,
 		isPublicSaleOpen,
-	} = useContractDetails(contractAddress);
+	} = useContractDetails(contractAddress, chainId);
 
+    // Get contract and load metamask or phantom
     useGetContract({
 		address: contractAddress,
-		onCompleted: data => {
-			setContract(data.getContract);
+		onCompleted: async data => {
+            const c = data.getContract;
+			setContract(c);
+            if (chainId.indexOf('solana') != -1) { // If solana
+                await loadWalletProvider('phantom');
+                console.log('loaded phantom provider')
+            }
+            else {
+                await loadWalletProvider('metamask');
+                console.log('loaded metamask provider')
+            }
 		},
 		onError: err => {
             console.log(err);
@@ -44,14 +54,6 @@ export const useEmbed = () => {
 			})
         }	
 	});
-
-    // Load web3
-    useEffect(() => {
-        (async () => {
-			await loadWeb3();
-            console.log(contract)
-		})()
-    }, [])
 
     // Get all query params
     useEffect(() => {
@@ -78,8 +80,8 @@ export const useEmbed = () => {
     // Check if connected to wallet
     useEffect(() => {
         if (!account || !account.length) return;
-        if (getNetworkID() !== chainId) setButtonState(2);
-        else setButtonState(1);
+        if (getNetworkID() !== chainId && chainId != 'solana') setButtonState(2);
+        // else setButtonState(1);
     }, [account])
 
     // Check for network change
@@ -87,8 +89,8 @@ export const useEmbed = () => {
         if (!chainId || !chainId.length) return;
         (async () => {
             window.ethereum.on("chainChanged", async (_chainId) => {
-                if (chainId !== _chainId) setButtonState(2);
-                else setButtonState(1);
+                if (chainId !== _chainId && _chainId != 'solana') setButtonState(2);
+                // else setButtonState(1);
             });
 		})();
     }, [chainId])
@@ -97,10 +99,14 @@ export const useEmbed = () => {
     const onConnectWallet = async (type = 0) => {
         try {
             if (type === 0) { // Metamask
-                await loadBlockchainData();
+                //await loginToWallet('metamask'); // dont need this
+                console.log('loaded metamask account')
+                setButtonState(1);
             }
             else if (type === 1) { // Phantom
-                console.log('phantom');
+               // await loginToWallet('phantom'); // dont need this
+                console.log('loaded phantom account')
+                setButtonState(1);
             }
         }
         catch (e) {
@@ -144,11 +150,19 @@ export const useEmbed = () => {
             //     !contract) return;
             
             if (!contract) throw new Error('Cannot find contract');
+            if (!account) throw new Error('Cannot find account');
+            if (!contractAddress.length) throw new Error('Cannot find contract address');
+            if (!chainId.length) throw new Error('Cannot find chain id');
 
             await compareNetwork(chainId, async () => {
                 setIsMinting(true);
                 
-                if (walletType === 0) { // Metamask
+                if (chainId.indexOf('solana') != -1) { // Phantom
+                    console.log("minting solana")
+                    await mintV2('devnet', contract.address, account);
+                    setIsMinting(false);
+                }
+                else { // Metamask
                     if (isPublicSaleOpen) {
                         await mint(contractAddress, mintCount);
                         setIsMinting(false);
@@ -163,11 +177,6 @@ export const useEmbed = () => {
                     } else {
                         throw new Error('Public sale and Presale is not open');
                     }
-                }
-                else if (walletType === 1 && contract.blockchain.indexOf('solana') != -1) { // Phantom
-                    setIsMinting(true);
-                    await mintV2(); // maybe change parameter
-                    setIsMinting(false);
                 }
             })
         }
@@ -205,5 +214,9 @@ export const useEmbed = () => {
 		size,
 		isPresaleOpen,
 		isPublicSaleOpen,
+
+        account,
+        contractVarsState,
+        chainId,
     }
 }

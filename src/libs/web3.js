@@ -18,6 +18,7 @@ export const Web3Provider = ({ children }) => {
     const [wallet, setWallet] = useState('default'); //default, metamask, phantom
 	const [account, setAccount] = useState('');
 	const [loading, setLoading] = useState(false);
+    const [contractVarsState, setContractVarsState] = useState(false);
 	const { addToast } = useToast();
     const { handleLoginSuccess } = useLoginForm();
     const [getNonceByAddress] = useGetNonceByAddress();
@@ -73,7 +74,7 @@ export const Web3Provider = ({ children }) => {
             }
             else if (walletType === 'phantom') {
                 const provider = window.solana;
-                if (!provider.isPhantom) throw new Error('Phantom is not installed');
+                if (!provider?.isPhantom) throw new Error('Phantom is not installed');
                 const sol = await window.solana.connect();
                 setAccount(sol.publicKey.toString());
                 return sol.publicKey.toString();
@@ -317,57 +318,73 @@ export const Web3Provider = ({ children }) => {
 		return owner
 	}
 
-	const getPublicContractVariables = async (contractAddress) => {
-        if (!contractAddress) return;
+	const getPublicContractVariables = async (contractAddress, chainid) => {
+        if (!contractAddress || !chainid) return;
 
+        console.log('getting contract variables', chainid)
 
 		try {
-			const contract = await retrieveContract(contractAddress);
+            if (chainid.indexOf('solana') != -1) { // If Solana Contract
+                setContractVarsState(false);
 
-			const balance = await window.web3.eth.getBalance(contractAddress);
-					console.log('balance', balance);
-			const balanceInEth = window.web3.utils.fromWei(balance);
-					console.log('balanceInEth', balanceInEth);
-			const baseTokenUri = await contract.methods.baseTokenURI().call();
-					console.log('baseTokenUri', baseTokenUri);
-			const open = await contract.methods.open().call();
-					console.log('open', open);
+                await loadWalletProvider('phantom');
 
-					let presaleOpen = false; // Temporary, presaleOpen is not working
-			try {
-							presaleOpen = await contract.methods.presaleOpen().call();
-					}
-					catch (err) {
-							//console.log(err);
-					}
-					console.log('presaleOpen', presaleOpen);
+                setContractVarsState(true);
+            }
+            else { // If Metamask Contract
+                setContractVarsState(false);
 
-			const maxPerMint = await contract.methods.maxPerMint().call();
-					console.log('maxPerMint', maxPerMint);
-			const cost = await contract.methods.cost().call();
-					console.log('cost', cost);
-			const costInEth = window.web3.utils.fromWei(cost);
-					console.log('costInEth', costInEth);
-			const supply = await contract.methods.supply().call();
-					console.log('supply', supply);
-			const totalSupply = await contract.methods.totalSupply().call();
-					console.log('totalSupply', totalSupply);
-			const owner = await contract.methods.owner().call();
-					console.log('owner', owner);
+                await loadWalletProvider('metamask');
 
-			return {
-				balance,
-				balanceInEth,
-				baseTokenUri,
-				open,
-				presaleOpen,
-				maxPerMint,
-				cost,
-				costInEth,
-				supply,
-				totalSupply,
-				owner,
-			}
+                const contract = await retrieveContract(contractAddress);
+
+                const balance = await window.web3.eth.getBalance(contractAddress);
+                console.log('balance', balance);
+                const balanceInEth = window.web3.utils.fromWei(balance);
+                console.log('balanceInEth', balanceInEth);
+                const baseTokenUri = await contract.methods.baseTokenURI().call();
+                console.log('baseTokenUri', baseTokenUri);
+                const open = await contract.methods.open().call();
+                console.log('open', open);
+
+                let presaleOpen = false; // Temporary, presaleOpen is not working
+                try {
+                        presaleOpen = await contract.methods.presaleOpen().call();
+                }
+                catch (err) {
+                        //console.log(err);
+                }
+                console.log('presaleOpen', presaleOpen);
+
+                const maxPerMint = await contract.methods.maxPerMint().call();
+                console.log('maxPerMint', maxPerMint);
+                const cost = await contract.methods.cost().call();
+                console.log('cost', cost);
+                const costInEth = window.web3.utils.fromWei(cost);
+                console.log('costInEth', costInEth);
+                const supply = await contract.methods.supply().call();
+                console.log('supply', supply);
+                const totalSupply = await contract.methods.totalSupply().call();
+                console.log('totalSupply', totalSupply);
+                const owner = await contract.methods.owner().call();
+                console.log('owner', owner);
+
+                setContractVarsState(true);
+
+                return {
+                    balance,
+                    balanceInEth,
+                    baseTokenUri,
+                    open,
+                    presaleOpen,
+                    maxPerMint,
+                    cost,
+                    costInEth,
+                    supply,
+                    totalSupply,
+                    owner,
+                }
+            }
 		} catch (e) {
 			console.log(e.message)
 		}
@@ -563,6 +580,7 @@ export const Web3Provider = ({ children }) => {
 				getTotalMinted,
 
 				getPublicContractVariables,
+                contractVarsState,
 			}}
 		>
 			{ children }

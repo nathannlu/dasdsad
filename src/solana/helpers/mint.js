@@ -13,26 +13,25 @@ import { createAssociatedTokenAccountInstruction } from './instructions';
 const nacl = require('tweetnacl');
 
 export async function mintV2(
-    keypair,
     env,
     candyMachineAddress,
+    payerWalletAddress,
     rpcUrl,
   ) {
-
-    const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC'); // Private key
-    console.log('decoded', decoded);
-
+    console.log(env, candyMachineAddress, rpcUrl);
+    //const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC'); // Private key
+    //console.log('decoded', decoded);
     // keypair = Uint8Array.from(decoded);
     // console.log(keypair);
-    candyMachineAddress = new PublicKey('6gxFyFrrw71xmaAbuykcuP9GG794df68A1CyjkFAGTr7'); // one of the signer from transaction
-    env="devnet";
+    //candyMachineAddress = new PublicKey('6gxFyFrrw71xmaAbuykcuP9GG794df68A1CyjkFAGTr7'); // one of the signer from transaction
+   // env="devnet";
     const mint = Keypair.generate();
   
-    const userKeyPair = loadWalletKey(null, env);
-    const anchorProgram = await loadCandyProgramV2(userKeyPair, env, rpcUrl);
+   // const userKeyPair = loadWalletKey(null, env);
+    const anchorProgram = await loadCandyProgramV2(null, env, rpcUrl);
     const userTokenAccountAddress = await getTokenWallet(
-      userKeyPair.publicKey,
-      mint.publicKey,
+        payerWalletAddress,
+        mint.publicKey,
     );
 
     const sol = await window.solana.connect();
@@ -49,7 +48,7 @@ export async function mintV2(
     const cleanupInstructions = [];
     const instructions = [
       anchor.web3.SystemProgram.createAccount({
-        fromPubkey: userKeyPair.publicKey,
+        fromPubkey: payerPublicAddress,
         newAccountPubkey: mint.publicKey,
         space: MintLayout.span,
         lamports:
@@ -62,20 +61,20 @@ export async function mintV2(
         TOKEN_PROGRAM_ID,
         mint.publicKey,
         0,
-        userKeyPair.publicKey,
-        userKeyPair.publicKey,
+        payerPublicAddress,
+        payerPublicAddress,
       ),
       createAssociatedTokenAccountInstruction(
         userTokenAccountAddress,
-        userKeyPair.publicKey,
-        userKeyPair.publicKey,
+        payerPublicAddress,
+        payerPublicAddress,
         mint.publicKey,
       ),
       Token.createMintToInstruction(
         TOKEN_PROGRAM_ID,
         mint.publicKey,
         userTokenAccountAddress,
-        userKeyPair.publicKey,
+        payerPublicAddress,
         [],
         1,
       ),
@@ -87,7 +86,7 @@ export async function mintV2(
       );
   
       const whitelistToken = (
-        await getAtaForMint(mint, userKeyPair.publicKey)
+        await getAtaForMint(mint, payerPublicAddress)
       )[0];
       remainingAccounts.push({
         pubkey: whitelistToken,
@@ -118,7 +117,7 @@ export async function mintV2(
               TOKEN_PROGRAM_ID,
               whitelistToken,
               whitelistBurnAuthority.publicKey,
-              userKeyPair.publicKey,
+              payerPublicAddress,
               [],
               1,
             ),
@@ -127,7 +126,7 @@ export async function mintV2(
             Token.createRevokeInstruction(
               TOKEN_PROGRAM_ID,
               whitelistToken,
-              userKeyPair.publicKey,
+              payerPublicAddress,
               [],
             ),
           );
@@ -140,7 +139,7 @@ export async function mintV2(
       transferAuthority = anchor.web3.Keypair.generate();
   
       tokenAccount = await getTokenWallet(
-        userKeyPair.publicKey,
+        payerPublicAddress,
         candyMachine.tokenMint,
       );
   
@@ -160,7 +159,7 @@ export async function mintV2(
           TOKEN_PROGRAM_ID,
           tokenAccount,
           transferAuthority.publicKey,
-          userKeyPair.publicKey,
+          payerPublicAddress,
           [],
           candyMachine.data.price.toNumber(),
         ),
@@ -170,7 +169,7 @@ export async function mintV2(
         Token.createRevokeInstruction(
           TOKEN_PROGRAM_ID,
           tokenAccount,
-          userKeyPair.publicKey,
+          payerPublicAddress,
           [],
         ),
       );
@@ -190,14 +189,14 @@ export async function mintV2(
         accounts: {
           candyMachine: candyMachineAddress,
           candyMachineCreator,
-          payer: userKeyPair.publicKey,
+          payer: payerPublicAddress,
           //@ts-ignore
           wallet: candyMachine.wallet,
           mint: mint.publicKey,
           metadata: metadataAddress,
           masterEdition,
-          mintAuthority: userKeyPair.publicKey,
-          updateAuthority: userKeyPair.publicKey,
+          mintAuthority: payerPublicAddress,
+          updateAuthority: payerPublicAddress,
           tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
@@ -249,13 +248,13 @@ export async function mintV2(
 
     let mintSignature = nacl.sign.detached(transactionBuffer, mint.secretKey);
 
-    transaction.addSignature(userKeyPair.publicKey, bs58.decode(payerSignature.signature));
+    transaction.addSignature(payerPublicAddress, bs58.decode(payerSignature.signature));
 
     console.log(mintSignature, mint.publicKey);
     transaction.addSignature(mint.publicKey, mintSignature);
 
 
-    console.log(userKeyPair.publicKey.toString());
+    console.log(payerPublicAddress.toString());
     // if(transferAuthority){
       // const transferSignature = nacl.sign.detached(transactionBuffer, transferAuthority.secretKey);
       // transaction.addSignature(transferAuthority.publicKey, (transferSignature));
