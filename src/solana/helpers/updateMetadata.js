@@ -8,15 +8,15 @@ import { sendTransactionWithRetryWithKeypair } from '../helpers/transactions';
 import { serialize } from 'borsh';
 
 import log from 'loglevel';
-import { sleep } from '../helpers/various';
-import { delay, getAccountsByCreatorAddress } from './signAll';
+// import { sleep } from '../helpers/various';
+// import { delay, getAccountsByCreatorAddress } from './signAll';
 import { createUpdateMetadataInstruction } from '../helpers/instructions';
-import {
-  Creator,
-  Data,
-  METADATA_SCHEMA,
-  UpdateMetadataArgs,
-} from '../helpers/schema';
+// import {
+//   Creator,
+//   Data,
+//   METADATA_SCHEMA,
+//   UpdateMetadataArgs,
+// } from '../helpers/schema';
 import {
   getCandyMachineCreator,
   deriveCandyMachineV2ProgramAddress,
@@ -31,10 +31,16 @@ export async function updateMetadataFromCache(
   cacheContent,
   newCacheContent,
 ) {
-  const [candyMachineAddr] = await deriveCandyMachineV2ProgramAddress(
-    new PublicKey(candyMachineAddress),
-  );
-  candyMachineAddress = candyMachineAddr.toBase58();
+
+  const cache = JSON.parse(fs.readFileSync("/home/user/Documents/ambition/devnet-testSpeed.json").toString());
+
+  const anchorProgram = await loadCandyProgram(null, "devnet", rpcUrl);
+  connection = anchorProgram.provider.connection;
+  candyMachineAddress = "EWdpGazvna4usyweX1WvQEMDHPdc5f89q4Nx2g6QffCi";
+  // const [candyMachineAddr] = await deriveCandyMachineV2ProgramAddress(
+  //   new PublicKey(candyMachineAddress),
+  // );
+  // candyMachineAddress = candyMachineAddr.toBase58();
   const metadataByCandyMachine = await getAccountsByCreatorAddress(
     (
       await getCandyMachineCreator(new PublicKey(candyMachineAddress))
@@ -44,8 +50,10 @@ export async function updateMetadataFromCache(
 
   const differences = {};
   for (let i = 0; i < Object.keys(cacheContent.items).length; i++) {
-      differences[cacheContent.items[i.toString()].link] = newCacheContent.items[i.toString()].link;
-		/*
+      // differences[cacheContent.items[i.toString()].link] = newCacheContent.items[i.toString()].link;
+      differences[cache.items[i.toString()].link] = cache.items[i.toString()].link;
+
+      /*
     if (
       cacheContent.items[i.toString()].link !=
       newCacheContent.items[i.toString()].link
