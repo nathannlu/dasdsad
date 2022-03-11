@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useGetContract } from "services/blockchain/gql/hooks/contract.hook";
 import { useToast } from "ds/hooks/useToast";
 import { useContractDetails } from "services/blockchain/pages/Contract/hooks/useContractDetails";
+import { mintV2 } from 'solana/helpers/mint.js';
 
 export const useEmbed = () => {
     const { addToast } = useToast();
@@ -48,6 +49,7 @@ export const useEmbed = () => {
     useEffect(() => {
         (async () => {
 			await loadWeb3();
+            console.log(contract)
 		})()
     }, [])
 
@@ -129,22 +131,24 @@ export const useEmbed = () => {
     }
 
     // Mint NFT
-    const onMint = async (type = 0) => {
+    const onMint = async (walletType = 0) => {
         try {
-            if (!price || 
-                !max || 
-                !max.length || 
-                !contractAddress || 
-                !contractAddress.length || 
-                !chainId || 
-                !chainId.length ||
-                mintCount <= 0 ||
-                !contract) return;
+            // if (!price || 
+            //     !max || 
+            //     !max.length || 
+            //     !contractAddress || 
+            //     !contractAddress.length || 
+            //     !chainId || 
+            //     !chainId.length ||
+            //     mintCount <= 0 ||
+            //     !contract) return;
+            
+            if (!contract) throw new Error('Cannot find contract');
 
             await compareNetwork(chainId, async () => {
                 setIsMinting(true);
                 
-                if (type === 0) { // Metamask
+                if (walletType === 0) { // Metamask
                     if (isPublicSaleOpen) {
                         await mint(contractAddress, mintCount);
                         setIsMinting(false);
@@ -160,8 +164,10 @@ export const useEmbed = () => {
                         throw new Error('Public sale and Presale is not open');
                     }
                 }
-                else if (type === 1) { // Phantom
-                    console.log('phantom mint');
+                else if (walletType === 1 && contract.blockchain.indexOf('solana') != -1) { // Phantom
+                    setIsMinting(true);
+                    await mintV2(); // maybe change parameter
+                    setIsMinting(false);
                 }
             })
         }

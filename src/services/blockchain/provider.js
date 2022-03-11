@@ -44,7 +44,7 @@ export const ContractProvider = ({ children }) => {
                     totalSupply: contract.nftCollection.size,
                     cost: contract.nftCollection.price,
                     open: false,
-                    id
+                    id: contract.id
                 })
             }
             else {
@@ -57,7 +57,8 @@ export const ContractProvider = ({ children }) => {
                     price: contract.nftCollection.price, 
                     liveDate: 'now',
                     creators: [ {address: account, verified: true, share: 100} ],
-                    cacheHash: contract.nftCollection.cacheHash
+                    cacheHash: contract.nftCollection.cacheHash,
+                    id: contract.id
                 });
             }
         }

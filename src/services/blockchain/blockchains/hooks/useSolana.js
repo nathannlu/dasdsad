@@ -14,8 +14,36 @@ export const useSolana = () => {
 	const { account } = useWeb3()
 	const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
 	const { addToast } = useToast();
+    const [updateContract] = useUpdateContract({
+		onCompleted: () => {
+			addToast({
+				severity: 'success',
+				message: `Contract deployed.`
+			})	
+			setStart(false);
+			setLoading(false)
+			setError(false);
+		},
+		onError: err => {
+			addToast({
+				severity: 'error',
+				message: `Contract successfully deployed, however was not saved in our server. Please contact an administrator. Error: ${err.message}`
+			})	
+			setError(true);
+		}
+	});
 
-	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash}) => {
+    const handleDeploymentSuccess = async (id, newContractAddress) => {
+		posthog.capture(
+			'User deployed contract to Solana blockchain', {
+				$set: {
+					deployedContract: true,
+				}
+		});
+		await updateContract({ variables: { id: id, address: newContractAddress} });
+	}
+
+	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, id}) => {
         try {
             //mintV2();
             const res = await createSolanaContract({
@@ -29,6 +57,8 @@ export const useSolana = () => {
                 creators,
                 cacheHash
             });
+
+            handleDeploymentSuccess(id, 'new');
 
             // console.log(res);
         }

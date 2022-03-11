@@ -19,7 +19,7 @@ export async function mintV2(
     rpcUrl,
   ) {
 
-    const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC');
+    const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC'); // Private key
     console.log('decoded', decoded);
 
     keypair = Uint8Array.from(decoded);
