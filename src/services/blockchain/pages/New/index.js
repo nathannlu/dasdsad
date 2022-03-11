@@ -12,9 +12,9 @@ const blockchains = [
 	{ title: 'Ethereum', value:'ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
 	{ title: 'Polygon', value:'polygon', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
     { title: 'Solana', value: 'solana', img: 'https://cryptologos.cc/logos/solana-sol-logo.png'},
-	{ title: 'Ethereum Testnet', value:'rinkeby', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
-	{ title: 'Polygon Testnet', value:'mumbai', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
-    { title: 'Solana Testnet', value: 'solanatestnet', img: 'https://cryptologos.cc/logos/solana-sol-logo.png'},
+	{ title: 'Ethereum devnet', value:'rinkeby', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
+	{ title: 'Polygon devnet', value:'mumbai', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
+    { title: 'Solana devnet', value: 'solanadevnet', img: 'https://cryptologos.cc/logos/solana-sol-logo.png'},
 ];
 
 const Upload = () => {
@@ -44,7 +44,7 @@ const Upload = () => {
             'polygon': 'matic',
             'mumbai': 'matic',
             'solana': 'sol',
-            'solanatestnet': 'sol',
+            'solanadevnet': 'sol',
         }
         const ContractInput = {
             name: name.value,

@@ -1,8 +1,10 @@
-import { PublicKey, Keypair } from '@solana/web3.js';
+import { PublicKey, Keypair, Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import { sendTransactionWithRetryWithKeypair } from '../helpers/transactions';
 import { Program } from '@project-serum/anchor';
 
+import { loadWalletKey, loadCandyProgramV2, getTokenWallet, getMetadata, getMasterEdition, getCandyMachineCreator } from './accounts';
+import bs58 from 'bs58';
 
 export async function withdrawV2(
   anchorProgram,
@@ -14,11 +16,17 @@ export async function withdrawV2(
   charityPercent = 0,
 ) {
   // const signers = [keypair];
+
+  candyAddress = "26bcmq3JsXUtW8xkiqVQYt5XmbQywGY37wPrv22gRoWn";
+
+  const sol = await window.solana.connect();
+  const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
+  anchorProgram = await loadCandyProgramV2(null, "devnet", null);
   const instructions = [
     anchorProgram.instruction.withdrawFunds({
       accounts: {
         candyMachine: candyAddress,
-        authority: keypair.publicKey,
+        authority: payerPublicAddress,
       },
     }),
   ];
@@ -61,7 +69,7 @@ export async function withdrawV2(
 		}
 	})
 
-  transaction.addSignature(keypair.publicKey, withDrawSignature);
+  transaction.addSignature(payerPublicAddress, bs58.decode(withDrawSignature.signature));
 
   let isVerifiedSignature = transaction.verifySignatures();
   console.log(`The signatures were verifed: ${isVerifiedSignature}`);

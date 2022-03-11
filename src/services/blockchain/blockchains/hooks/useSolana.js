@@ -36,7 +36,7 @@ export const useSolana = () => {
 
 	const deploySolanaContract = async () => {
 		const connection = new Connection(
-			"https://api.testnet.solana.com",
+			"https://api.devnet.solana.com",
 			'confirmed',
 		);
 
@@ -46,9 +46,9 @@ export const useSolana = () => {
 
 		const candyAccount = Keypair.generate();
 		const goLiveDate = '25 Dec 2021 00:00:00 GMT';
-		const env = 'testnet';
+		const env = 'devnet';
 		const totalNFTs = 100;
-		const anchorProgram = await loadCandyProgramV2(from, 'testnet');
+		const anchorProgram = await loadCandyProgramV2(from, 'devnet');
 		const remainingAccounts = [];
 		const splToken = null;
 		if (splToken) {

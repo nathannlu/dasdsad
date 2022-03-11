@@ -18,7 +18,7 @@ export const useSolana = () => {
 
   const deploySolanaContract = async (payerWallet, creators) => {
 		console.log('payer wallet:', payerWallet)
-		const env = 'testnet';
+		const env = 'devnet';
 		const totalNFTs = 100
 
 
