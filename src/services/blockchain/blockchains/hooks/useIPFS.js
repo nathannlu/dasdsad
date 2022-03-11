@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useContract } from 'services/blockchain/provider';
 import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
+import { useSetCacheHash } from 'services/blockchain/gql/hooks/contract.hook';
+import MD5 from 'crypto-js/md5'
 
 export const useIPFS = () => {
 	const {
@@ -17,11 +19,19 @@ export const useIPFS = () => {
 		setActiveStep,
 		setError,
         contract,
+        setCacheHash: setHash,
 	} = useContract()
 	const { addToast } = useToast();
 	const { user } = useAuth();
 	const [loading,setLoading] = useState(false)
-
+    const [setCacheHash] = useSetCacheHash({
+		onError: err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})	
+		}
+	});
 
 	const pinImages = async (callback) => {
 		const folder = uploadedFiles
@@ -89,10 +99,10 @@ export const useIPFS = () => {
 					const tokenId = file.name.split('.')[0]
 
 					if(jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type == 'image/webp') {
-						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`
+						jsonMetadata.image = contract.blockchain.indexOf('solana') != -1 ? `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.webp` : `ipfs://${imagesUrl}/${tokenId}.webp`
 						
 					} else {
-						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.png`
+						jsonMetadata.image = contract.blockchain.indexOf('solana') != -1 ? `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.png` : `ipfs://${imagesUrl}/${tokenId}.png`
 					}
 
 					// Attach JSON to formdata
@@ -110,6 +120,31 @@ export const useIPFS = () => {
 		})
 	}
 
+    const createCacheContent = async (metadataToken) => {
+       try {
+            console.log('Creating cache content')
+            let cacheContent = [];
+            const folder = uploadedJson;
+            folder.forEach((file, idx) => {
+                cacheContent.push({
+                    'mint_num': idx + 1,
+                    "uri": `https://gateway.pinata.cloud/ipfs/${metadataToken}`
+                })
+            })
+            const hash = MD5(cacheContent).toString();
+            console.log('cacheContent Hash:', hash, contract.id);
+            setHash(hash);
+            await setCacheHash({ variables: { id: contract.id, cacheHash: hash } });
+       }
+       catch (err) {
+            console.log(err);
+            addToast({
+                severity: 'error',
+                message: e.message 
+            });
+       }
+    }
+
 	const pinMetadata = async (callback) => {
 		const folder = uploadedJson;
         let data = new FormData();
@@ -121,25 +156,15 @@ export const useIPFS = () => {
 			message: "Deploying metadata to IPFS... this may take a long time depending on your collection size"
 		});
 
-        //let cacheContent = [];
-
 		// Update metadata
 		for (let i = 0; i < folder.length; i++) {
 			await updateAndSaveJson(folder[i], data);
-            // if (contract.blockchain.indexOf('solana') != -1 && folder[i].name !== 'metadata.json') {
-            //     cacheContent.push({
-            //         'mint_num': i + 1,
-            //         "uri": `https://ipfs.io/ipfs/${imagesUrl}`
-            //     })
-            // }
 		}
 
         const metadata = JSON.stringify({
             name: user.id + '_metadata',
         });
 
-        //const cacheContentData = new Blob([JSON.stringify(cacheContent)])
-        //data.append('file', cacheContentData, `/metadata/cache.json`)
 		data.append('pinataMetadata', metadata);
 
 		const opt = {
@@ -158,6 +183,7 @@ export const useIPFS = () => {
 				message: 'Added json metadata to IPFS under URL: ipfs://' + res.data.IpfsHash
 			})
             console.log('Json Metadata: ', res.data.IpfsHash);
+            await createCacheContent(res.data.IpfsHash);
 			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/');
 			setMetadataUrl(res.data.IpfsHash);
 		} 

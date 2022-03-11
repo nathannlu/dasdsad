@@ -18,6 +18,7 @@ export const CREATE_CONTRACT = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
 			}
 		}
 	}
@@ -41,6 +42,7 @@ export const UPDATE_CONTRACT = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
 			}
 		}
 	}
@@ -72,6 +74,7 @@ export const GET_CONTRACTS = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
 			}
 		}
 	}
@@ -94,6 +97,7 @@ export const GET_CONTRACT = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
 			}
 		}
 	}
@@ -110,6 +114,7 @@ export const SET_BASE_URI = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
 			}
 		}
 	}
@@ -126,11 +131,25 @@ export const SET_WHITELIST = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
 			}
 		}
 	}
 `
 
-
-
-
+export const SET_CACHE_HASH = gql`
+    mutation SetCacheHash($id: ID!, $cacheHash: String!) {
+        setCacheHash(id: $id, cacheHash: $cacheHash) {
+            id
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                whitelist
+                cacheHash
+            }
+        }
+    }
+`

@@ -26,6 +26,7 @@ export const ContractProvider = ({ children }) => {
 	const [imagesUrl, setImagesUrl] = useState('')
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const [cacheHash, setCacheHash] = useState('');
     const { account } = useWeb3();
 
     const { deployEthereumContract } = useEthereum();
@@ -55,7 +56,8 @@ export const ContractProvider = ({ children }) => {
                     size: contract.nftCollection.size, 
                     price: contract.nftCollection.price, 
                     liveDate: 'now',
-                    creators: [ {address: account, verified: true, share: 100} ]
+                    creators: [ {address: account, verified: true, share: 100} ],
+                    cacheHash: contract.nftCollection.cacheHash
                 });
             }
         }
@@ -96,6 +98,8 @@ export const ContractProvider = ({ children }) => {
 		selectInput,
 		setSelectInput,
         deployContract,
+        cacheHash,
+        setCacheHash
 	}
 
 	return (

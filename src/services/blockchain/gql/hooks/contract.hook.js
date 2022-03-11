@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI, UPDATE_CONTRACT, SET_WHITELIST, GET_CONTRACT, DELETE_CONTRACT } from '../contract.gql';
+import { CREATE_CONTRACT, GET_CONTRACTS, SET_BASE_URI, UPDATE_CONTRACT, SET_WHITELIST, GET_CONTRACT, DELETE_CONTRACT, SET_CACHE_HASH } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
 
@@ -143,4 +143,29 @@ export const useUpdateContract = ({ onCompleted, onError }) => {
 	return [ updateContract, { ...mutationResult }]
 };
 
+export const useSetCacheHash = ({ onCompleted, onError }) => {
+	const { setContracts } = useContract();
 
+	const [setCacheHash, { ...mutationResult }] = useMutation(SET_CACHE_HASH, {
+		onCompleted: async data => {
+			const updated = data.setCacheHash
+
+			setContracts(prevState => {
+				const newState = prevState.map(contract => {
+					if (contract.id == updated.id) {
+						return {...contract, nftCollection: updated.nftCollection};
+					}
+
+					return contract;
+				})
+
+				return newState
+			})
+			
+			onCompleted && onCompleted(data)
+		},
+		onError
+	})
+
+	return [ setCacheHash, { ...mutationResult }]
+};

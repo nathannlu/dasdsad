@@ -25,7 +25,7 @@ export function parseDate(date) {
 	return Date.parse(date) / 1000;
   }
 
-export const createSolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators}) => {
+export const createSolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash}) => {
     console.log('[Ambition] Solana Contract Deployment');
 
 	const env = 'testnet';
@@ -38,26 +38,16 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 
     console.log('anchorProgram:', anchorProgram);
 
-    console.log('uri', uri)
+    console.log('uri:', uri);
 
     const livedatelol = new BN(parseDate(liveDate));
-    console.log(livedatelol)
+    console.log('liveDat:', livedatelol);
 
-    // Get Cache Data from URL
-    let cacheData;
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                cacheData = JSON.parse(xhr.responseText);
-            }
-            else {
-                console.log(xhr);
-            }
-        }
-    };
-    xhr.open('GET', 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/cache.json', true); //https://gateway.pinata.cloud/ipfs/QmQpPTfRwoA2ov3YNpZqxftWJNjhJzbihZon7itxhvyDoM/cache.json
-    xhr.send();
+    console.log('cacheHash:', cacheHash);
+
+    const hash = new TextEncoder().encode(cacheHash);
+
+    console.log('hash', hash);
 
 	const res = await createCandyMachineV2(
 		anchorProgram,  // AnchorProgram
@@ -79,7 +69,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			hiddenSettings: {
                 name: name + ' ',
                 uri: 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/0.json',
-                hash: []
+                hash: hash
             },
 			creators,
         },

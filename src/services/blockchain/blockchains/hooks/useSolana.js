@@ -15,7 +15,7 @@ export const useSolana = () => {
 	const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
 	const { addToast } = useToast();
 
-	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators}) => {
+	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash}) => {
         try {
             //mintV2();
             const res = await createSolanaContract({
@@ -26,7 +26,8 @@ export const useSolana = () => {
                 size, 
                 price, 
                 liveDate, 
-                creators
+                creators,
+                cacheHash
             });
 
             // console.log(res);
