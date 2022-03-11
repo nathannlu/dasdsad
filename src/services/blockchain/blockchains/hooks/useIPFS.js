@@ -144,18 +144,16 @@ export const useIPFS = () => {
         });
     }
 
-    const createCacheContent = async (metadataToken, uuid, candyMachineAddress) => {
+    const createCacheContent = async (metadataToken, uuid = null, candyMachineAddress = null) => {
        try {
             console.log('Creating cache content')
 
             let cacheContent = {
-                "program": {
-                    "uuid": uuid,
-                    "candyMachine": candyMachineAddress
+                program: {
+                    uuid,
+                    candyMachineAddress
                 },
-                "items": {
-                    
-                }
+                items: { }
             };
 
             const folder = uploadedJson;
