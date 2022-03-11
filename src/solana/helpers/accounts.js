@@ -256,7 +256,7 @@ import {
 
 	let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);
 
-	transaction.addSignature(payerWallet.publicKey, bs58.decode(signature1.signature));
+	transaction.addSignature(payerPublicAddress, bs58.decode(signature1.signature));
 	transaction.addSignature(candyAccount.publicKey, (signature2));
 
 	let isVerifiedSignature = transaction.verifySignatures();
@@ -292,7 +292,10 @@ import {
 
 
 
-  return r
+	return {
+		uuid: candyData.uuid,
+		candyMachineAddress: candyAccount.publicKey
+	}
 };
 
 export const createConfig = async function (

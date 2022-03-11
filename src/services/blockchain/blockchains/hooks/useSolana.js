@@ -58,7 +58,9 @@ export const useSolana = () => {
                 cacheHash
             });
 
-            handleDeploymentSuccess(id, 'candymachineaddresHERE');
+					console.log('res', res)
+
+            handleDeploymentSuccess(id, res.candyMachineAddress);
 
             // console.log(res);
         }
