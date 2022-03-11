@@ -1,4 +1,4 @@
-import { PublicKey, Keypair, createAccount, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
+import { PublicKey, Keypair, createAccount, LAMPORTS_PER_SOL, SystemProgram, Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js';
 import { sendTransactionWithRetryWithKeypair } from './transactions';
 import { loadWalletKey, loadCandyProgramV2, getTokenWallet, getMetadata, getMasterEdition, getCandyMachineCreator } from './accounts';
 import { MintLayout, Token } from '@solana/spl-token';
@@ -8,9 +8,9 @@ import {
   TOKEN_METADATA_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from './constants';
-
 import { createAssociatedTokenAccountInstruction } from './instructions';
 // import { sendTransactionWithRetryWithKeypair } from '../helpers/transactions';
+const nacl = require('tweetnacl');
 
 export async function mintV2(
     keypair,
@@ -22,25 +22,30 @@ export async function mintV2(
     const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC'); // Private key
     console.log('decoded', decoded);
 
-    keypair = Uint8Array.from(decoded);
-    console.log(keypair);
+    // keypair = Uint8Array.from(decoded);
+    // console.log(keypair);
     candyMachineAddress = new PublicKey('6gxFyFrrw71xmaAbuykcuP9GG794df68A1CyjkFAGTr7'); // one of the signer from transaction
-    env = "testnet";
+    env="devnet";
     const mint = Keypair.generate();
   
-    const userKeyPair = loadWalletKey(keypair, env);
+    const userKeyPair = loadWalletKey(null, env);
     const anchorProgram = await loadCandyProgramV2(userKeyPair, env, rpcUrl);
     const userTokenAccountAddress = await getTokenWallet(
       userKeyPair.publicKey,
       mint.publicKey,
     );
 
+    const sol = await window.solana.connect();
+    const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
+  
     const candyMachine = await anchorProgram.account.candyMachine.fetch(
       candyMachineAddress,
     );
   
+    let transferAuthority;
+    let whitelistBurnAuthority;
     const remainingAccounts = [];
-    const signers = [mint, userKeyPair];
+    const signers = [mint];
     const cleanupInstructions = [];
     const instructions = [
       anchor.web3.SystemProgram.createAccount({
@@ -91,7 +96,7 @@ export async function mintV2(
       });
   
       if (candyMachine.data.whitelistMintSettings.mode.burnEveryTime) {
-        const whitelistBurnAuthority = anchor.web3.Keypair.generate();
+        whitelistBurnAuthority = anchor.web3.Keypair.generate();
   
         remainingAccounts.push({
           pubkey: mint,
@@ -132,7 +137,7 @@ export async function mintV2(
   
     let tokenAccount;
     if (candyMachine.tokenMint) {
-      const transferAuthority = anchor.web3.Keypair.generate();
+      transferAuthority = anchor.web3.Keypair.generate();
   
       tokenAccount = await getTokenWallet(
         userKeyPair.publicKey,
@@ -206,21 +211,69 @@ export async function mintV2(
       }),
     );
   
-    const finished = (
-      await sendTransactionWithRetryWithKeypair(
-        anchorProgram.provider.connection,
-        userKeyPair,
-        instructions,
-        signers,
-      )
-    ).txid;
+    // const finished = (
+    //   await sendTransactionWithRetryWithKeypair(
+    //     anchorProgram.provider.connection,
+    //     userKeyPair,
+    //     instructions,
+    //     signers,
+    //   )
+    // ).txid;
   
-    await sendTransactionWithRetryWithKeypair(
-      anchorProgram.provider.connection,
-      userKeyPair,
-      cleanupInstructions,
-      [],
-    );
-  
+    // await sendTransactionWithRetryWithKeypair(
+    //   anchorProgram.provider.connection,
+    //   userKeyPair,
+    //   cleanupInstructions,
+    //   [],
+    // );
+
+    console.log("minting");
+    let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
+    const transaction = new Transaction({
+      recentBlockhash: recentBlockhash.blockhash,
+      feePayer: payerPublicAddress
+    });
+
+    for (let i = 0; i < instructions.length; i++) {
+      transaction.add(instructions[i]);
+    }
+
+    let transactionBuffer = transaction.serializeMessage();
+
+    const payerSignature = await window.solana.request({
+      method: 'signTransaction',
+      params: {
+        message: bs58.encode(transactionBuffer)
+      }
+    })
+
+    let mintSignature = nacl.sign.detached(transactionBuffer, mint.secretKey);
+
+    transaction.addSignature(userKeyPair.publicKey, bs58.decode(payerSignature.signature));
+
+    console.log(mintSignature, mint.publicKey);
+    transaction.addSignature(mint.publicKey, mintSignature);
+
+
+    console.log(userKeyPair.publicKey.toString());
+    // if(transferAuthority){
+      // const transferSignature = nacl.sign.detached(transactionBuffer, transferAuthority.secretKey);
+      // transaction.addSignature(transferAuthority.publicKey, (transferSignature));
+    // }
+
+    // if(whitelistBurnAuthority){
+      // const whiteListSignature = nacl.sign.detached(transactionBuffer, whitelistBurnAuthority.secretKey);
+      // transaction.addSignature(whitelistBurnAuthority.publicKey, (whiteListSignature));
+    // }
+    
+
+    let isVerifiedSignature = transaction.verifySignatures();
+	  console.log(`The signatures were verifed: ${isVerifiedSignature}`)
+
+    let rawTransaction = transaction.serialize();
+
+    const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
+	  console.log(asd)
+
     return 0;
   }

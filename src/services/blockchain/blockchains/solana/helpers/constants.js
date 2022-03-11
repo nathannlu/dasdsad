@@ -130,8 +130,8 @@ export const CLUSTERS = [
     url: clusterApiUrl('devnet'),
   },
   {
-    name: 'devnet',
-    url: clusterApiUrl('devnet'),
+    name: 'testnet',
+    url: clusterApiUrl('testnet'),
   },
 ];
 export const DEFAULT_CLUSTER = CLUSTERS[2];

@@ -204,103 +204,98 @@ import {
 
     console.log('initializing candy machine from anchor program')
   
-      const r = {
-        candyMachine: candyAccount.publicKey,
+    const r = {
+		candyMachine: candyAccount.publicKey,
         uuid: candyData.uuid,
         txId: await anchorProgram.instruction.initializeCandyMachine(candyData, {
-        accounts: {
-          candyMachine: candyAccount.publicKey,
-          wallet:   payerPublicAddress,
-          authority:  payerPublicAddress,
-          payer:   payerPublicAddress,
-          systemProgram: SystemProgram.programId,
-          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        },
-      }),
-      }
+            accounts: {
+                candyMachine: candyAccount.publicKey,
+                wallet:   payerPublicAddress,
+                authority:  payerPublicAddress,
+                payer:   payerPublicAddress,
+                systemProgram: SystemProgram.programId,
+                rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+            },
+        }),
+	}
 
-      console.log('creating candy machine account')
-  
-      const instructions = [
-          await createCandyMachineV2Account(
-              anchorProgram,
-              candyData,
-              payerPublicAddress,
-              candyAccount.publicKey,
-          ),
-          r.txId
-      ]
+	const instructions = [
+		await createCandyMachineV2Account(
+			anchorProgram,
+			candyData,
+			payerPublicAddress,
+			candyAccount.publicKey,
+		),
+		r.txId
+	]
 
-      console.log('recent block hash')
-  
-      let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
-      const transaction = new Transaction({
-          recentBlockhash: recentBlockhash.blockhash,
-      feePayer: payerPublicAddress
-      })
-      transaction.add(instructions[0]);
-      transaction.add(instructions[1]);
-  
-  
-      let transactionBuffer = transaction.serializeMessage();
-      console.log('tbuffer', transactionBuffer)
-  
-  //	let signature1 = nacl.sign.detached(transactionBuffer, payerWallet.secretKey);
-  
-      const signature1 = await window.solana.request({
-          method: 'signTransaction',
-          params: {
-              message: bs58.encode(transactionBuffer)
-          }
-      })
-  
-      console.log('signature1', bs58.decode(signature1.signature))
-    // console.log
-  
-      let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);
-  
-      console.log('signature2', signature2)
+	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
+	const transaction = new Transaction({
+		recentBlockhash: recentBlockhash.blockhash,
+    feePayer: payerPublicAddress
+	})
+	transaction.add(instructions[0]);
+	transaction.add(instructions[1]);
 
-      transaction.addSignature(sol.publicKey, bs58.decode(signature1.signature));
-      transaction.addSignature(candyAccount.publicKey, (signature2));
-  
-      let isVerifiedSignature = transaction.verifySignatures();
+	let transactionBuffer = transaction.serializeMessage();
+	console.log(transactionBuffer);
 
-      console.log(`The signatures were verifed: ${isVerifiedSignature}`)
-  
-  // The signatures were verified: true
-  
-      let rawTransaction = transaction.serialize();
-  
-      console.log('serialized transaction', rawTransaction);
+//	let signature1 = nacl.sign.detached(transactionBuffer, payerWallet.secretKey);
 
-      const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
 
-      console.log('sendAndConfirmRawTransaction', asd)
-  
-  
-      /*
-      // Sign transaction, broadcast, and confirm
-      const signature = await sendAndConfirmTransaction(
-          anchorProgram.provider.connection,
-          transaction,
-          [payerWallet, candyAccount],
-      );
-      */
-  
-  //	let signature = nacl.sign.detached(transactionBuffer, payer.secretKey);
-  
-  
-  //	console.log('SIGNATURE', signature);
-  
-  //	console.log('the txn', finished)
-  
-  
-  
-    return r
-  };
-  
-  export const createConfig = async function (
+	const signature1 = await window.solana.request({
+		method: 'signTransaction',
+		params: {
+			message: bs58.encode(transactionBuffer)
+		}
+	})
+
+
+	console.log(bs58.decode(signature1.signature))
+  // console.log
+
+	let signature2 = nacl.sign.detached(transactionBuffer, candyAccount.secretKey);
+
+	transaction.addSignature(payerWallet.publicKey, bs58.decode(signature1.signature));
+	transaction.addSignature(candyAccount.publicKey, (signature2));
+
+	let isVerifiedSignature = transaction.verifySignatures();
+	console.log(`The signatures were verifed: ${isVerifiedSignature}`)
+
+
+
+// The signatures were verified: true
+
+	let rawTransaction = transaction.serialize();
+
+	const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
+	console.log(asd)
+
+
+
+
+	/*
+	// Sign transaction, broadcast, and confirm
+	const signature = await sendAndConfirmTransaction(
+		anchorProgram.provider.connection,
+		transaction,
+		[payerWallet, candyAccount],
+	);
+	*/
+
+//	let signature = nacl.sign.detached(transactionBuffer, payer.secretKey);
+
+
+//	console.log('SIGNATURE', signature);
+
+//	console.log('the txn', finished)
+
+
+
+  return r
+};
+
+export const createConfig = async function (
     anchorProgram,
     payerWallet,
     configData,
@@ -702,21 +697,23 @@ import {
       customRpcUrl || getCluster(env),
     );
   
-    const walletWrapper = {}; //new Wallet(walletKeyPair);
-    console.log('wallet wrapper', walletWrapper)
+    const walletWrapper = new Wallet(walletKeyPair);
+      console.log('wallet wrapper', walletWrapper)
   
-    const provider = new anchor.Provider(solConnection, walletWrapper, {
-        preflightCommitment: 'recent',
+    console.log("null wallet");
+    const provider = new anchor.Provider(solConnection, null, {
+      preflightCommitment: 'recent',
     });
   
-    console.log(provider)
-    //const solProvider = window.solana;
-    //console.log(solProvider)
+      console.log(provider)
+  //	const solProvider = window.solana;
+  //	console.log(solProvider)
   
     const idl = await anchor.Program.fetchIdl(
       CANDY_MACHINE_PROGRAM_V2_ID,
       provider,
     );
+  
   
     const program = new anchor.Program(
       idl,
