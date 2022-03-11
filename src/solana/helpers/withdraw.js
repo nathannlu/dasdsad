@@ -7,21 +7,19 @@ import { loadWalletKey, loadCandyProgramV2, getTokenWallet, getMetadata, getMast
 import bs58 from 'bs58';
 
 export async function withdrawV2(
-  anchorProgram,
-  keypair,
   env,
   candyAddress,
-  lamports,
-  charityAddress,
-  charityPercent = 0,
+//   lamports,
+//   charityAddress,
+//   charityPercent = 0,
 ) {
   // const signers = [keypair];
 
-  candyAddress = "26bcmq3JsXUtW8xkiqVQYt5XmbQywGY37wPrv22gRoWn";
+ // candyAddress = "26bcmq3JsXUtW8xkiqVQYt5XmbQywGY37wPrv22gRoWn";
 
   const sol = await window.solana.connect();
   const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
-  anchorProgram = await loadCandyProgramV2(null, "devnet", null);
+  const anchorProgram = await loadCandyProgramV2(null, env, null);
   const instructions = [
     anchorProgram.instruction.withdrawFunds({
       accounts: {

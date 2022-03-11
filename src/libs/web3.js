@@ -464,6 +464,9 @@ export const Web3Provider = ({ children }) => {
 
     // Get current network
     const getNetworkID = () => {
+        if (wallet == 'phantom')
+            return 'solana';{
+        }
         return `0x${parseInt(window.ethereum.networkVersion).toString(16)}`;
     }
 
