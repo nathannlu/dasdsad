@@ -18,6 +18,35 @@ function App() {
 	const { initGA, initPosthog, initLogRocket } = useAnalytics();
 	const history = createBrowserHistory();
 
+//	const { start, progress } = useGenerator();
+//	const { settingsForm: {size}} = useMetadata();
+
+
+	/*
+	const initBeforeUnLoad = (showExitPrompt) => {
+		window.onbeforeunload = (event) => {
+			// Show prompt based on state
+			if (showExitPrompt) {
+				const e = event || window.event;
+				e.preventDefault();
+				if (e) {
+					e.returnValue = ''
+				}
+				return '';
+			}
+		};
+	};
+
+	window.onload = function() {
+			initBeforeUnLoad(start);
+	};
+
+	useEffect(() => {
+        initBeforeUnLoad(start);
+	}, [start]);
+	*/
+
+
 	useGetCurrentUser();
 	initGA()
 	initPosthog()
