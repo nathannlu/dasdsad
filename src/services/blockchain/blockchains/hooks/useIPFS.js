@@ -120,19 +120,54 @@ export const useIPFS = () => {
 		})
 	}
 
-    const createCacheContent = async (metadataToken) => {
+    const fillCacheContent = async (file, idx, cacheContent, metadataToken) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const fileReader = new FileReader();
+                fileReader.onload = (evt) => {
+                    if(file.name !== 'metadata.json') {
+                        const jsonMetadata = JSON.parse(evt.target.result);
+                        cacheContent.items[idx] = {
+                            'link': `https://gateway.pinata.cloud/ipfs/${metadataToken}/${idx}.json`,
+                            'name': jsonMetadata.name,
+                            'onChain': true,
+                            'verifyRun': false
+                        }
+                    }
+                    resolve();
+                }
+                fileReader.readAsText(file);
+            }
+            catch(err) {
+                console.log(err)
+            }
+        });
+    }
+
+    const createCacheContent = async (metadataToken, uuid, candyMachineAddress) => {
        try {
             console.log('Creating cache content')
-            let cacheContent = [];
+
+            let cacheContent = {
+                "program": {
+                    "uuid": uuid,
+                    "candyMachine": candyMachineAddress
+                },
+                "items": {
+                    
+                }
+            };
+
             const folder = uploadedJson;
-            folder.forEach((file, idx) => {
-                cacheContent.push({
-                    'mint_num': idx + 1,
-                    "uri": `https://gateway.pinata.cloud/ipfs/${metadataToken}`
-                })
-            })
+
+            for (let i = 0; i < folder.length; i++) {
+                await fillCacheContent(folder[i], i, cacheContent, metadataToken);
+            }
+
             const hash = MD5(cacheContent).toString();
+
             console.log('cacheContent Hash:', hash, contract.id);
+
             setHash(hash);
             await setCacheHash({ variables: { id: contract.id, cacheHash: hash } });
        }
@@ -183,7 +218,7 @@ export const useIPFS = () => {
 				message: 'Added json metadata to IPFS under URL: ipfs://' + res.data.IpfsHash
 			})
             console.log('Json Metadata: ', res.data.IpfsHash);
-            await createCacheContent(res.data.IpfsHash);
+            await createCacheContent(res.data.IpfsHash); // need uuid, candyMachineAddress
 			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/');
 			setMetadataUrl(res.data.IpfsHash);
 		} 
