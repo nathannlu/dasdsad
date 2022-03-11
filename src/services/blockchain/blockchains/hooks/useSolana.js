@@ -33,14 +33,14 @@ export const useSolana = () => {
 		}
 	});
 
-    const handleDeploymentSuccess = async (id, newContractAddress) => {
+    const handleDeploymentSuccess = async (id, candyMachineAddress) => {
 		posthog.capture(
 			'User deployed contract to Solana blockchain', {
 				$set: {
 					deployedContract: true,
 				}
 		});
-		await updateContract({ variables: { id: id, address: newContractAddress} });
+		await updateContract({ variables: { id: id, address: candyMachineAddress} });
 	}
 
 	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, id}) => {
@@ -58,7 +58,7 @@ export const useSolana = () => {
                 cacheHash
             });
 
-            handleDeploymentSuccess(id, 'new');
+            handleDeploymentSuccess(id, 'candymachineaddresHERE');
 
             // console.log(res);
         }
