@@ -66,9 +66,9 @@ export const createSolanaContract = async () => {
 			endSettings: null,
 			whitelistMintSettings: null,
 			hiddenSettings: {
-				name: "test7 ",
-				uri: "https://gateway.pinata.cloud/ipfs/QmQpPTfRwoA2ov3YNpZqxftWJNjhJzbihZon7itxhvyDoM/1.json",
-				hash: "44kiGWWsSgdqPMvmqYgTS78Mx2BKCWzd"
+				name: "test10",
+				uri: "https://ems5fiescduxnaamoeo3wc6pv67jyjlmwxfv5ion2zgtwmplcm6q.arweave.net/IyXSoJIQ6XaADHEduwvPr76cJWy1y16hzdZNOzHrEz0/",
+				hash: new TextEncoder().encode("d2fed82ee0ea129d0575f5977be00c53d87ac6bf2c87d6ddb47477d99733d70d")
 
 			  },
 			// creators:[{address: "127xW67HTbXXzYvwzU4aZaz6vkY7cyPyycmsrLz5Q4cz", verified: true, share: 100}],
@@ -122,7 +122,7 @@ export const withDraw = async () => {
 			},
 		  },
 		],
-	  };
+	};
 
 	const machines = await getProgramAccounts(
 	anchorProgram.provider.connection,
@@ -181,5 +181,4 @@ export const withDraw = async () => {
 	console.log(
 		`Congratulations, ${candyMachineId} has been successfuly drained! Please consider support Open Source developers`,
 	);
-	
 }
