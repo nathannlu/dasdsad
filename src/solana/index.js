@@ -49,6 +49,10 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 
     console.log('hash', hash);
 
+    const tokenId = uri.substring(uri.indexOf('ipfs://') + 7, uri.length - 1);
+
+    console.log('tokenId', tokenId)
+
 	const res = await createCandyMachineV2(
 		anchorProgram,  // AnchorProgram
 		address,        // Treasury
@@ -68,7 +72,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			whitelistMintSettings: null,
 			hiddenSettings: {
                 name: name + ' ',
-                uri: 'https://ipfs.io/ipfs/QmdfgQGccWddJFR2XdrQA3KfPEv38LkM9JgJGNCqiCH35N/0.json',
+                uri: `https://gateway.pinata.cloud/ipfs/${tokenId}/0.json`,
                 hash: hash
             },
 			creators,
