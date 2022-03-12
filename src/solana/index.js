@@ -57,7 +57,7 @@ export const createSolanaContract = async () => {
 			uuid: null,
 			symbol: '',
 			sellerFeeBasisPoints: null,
-			isMutable: false,
+			isMutable: true,
 			maxSupply: new BN(0),
 			retainAuthority: false,
 			gatekeeper: null,

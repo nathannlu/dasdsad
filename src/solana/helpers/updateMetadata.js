@@ -3,20 +3,26 @@ import {
   Keypair,
   PublicKey,
   TransactionInstruction,
+	Transaction,
+	sendAndConfirmTransaction,
+	sendAndConfirmRawTransaction,
 } from '@solana/web3.js';
 import { sendTransactionWithRetryWithKeypair } from '../helpers/transactions';
 import { serialize } from 'borsh';
+import jason from './devnet-testSpeed.json'
+import { loadCandyProgramV2 } from './accounts';
+import { getAccountsByCreatorAddress } from './signAll';
+import bs58 from 'bs58';
 
 import log from 'loglevel';
 // import { sleep } from '../helpers/various';
-// import { delay, getAccountsByCreatorAddress } from './signAll';
 import { createUpdateMetadataInstruction } from '../helpers/instructions';
-// import {
-//   Creator,
-//   Data,
-//   METADATA_SCHEMA,
-//   UpdateMetadataArgs,
-// } from '../helpers/schema';
+ import {
+   Creator,
+   Data,
+   METADATA_SCHEMA,
+   UpdateMetadataArgs,
+ } from '../helpers/schema';
 import {
   getCandyMachineCreator,
   deriveCandyMachineV2ProgramAddress,
@@ -32,15 +38,22 @@ export async function updateMetadataFromCache(
   newCacheContent,
 ) {
 
-  const cache = JSON.parse(fs.readFileSync("/home/user/Documents/ambition/devnet-testSpeed.json").toString());
+//  const cache = JSON.parse(fs.readFileSync("/home/user/Documents/ambition/devnet-testSpeed.json").toString());
 
-  const anchorProgram = await loadCandyProgram(null, "devnet", rpcUrl);
+	let cache = jason
+	cacheContent = jason
+	newCacheContent = jason
+
+  const anchorProgram = await loadCandyProgramV2(null, "devnet");
+
   connection = anchorProgram.provider.connection;
-  candyMachineAddress = "EWdpGazvna4usyweX1WvQEMDHPdc5f89q4Nx2g6QffCi";
+  candyMachineAddress = "5VGk7FAkYxFfUy7DpvkvcDa9jiJeZ6P1h5ej5LvVEV5n";
+
   // const [candyMachineAddr] = await deriveCandyMachineV2ProgramAddress(
   //   new PublicKey(candyMachineAddress),
   // );
   // candyMachineAddress = candyMachineAddr.toBase58();
+
   const metadataByCandyMachine = await getAccountsByCreatorAddress(
     (
       await getCandyMachineCreator(new PublicKey(candyMachineAddress))
@@ -53,6 +66,7 @@ export async function updateMetadataFromCache(
       // differences[cacheContent.items[i.toString()].link] = newCacheContent.items[i.toString()].link;
       differences[cache.items[i.toString()].link] = cache.items[i.toString()].link;
 
+
       /*
     if (
       cacheContent.items[i.toString()].link !=
@@ -61,29 +75,33 @@ export async function updateMetadataFromCache(
     }
 		*/
   }
-
+	
+	console.log('diff', differences)
+	console.log('metadatabycandymachine', metadataByCandyMachine)
   const toUpdate = metadataByCandyMachine.filter(
-    m => !!differences[m[0].data.uri],
+    m => !differences[m[0].data.uri],
   );
 
   console.log('Found', toUpdate.length, 'uris to update');
+	console.log('to update', toUpdate)
   let total = 0;
 
-  while (toUpdate.length > 0) {
+//  while (toUpdate.length > 0) {
     log.debug('Signing metadata ');
     let sliceAmount = batchSize;
     if (toUpdate.length < batchSize) {
       sliceAmount = toUpdate.length;
     }
     const removed = toUpdate.splice(0, sliceAmount);
+//	console.log('removed', removed, sliceAmount)
     total += sliceAmount;
     await delay(500);
 
 		// This function here
-    await updateMetadataBatch(removed, connection, differences);
+    await updateMetadataBatch(toUpdate, connection, differences);
 
     console.log(`Processed ${total} nfts`);
-  }
+ // }
   console.log(`Finished signing metadata for ${total} NFTs`);
 }
 
@@ -96,14 +114,20 @@ async function updateMetadataBatch(
 	const sol = await window.solana.connect();
 	const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
 
+	console.log(differences['https://arweave.net/0C59qFfJZBIIGd4h1coZn2aPOfjtjXOPe8SbdNZVbZE'])
+
+
   const instructions = metadataList.map(meta => {
+		console.log('meta', meta)
+
     const newData = new Data({
       ...meta[0].data,
       creators: meta[0].data.creators.map(
         c =>
           new Creator({ ...c, address: new PublicKey(c.address).toBase58() }),
       ),
-      uri: differences[meta[0].data.uri],
+//      uri: differences[meta[0].data.uri],
+			uri: '' //differences['https://arweave.net/0C59qFfJZBIIGd4h1coZn2aPOfjtjXOPe8SbdNZVbZE']
     });
 
     const value = new UpdateMetadataArgs({
@@ -111,7 +135,12 @@ async function updateMetadataBatch(
       updateAuthority: payerPublicAddress.toBase58(),
       primarySaleHappened: null,
     });
+
+
+		console.log('new data', newData)
+
     const txnData = Buffer.from(serialize(METADATA_SCHEMA, value));
+
     return createUpdateMetadataInstruction(
       new PublicKey(meta[1]),
       payerPublicAddress,
@@ -119,8 +148,11 @@ async function updateMetadataBatch(
     );
   });
 
+	console.log('instruc', instructions)
+
 
 	
+  const anchorProgram = await loadCandyProgramV2(null, "devnet");
 	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
 	const transaction = new Transaction({
 		recentBlockhash: recentBlockhash.blockhash,
@@ -140,7 +172,7 @@ async function updateMetadataBatch(
 			message: bs58.encode(transactionBuffer)
 		}
 	})
-	transaction.addSignature(userKeyPair.publicKey, bs58.decode(payerSignature.signature));
+	transaction.addSignature(payerPublicAddress, bs58.decode(payerSignature.signature));
 
 
 	// Verify signature
@@ -149,5 +181,10 @@ async function updateMetadataBatch(
 
 	let rawTransaction = transaction.serialize();
 	const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
-	console.log(asd)
+
+	return 0;
+}
+
+export function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

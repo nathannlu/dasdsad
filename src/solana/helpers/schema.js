@@ -1,28 +1,19 @@
 import { BinaryReader, BinaryWriter, deserializeUnchecked } from 'borsh';
 import base58 from 'bs58';
 import { PublicKey } from '@solana/web3.js';
-type StringPublicKey = string;
 
 import { BN } from '@project-serum/anchor';
 
-export enum MetadataKey {
-  Uninitialized = 0,
-  MetadataV1 = 4,
-  EditionV1 = 1,
-  MasterEditionV1 = 2,
-  MasterEditionV2 = 6,
-  EditionMarker = 7,
+export const MetadataKey = {
+	Uninitialized: 0,
+  MetadataV1: 4,
+  EditionV1: 1,
+  MasterEditionV1: 2,
+  MasterEditionV2: 6,
+  EditionMarker: 7,
 }
 export class Creator {
-  address;
-  verified;
-  share;
-
-  constructor(
-    address,
-    verified,
-    share,
-  ) {
+  constructor(args) {
     this.address = args.address;
     this.verified = args.verified;
     this.share = args.share;
@@ -30,18 +21,7 @@ export class Creator {
 }
 
 export class Data {
-  name;
-  symbol;
-  uri;
-  sellerFeeBasisPoints;
-  creators;
-  constructor(
-    name,
-    symbol,
-    uri,
-    sellerFeeBasisPoints,
-    creators,
-  ) {
+  constructor(args) {
     this.name = args.name;
     this.symbol = args.symbol;
     this.uri = args.uri;
@@ -52,26 +32,19 @@ export class Data {
 
 export class CreateMetadataArgs {
   instruction = 0;
-  data;
-  isMutable;
-
-  constructor(args: { data: Data; isMutable: boolean }) {
+  constructor(args) {
     this.data = args.data;
     this.isMutable = args.isMutable;
   }
 }
 
 export class UpdateMetadataArgs {
-  instruction: number = 1;
-  data: Data | null;
+  instruction = 1;
+  data= null;
   // Not used by this app, just required for instruction
-  updateAuthority: StringPublicKey | null;
-  primarySaleHappened: boolean | null;
-  constructor(args: {
-    data?: Data;
-    updateAuthority?: string;
-    primarySaleHappened: boolean | null;
-  }) {
+  updateAuthority = null;
+  primarySaleHappened = null;
+  constructor(args) {
     this.data = args.data ? args.data : null;
     this.updateAuthority = args.updateAuthority ? args.updateAuthority : null;
     this.primarySaleHappened = args.primarySaleHappened;
@@ -79,34 +52,15 @@ export class UpdateMetadataArgs {
 }
 
 export class CreateMasterEditionArgs {
-  instruction: number = 10;
-  maxSupply: BN | null;
-  constructor(args: { maxSupply: BN | null }) {
+  instruction = 10;
+  maxSupply = null;
+  constructor(args) {
     this.maxSupply = args.maxSupply;
   }
 }
 
 export class Metadata {
-  key: MetadataKey;
-  updateAuthority: StringPublicKey;
-  mint: StringPublicKey;
-  data: Data;
-  primarySaleHappened: boolean;
-  isMutable: boolean;
-  editionNonce: number | null;
-
-  // set lazy
-  masterEdition?: StringPublicKey;
-  edition?: StringPublicKey;
-
-  constructor(args: {
-    updateAuthority: StringPublicKey;
-    mint: StringPublicKey;
-    data: Data;
-    primarySaleHappened: boolean;
-    isMutable: boolean;
-    editionNonce: number | null;
-  }) {
+  constructor(args) {
     this.key = MetadataKey.MetadataV1;
     this.updateAuthority = args.updateAuthority;
     this.mint = args.mint;
@@ -117,7 +71,7 @@ export class Metadata {
   }
 }
 
-export const METADATA_SCHEMA = new Map<any, any>([
+export const METADATA_SCHEMA = new Map([
   [
     CreateMetadataArgs,
     {
@@ -195,7 +149,7 @@ export const METADATA_SCHEMA = new Map<any, any>([
 // eslint-disable-next-line no-control-regex
 const METADATA_REPLACE = new RegExp('\u0000', 'g');
 
-export const decodeMetadata = (buffer: Buffer): Metadata => {
+export const decodeMetadata = (buffer) => {
   const metadata = deserializeUnchecked(
     METADATA_SCHEMA,
     Metadata,
@@ -208,27 +162,25 @@ export const decodeMetadata = (buffer: Buffer): Metadata => {
 };
 
 export const extendBorsh = () => {
-  (BinaryReader.prototype as any).readPubkey = function () {
-    const reader = this as unknown as BinaryReader;
+  (BinaryReader.prototype).readPubkey = function () {
+    const reader = this
     const array = reader.readFixedArray(32);
     return new PublicKey(array);
   };
 
-  (BinaryWriter.prototype as any).writePubkey = function (value: PublicKey) {
-    const writer = this as unknown as BinaryWriter;
+  (BinaryWriter.prototype).writePubkey = function (value) {
+    const writer = this
     writer.writeFixedArray(value.toBuffer());
   };
 
-  (BinaryReader.prototype as any).readPubkeyAsString = function () {
-    const reader = this as unknown as BinaryReader;
+  (BinaryReader.prototype).readPubkeyAsString = function () {
+    const reader = this
     const array = reader.readFixedArray(32);
-    return base58.encode(array) as StringPublicKey;
+    return base58.encode(array)
   };
 
-  (BinaryWriter.prototype as any).writePubkeyAsString = function (
-    value: StringPublicKey,
-  ) {
-    const writer = this as unknown as BinaryWriter;
+  (BinaryWriter.prototype).writePubkeyAsString = function (value) {
+    const writer = this
     writer.writeFixedArray(base58.decode(value));
   };
 };
