@@ -168,7 +168,7 @@ export const GeneratorProvider = ({children}) => {
 						attributes: attributes,
 						compiler: "https://ambition.so/"
 					}
-					if (metadataType == "sol") {
+					if (metadataType === "sol") {
 						nftJson = {
 							name: nftJson.name,
 							symbol: symbol.value,

@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App'
+import App from './App';
 
 import { AuthorizedApolloProvider } from 'libs/apollo';
 import { Web3Provider } from 'libs/web3';
@@ -9,7 +9,6 @@ import { ThemeProvider } from 'ds/hooks/useTheme';
 import { ToastManager } from 'ds/hooks/useToast';
 import { CollectionProvider } from 'services/generator/provider'; 
 
-import { ClientWalletProvider } from 'solana/wallet/ClientWallet';
 
 import './assets/styles/index.css';
 
@@ -20,7 +19,7 @@ ReactDOM.render(
 				<ToastManager>
 					<Web3Provider>
 						<CollectionProvider>
-								<App />
+							<App />
 						</CollectionProvider>
 					</Web3Provider>
 				</ToastManager>

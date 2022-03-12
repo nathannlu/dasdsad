@@ -5,8 +5,6 @@ import { useWeb3 } from 'libs/web3';
 import { MerkleTree } from "merkletreejs";
 import keccak256 from "keccak256";
 import { useSetWhitelist } from "services/blockchain/gql/hooks/contract.hook.js";
-import { mintV2 } from 'solana/helpers/mint.js';
-import { withdrawV2 } from 'solana/helpers/withdraw.js';
 
 export const useContractActions = (contractAddress) => {
 	const { addToast } = useToast();
@@ -167,13 +165,7 @@ export const useContractActions = (contractAddress) => {
 		return true;
 	}
 
-	const withdraw = async (wallet = 'metamask') => {
-        if (wallet == 'phantom') {
-            console.log('withdrawing phantom')
-            await withdrawV2('devnet', contractAddress);
-            return;
-        }
-
+	const withdraw = async () => {
 		contract.methods.withdraw().send({ 
 			from: account,
 			value: 0
@@ -183,13 +175,7 @@ export const useContractActions = (contractAddress) => {
 	}
 
 	// Mint NFT
-	const mint = async (count = 1, wallet = 'metamask') => {
-        if (wallet == 'phantom') {
-            console.log('minting phantom')
-            await mintV2('devnet', contractAddress, account);
-            return;
-        }
-
+	const mint = async (count = 1) => {
 		const { methods } = contract;
 		const price = await methods.cost().call();
 

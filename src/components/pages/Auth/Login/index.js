@@ -3,7 +3,6 @@ import { useLogin } from 'gql/hooks/users.hook';
 import { useLoginForm } from '../hooks/useLoginForm';
 import { Fade, TextField, Link, FormLabel, Grid, Box, Stack, Typography, Button, LoadingButton } from 'ds/components';
 import MetamaskButton from '../MetamaskButton';
-import PhantomButton from '../PhantomButton';
 
 const Login = props => {
 	const {
@@ -19,6 +18,7 @@ const Login = props => {
 		onCompleted: handleRedirect,
 		onError: handleLoginError
 	});
+
 
 	return (
 		<Fade in>
@@ -60,6 +60,13 @@ const Login = props => {
 						<Typography variant="body1">
 							Need an account? <Link className="link" to={redirect ? `/signup?redirect=${redirect}` : "/signup"}>Create an account</Link>
 						</Typography>
+						<MetamaskButton />
+
+						<Box sx={{textAlign:'center', opacity: .8}}>
+							<Typography>
+								or
+							</Typography>
+						</Box>
 
 						<form onSubmit={e => {
 							e.preventDefault();
@@ -88,18 +95,9 @@ const Login = props => {
 							</Stack>
 						</form>
 
-                        <Stack justifyContent="center" direction="row">
+						<Stack justifyContent="center" direction="row">
 							<Link to="/login/forgot" className="link">Forgot password?</Link>
 						</Stack>
-
-                        <Box sx={{textAlign:'center', opacity: .8}}>
-							<Typography>
-								or
-							</Typography>
-						</Box>
-
-						<MetamaskButton />
-                        <PhantomButton />
 					</Stack>
 				</Grid>
 			</Box>

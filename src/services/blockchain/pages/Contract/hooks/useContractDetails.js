@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
 
-export const useContractDetails = (contractAddress, chainid) => {
+
+export const useContractDetails = (contractAddress) => {
 	const [balance, setBalance] = useState(null)
 	const [soldCount, setSoldCount] = useState(null)
 	const [size, setSize] = useState(null);
@@ -22,10 +23,6 @@ export const useContractDetails = (contractAddress, chainid) => {
 	}, [contractAddress])
 
 	const refresh = async () => {
-        if (!contractAddress || !chainid) return;
-
-        console.log(contractAddress, chainid);
-
 		setLoading(true);
 
 		const {
@@ -38,7 +35,7 @@ export const useContractDetails = (contractAddress, chainid) => {
 			open,
 			maxPerMint,
 			baseTokenUri,
-		} = await getPublicContractVariables(contractAddress, chainid);
+		} = await getPublicContractVariables(contractAddress);
 
 		setBalance(balanceInEth);
 		setPrice(costInEth);
@@ -48,8 +45,10 @@ export const useContractDetails = (contractAddress, chainid) => {
 		setMetadataUrl(baseTokenUri);
 		setMax(maxPerMint);
 		setSize(totalSupply);
+
 		setLoading(false);
 	}
+
 
 	return {
 		max,

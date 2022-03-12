@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 
+
 // Email login
 export const REGISTER = gql`
 	mutation Register($name: String!, $email: String!, $password: String!) {
@@ -36,21 +37,6 @@ export const GET_NONCE = gql`
 export const VERIFY_SIGNATURE = gql`
 	mutation VerifySignature($address: String!, $signature: String!){
 		verifySignature(address: $address, signature: $signature) {
-			token
-			user {
-				id
-				address
-				name
-				email
-				stripeCustomerId
-			}
-		}
-	}
-`
-
-export const VERIFY_SIGNATURE_PHANTOM = gql`
-	mutation VerifySignaturePhantom($address: String!, $signature: String!){
-		verifySignaturePhantom(address: $address, signature: $signature) {
 			token
 			user {
 				id

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, IconButton } from 'ds/components';
-import { Stack, TextField, ButtonGroup, CircularProgress, Menu, MenuList, MenuItem, ListItemIcon, ListItemText, Chip } from '@mui/material';
+import { Stack, TextField, ButtonGroup, CircularProgress } from '@mui/material';
 import { LoadingButton  } from '@mui/lab';
 import { useEmbed } from './hooks/useEmbed'
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
@@ -10,7 +10,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import DiamondIcon from '@mui/icons-material/Diamond';
 
 const Embed = () => {
-    const { chainId, contractVarsState, contract, buttonState, textColor, bgImage, price, prefix, soldCount, size, isMinting, mintCount, metadataUrl, max, chooseWalletState, onConnectWallet, onSwitch, onMint, setMintCount, setChooseWalletState } = useEmbed();
+    const { contract, buttonState, textColor, bgImage, price, prefix, soldCount, size, isMinting, mintCount, metadataUrl, max, onConnectWallet, onSwitch, onMint, setMintCount } = useEmbed();
 
     return (
         <Box
@@ -26,7 +26,7 @@ const Embed = () => {
                 objectFit: 'cover',
             }}
         >
-            {contract && contractVarsState ? (
+            {contract && metadataUrl.length > 0 ? (
                 <Box
                     display='flex'
                     flexDirection='column'
@@ -34,55 +34,19 @@ const Embed = () => {
                     padding='1em'
                 >
                     {buttonState === 0 && (
-                        <>
-                            {!chooseWalletState ? (
-                                <Button
-                                    variant='contained'
-                                    startIcon={<AccountBalanceWalletIcon />}
-                                    sx={{
-                                        bgcolor: 'rgb(238,72,0)',
-                                        "&:hover": {
-                                            bgcolor: "rgb(212, 66, 2)"
-                                        }
-                                    }}
-                                    onClick={() => setChooseWalletState(true)}
-                                >
-                                    Connect Wallet
-                                </Button>
-                            ) : (
-                                <Stack
-                                    direction='row'
-                                    spacing={1}
-                                    justifyContent='center'
-                                >
-                                    {chainId.indexOf('solana') != -1 ? (
-                                        <Chip 
-                                            icon={<AccountBalanceWalletIcon fontSize='12pt'/>} 
-                                            label="Phantom" 
-                                            sx={{
-                                                "&:hover": {
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                                    cursor: 'pointer'
-                                                }
-                                            }} 
-                                            onClick={() => onConnectWallet(1)}
-                                        />
-                                    ) : (
-                                        <Chip 
-                                            icon={<AccountBalanceWalletIcon fontSize='12pt'/>} 
-                                            label="Metamask" 
-                                            sx={{
-                                                "&:hover": {
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                                    cursor: 'pointer'
-                                                }
-                                            }} 
-                                            onClick={() => onConnectWallet(0)}
-                                        />
-                                    )}
-                                </Stack>
-                            )}
-                        </>
+                        <Button
+                            variant='contained'
+                            startIcon={<AccountBalanceWalletIcon />}
+                            sx={{
+                                bgcolor: 'rgb(238,72,0)',
+                                "&:hover": {
+                                    bgcolor: "rgb(212, 66, 2)"
+                                }
+                            }}
+                            onClick={onConnectWallet}
+                        >
+                            Connect Wallet
+                        </Button>
                     )}
                     {buttonState === 1 && (
                         <Stack direction='row' spacing={1} sx={{width: '100%'}}>
@@ -98,72 +62,70 @@ const Embed = () => {
                             >
                                 Mint {(price * mintCount).toString().substring(0, 5)} {prefix}
                             </LoadingButton>
-                            {chainId.indexOf('solana') == -1 && (
-                                <Box
-                                    width='100px'
-                                    display='flex'
-                                    height='100%'
-                                    alignItems='center'
+                            <Box
+                                width='100px'
+                                display='flex'
+                                height='100%'
+                                alignItems='center'
+                            >
+                                <TextField 
+                                    type='number'
+                                    inputProps={{ 
+                                        inputMode: 'numeric', 
+                                        pattern: '[0-9]*', 
+                                        min: 1, 
+                                        max: contract.nftCollection.size,
+                                    }} 
+                                    value={mintCount}
+                                    onChange={(e) => setMintCount(e.target.value)}
+                                    sx={{
+                                        input: {
+                                            borderColor: `${textColor}`,
+                                            color: `${textColor}`,
+                                        },
+                                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                                            borderColor: `${textColor}`,
+                                        },
+                                    }}
+                                />
+                                <ButtonGroup
+                                    orientation="vertical"
+                                    aria-label="vertical outlined button group"
                                 >
-                                    <TextField 
-                                        type='number'
-                                        inputProps={{ 
-                                            inputMode: 'numeric', 
-                                            pattern: '[0-9]*', 
-                                            min: 1, 
-                                            max: contract.nftCollection.size,
-                                        }} 
-                                        value={mintCount}
-                                        onChange={(e) => setMintCount(e.target.value)}
-                                        sx={{
-                                            input: {
-                                                borderColor: `${textColor}`,
-                                                color: `${textColor}`,
-                                            },
-                                            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                                                borderColor: `${textColor}`,
-                                            },
+                                    <IconButton 
+                                        key="one" 
+                                        variable='contained' 
+                                        size='small' 
+                                        sx={{ 
+                                            padding: 0,
+                                            color: `${textColor}`
                                         }}
-                                    />
-                                    <ButtonGroup
-                                        orientation="vertical"
-                                        aria-label="vertical outlined button group"
+                                        onClick={() => {
+                                            if (mintCount < contract.nftCollection.size && mintCount <= max) {
+                                                setMintCount(prevCount => prevCount + 1);
+                                            }
+                                        }}
                                     >
-                                        <IconButton 
-                                            key="one" 
-                                            variable='contained' 
-                                            size='small' 
-                                            sx={{ 
-                                                padding: 0,
-                                                color: `${textColor}`
-                                            }}
-                                            onClick={() => {
-                                                if (mintCount < contract.nftCollection.size && mintCount <= max) {
-                                                    setMintCount(prevCount => prevCount + 1);
-                                                }
-                                            }}
-                                        >
-                                            <KeyboardArrowUpIcon/>
-                                        </IconButton>
-                                        <IconButton 
-                                            key="two" 
-                                            variable='contained' 
-                                            size='small' 
-                                            sx={{ 
-                                                padding: 0,
-                                                color: `${textColor}`
-                                            }}
-                                            onClick={() => {
-                                                if (mintCount > 1) {
-                                                    setMintCount(prevCount => prevCount - 1);
-                                                }
-                                            }}
-                                        >
-                                            <KeyboardArrowDownIcon/>
-                                        </IconButton>
-                                    </ButtonGroup>
-                                </Box>
-                            )}
+                                        <KeyboardArrowUpIcon/>
+                                    </IconButton>
+                                    <IconButton 
+                                        key="two" 
+                                        variable='contained' 
+                                        size='small' 
+                                        sx={{ 
+                                            padding: 0,
+                                            color: `${textColor}`
+                                        }}
+                                        onClick={() => {
+                                            if (mintCount > 1) {
+                                                setMintCount(prevCount => prevCount - 1);
+                                            }
+                                        }}
+                                    >
+                                        <KeyboardArrowDownIcon/>
+                                    </IconButton>
+                                </ButtonGroup>
+                            </Box>
                         </Stack>
                     )}
                     {buttonState === 2 && (
@@ -187,7 +149,7 @@ const Embed = () => {
                         width='100%'
                         mt='.5em'
                     >
-                        {buttonState === 1 && chainId?.indexOf('solana') == -1 && (
+                        {buttonState === 1 && (
                             <Typography fontSize='12pt' sx={{ color: `${textColor}`, fontWeight: 600 }}>
                                 {soldCount}/{size}
                             </Typography>
