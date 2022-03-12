@@ -62,7 +62,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			uuid: null,
 			symbol,
 			sellerFeeBasisPoints: null,
-			isMutable: false,
+			isMutable: true,
 			maxSupply: new BN(0),
 			retainAuthority: false,
 			gatekeeper: null,
@@ -105,7 +105,7 @@ export const withdraw = async () => {
 			},
 		  },
 		],
-	  };
+	};
 
 	const machines = await getProgramAccounts(
 	anchorProgram.provider.connection,
@@ -162,5 +162,6 @@ export const withdraw = async () => {
 	}
 	console.log(
 		`Congratulations, ${candyMachineId} has been successfuly drained! Please consider support Open Source developers`,
-	);	
+	);
 }
+

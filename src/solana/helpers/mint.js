@@ -18,13 +18,7 @@ export async function mintV2(
     payerWalletAddress,
     rpcUrl,
   ) {
-    console.log(env, candyMachineAddress, rpcUrl);
-    //const decoded = bs58.decode('5HkP4pQgoFzJ4VahMgcSGnhXwpGbF62XXhPkc8zna2wMZSfAFLDDzDeEFvjJopmzgkZwfCUZBUBpsUKxmtA8nVeC'); // Private key
-    //console.log('decoded', decoded);
-    // keypair = Uint8Array.from(decoded);
-    // console.log(keypair);
-    //candyMachineAddress = new PublicKey('6gxFyFrrw71xmaAbuykcuP9GG794df68A1CyjkFAGTr7'); // one of the signer from transaction
-   // env="devnet";
+
     const mint = Keypair.generate();
   
    // const userKeyPair = loadWalletKey(null, env);
