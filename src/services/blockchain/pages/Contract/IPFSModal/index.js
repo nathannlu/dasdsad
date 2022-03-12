@@ -24,8 +24,8 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
 				background: '#fff'
 			}}>
 				<Stack>
-					<IconButton sx={{ml:'auto'}} onClick={() => setIsModalOpen(false)}>
-						<CloseIcon />
+					<IconButton sx={{ml:'auto'}}>
+						<CloseIcon onClick={() => setIsModalOpen(false)} />
 					</IconButton>
 				</Stack>
 
