@@ -59,7 +59,7 @@ export const ContractProvider = ({ children }) => {
                     creators: [ {address: account, verified: true, share: 100} ],
                     cacheHash: contract.nftCollection.cacheHash,
                     id: contract.id,
-                    env: contract.blockchain == 'solanadevnet' ? 'testnet' : 'mainnet'
+                    env: contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet'
                 });
             }
         }

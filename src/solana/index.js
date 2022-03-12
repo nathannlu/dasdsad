@@ -25,7 +25,7 @@ export function parseDate(date) {
 	return Date.parse(date) / 1000;
   }
 
-export const createSolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, env = 'testnet'}) => {
+export const createSolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, env = 'mainnet'}) => {
     console.log('[Ambition] Solana Contract Deployment');
 
     console.log('env', env)
