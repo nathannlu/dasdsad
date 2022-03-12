@@ -13,6 +13,7 @@ import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 import { createSolanaContract } from 'solana';
 import { mintV2 } from 'solana/helpers/mint.js';
 import { withdrawV2 } from 'solana/helpers/withdraw.js';
+import { updateMetadataFromCache } from 'solana/helpers/updateMetadata.js';
 
 const Dashboard = () => {
 	const { contracts } = useContract();
@@ -55,6 +56,9 @@ const Dashboard = () => {
 							</Button>
 							<Button onClick={withdrawV2}>
 								Withdraw
+							</Button>
+							<Button onClick={updateMetadataFromCache}>
+								UpdateMeta
 							</Button>
 				{contracts.length > 0 ? (
 					<Stack gap={2}>
