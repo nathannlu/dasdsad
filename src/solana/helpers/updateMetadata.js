@@ -47,7 +47,7 @@ export async function updateMetadataFromCache(
   const anchorProgram = await loadCandyProgramV2(null, "devnet");
 
   connection = anchorProgram.provider.connection;
-  candyMachineAddress = "5VGk7FAkYxFfUy7DpvkvcDa9jiJeZ6P1h5ej5LvVEV5n";
+  candyMachineAddress = "CmZNndCMFkPpdx6fKH7pjchwGgPJfcT3K2PVP34bcbkN";
 
   // const [candyMachineAddr] = await deriveCandyMachineV2ProgramAddress(
   //   new PublicKey(candyMachineAddress),
@@ -127,7 +127,7 @@ async function updateMetadataBatch(
           new Creator({ ...c, address: new PublicKey(c.address).toBase58() }),
       ),
 //      uri: differences[meta[0].data.uri],
-			uri: '' //differences['https://arweave.net/0C59qFfJZBIIGd4h1coZn2aPOfjtjXOPe8SbdNZVbZE']
+			uri: "https://gateway.pinata.cloud/ipfs/QmWaYTudn9ogrEQ7QsafcoTP522U32kHvnKBq2hCVpZBcF/5.png" 
     });
 
     const value = new UpdateMetadataArgs({
