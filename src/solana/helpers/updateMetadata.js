@@ -29,6 +29,187 @@ import {
 } from '../helpers/accounts';
 
 
+export const asd = async () => {
+	const sol = await window.solana.connect();
+	const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
+
+	// needs to be dynamic
+  const anchorProgram = await loadCandyProgramV2(null, "devnet");
+	const candyMachineAddress = 'CUh3AHBMUVByKuNHNPrG4gyHXg9Uh9UEccyjop9C5U7u'
+  const connection = anchorProgram.provider.connection;
+	let ipfsHash = 'QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs'
+	let instructions = [];
+
+	/*
+  const metadataByCandyMachine = await getAccountsByCreatorAddress(
+    (await getCandyMachineCreator(new PublicKey(candyMachineAddress)))[0].toBase58(),
+    connection,
+  );
+
+	console.log(metadataByCandyMachine);
+	*/
+
+
+	// loop over all total nfts
+	// construct config lines
+	const cacheContent = {
+		"items": {
+			"0": {
+				"link": "https://arweave.net/_5kYA0r-xzQPwhjdGa_v2eLim3V_K2Wgw1eVdjuVZvQ",
+				"name": "llamadramaclub #51",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"1": {
+				"link": "https://arweave.net/bgTX-piW1uUXNrKQtqukIJdDiscbSAi_RJpKKP7uMRE",
+				"name": "llamadramaclub #52",
+				"onChain": true,
+				"verifyRun": false
+			}
+		}
+	}
+
+	const addConfigLines = async ({index,configLines}) => {
+
+		console.log('config lines', configLines.map(i => ({
+        uri: cacheContent.items[keys[i]].link,
+        name: cacheContent.items[keys[i]].name,
+      })))
+		
+		const instruction = await anchorProgram.instruction.addConfigLines(
+			index,
+      configLines.map(i => ({
+        uri: cacheContent.items[keys[i]].link,
+        name: cacheContent.items[keys[i]].name,
+      })),
+			{
+				accounts: {
+					candyMachine: candyMachineAddress,
+					authority: payerPublicAddress.toBase58(),
+				},
+			},
+		);
+		instructions.push(instruction)	
+	}
+
+	const keys = Object.keys(cacheContent.items)
+	const poolArray = [];
+  const allIndicesInSlice = Array.from(Array(keys.length).keys());
+	let offset = 0;
+
+  while (offset < allIndicesInSlice.length) {
+    let length = 0;
+    let lineSize = 0;
+    let configLines = allIndicesInSlice.slice(offset, offset + 16);
+    while (
+      length < 850 &&
+      lineSize < 16 &&
+      configLines[lineSize] !== undefined
+    ) {
+      length +=
+        cacheContent.items[keys[configLines[lineSize]]].link.length +
+        cacheContent.items[keys[configLines[lineSize]]].name.length;
+      if (length < 850) lineSize++;
+    }
+    configLines = allIndicesInSlice.slice(offset, offset + lineSize);
+    offset += lineSize;
+    const index = keys[configLines[0]];
+		poolArray.push({ index, configLines });
+  }
+
+	for(let i = 0;i<poolArray.length;i++){
+		const { index, configLines } = poolArray[i];
+		addConfigLines({ index, configLines});	
+	}
+
+
+
+
+
+
+
+	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
+	const transaction = new Transaction({
+		recentBlockhash: recentBlockhash.blockhash,
+		feePayer: payerPublicAddress
+	});
+
+	console.log(instructions)
+
+	for (let i = 0; i < instructions.length; i++) {
+		transaction.add(instructions[i]);
+	}
+
+	let transactionBuffer = transaction.serializeMessage();
+
+	// Payer signature
+	const payerSignature = await window.solana.request({
+		method: 'signTransaction',
+		params: {
+			message: bs58.encode(transactionBuffer)
+		}
+	})
+	transaction.addSignature(payerPublicAddress, bs58.decode(payerSignature.signature));
+
+
+	// Verify signature
+	let isVerifiedSignature = transaction.verifySignatures();
+	console.log(`The signatures were verifed: ${isVerifiedSignature}`)
+
+	let rawTransaction = transaction.serialize();
+	const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
+
+	console.log('done')
+
+	return 0;
+
+
+	/*
+	// update data to ipfs url
+	const metadataList = [
+		[],
+		[],
+		[]
+	]
+
+
+	// create an instruction to update every nft
+  const instructions = metadataList.map((meta, i) => {
+		console.log('meta', meta)
+
+    const newData = new Data({
+      ...meta[0].data,
+      creators: meta[0].data.creators.map(
+        c =>
+          new Creator({ ...c, address: new PublicKey(c.address).toBase58() }),
+      ),
+
+			// replace this url with ipfs hash
+			uri:`https://gateway.pinata.cloud/ipfs/${ipfsHash}/${i}.json` 
+    });
+
+    const value = new UpdateMetadataArgs({
+      data: newData,
+      updateAuthority: payerPublicAddress.toBase58(),
+      primarySaleHappened: null,
+    });
+
+
+		console.log('new data', newData)
+
+    const txnData = Buffer.from(serialize(METADATA_SCHEMA, value));
+
+    return createUpdateMetadataInstruction(
+      new PublicKey(meta[1]),
+      payerPublicAddress,
+      txnData,
+    );
+  });
+
+	*/
+};
+
+
 export async function updateMetadataFromCache(
   candyMachineAddress,
   connection,

@@ -70,11 +70,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			price: parsedPrice,
 			endSettings: null,
 			whitelistMintSettings: null,
-			hiddenSettings: {
-                name: name + ' ',
-                uri: `https://gateway.pinata.cloud/ipfs/${tokenId}/0.json`,
-                hash: hash
-            },
+			hiddenSettings:	null,
 			creators,
         },
     );

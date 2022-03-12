@@ -219,6 +219,73 @@ import {
         }),
 	}
 
+	const configLines = [{
+		uri: 'https://asd.com',
+		name: 'test name',
+	}];
+
+	// construct config lines
+	const sampleConfig = {
+		"items": {
+			"0": {
+				"link": "https://arweave.net/_5kYA0r-xzQPwhjdGa_v2eLim3V_K2Wgw1eVdjuVZvQ",
+				"name": "llamadramaclub #51",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"1": {
+				"link": "https://arweave.net/bgTX-piW1uUXNrKQtqukIJdDiscbSAi_RJpKKP7uMRE",
+				"name": "llamadramaclub #52",
+				"onChain": true,
+				"verifyRun": false
+			}
+		}
+	}
+	const keys = Object.keys(sampleConfig)
+	const poolArray = [];
+  const allIndicesInSlice = Array.from(Array(keys.length).keys());
+	let offset = 0;
+	while (offset < allIndicesInSlice.length) {
+		let length = 0;
+		let lineSize = 0;
+		let configLines = allIndicesInSlice.slice(offset,offset+16); 
+
+		while(length < 850 && lineSize < 16 && configLines[lineSize] !== undefined) {
+			length += sampleConfig.items[keys[configLines[lineSize]]].link.length +
+				sampleConfig.items[keys[configLines[lineSize]]].name.length;
+			if(length < 850) lineSize++;	
+		};
+
+		configLines = allIndicesInSlice.slice(offset, offset+lineSize);
+		offset += lineSize;
+
+		const index = keys[configLines[0]];
+		poolArray.push({index, configLines});
+	}
+
+	for(let i = 0;i<poolArray.length;i++){
+		const { index, configLines } = poolArray[i];
+		addConfigLines({ index, configLines});	
+	}
+
+
+	const addConfigLines = async ({index,configLines}) => {
+		const instruction = await anchorProgram.instruction.addConfigLines(
+			0,
+			configLines,
+			{
+				accounts: {
+					candyMachine: candyMachineAddress,
+					authority: payerPublicAddress.toBase58(),
+				},
+			},
+		);
+		instructions.push(instruction)	
+	}
+		
+
+
+
 	const instructions = [
 		await createCandyMachineV2Account(
 			anchorProgram,
