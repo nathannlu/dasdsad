@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useContract } from 'services/blockchain/provider';
 import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
+import { useSetCacheHash } from 'services/blockchain/gql/hooks/contract.hook';
+import MD5 from 'crypto-js/md5'
 
 export const useIPFS = () => {
 	const {
@@ -15,12 +17,21 @@ export const useIPFS = () => {
 		uploadedJson,
 		setStart,
 		setActiveStep,
-		setError
+		setError,
+        contract,
+        setCacheHash: setHash,
 	} = useContract()
 	const { addToast } = useToast();
 	const { user } = useAuth();
 	const [loading,setLoading] = useState(false)
-
+    const [setCacheHash] = useSetCacheHash({
+		onError: err => {
+			addToast({
+				severity: 'error',
+				message: err.message
+			})	
+		}
+	});
 
 	const pinImages = async (callback) => {
 		const folder = uploadedFiles
@@ -88,10 +99,10 @@ export const useIPFS = () => {
 					const tokenId = file.name.split('.')[0]
 
 					if(jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type == 'image/webp') {
-						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`
+						jsonMetadata.image = contract.blockchain.indexOf('solana') != -1 ? `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.webp` : `ipfs://${imagesUrl}/${tokenId}.webp`
 						
 					} else {
-						jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.png`
+						jsonMetadata.image = contract.blockchain.indexOf('solana') != -1 ? `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.png` : `ipfs://${imagesUrl}/${tokenId}.png`
 					}
 
 					// Attach JSON to formdata
@@ -109,6 +120,64 @@ export const useIPFS = () => {
 		})
 	}
 
+    const fillCacheContent = async (file, idx, cacheContent, metadataToken) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const fileReader = new FileReader();
+                fileReader.onload = (evt) => {
+                    if(file.name !== 'metadata.json') {
+                        const jsonMetadata = JSON.parse(evt.target.result);
+                        cacheContent.items[idx] = {
+                            'link': `https://gateway.pinata.cloud/ipfs/${metadataToken}/${idx}.json`,
+                            'name': jsonMetadata.name,
+                            'onChain': true,
+                            'verifyRun': false
+                        }
+                    }
+                    resolve();
+                }
+                fileReader.readAsText(file);
+            }
+            catch(err) {
+                console.log(err)
+            }
+        });
+    }
+
+    const createCacheContent = async (metadataToken, uuid = null, candyMachineAddress = null) => {
+       try {
+            console.log('Creating cache content')
+
+            let cacheContent = {
+                program: {
+                    uuid,
+                    candyMachineAddress
+                },
+                items: { }
+            };
+
+            const folder = uploadedJson;
+
+            for (let i = 0; i < folder.length; i++) {
+                await fillCacheContent(folder[i], i, cacheContent, metadataToken);
+            }
+
+            const hash = MD5(cacheContent).toString();
+
+            console.log('cacheContent Hash:', hash, contract.id);
+
+            setHash(hash);
+            await setCacheHash({ variables: { id: contract.id, cacheHash: hash } });
+       }
+       catch (err) {
+            console.log(err);
+            addToast({
+                severity: 'error',
+                message: e.message 
+            });
+       }
+    }
+
 	const pinMetadata = async (callback) => {
 		const folder = uploadedJson;
         let data = new FormData();
@@ -122,7 +191,7 @@ export const useIPFS = () => {
 
 		// Update metadata
 		for (let i = 0; i < folder.length; i++) {
-			await updateAndSaveJson(folder[i], data)
+			await updateAndSaveJson(folder[i], data);
 		}
 
         const metadata = JSON.stringify({
@@ -146,8 +215,10 @@ export const useIPFS = () => {
 				severity: 'success',
 				message: 'Added json metadata to IPFS under URL: ipfs://' + res.data.IpfsHash
 			})
-			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/')
-			setMetadataUrl(res.data.IpfsHash)
+            console.log('Json Metadata: ', res.data.IpfsHash);
+            await createCacheContent(res.data.IpfsHash); // need uuid, candyMachineAddress
+			setIpfsUrl('ipfs://' + res.data.IpfsHash + '/');
+			setMetadataUrl(res.data.IpfsHash);
 		} 
         catch(e) {
 			addToast({

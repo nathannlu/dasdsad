@@ -1,33 +1,17 @@
 import React, { useState, useContext }  from 'react';
-//import { useWebsite } from 'libs/website';
-//import { setAuthToken } from './api';
-
-/*
-export interface AuthContextType {
-	isAuthenticated: boolean;
-	user: any;
-	token: string | null;
-	onLoginSuccess(payload: {user: any; token: any}): void;
-	logout(): void;
-	loading: boolean;
-	onReauthenticationSuccess(payload: {user: any; token: any}): void;
-};
-*/
+import { useWeb3 } from 'libs/web3';
 
 export const AuthContext = React.createContext({});
 export const useAuth = () => useContext(AuthContext);
 
 const TOKEN_KEY = "token";
 
-
-
 export const AuthProvider = ({ children }) => {
-//	const { setWebsite } = useWebsite();
-
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [user, setUser] = useState();
 	const [token, setToken] = useState(window.localStorage.getItem(TOKEN_KEY))
 	const [loading, setLoading] = useState(true);
+    const { wallet } = useWeb3();
 
 	const updateToken = (t) => {
 		setToken(t)	
@@ -40,7 +24,6 @@ export const AuthProvider = ({ children }) => {
 	const onLoginSuccess = ({ user, token }) => {
 		updateToken(token);	
 		setUser(user);
-
 		setIsAuthenticated(true);
 	}
 
@@ -73,6 +56,10 @@ export const AuthProvider = ({ children }) => {
 		setUser(null);
 		//setWebsite({});
 		setIsAuthenticated(false);
+        if (wallet === 'phantom') {
+            window.solana.disconnect();
+        }
+        window.localStorage.setItem('ambition-wallet', '');
 	}
 
 	return (

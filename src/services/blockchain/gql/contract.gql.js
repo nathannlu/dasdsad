@@ -18,6 +18,8 @@ export const CREATE_CONTRACT = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
+                candyAccountAddress
 			}
 		}
 	}
@@ -41,6 +43,8 @@ export const UPDATE_CONTRACT = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
+                candyAccountAddress
 			}
 		}
 	}
@@ -72,6 +76,8 @@ export const GET_CONTRACTS = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
+                candyAccountAddress
 			}
 		}
 	}
@@ -94,6 +100,8 @@ export const GET_CONTRACT = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
+                candyAccountAddress
 			}
 		}
 	}
@@ -110,6 +118,8 @@ export const SET_BASE_URI = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
+                candyAccountAddress
 			}
 		}
 	}
@@ -126,11 +136,45 @@ export const SET_WHITELIST = gql`
 				royalty
 				baseUri
 				whitelist
+                cacheHash
+                candyAccountAddress
 			}
 		}
 	}
 `
 
+export const SET_CACHE_HASH = gql`
+    mutation SetCacheHash($id: ID!, $cacheHash: String!) {
+        setCacheHash(id: $id, cacheHash: $cacheHash) {
+            id
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                whitelist
+                cacheHash
+                candyAccountAddress
+            }
+        }
+    }
+`
 
-
-
+export const SET_CANDY_ACCOUNT_ADDRESS = gql`
+    mutation SetCandyAccountAddress($id: ID!, $address: String!) {
+        setCandyAccountAddress(id: $id, address: $address) {
+            id
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                whitelist
+                cacheHash
+                candyAccountAddress
+            }
+        }
+    }
+`

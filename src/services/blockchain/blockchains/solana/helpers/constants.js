@@ -126,12 +126,12 @@ export const CLUSTERS = [
     url: 'https://api.metaplex.solana.com/',
   },
   {
-    name: 'testnet',
-    url: clusterApiUrl('testnet'),
-  },
-  {
     name: 'devnet',
     url: clusterApiUrl('devnet'),
+  },
+  {
+    name: 'testnet',
+    url: clusterApiUrl('testnet'),
   },
 ];
 export const DEFAULT_CLUSTER = CLUSTERS[2];

@@ -34,6 +34,9 @@ module.exports = env => {
 			new webpack.ProvidePlugin({
 				Buffer: ['buffer', 'Buffer'],
 			}),
+            new webpack.DefinePlugin({
+                'process.env.NODE_DEBUG': JSON.stringify('http')
+            })
 	//		new BundleAnalyzerPlugin
 		],
 		module: {
@@ -83,21 +86,22 @@ module.exports = env => {
 				'config': `${__dirname}/src/config`,
 				'core': `${__dirname}/src/core`,
 				'gql': `${__dirname}/src/gql`,
-				'ethereum': `${__dirname}/src/ethereum`,
+				'ethereum': `${__dirname}/src/services/blockchain/blockchains/ethereum`,
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
 				'solana': `${__dirname}/src/solana`,
+                'stream': require.resolve("stream-browserify")
 			},
-			/*
 			fallback: {
+				/*
 				util: require.resolve('util/'),
 				assert: require.resolve('assert/'),
 				buffer: require.resolve('buffer/'),
 				process: require.resolve('process/browser'),
+				*/
 				stream: require.resolve("stream-browserify"),
-				zlib: require.resolve("browserify-zlib")
+//				zlib: require.resolve("browserify-zlib")
 			}
-			*/
 		},
 		devServer: {
 			port: process.env.PORT || '3000',

@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
+import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
+import { useSolana } from 'services/blockchain/blockchains/hooks/useSolana';
 
 export const ContractContext = React.createContext({})
 
@@ -9,7 +11,6 @@ export const useContract = () => useContext(ContractContext)
 
 export const ContractProvider = ({ children }) => {
 	const { addToast } = useToast()
-	const { getNetworkID, setNetwork } = useWeb3()
 
 	const [loading, setLoading] = useState(true)
 	const [activeStep, setActiveStep] = useState(0);
@@ -19,79 +20,61 @@ export const ContractProvider = ({ children }) => {
 	const [contracts, setContracts] = useState([]);
 	const [contract, setContract] = useState({});
 
-
 	const [selectInput, setSelectInput] = useState('ethereum');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedJson, setUploadedJson] = useState([]);
 	const [imagesUrl, setImagesUrl] = useState('')
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const [cacheHash, setCacheHash] = useState('');
+    const { account } = useWeb3();
 
+    const { deployEthereumContract } = useEthereum();
+    const { deploySolanaContract } = useSolana();
 
-
-    const handleSelectNetwork = async (value) => {
-			console.log(value)
+    const deployContract = async () => {
         try {
-            if (!window.ethereum) throw new Error("Please install Metamask Wallet");
-            const id = getNetworkID();
-            let res = true;
-            if (value === "ethereum") {
-                if (id !== "0x1") res = await setNetwork("0x1");
+            if (!contract || !Object.keys(contract).length) throw new Error("Contract not found");
+
+            if (contract.blockchain.indexOf('solana') === -1) {
+                await deployEthereumContract({
+                    uri: contract.nftCollection.baseUri,
+                    name: contract.name,
+                    symbol: contract.symbol,
+                    totalSupply: contract.nftCollection.size,
+                    cost: contract.nftCollection.price,
+                    open: false,
+                    id: contract.id
+                })
             }
-            else if (value === "polygon") {
-                if (id !== "0x89") res = await setNetwork("0x89");
+            else {
+							/*
+				await deploySolanaContract({
+                    uri: contract.nftCollection.baseUri,
+                    name: contract.name,
+                    address: account, 
+                    symbol: contract.symbol, 
+                    size: contract.nftCollection.size, 
+                    price: contract.nftCollection.price, 
+                    liveDate: 'now',
+                    creators: [ {address: account, verified: true, share: 100} ],
+                    cacheHash: contract.nftCollection.cacheHash,
+                    id: contract.id
+                });
+								*/
+							throw Error("Incorrect wallet type")	
             }
-            else if (value === "rinkeby") {
-                if (id !== "0x4") res = await setNetwork("0x4");
-            }
-            else if (value === "mumbai") {
-                if (id !== "0x13881") res = await setNetwork("0x13881");
-            }
-            if (res === "prompt_cancled") throw new Error("Please switch to the desired network")
-            setSelectInput(value);
         }
-        catch (e) {
+        catch (err) {
+            console.error(err);
             addToast({
-				severity: 'error',
-				message: e.message
-			});
-			setError(true);
+                severity: 'error',
+                message: err.message
+            })
         }
     }
 
-    // Check before network pinning image
-    const validateNetwork = async () => {
-        try {
-            if (!window.ethereum) throw new Error("Please install Metamask Wallet");
-            const id = await getNetworkID(); // Check current network
-            let res = true;
-            if (selectInput === "ethereum") {
-                if (id !== "0x1") res = await setNetwork("0x1");
-            }
-            else if (selectInput === "polygon") {
-                if (id !== "0x89") res = await setNetwork("0x89");
-            }
-            else if (selectInput === "rinkeby") {
-                if (id !== "0x4") res = await setNetwork("0x4");
-            }
-            else if (selectInput === "mumbai") {
-                if (id !== "0x13881") res = await setNetwork("0x13881");
-            }
-            if (!res) return false;
-            return true;
-        }
-        catch (e) {
-            addToast({
-				severity: 'error',
-				message: e.message
-			});
-			setError(true);
-            return false;
-        }
-    }
-
-
-	const	controllers = {
+	const controllers = {
 		imagesUrl,
 		setImagesUrl,
 		metadataUrl,
@@ -118,13 +101,10 @@ export const ContractProvider = ({ children }) => {
 		setError,
 		selectInput,
 		setSelectInput,
-
-		validateNetwork,
-		handleSelectNetwork,
+        deployContract,
+        cacheHash,
+        setCacheHash
 	}
-
-
-
 
 	return (
 		<ContractContext.Provider
