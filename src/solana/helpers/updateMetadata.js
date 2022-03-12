@@ -131,7 +131,7 @@ async function updateMetadataBatch(
           new Creator({ ...c, address: new PublicKey(c.address).toBase58() }),
       ),
 //      uri: differences[meta[0].data.uri],
-			uri:"https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/5.json" 
+			uri:"https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/7.json" 
     });
 
     const value = new UpdateMetadataArgs({
