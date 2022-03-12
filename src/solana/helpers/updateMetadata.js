@@ -78,9 +78,13 @@ export async function updateMetadataFromCache(
 	
 	console.log('diff', differences)
 	console.log('metadatabycandymachine', metadataByCandyMachine)
-  const toUpdate = metadataByCandyMachine.filter(
+  const toUpdate = metadataByCandyMachine
+
+	/*
+		.filter(
     m => !differences[m[0].data.uri],
   );
+	*/
 
   console.log('Found', toUpdate.length, 'uris to update');
 	console.log('to update', toUpdate)
@@ -127,7 +131,7 @@ async function updateMetadataBatch(
           new Creator({ ...c, address: new PublicKey(c.address).toBase58() }),
       ),
 //      uri: differences[meta[0].data.uri],
-			uri: "https://gateway.pinata.cloud/ipfs/QmWaYTudn9ogrEQ7QsafcoTP522U32kHvnKBq2hCVpZBcF/5.png" 
+			uri:"https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/5.json" 
     });
 
     const value = new UpdateMetadataArgs({
