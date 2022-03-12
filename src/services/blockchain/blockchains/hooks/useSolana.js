@@ -43,7 +43,7 @@ export const useSolana = () => {
 		await updateContract({ variables: { id: id, address: candyMachineAddress} });
 	}
 
-	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, id}) => {
+	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, id, env}) => {
         try {
             //mintV2();
             const res = await createSolanaContract({
@@ -55,14 +55,13 @@ export const useSolana = () => {
                 price, 
                 liveDate, 
                 creators,
-                cacheHash
+                cacheHash,
+                env
             });
 
 			console.log('res', res)
 
             handleDeploymentSuccess(id, res.candyMachineAddress);
-
-            console.log(res);
         }
         catch (err) {
             console.error(err);

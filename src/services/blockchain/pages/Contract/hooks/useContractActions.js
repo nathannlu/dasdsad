@@ -167,10 +167,10 @@ export const useContractActions = (contractAddress) => {
 		return true;
 	}
 
-	const withdraw = async (wallet = 'metamask') => {
+	const withdraw = async (wallet = 'metamask', env = 'mainnet') => {
         if (wallet == 'phantom') {
             console.log('withdrawing phantom')
-            await withdrawV2('devnet', contractAddress);
+            await withdrawV2(env, contractAddress);
             return;
         }
 
@@ -183,10 +183,10 @@ export const useContractActions = (contractAddress) => {
 	}
 
 	// Mint NFT
-	const mint = async (count = 1, wallet = 'metamask') => {
+	const mint = async (count = 1, wallet = 'metamask', env = 'mainnet') => {
         if (wallet == 'phantom') {
             console.log('minting phantom')
-            await mintV2('devnet', contractAddress, account);
+            await mintV2(env, contractAddress, account);
             return;
         }
 

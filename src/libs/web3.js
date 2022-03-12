@@ -435,7 +435,7 @@ export const Web3Provider = ({ children }) => {
 
     // Compare current network with target network and switches if it doesn't match
     const compareNetwork = async (targetNetwork, callback = null) => {
-        if (targetNetwork === 'solana' || targetNetwork === 'solanatestnet') {
+        if (targetNetwork.indexOf('solana') != -1) {
             if (callback != null) callback();
             return;
         }

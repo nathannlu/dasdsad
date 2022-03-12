@@ -248,7 +248,7 @@ const Actions = ({ id, contract }) => {
                                 startIcon={<SwapVertIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => withdraw(wallet)}
+                                onClick={() => withdraw(wallet, contract.blockchain == 'solanadevnet' ? 'testnet' : 'mainnet')}
                             >
                                 Pay out to bank
                             </Button>
@@ -256,7 +256,7 @@ const Actions = ({ id, contract }) => {
                                 startIcon={<PaymentIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => mint(1, wallet)}
+                                onClick={() => mint(1, wallet, contract.blockchain == 'solanadevnet' ? 'testnet' : 'mainnet')}
                             >
                                 Mint
                             </Button>

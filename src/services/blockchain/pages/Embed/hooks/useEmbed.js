@@ -159,7 +159,7 @@ export const useEmbed = () => {
                 
                 if (chainId.indexOf('solana') != -1) { // Phantom
                     console.log("minting solana")
-                    await mintV2('devnet', contract.address, account);
+                    await mintV2(contract.blockchain == 'solanadevnet' ? 'testnet' : 'mainnet', contract.address, account);
                     setIsMinting(false);
                 }
                 else { // Metamask
