@@ -1,5 +1,5 @@
 import bs58 from 'bs58';
-import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts } from './helpers/accounts';
+import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts, writeIndices } from './helpers/accounts';
 import { withdrawV2 } from './helpers/withdraw';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { BN, Program, web3 } from '@project-serum/anchor';
@@ -74,6 +74,11 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			creators,
         },
     );
+
+	console.log('uri', uri)
+
+		let link = 'https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/'
+		await writeIndices(res.candyMachineAddress, link);
 	
     return res;
 }
@@ -160,4 +165,3 @@ export const withdraw = async () => {
 		`Congratulations, ${candyMachineId} has been successfuly drained! Please consider support Open Source developers`,
 	);
 }
-

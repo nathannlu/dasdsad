@@ -48,7 +48,6 @@ export const ContractProvider = ({ children }) => {
                 })
             }
             else {
-							/*
 				await deploySolanaContract({
                     uri: contract.nftCollection.baseUri,
                     name: contract.name,
@@ -61,8 +60,6 @@ export const ContractProvider = ({ children }) => {
                     cacheHash: contract.nftCollection.cacheHash,
                     id: contract.id
                 });
-								*/
-							throw Error("Incorrect wallet type")	
             }
         }
         catch (err) {

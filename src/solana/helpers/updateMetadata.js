@@ -35,7 +35,7 @@ export const asd = async () => {
 
 	// needs to be dynamic
   const anchorProgram = await loadCandyProgramV2(null, "devnet");
-	const candyMachineAddress = 'CUh3AHBMUVByKuNHNPrG4gyHXg9Uh9UEccyjop9C5U7u'
+	const candyMachineAddress = '2ndvf3R74kq46EcagC1sQRxmQ2bvQx3bVZdnyZ5RJBoT'
   const connection = anchorProgram.provider.connection;
 	let ipfsHash = 'QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs'
 	let instructions = [];
@@ -49,9 +49,6 @@ export const asd = async () => {
 	console.log(metadataByCandyMachine);
 	*/
 
-
-	// loop over all total nfts
-	// construct config lines
 	const cacheContent = {
 		"items": {
 			"0": {
@@ -65,10 +62,60 @@ export const asd = async () => {
 				"name": "llamadramaclub #52",
 				"onChain": true,
 				"verifyRun": false
+			},
+			"2": {
+				"link": "https://arweave.net/_5kYA0r-xzQPwhjdGa_v2eLim3V_K2Wgw1eVdjuVZvQ",
+				"name": "llamadramaclub #51",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"3": {
+				"link": "https://arweave.net/bgTX-piW1uUXNrKQtqukIJdDiscbSAi_RJpKKP7uMRE",
+				"name": "llamadramaclub #52",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"4": {
+				"link": "https://arweave.net/_5kYA0r-xzQPwhjdGa_v2eLim3V_K2Wgw1eVdjuVZvQ",
+				"name": "llamadramaclub #51",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"5": {
+				"link": "https://arweave.net/bgTX-piW1uUXNrKQtqukIJdDiscbSAi_RJpKKP7uMRE",
+				"name": "llamadramaclub #52",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"6": {
+				"link": "https://arweave.net/_5kYA0r-xzQPwhjdGa_v2eLim3V_K2Wgw1eVdjuVZvQ",
+				"name": "llamadramaclub #51",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"7": {
+				"link": "https://arweave.net/bgTX-piW1uUXNrKQtqukIJdDiscbSAi_RJpKKP7uMRE",
+				"name": "llamadramaclub #52",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"8": {
+				"link": "https://arweave.net/_5kYA0r-xzQPwhjdGa_v2eLim3V_K2Wgw1eVdjuVZvQ",
+				"name": "llamadramaclub #51",
+				"onChain": true,
+				"verifyRun": false
+			},
+			"9": {
+				"link": "https://arweave.net/bgTX-piW1uUXNrKQtqukIJdDiscbSAi_RJpKKP7uMRE",
+				"name": "llamadramaclub #52",
+				"onChain": true,
+				"verifyRun": false
 			}
 		}
 	}
 
+	// loop over all total nfts
+	// construct config lines
 	const addConfigLines = async ({index,configLines}) => {
 
 		console.log('config lines', configLines.map(i => ({

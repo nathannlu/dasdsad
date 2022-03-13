@@ -48,7 +48,6 @@ const Dashboard = () => {
 	return (
 		<Fade in>
 			<Container sx={{pt: 4}}>
-				{/*
 							<Button onClick={createSolanaContract}>
 								Create solana contract
 							</Button>
@@ -64,7 +63,6 @@ const Dashboard = () => {
 							<Button onClick={asd}>
 								asd
 							</Button>
-							*/}
 				{contracts.length > 0 ? (
 					<Stack gap={2}>
 						<Stack direction="row" alignItems="center">
