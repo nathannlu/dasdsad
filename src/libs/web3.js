@@ -17,6 +17,29 @@ export const Web3Provider = ({ children }) => {
 	const [loading, setLoading] = useState(false);
 	const { addToast } = useToast();
 
+    const loadWalletProvider = async (walletType) => {
+        try {
+            if (walletType === 'metamask') {
+                if (typeof window.ethereum === 'undefined' || (typeof window.web3 === 'undefined')) throw new Error('Metamask is not installed');
+                window.web3 = new Web3(window.ethereum) || new Web3(window.web3.currentProvider);
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                setAccount(accounts[0]);
+                return accounts[0];
+            }
+            else if (walletType === 'phantom') {
+                const provider = window.solana;
+                if (!provider?.isPhantom) throw new Error('Phantom is not installed');
+                const sol = await window.solana.connect();
+                setAccount(sol.publicKey.toString());
+                return sol.publicKey.toString();
+            }
+            else throw new Error('Wallet not supported');
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+
 	// Checks if browser has Ethereum extension installed
 	// If yes then set up Web3
 	// If no then alert user
@@ -61,103 +84,12 @@ export const Web3Provider = ({ children }) => {
 		return ({address, signature})
 	}
 
-	// Mint NFT
-	const mint = async (contractAddress, count = 1) => {
+    const mint = async (price, contractAddress, userAddress, mintCount = 1) => {
 		const contract = await retrieveContract(contractAddress)
-		const price = await contract.methods.cost().call();
+		const cost = await contract.methods.cost().call()
+		//const priceInWei = Web3.utils.toWei(price);
 
-//		const priceInWei = Web3.utils.toWei(price);
-
-		// Support depreciated method
-		contract.methods.mintNFTs(count).estimateGas({
-			from: account,
-			value: price
-		}, (err, gasAmount) => {
-			if(gasAmount !== undefined) {
-				contract.methods.mintNFTs(count).send({ from: account, value: price }, err => {
-					if (err) {
-						addToast({
-							severity: 'error',
-							message: err.message
-						})
-					} else {
-						addToast({
-							severity: 'info',
-							message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
-						})
-					}
-				})
-				.on('error', err => {
-					addToast({
-						severity: 'error',
-						message: err.message
-					})
-				})
-				.once("confirmation", () => {
-					addToast({
-						severity: 'success',
-						message: 'NFT successfully minted.'
-					})
-				})
-			}
-		})
-
-		contract.methods.mint(count).estimateGas({
-			from: account,
-			value: price * count
-		}, (err, gasAmount) => {
-
-			if(!err && gasAmount !== undefined) {
-				contract.methods.mint(count).send({ from: account, value: price * count }, err => {
-					if (err) {
-						addToast({
-							severity: 'error',
-							message: err.message
-						})
-					} else {
-						addToast({
-							severity: 'info',
-							message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
-						})
-					}
-				})
-				.on('error', err => {
-					addToast({
-						severity: 'error',
-						message: err.message
-					})
-				})
-				.once("confirmation", () => {
-					addToast({
-						severity: 'success',
-						message: 'NFT successfully minted.'
-					})
-				})
-			}
-		})
-	}
-
-	// compare array buffers
-	function compare(a, b) {
-		for (let i = a.length; -1 < i; i -= 1) {
-			if ((a[i] !== b[i])) return false;
-		}
-		return true;
-	}
-
-	const presaleMint = async (price, contractAddress, whitelist, count = 1) => {
-		const contract = await retrieveContract(contractAddress)
-		const priceInWei = Web3.utils.toWei(price);
-
-		const leafNodes = whitelist.map(addr => keccak256(addr));
-		const claimingAddress = await leafNodes.find(node =>  compare(keccak256(account), node))
-
-		const merkleTree = new MerkleTree(leafNodes,keccak256, { sortPairs: true });
-
-		const hexProof = merkleTree.getHexProof(claimingAddress)
-
-
-		contract.methods.presaleMint(count, hexProof).send({ from: account, value: priceInWei }, err => {
+		contract.methods.mint(mintCount).send({ from: userAddress, value: cost * mintCount }, err => {
 			if (err) {
 				addToast({
 					severity: 'error',
@@ -184,6 +116,57 @@ export const Web3Provider = ({ children }) => {
 		})
 	}
 
+	const presaleMint = async (price, contractAddress, whitelist, userAddress, mintCount = 1) => {
+		try {
+			const contract = await retrieveContract(contractAddress)
+			const priceInWei = Web3.utils.toWei(price * mintCount);
+
+			const leafNodes = whitelist.map(addr => keccak256(addr));
+			const claimingAddress = await leafNodes.find(node =>  compare(keccak256(userAddress), node))
+
+			const merkleTree = new MerkleTree(leafNodes,keccak256, { sortPairs: true });
+			const hexProof = merkleTree.getHexProof(claimingAddress)
+
+			contract.methods.presaleMint(mintCount, hexProof).send({ from: userAddress, value: priceInWei }, err => {
+				if (err) {
+					addToast({
+						severity: 'error',
+						message: err.message
+					})
+				} else {
+					addToast({
+						severity: 'info',
+						message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+					})
+				}
+			})
+			.on('error', err => {
+				addToast({
+					severity: 'error',
+					message: err.message
+				})
+			})
+			.once("confirmation", () => {
+				addToast({
+					severity: 'success',
+					message: 'NFT successfully minted.'
+				})
+			})
+		} catch (e) {
+			addToast({
+				severity: 'error',
+				message: 'You are not on the whitelist!'
+			})
+		}
+	}
+
+	// compare array buffers
+	function compare(a, b) {
+		for (let i = a.length; -1 < i; i -= 1) {
+			if ((a[i] !== b[i])) return false;
+		}
+		return true;
+	}
 
 	const checkOwner = async (id, contractAddress) => {
 		const contract = await retrieveContract(contractAddress)
@@ -251,7 +234,7 @@ export const Web3Provider = ({ children }) => {
 		const web3 = window.web3;
 		if (web3.eth) {
 			const contract = new web3.eth.Contract(NFTCollectible.abi, contractAddress);
-			console.log(contract)
+			//console.log(contract)
 			return contract;
 		}
 	}
@@ -397,7 +380,19 @@ export const Web3Provider = ({ children }) => {
 		return [loading]
 	}
 
+    const getOpen = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress);
+		const open = await contract.methods.open().call();
 
+		return open;
+	}
+
+    const getSize = async (contractAddress) => {
+		const contract = await retrieveContract(contractAddress);
+		const size = await contract.methods.totalSupply().call();
+
+		return size;
+	}
 
 	return (
 		<Web3Context.Provider
@@ -420,7 +415,10 @@ export const Web3Provider = ({ children }) => {
                 getMaximumSupply,
 				getTotalMinted,
 
-				getPublicContractVariables
+				getPublicContractVariables,
+                loadWalletProvider,
+                getOpen,
+                getSize
 			}}
 		>
 			{ children }
