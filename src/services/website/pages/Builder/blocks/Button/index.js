@@ -1,21 +1,19 @@
-import React, { useEffect } from 'react';
-import { useWeb3 } from 'libs/web3';
-import { useWebsite } from 'services/website/provider';
+import React from 'react';
+import { useMintButton } from '../../hooks/useMintButton'
 
 const Button = ({isMint, text, link}) => {
-	const { loadWeb3, loadBlockchainData, account, mint } = useWeb3();
-	useEffect(() => {
-		(async () => {
-			await loadWeb3()
-			await loadBlockchainData()
-		})()
-	}, [])
-
-	const {website} = useWebsite();
-	//console.log(website)
+    const { onMint, contract, size, setMintCount, mintCount } = useMintButton();
 
 	return isMint ? (
-		<button onClick={() => mint(website.settings.connectedContractAddress)} className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">{text}</button>
+		<div className='flex flex-col'>
+            <div className='flex'>
+                <button onClick={onMint} class="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+                    {`${text} $${contract?.nftCollection?.price * mintCount} ${contract?.nftCollection?.currency.toUpperCase()}`}
+                </button>
+                <input class="mx-2 rounded-lg bg-white-500" type="number" min="1" value={mintCount} max={contract?.nftCollection?.size} onChange={(e) => setMintCount(e.target.value)}></input>
+            </div>
+            {size !== -1 && <p>{`${size}/${contract?.nftCollection?.size}`}</p>}
+        </div>
 	) : (
 		<button onClick={() => window.location.href = link} className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">{text}</button>
 	)
