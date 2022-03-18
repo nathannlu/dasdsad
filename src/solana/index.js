@@ -1,5 +1,5 @@
 import bs58 from 'bs58';
-import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts, writeIndices } from './helpers/accounts';
+import { createCandyMachineV2, loadCandyProgramV2, getProgramAccounts } from './helpers/accounts';
 import { withdrawV2 } from './helpers/withdraw';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { BN, Program, web3 } from '@project-serum/anchor';
@@ -28,7 +28,7 @@ export function parseDate(date) {
 export const createSolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash}) => {
     console.log('[Ambition] Solana Contract Deployment');
 
-	const env = 'testnet';
+	const env = 'devnet';
 
 	const parsedPrice = new BN(parsePrice(price));
     
@@ -41,7 +41,7 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
     console.log('uri:', uri);
 
     const livedatelol = new BN(parseDate(liveDate));
-    console.log('liveDat:', livedatelol);
+    console.log('liveDate:', liveDate);
 
     console.log('cacheHash:', cacheHash);
 
@@ -70,7 +70,11 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 			price: parsedPrice,
 			endSettings: null,
 			whitelistMintSettings: null,
-			hiddenSettings:	null,
+			hiddenSettings:	{
+				name,
+				uri,
+				hash: [],
+			},
 			creators,
         },
     );
@@ -78,7 +82,6 @@ export const createSolanaContract = async ({uri, name, address, symbol, size, pr
 	console.log('uri', uri)
 
 		let link = 'https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/'
-		await writeIndices(res.candyMachineAddress, link);
 	
     return res;
 }

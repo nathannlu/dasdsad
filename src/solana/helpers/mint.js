@@ -20,9 +20,16 @@ export async function mintV2(
   ) {
 
     const mint = Keypair.generate();
+		
+		env = 'devnet'
+//		rpcUrl = 'https://'
+
+	
   
    // const userKeyPair = loadWalletKey(null, env);
     const anchorProgram = await loadCandyProgramV2(null, env, rpcUrl);
+	console.log(anchorProgram)
+	console.log(candyMachineAddress)
     const userTokenAccountAddress = await getTokenWallet(
         payerWalletAddress,
         mint.publicKey,
@@ -171,13 +178,32 @@ export async function mintV2(
     const metadataAddress = await getMetadata(mint.publicKey);
     const masterEdition = await getMasterEdition(mint.publicKey);
   
-    console.log(metadataAddress);
-    console.log(masterEdition);
     
     const [candyMachineCreator, creatorBump] = await getCandyMachineCreator(
       candyMachineAddress,
     );
   
+
+		console.log({
+          candyMachine: candyMachineAddress,
+          candyMachineCreator,
+          payer: payerPublicAddress,
+          //@ts-ignore
+          wallet: candyMachine.wallet,
+          mint: mint.publicKey,
+          metadata: metadataAddress,
+          masterEdition,
+          mintAuthority: payerPublicAddress,
+          updateAuthority: payerPublicAddress,
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+          clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+          recentBlockhashes: anchor.web3.SYSVAR_SLOT_HASHES_PUBKEY,
+          instructionSysvarAccount: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
+        })
+
     instructions.push(
       await anchorProgram.instruction.mintNft(creatorBump, {
         accounts: {
@@ -204,22 +230,6 @@ export async function mintV2(
       }),
     );
   
-    // const finished = (
-    //   await sendTransactionWithRetryWithKeypair(
-    //     anchorProgram.provider.connection,
-    //     userKeyPair,
-    //     instructions,
-    //     signers,
-    //   )
-    // ).txid;
-  
-    // await sendTransactionWithRetryWithKeypair(
-    //   anchorProgram.provider.connection,
-    //   userKeyPair,
-    //   cleanupInstructions,
-    //   [],
-    // );
-
     console.log("minting");
     let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
     const transaction = new Transaction({
@@ -265,7 +275,10 @@ export async function mintV2(
 
     let rawTransaction = transaction.serialize();
 
-    const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
+    const asd = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction, {
+			commitment: 'finalized',
+			skipPreflight: true	
+		});
 	  console.log(asd)
 
     return 0;

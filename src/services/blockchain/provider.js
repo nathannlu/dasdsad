@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
@@ -27,7 +27,7 @@ export const ContractProvider = ({ children }) => {
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
     const [cacheHash, setCacheHash] = useState('');
-    const { account } = useWeb3();
+    const { account, loadBlockchainData, loadWeb3 } = useWeb3();
 
     const { deployEthereumContract } = useEthereum();
     const { deploySolanaContract } = useSolana();
@@ -70,6 +70,13 @@ export const ContractProvider = ({ children }) => {
             })
         }
     }
+
+	useEffect(() => {
+		(async () => {
+			await loadWeb3();
+			await loadBlockchainData();
+		})()
+	}, [])
 
 	const controllers = {
 		imagesUrl,

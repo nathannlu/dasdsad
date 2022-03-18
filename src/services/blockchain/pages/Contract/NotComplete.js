@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useContract } from 'services/blockchain/provider';
+import { useDeployContract } from './hooks/useDeployContract';
 import { Stack, Typography, Box, Button } from 'ds/components';
 import { useWeb3 } from 'libs/web3';
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
 
-const NotComplete = ({ id, contract, setIsModalOpen }) => {
-    const { deployContract } = useContract();
+const NotComplete = ({ id, setIsModalOpen }) => {
+    const { contract } = useContract();
+    const { deployContract } = useDeployContract();
 	const {
         compareNetwork,
 	} = useWeb3()

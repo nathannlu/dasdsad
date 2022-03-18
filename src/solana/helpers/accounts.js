@@ -217,7 +217,7 @@ export const createCandyMachineV2 = async function (
 
 	const asd = await sendAndConfirmRawTransaction(
 		anchorProgram.provider.connection,
-		rawTransaction
+		rawTransaction,
 	);
 	console.log(asd);
 
@@ -227,110 +227,6 @@ export const createCandyMachineV2 = async function (
 	};
 };
 
-export const writeIndices = async (candyMachineAddress, link) => {
-	const sol = await window.solana.connect();
-	const payerPublicAddress = new PublicKey(sol.publicKey.toString().toBuffer());
-	console.log('candy machine addy', candyMachineAddress)
-	const collectionSize = 100
-
-	// needs to be dynamic
-  const anchorProgram = await loadCandyProgramV2(null, "devnet");
-  const connection = anchorProgram.provider.connection;
-//	let ipfsHash = 'QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs'
-	let instructions = [];
-	let transactions = [];
-	let recentBlockhash = await anchorProgram.provider.connection.getRecentBlockhash();
-
-
-
-	// helper function 
-	const addConfigLines = async ({ index, configLines }) => {
-		const instruction = await anchorProgram.instruction.addConfigLines(
-			index,
-			configLines.map((i) => ({
-				uri: `${link}${i}.json`,
-				name: `${i}`,
-			})),
-			{
-				accounts: {
-					candyMachine: candyMachineAddress,
-					authority: payerPublicAddress.toBase58(),
-				},
-			}
-		);
-
-		// Sign transaction
-		const transaction = new Transaction({
-			recentBlockhash: recentBlockhash.blockhash,
-			feePayer: payerPublicAddress
-		});
-		transaction.add(instruction);
-		transactions.push(transaction)
-
-		console.log('config lines: index', index)
-	};
-
-	// generate config lines
-//	const keys = Object.keys(sampleConfig.items);
-	const poolArray = [];
-
-	const allIndicesInSlice = Array.from(Array(collectionSize).keys());
-
-	console.log('all idx in slice', allIndicesInSlice)
-	let offset = 0;
-
-	for (let index=0;offset < allIndicesInSlice.length; index++) {
-		let length = 0;
-		let lineSize = 0;
-		let configLines = allIndicesInSlice.slice(offset, offset + 16);
-
-		while (
-			length < 850 &&
-			lineSize < 16 &&
-			configLines[lineSize] !== undefined
-		) {
-			length += link.length + collectionSize.toString.length;
-			if (length < 850) lineSize++;
-		}
-
-		configLines = allIndicesInSlice.slice(offset, offset + lineSize);
-		offset += lineSize;
-
-		poolArray.push({ index, configLines });
-	}
-
-	console.log('pool arr', poolArray)
-
-	for (let i = 0; i < poolArray.length; i++) {
-		const { index, configLines } = poolArray[i];
-		
-		console.log('asd')
-
-		await addConfigLines({ index, configLines });
-	}
-
-
-	// Request client wallet to sign transaction
-	console.log('txn', transactions)
-	const signedTransactions = await window.solana.signAllTransactions(transactions);
-	console.log(signedTransactions)
-
-
-
-	let listOfTxnHashes = [];
-	for (let i = 0; i < signedTransactions.length; i++) {
-		console.log('sending transaction number', i)
-		console.log(transactions[i])
-
-		const rawTransaction = transactions[i].serialize();
-		const txn = await sendAndConfirmRawTransaction(anchorProgram.provider.connection, rawTransaction);
-		listOfTxnHashes.push(txn)
-	}
-
-	console.log('done', listOfTxnHashes)
-
-	return 0;
-};
 
 export const createConfig = async function (
 	anchorProgram,
@@ -685,6 +581,7 @@ export async function loadCandyProgramV2(walletKeyPair, env, customRpcUrl) {
 		CANDY_MACHINE_PROGRAM_V2_ID,
 		provider
 	);
+	console.log('Fetched IDL', idl)
 
 	const program = new anchor.Program(
 		idl,

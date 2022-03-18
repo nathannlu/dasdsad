@@ -36,6 +36,7 @@ const Upload = (props) => {
                 if (wallet === 'metamask') {
                     await compareNetwork(chainId);
                 }
+
             }
             catch (err) {
                 console.error(err);

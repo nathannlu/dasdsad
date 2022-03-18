@@ -48,25 +48,9 @@ const Dashboard = () => {
 	return (
 		<Fade in>
 			<Container sx={{pt: 4}}>
-							<Button onClick={createSolanaContract}>
-								Create solana contract
-							</Button>
-							<Button onClick={mintV2}>
-								Mint
-							</Button>
-							<Button onClick={withdrawV2}>
-								Withdraw
-							</Button>
-							<Button onClick={updateMetadataFromCache}>
-								UpdateMeta
-							</Button>
-							<Button onClick={asd}>
-								asd
-							</Button>
 				{contracts.length > 0 ? (
 					<Stack gap={2}>
 						<Stack direction="row" alignItems="center">
-
 							<Box>
 								<Typography variant="h4">
 									Your contracts
@@ -101,9 +85,6 @@ const Dashboard = () => {
 							<Grid key={i} p={1} item xs={3}>
 									<Card variant="outlined">
 										<Link to={`/smart-contracts/${contract.id}`}>
-
-											
-
 											<Box sx={{ bgcolor: 'grey.100', position: 'relative'}}>
 												{!contract?.address && (
 													<Box sx={{position: 'absolute', top: 0, right: 0}} p={2}>
