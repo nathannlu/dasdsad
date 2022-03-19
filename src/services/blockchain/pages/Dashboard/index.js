@@ -79,9 +79,6 @@ const Dashboard = () => {
 							<Grid key={i} p={1} item xs={3}>
 									<Card variant="outlined">
 										<Link to={`/smart-contracts/${contract.id}`}>
-
-											
-
 											<Box sx={{ bgcolor: 'grey.100', position: 'relative'}}>
 												{!contract?.address && (
 													<Box sx={{position: 'absolute', top: 0, right: 0}} p={2}>

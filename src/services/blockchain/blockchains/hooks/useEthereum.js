@@ -56,20 +56,11 @@ export const useEthereum = () => {
 		try {
 
 			const web3 = window.web3;
+			console.log(web3.eth)
 			const contract = new web3.eth.Contract(NFTCollectible.abi);
 			const priceInWei = web3.utils.toWei(cost.toString());
 
 			console.log(uri,name,symbol,totalSupply,priceInWei)
-			/*
-			const uri = ipfsUrl;
-			const name = '';
-			const symbol = '';
-			const totalSupply = deployContractForm.maxSupply.value
-			const cost = priceInWei
-			const open = false;
-			*/
-
-
 			const options = {
 				data: NFTCollectible.bytecode,
 				arguments: [uri, name, symbol, totalSupply, priceInWei, open]

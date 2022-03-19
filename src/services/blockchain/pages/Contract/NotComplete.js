@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
 import { useContract } from 'services/blockchain/provider';
-import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
+import { useDeployContract } from './hooks/useDeployContract';
 import { Stack, Typography, Box, Button } from 'ds/components';
 
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
 
-const NotComplete = ({ id, contract, setIsModalOpen }) => {
-	const { deployEthereumContract } = useEthereum();
-	const { handleSelectNetwork } = useContract();
-	
+const NotComplete = ({ id, setIsModalOpen }) => {
+    const { contract } = useContract();
+    const { deployContract } = useDeployContract();
+	const {
+        compareNetwork,
+	} = useWeb3()
+
 	const activeStep = contract?.nftCollection?.baseUri ? 1 : 0
 
 	return (

@@ -6,7 +6,6 @@ import LogRocket from 'logrocket';
 export const useAnalytics = () => {
 	const initGA = () => {
 		ReactGA.initialize('UA-222492814-1');
-		console.log('hi')
 		ReactGA.pageview(window.location.pathname + window.location.search);
 	}
 

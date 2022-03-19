@@ -23,26 +23,33 @@ const Upload = (props) => {
 	} = useWeb3()
 	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
 
-	useEffect(() => {
-		(async () => {
-			await loadWeb3();
-			await loadBlockchainData();
 
-			if(contracts.length > 0) {
-				const c = contracts.find(c => c.id == id)
-				setContract(c)
+			useEffect(() => {
+        if (!contracts || !contracts.length) return;
+        const getContract = async () => {
+            try {
+                const c = contracts.find(c => c.id == id);
+                setContract(c);
 
-				let chainId;
-				if (c.blockchain === "ethereum") chainId = "0x1";
-				else if (c.blockchain === "rinkeby") chainId = "0x4";
-				else if (c.blockchain === "polygon") chainId = "0x89";
-				else if (c.blockchain === "mumbai") chainId = "0x13881";
+                await loadWalletProvider(wallet);
 
-				compareNetwork(chainId)
-			}
-		})()
-
-	},[contracts])
+							/*
+                if (wallet === 'metamask') {
+                    await compareNetwork(chainId);
+                }
+								*/
+            }
+            catch (err) {
+                console.error(err);
+                addToast({
+                    severity: 'error',
+                    message: err.message
+                })
+                location.href = '/smart-contracts';
+            }
+        }
+        getContract();
+    }, [contracts])
 
 	return (
 		<Fade in>

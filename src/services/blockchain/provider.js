@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
@@ -26,8 +26,11 @@ export const ContractProvider = ({ children }) => {
 	const [imagesUrl, setImagesUrl] = useState('')
 	const [metadataUrl, setMetadataUrl] = useState('') //unused 
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const [cacheHash, setCacheHash] = useState('');
+    const { account, loadBlockchainData, loadWeb3 } = useWeb3();
 
 
+	/*
 
     const handleSelectNetwork = async (value) => {
 			console.log(value)
@@ -38,8 +41,24 @@ export const ContractProvider = ({ children }) => {
             if (value === "ethereum") {
                 if (id !== "0x1") res = await setNetwork("0x1");
             }
+<<<<<<< HEAD
             else if (value === "polygon") {
                 if (id !== "0x89") res = await setNetwork("0x89");
+=======
+            else {
+				await deploySolanaContract({
+                    uri: contract.nftCollection.baseUri,
+                    name: contract.name,
+                    address: account, 
+                    symbol: contract.symbol, 
+                    size: contract.nftCollection.size, 
+                    price: contract.nftCollection.price, 
+                    liveDate: 'now',
+                    creators: [ {address: account, verified: true, share: 100} ],
+                    cacheHash: contract.nftCollection.cacheHash,
+                    id: contract.id
+                });
+>>>>>>> nathannlu/solana-login-2
             }
             else if (value === "rinkeby") {
                 if (id !== "0x4") res = await setNetwork("0x4");
@@ -59,6 +78,7 @@ export const ContractProvider = ({ children }) => {
         }
     }
 
+<<<<<<< HEAD
     // Check before network pinning image
     const validateNetwork = async () => {
         try {
@@ -89,9 +109,17 @@ export const ContractProvider = ({ children }) => {
             return false;
         }
     }
+*/
 
 
-	const	controllers = {
+	useEffect(() => {
+		(async () => {
+			await loadWeb3();
+			await loadBlockchainData();
+		})()
+	}, [])
+
+	const controllers = {
 		imagesUrl,
 		setImagesUrl,
 		metadataUrl,
@@ -119,8 +147,8 @@ export const ContractProvider = ({ children }) => {
 		selectInput,
 		setSelectInput,
 
-		validateNetwork,
-		handleSelectNetwork,
+//		validateNetwork,
+//		handleSelectNetwork,
 	}
 
 
