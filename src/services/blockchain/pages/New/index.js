@@ -11,8 +11,10 @@ import CloseIcon from '@mui/icons-material/Close';
 const blockchains = [
 	{ title: 'Ethereum', value:'ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
 	{ title: 'Polygon', value:'polygon', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
+	{ title: 'Solana', value: 'solana', img: 'https://cryptologos.cc/logos/solana-sol-logo.png'},
 	{ title: 'Ethereum Testnet', value:'rinkeby', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
 	{ title: 'Polygon Testnet', value:'mumbai', img: 'https://cryptologos.cc/logos/polygon-matic-logo.png'},
+	{ title: 'Solana devnet', value: 'solanadevnet', img: 'https://cryptologos.cc/logos/solana-sol-logo.png'},
 	/*
 	{ title: 'Solana', value: 'solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
 	*/

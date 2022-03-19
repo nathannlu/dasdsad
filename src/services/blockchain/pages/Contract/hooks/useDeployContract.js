@@ -5,10 +5,10 @@ import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
 import { useSolana } from 'services/blockchain/blockchains/hooks/useSolana';
 import { useContract } from 'services/blockchain/provider';
 
-export const useDeployContract = () => {
+export const useDeployContract = (contract) => {
 	const { deployEthereumContract } = useEthereum();
 	const { deploySolanaContract } = useSolana();
-	const { contract } = useContract();
+//	const { contract } = useContract();
 	const { account } = useWeb3();
 	const { addToast } = useToast();
 

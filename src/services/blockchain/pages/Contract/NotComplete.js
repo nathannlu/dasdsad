@@ -2,12 +2,13 @@ import React, { useState } from 'react'
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContract } from './hooks/useDeployContract';
 import { Stack, Typography, Box, Button } from 'ds/components';
+import { useWeb3 } from 'libs/web3';
 
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
 
-const NotComplete = ({ id, setIsModalOpen }) => {
-    const { contract } = useContract();
-    const { deployContract } = useDeployContract();
+const NotComplete = ({ id, contract, setIsModalOpen }) => {
+//    const { contract } = useContract();
+    const { deployContract } = useDeployContract(contract);
 	const {
         compareNetwork,
 	} = useWeb3()
@@ -49,16 +50,8 @@ const NotComplete = ({ id, setIsModalOpen }) => {
 						</Typography>
 						<Box>
 							<Button onClick={async () => {
-									await handleSelectNetwork(contract?.blockchain);
-									await deployEthereumContract({
-										uri: contract.nftCollection.baseUri,
-										name: contract.name,
-										symbol: contract.symbol,
-										totalSupply: contract.nftCollection.size,
-										cost: contract.nftCollection.price,
-										open: false,
-										id
-									})
+									await compareNetwork(contract?.blockchain);
+									await deployContract();
 								}}
 								variant="contained"
 							>
