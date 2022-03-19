@@ -137,19 +137,27 @@ export const useEmbed = () => {
             await compareNetwork(chainId, async () => {
                 setIsMinting(true);
                 
-                if (isPublicSaleOpen) {
-					await mint(contractAddress, mintCount);
-					setIsMinting(false);
-				} else if (isPresaleOpen) {
-					await presaleMint(
-						(price * mintCount).toString(),
-						contractAddress,
-						contract.nftCollection.whitelist,
-						mintCount
-					);
-					setIsMinting(false);
-				} else {
-                    throw new Error('Public sale and Presale is not open');
+
+                if (chainId.indexOf('solana') != -1) { // Phantom
+                    console.log("minting solana")
+                    await mintV2(contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, account);
+                    setIsMinting(false);
+                }
+                else { // Metamask
+                    if (isPublicSaleOpen) {
+                        await mint(contractAddress, mintCount);
+                        setIsMinting(false);
+                    } else if (isPresaleOpen) {
+                        await presaleMint(
+                            (price * mintCount).toString(),
+                            contractAddress,
+                            contract.nftCollection.whitelist,
+                            mintCount
+                        );
+                        setIsMinting(false);
+                    } else {
+                        throw new Error('Public sale and Presale is not open');
+                    }
                 }
             })
         }

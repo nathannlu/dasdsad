@@ -50,46 +50,36 @@ export const useSolana = () => {
 		});
 	};
 
-	const deploySolanaContract = async ({
-		uri,
-		name,
-		address,
-		symbol,
-		size,
-		price,
-		liveDate,
-		creators,
-		cacheHash,
-		id,
-	}) => {
-		try {
-			//mintV2();
-			const res = await createSolanaContract({
-				uri,
-				name,
-				address,
-				symbol,
-				size,
-				price,
-				liveDate,
-				creators,
-				cacheHash,
-			});
 
-			console.log("res", res);
+	const deploySolanaContract = async ({uri, name, address, symbol, size, price, liveDate, creators, cacheHash, id, env}) => {
+        try {
+            //mintV2();
+            const res = await createSolanaContract({
+                uri,
+                name,
+                address, 
+                symbol, 
+                size, 
+                price, 
+                liveDate, 
+                creators,
+                cacheHash,
+                env
+            });
 
-			handleDeploymentSuccess(id, res.candyMachineAddress);
+			console.log('res', res)
 
-			// console.log(res);
-		} catch (err) {
-			console.error(err);
-			addToast({
-				severity: "error",
-				message: err.message,
-			});
-		}
-	};
-
+            handleDeploymentSuccess(id, res.candyMachineAddress);
+        }
+        catch (err) {
+            console.error(err);
+            addToast({
+				severity: 'error',
+				message: err.message
+			})	
+        }
+	}
+	
 	return {
 		deploySolanaContract,
 	};

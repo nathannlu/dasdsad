@@ -272,7 +272,18 @@ export const Web3Provider = ({ children }) => {
 			}
 		}
     // Compare current network with target network and switches if it doesn't match
-    const compareNetwork = async (targetNetwork, callback) => {
+    const compareNetwork = async (targetNetwork, callback = null) => {
+        if (targetNetwork.indexOf('solana') != -1) {
+            if (callback != null) callback();
+            return;
+        }
+        let target = targetNetwork;
+        if (targetNetwork.indexOf('x') === -1) {
+            if (targetNetwork === "ethereum") target = "0x1";
+            else if (targetNetwork === "rinkeby") target = "0x4";
+            else if (targetNetwork === "polygon") target = "0x89";
+            else if (targetNetwork === "mumbai") target = "0x13881";
+        }
         const curNetwork = getNetworkID();
         if (curNetwork !== targetNetwork) {
             const status = await setNetwork(targetNetwork);

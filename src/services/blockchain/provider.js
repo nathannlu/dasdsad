@@ -56,7 +56,8 @@ export const ContractProvider = ({ children }) => {
                     liveDate: 'now',
                     creators: [ {address: account, verified: true, share: 100} ],
                     cacheHash: contract.nftCollection.cacheHash,
-                    id: contract.id
+                    id: contract.id,
+                    env: contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet'
                 });
 >>>>>>> nathannlu/solana-login-2
             }
