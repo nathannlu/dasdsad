@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { Fade, Box, Stack, Grid, Typography, Button, IconButton } from 'ds/components';
 import { useWeb3 } from 'libs/web3';
 
-const Login = (props) => {
-	const { loginToWallet } = useWeb3();
+const PhantomButton = () => {
+    const { loginToWallet } = useWeb3();
 
-	return (
-		<Button
-			startIcon={<img style={{width:'20px'}} src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" />} 
+    return (
+        <Button
+			startIcon={<img style={{width:'20px'}} src="https://res.cloudinary.com/crunchbase-production/image/upload/c_lpad,f_auto,q_auto:eco,dpr_1/sqzgmbkggvc1uwgapeuy" />} 
 			fullWidth 
-			onClick={() => loginToWallet('metamask')} 
+			onClick={() => loginToWallet('phantom')} 
 			variant="contained" 
             style={{
                 backgroundColor: 'rgb(25,26,36)',
@@ -17,9 +17,9 @@ const Login = (props) => {
                 textTransform: 'none'
             }}
 		>
-			Continue with Metamask
+			Continue with Phantom
 		</Button>
-	)
-};
+    )
+}
 
-export default Login;
+export default PhantomButton

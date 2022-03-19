@@ -5,6 +5,8 @@ import { useWeb3 } from 'libs/web3';
 import { MerkleTree } from "merkletreejs";
 import keccak256 from "keccak256";
 import { useSetWhitelist } from "services/blockchain/gql/hooks/contract.hook.js";
+import { mintV2 } from 'solana/helpers/mint';
+import { withdrawV2 } from 'solana/helpers/withdraw';
 
 export const useContractActions = (contractAddress) => {
 	const { addToast } = useToast();

@@ -49,6 +49,21 @@ export const VERIFY_SIGNATURE = gql`
 	}
 `
 
+export const VERIFY_SIGNATURE_PHANTOM = gql`
+	mutation VerifySignaturePhantom($address: String!, $signature: String!){
+		verifySignaturePhantom(address: $address, signature: $signature) {
+			token
+			user {
+				id
+				address
+				name
+				email
+				stripeCustomerId
+			}
+		}
+	}
+`
+
 // Verifies jwt token
 export const REAUTHENTICATE = gql`
 	query Reauthenticate {

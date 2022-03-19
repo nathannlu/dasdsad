@@ -36,3 +36,4 @@ export const useValidateToken = ({ token, onCompleted, onError }) => {
 
 	return { ...queryResult }
 };
+

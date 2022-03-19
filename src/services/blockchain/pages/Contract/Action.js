@@ -248,17 +248,17 @@ const Actions = ({ id, contract }) => {
                                 startIcon={<SwapVertIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => withdraw(wallet, contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet')}
+                                onClick={() => withdraw(wallet)}
                             >
-															Close contract & withdraw Solana rent
+															Close smart contract & withdraw rent
                             </Button>
                             <Button
                                 startIcon={<PaymentIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => mint(1, wallet, contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet')}
+                                onClick={() => mint(1, wallet)}
                             >
-                                Mint your NFT
+                                Mint
                             </Button>
                     </Stack>
                 )}

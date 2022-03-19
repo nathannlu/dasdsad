@@ -31,6 +31,7 @@ export const useDeployContract = (contract) => {
 					id: contract.id,
 				});
 			} else {
+				console.log('account', account)
 				await deploySolanaContract({
 					uri: contract.nftCollection.baseUri,
 					name: contract.name,

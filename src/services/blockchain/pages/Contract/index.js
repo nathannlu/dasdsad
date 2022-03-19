@@ -45,7 +45,7 @@ const Upload = (props) => {
                     severity: 'error',
                     message: err.message
                 })
-                location.href = '/smart-contracts';
+   //             location.href = '/smart-contracts';
             }
         }
         getContract();

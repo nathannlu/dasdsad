@@ -4,7 +4,8 @@ import { useWebsite } from 'services/website/provider';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';
-import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE } from '../users.gql'
+import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE, VERIFY_SIGNATURE_PHANTOM } from '../users.gql'
+import { useWeb3 } from '../../libs/web3';
 
 
 
@@ -74,6 +75,22 @@ export const useVerifySignature = ({ onCompleted, onError }) => {
 	})
 
 	return [ verifySignature, { ...mutationResult }]
+};
+
+export const useVerifySignaturePhantom = ({ onCompleted, onError }) => {
+	const { onLoginSuccess } = useAuth()
+
+	const [verifySignaturePhantom, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE_PHANTOM, {
+		onCompleted: data => {
+			onLoginSuccess(data.verifySignaturePhantom)
+			if(onCompleted) {
+				onCompleted(data)
+			}
+		},
+		onError
+	})
+
+	return [ verifySignaturePhantom, { ...mutationResult }]
 };
 
 
