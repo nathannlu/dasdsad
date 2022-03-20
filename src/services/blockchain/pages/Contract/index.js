@@ -4,12 +4,10 @@ import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { Fade, Container, Link, TextField, Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
 import { useContractDetails } from './hooks/useContractDetails';
-
 import IPFSModal from './IPFSModal';
 import NotComplete from './NotComplete';
 import Header from './Header';
 import Tabs from './Tabs';
-
 
 const Upload = (props) => {
 	const [contract, setContract] = useState({});
@@ -17,14 +15,13 @@ const Upload = (props) => {
 	const { id } = useParams();
 	const { contracts } = useContract();
 	const {
-		loadWeb3,
-		loadBlockchainData,
 		compareNetwork,
-	} = useWeb3()
-	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false
+        wallet,
+        loadWalletProvider
+	} = useWeb3();
+	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false;
 
-
-			useEffect(() => {
+	useEffect(() => {
         if (!contracts || !contracts.length) return;
         const getContract = async () => {
             try {
@@ -33,11 +30,9 @@ const Upload = (props) => {
 
                 await loadWalletProvider(wallet);
 
-							/*
                 if (wallet === 'metamask') {
                     await compareNetwork(chainId);
                 }
-								*/
             }
             catch (err) {
                 console.error(err);
@@ -45,7 +40,7 @@ const Upload = (props) => {
                     severity: 'error',
                     message: err.message
                 })
-   //             location.href = '/smart-contracts';
+                location.href = '/smart-contracts';
             }
         }
         getContract();
@@ -71,7 +66,6 @@ const Upload = (props) => {
 							<Tabs id={id} contract={contract} />
 						)}
 					</Stack>
-
 
 					<IPFSModal id={id} contract={contract} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
 				</Container>
