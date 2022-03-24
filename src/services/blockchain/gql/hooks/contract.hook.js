@@ -38,6 +38,8 @@ export const useGetContracts = async ({ onCompleted, onError }) => {
     const { ...queryResult } = useQuery(GET_CONTRACTS, {
 		onCompleted: async data => {
 
+            console.log(data.getContracts)
+
 			if (setContracts !== undefined) {
 				setContracts(data.getContracts)
 			}

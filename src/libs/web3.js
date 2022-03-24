@@ -68,7 +68,7 @@ export const Web3Provider = ({ children }) => {
             if (walletType === 'metamask') {
                 if (typeof window.ethereum === 'undefined' || (typeof window.web3 === 'undefined')) throw new Error('Metamask is not installed');
                 window.web3 = new Web3(window.ethereum) || new Web3(window.web3.currentProvider);
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const accounts = await window.web3.eth.getAccounts();
                 setAccount(accounts[0]);
                 return accounts[0];
             }
@@ -94,6 +94,8 @@ export const Web3Provider = ({ children }) => {
         try {
             const account = await loadWalletProvider(walletType);
             setAccount(account);
+
+            console.log(account)
 
             const res = await getNonceByAddress({variables: {address: account}});
             const nonce = res.data.getNonceByAddress;

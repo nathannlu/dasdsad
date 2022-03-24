@@ -50,7 +50,7 @@ export const useLoginForm = () => {
 	const handleRedirect = () => {
 		// Check for redirect param
 
-		history.push(redirect ?? "/dashboard");
+		history?.push(redirect ?? "/dashboard");
 
 //		history.push('/dashboard');
 	}

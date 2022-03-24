@@ -41,25 +41,8 @@ export const ContractProvider = ({ children }) => {
             if (value === "ethereum") {
                 if (id !== "0x1") res = await setNetwork("0x1");
             }
-<<<<<<< HEAD
             else if (value === "polygon") {
                 if (id !== "0x89") res = await setNetwork("0x89");
-=======
-            else {
-				await deploySolanaContract({
-                    uri: contract.nftCollection.baseUri,
-                    name: contract.name,
-                    address: account, 
-                    symbol: contract.symbol, 
-                    size: contract.nftCollection.size, 
-                    price: contract.nftCollection.price, 
-                    liveDate: 'now',
-                    creators: [ {address: account, verified: true, share: 100} ],
-                    cacheHash: contract.nftCollection.cacheHash,
-                    id: contract.id,
-                    env: contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet'
-                });
->>>>>>> nathannlu/solana-login-2
             }
             else if (value === "rinkeby") {
                 if (id !== "0x4") res = await setNetwork("0x4");
