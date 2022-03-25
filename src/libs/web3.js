@@ -201,10 +201,10 @@ export const Web3Provider = ({ children }) => {
 		// Support depreciated method
 		contract.methods.mintNFTs(count).estimateGas({
 			from: account,
-			value: price
+			value: price * count
 		}, (err, gasAmount) => {
 			if(gasAmount !== undefined) {
-				contract.methods.mintNFTs(count).send({ from: account, value: price }, err => {
+				contract.methods.mintNFTs(count).send({ from: account, value: price * count }, err => {
 					if (err) {
 						addToast({
 							severity: 'error',
@@ -277,7 +277,7 @@ export const Web3Provider = ({ children }) => {
 
 	const presaleMint = async (price, contractAddress, whitelist, count = 1) => {
 		const contract = await retrieveContract(contractAddress)
-		const priceInWei = Web3.utils.toWei(price);
+		const priceInWei = Web3.utils.toWei(price * count);
 
 		const leafNodes = whitelist.map(addr => keccak256(addr));
 		const claimingAddress = await leafNodes.find(node =>  compare(keccak256(account), node))

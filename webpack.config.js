@@ -34,6 +34,9 @@ module.exports = env => {
 			new webpack.ProvidePlugin({
 				Buffer: ['buffer', 'Buffer'],
 			}),
+            new webpack.DefinePlugin({
+                'process.env.NODE_DEBUG': JSON.stringify('http')
+            })
 	//		new BundleAnalyzerPlugin
 		],
 		module: {
