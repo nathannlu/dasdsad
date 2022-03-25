@@ -150,7 +150,6 @@ export const useEmbed = () => {
             //     !contract) return;
             
             if (!contract) throw new Error('Cannot find contract');
-            if (!account) throw new Error('Cannot find account');
             if (!contractAddress.length) throw new Error('Cannot find contract address');
             if (!chainId.length) throw new Error('Cannot find chain id');
 
