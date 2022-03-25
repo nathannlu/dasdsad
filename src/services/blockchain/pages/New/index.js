@@ -7,6 +7,8 @@ import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useDeployContractForm } from './hooks/useDeployContractForm';
 import StepWizard from 'react-step-wizard';
 import CloseIcon from '@mui/icons-material/Close';
+import { useWeb3 } from "libs/web3";
+import { useToast } from "ds/hooks/useToast";
 
 const blockchains = [
 	{ title: 'Ethereum', value:'ethereum', img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'},
@@ -21,6 +23,8 @@ const blockchains = [
 ];
 
 const Upload = () => {
+    const { addToast } = useToast();
+    const { wallet } = useWeb3();
 	const [activeStep, setActiveStep] = useState();
 	const history = useHistory();
 	const {
@@ -41,25 +45,37 @@ const Upload = () => {
 	});
 
     const onCreateContract = async () => {
-        const currencyMap = {
-            'ethereum': 'eth',
-            'rinkeby': 'eth',
-            'polygon': 'matic',
-            'mumbai': 'matic',
-            'solana': 'sol',
-        }
-        const ContractInput = {
-            name: name.value,
-            symbol: symbol.value,
-            blockchain: selectInput,
-            type: 'whitelist',
-            nftCollection: {
-                price: parseFloat(priceInEth.value),
-                size: parseInt(maxSupply.value),
-                currency: currencyMap[selectInput],
+        try {
+            if ((wallet === 'metamask' || wallet === 'default') && selectInput === 'solanadevnet') throw new Error('You must login with a phantom wallet to deploy a solana contract');
+
+            const currencyMap = {
+                'ethereum': 'eth',
+                'rinkeby': 'eth',
+                'polygon': 'matic',
+                'mumbai': 'matic',
+                'solana': 'sol',
+                'solanadevnet': 'sol',
             }
+            
+            const ContractInput = {
+                name: name.value,
+                symbol: symbol.value,
+                blockchain: selectInput,
+                type: 'whitelist',
+                nftCollection: {
+                    price: parseFloat(priceInEth.value),
+                    size: parseInt(maxSupply.value),
+                    currency: currencyMap[selectInput],
+                }
+            }
+            await createContract({ variables: { contract: ContractInput}});
         }
-        await createContract({ variables: { contract: ContractInput}});
+        catch (err) {
+            addToast({
+				severity: "error",
+				message: err.message,
+			})
+        }
     }
 
 	return (
