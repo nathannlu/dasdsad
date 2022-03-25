@@ -36,9 +36,9 @@ export const SettingsPanel = props => {
 				</div>
 				<hr />
 				<div className="px-8 py-6">
-					{/*
+					{
 						selected.settings && React.createElement(selected.settings)
-						*/}
+					}
 				</div>
 			</div>
 		</Drawer>

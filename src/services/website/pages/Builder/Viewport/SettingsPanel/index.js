@@ -219,7 +219,7 @@ export const Settings = () => {
                    <>
                         {imagePlaceHolders.some(img => component[key].value.includes(img)) ? (
                             <Widget 
-                                publicKey='dfeba611508a6f7760ca'
+                                publicKey="dfeba611508a6f7760ca"
                                 id={key}
                                 onChange={info => onChangeImage(info, key, parentKey, componentIdx)}
                             />

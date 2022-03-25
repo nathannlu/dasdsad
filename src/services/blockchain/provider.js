@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
+import bs58 from 'bs58';
 
 export const ContractContext = React.createContext({})
 
@@ -28,6 +29,19 @@ export const ContractProvider = ({ children }) => {
 	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
     const [cacheHash, setCacheHash] = useState('');
     const { account, loadBlockchainData, loadWeb3 } = useWeb3();
+
+	// monkey patch
+Object.prototype.toBuffer = function (fn) {
+	const isBase58 = value => /^[A-HJ-NP-Za-km-z1-9]*$/.test(this);
+	if (typeof this == "string" && isBase58) {
+		console.log(this);
+
+		const decoded = bs58.decode(this);
+		console.log(decoded);
+
+		return decoded;
+	}
+};
 
 
 	/*
