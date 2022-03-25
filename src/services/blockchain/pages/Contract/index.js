@@ -30,6 +30,12 @@ const Upload = (props) => {
 
                 await loadWalletProvider(wallet);
 
+                let chainId;
+				if (c.blockchain === "ethereum") chainId = "0x1";
+				else if (c.blockchain === "rinkeby") chainId = "0x4";
+				else if (c.blockchain === "polygon") chainId = "0x89";
+				else if (c.blockchain === "mumbai") chainId = "0x13881";
+
                 if (wallet === 'metamask') {
                     await compareNetwork(chainId);
                 }
