@@ -30,6 +30,7 @@ const Embed = ({ contract, id }) => {
 		else if (contract.blockchain === "rinkeby") chainId = "0x4";
 		else if (contract.blockchain === "polygon") chainId = "0x89";
 		else if (contract.blockchain === "mumbai") chainId = "0x13881";
+        else if (contract.blockchain.indexOf('solana') != -1) chainId = "solana";
 		setEmbedChainId(chainId);
 
 		setEmbedCode(`<iframe
