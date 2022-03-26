@@ -13,7 +13,14 @@ export const useDeployContract = (contract) => {
 	const { addToast } = useToast();
 
 	const deployContract = async () => {
-		console.log(contract)
+		console.log(contract.blockchain)
+		let env;
+		if(contract.blockchain == 'solanadevnet') {
+			env = 'devnet'
+		} else if (contract.blockchain == 'solana') {
+			env = 'mainnet'
+		}
+
 
 		try {
 			if (!contract || !Object.keys(contract).length)
@@ -43,6 +50,7 @@ export const useDeployContract = (contract) => {
 					creators: [{ address: account, verified: true, share: 100 }],
 					cacheHash: contract.nftCollection.cacheHash,
 					id: contract.id,
+					env
 				});
 			}
 		} catch (err) {

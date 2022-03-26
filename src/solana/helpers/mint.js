@@ -21,13 +21,12 @@ export async function mintV2(
 
     const mint = Keypair.generate();
 		
-		env = 'devnet'
 //		rpcUrl = 'https://'
 
 	
   
    // const userKeyPair = loadWalletKey(null, env);
-    const anchorProgram = await loadCandyProgramV2(null, env, rpcUrl);
+    const anchorProgram = await loadCandyProgramV2(null, env);
 	console.log(anchorProgram)
 	console.log(candyMachineAddress)
     const userTokenAccountAddress = await getTokenWallet(

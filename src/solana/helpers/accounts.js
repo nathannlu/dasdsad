@@ -200,6 +200,8 @@ export const createCandyMachineV2 = async function (
 	console.log(`The signatures were verifed: ${isVerifiedSignature}`);
 	let rawTransaction = transaction.serialize();
 
+	console.log(anchorProgram.provider.connection)
+
 	const asd = await sendAndConfirmRawTransaction(
 		anchorProgram.provider.connection,
 		rawTransaction,
@@ -544,10 +546,18 @@ export function loadWalletKey(keypair) {
 export async function loadCandyProgramV2(walletKeyPair, env, customRpcUrl) {
 	if (customRpcUrl) console.log("USING CUSTOM URL", customRpcUrl);
 
+		let url;
+		if(env == 'devnet') {
+			url = 'https://api.devnet.solana.com'	
+		} else if (env == 'mainnet') {
+			url = 'https://api.mainnet-beta.solana.com'	
+		}
+
 	// @ts-ignore
 	const solConnection = new anchor.web3.Connection(
 		//@ts-ignore
-		customRpcUrl || getCluster(env)
+//		customRpcUrl || getCluster(env)
+		url
 	);
 
 	const walletWrapper = new Wallet(walletKeyPair);
