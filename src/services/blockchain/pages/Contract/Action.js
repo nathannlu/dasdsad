@@ -57,6 +57,13 @@ const Actions = ({ id, contract }) => {
 	} = useContractActions(contract.address, getNetworkID());
 	const [selectedUpdate, setSelectedUpdate] = useState('metadata')
 
+	let env
+	if(contract.blockchain == 'solanadevnet') {
+		env = 'devnet'
+	} else if (contract.blockchain == 'solana') {
+		env = 'mainnet'
+	}
+
 	return (
 		<>
 			<Stack gap={3}>
@@ -248,7 +255,7 @@ const Actions = ({ id, contract }) => {
                                 startIcon={<SwapVertIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => withdraw(wallet)}
+                                onClick={() => withdraw(wallet, env)}
                             >
 															Close smart contract & withdraw rent
                             </Button>
@@ -256,13 +263,12 @@ const Actions = ({ id, contract }) => {
                                 startIcon={<PaymentIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => mint(1, wallet)}
+                                onClick={() => mint(1, wallet, env)}
                             >
                                 Mint
                             </Button>
                     </Stack>
                 )}
-			
 			</Stack>
 		</>
 	);
