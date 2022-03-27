@@ -196,75 +196,84 @@ export const Web3Provider = ({ children }) => {
 		const contract = await retrieveContract(contractAddress)
 		const price = await contract.methods.cost().call();
 
-//		const priceInWei = Web3.utils.toWei(price);
 
 		// Support depreciated method
-		contract.methods.mintNFTs(count).estimateGas({
-			from: account,
-			value: price * count
-		}, (err, gasAmount) => {
-			if(gasAmount !== undefined) {
-				contract.methods.mintNFTs(count).send({ from: account, value: price * count }, err => {
-					if (err) {
+		try {
+			await contract.methods.mintNFTs(count).estimateGas({
+				from: account,
+				value: price * count
+			}, (err, gasAmount) => {
+				if(gasAmount !== undefined) {
+					contract.methods.mintNFTs(count).send({ from: account, value: price * count }, err => {
+						if (err) {
+							addToast({
+								severity: 'error',
+								message: err.message
+							})
+						} else {
+							addToast({
+								severity: 'info',
+								message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+							})
+						}
+					})
+					.on('error', err => {
 						addToast({
 							severity: 'error',
 							message: err.message
 						})
-					} else {
+					})
+					.once("confirmation", () => {
 						addToast({
-							severity: 'info',
-							message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+							severity: 'success',
+							message: 'NFT successfully minted.'
 						})
-					}
-				})
-				.on('error', err => {
-					addToast({
-						severity: 'error',
-						message: err.message
 					})
-				})
-				.once("confirmation", () => {
-					addToast({
-						severity: 'success',
-						message: 'NFT successfully minted.'
+				}
+			})
+
+			await contract.methods.mint(count).estimateGas({
+				from: account,
+				value: price * count
+			}, (err, gasAmount) => {
+
+				if(!err && gasAmount !== undefined) {
+					contract.methods.mint(count).send({ from: account, value: price * count }, err => {
+						if (err) {
+							addToast({
+								severity: 'error',
+								message: err.message
+							})
+						} else {
+							addToast({
+								severity: 'info',
+								message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+							})
+						}
 					})
-				})
-			}
-		})
-
-		contract.methods.mint(count).estimateGas({
-			from: account,
-			value: price * count
-		}, (err, gasAmount) => {
-
-			if(!err && gasAmount !== undefined) {
-				contract.methods.mint(count).send({ from: account, value: price * count }, err => {
-					if (err) {
+					.on('error', err => {
 						addToast({
 							severity: 'error',
 							message: err.message
 						})
-					} else {
+					})
+					.once("confirmation", () => {
 						addToast({
-							severity: 'info',
-							message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
+							severity: 'success',
+							message: 'NFT successfully minted.'
 						})
-					}
-				})
-				.on('error', err => {
-					addToast({
-						severity: 'error',
-						message: err.message
 					})
-				})
-				.once("confirmation", () => {
-					addToast({
-						severity: 'success',
-						message: 'NFT successfully minted.'
-					})
-				})
-			}
-		})
+				}
+			})
+		} catch (e) {
+			addToast({
+				severity: 'error',
+				message: e.message
+			});
+
+		}
+
+
 	}
 
 	// compare array buffers
