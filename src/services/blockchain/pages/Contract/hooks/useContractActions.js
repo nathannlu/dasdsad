@@ -194,7 +194,15 @@ export const useContractActions = (contractAddress) => {
 		const { methods } = contract;
 		const price = await methods.cost().call();
 
+					methods.mint(count).send({ 
+						from: account,
+						value: price
+					}, err => err ? onTxnError(err) : onTxnInfo())
+					.once('error', err => onTxnError(err))
+					.once("confirmation", () => onTxnSuccess())
 
+
+		/*
 		try {
 			// Support depreciated method
 			await methods.mintNFTs(count).estimateGas({
@@ -230,6 +238,7 @@ export const useContractActions = (contractAddress) => {
 				message: e.message
 			});
 		}
+		*/
 
 	}
 	

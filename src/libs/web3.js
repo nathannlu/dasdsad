@@ -197,81 +197,31 @@ export const Web3Provider = ({ children }) => {
 		const price = await contract.methods.cost().call();
 
 
-		// Support depreciated method
-		try {
-			await contract.methods.mintNFTs(count).estimateGas({
-				from: account,
-				value: price * count
-			}, (err, gasAmount) => {
-				if(gasAmount !== undefined) {
-					contract.methods.mintNFTs(count).send({ from: account, value: price * count }, err => {
-						if (err) {
-							addToast({
-								severity: 'error',
-								message: err.message
-							})
-						} else {
-							addToast({
-								severity: 'info',
-								message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
-							})
-						}
-					})
-					.on('error', err => {
+				contract.methods.mint(count).send({ from: account, value: price * count }, err => {
+					if (err) {
 						addToast({
 							severity: 'error',
 							message: err.message
 						})
-					})
-					.once("confirmation", () => {
+					} else {
 						addToast({
-							severity: 'success',
-							message: 'NFT successfully minted.'
+							severity: 'info',
+							message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
 						})
+					}
+				})
+				.on('error', err => {
+					addToast({
+						severity: 'error',
+						message: err.message
 					})
-				}
-			})
-
-			await contract.methods.mint(count).estimateGas({
-				from: account,
-				value: price * count
-			}, (err, gasAmount) => {
-
-				if(!err && gasAmount !== undefined) {
-					contract.methods.mint(count).send({ from: account, value: price * count }, err => {
-						if (err) {
-							addToast({
-								severity: 'error',
-								message: err.message
-							})
-						} else {
-							addToast({
-								severity: 'info',
-								message: 'Sending transaction to Blockchain. This might take a couple of seconds...'
-							})
-						}
+				})
+				.once("confirmation", () => {
+					addToast({
+						severity: 'success',
+						message: 'NFT successfully minted.'
 					})
-					.on('error', err => {
-						addToast({
-							severity: 'error',
-							message: err.message
-						})
-					})
-					.once("confirmation", () => {
-						addToast({
-							severity: 'success',
-							message: 'NFT successfully minted.'
-						})
-					})
-				}
-			})
-		} catch (e) {
-			addToast({
-				severity: 'error',
-				message: e.message
-			});
-
-		}
+				})
 
 
 	}
