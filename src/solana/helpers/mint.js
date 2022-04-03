@@ -28,6 +28,8 @@ export async function mintV2(
    // const userKeyPair = loadWalletKey(null, env);
     const anchorProgram = await loadCandyProgramV2(null, env);
 	console.log(anchorProgram)
+
+	console.log(env)
 	console.log(candyMachineAddress)
     const userTokenAccountAddress = await getTokenWallet(
         payerWalletAddress,

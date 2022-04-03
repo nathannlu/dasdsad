@@ -5,6 +5,7 @@ import { useGetContract } from "services/blockchain/gql/hooks/contract.hook";
 import { useToast } from "ds/hooks/useToast";
 import { useContractDetails } from "services/blockchain/pages/Contract/hooks/useContractDetails";
 import { mintV2 } from 'solana/helpers/mint.js';
+import bs58 from 'bs58';
 
 export const useEmbed = () => {
     const { addToast } = useToast();
@@ -153,19 +154,21 @@ export const useEmbed = () => {
             if (!contractAddress.length) throw new Error('Cannot find contract address');
             if (!chainId.length) throw new Error('Cannot find chain id');
 
-            if (!isPublicSaleOpen && !isPresaleOpen) {
-                throw new Error('Public sale and Presale is not open');
-            }
+
 
             await compareNetwork(chainId, async () => {
                 setIsMinting(true);
                 
                 if (chainId.indexOf('solana') != -1) { // Phantom
                     console.log("minting solana")
+									console.log(contract)
                     await mintV2(contract.blockchain == 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, account);
                     setIsMinting(false);
                 }
                 else { // Metamask
+										if (!isPublicSaleOpen && !isPresaleOpen) {
+												throw new Error('Public sale and Presale is not open');
+										}
                     if (isPublicSaleOpen) {
                         await mint(contractAddress, mintCount);
                         setIsMinting(false);
@@ -190,6 +193,19 @@ export const useEmbed = () => {
 			})
         }
     }
+
+	// monkey patch
+Object.prototype.toBuffer = function (fn) {
+	const isBase58 = value => /^[A-HJ-NP-Za-km-z1-9]*$/.test(this);
+	if (typeof this == "string" && isBase58) {
+		console.log(this);
+
+		const decoded = bs58.decode(this);
+		console.log(decoded);
+
+		return decoded;
+	}
+};
 
     return {
         buttonState,

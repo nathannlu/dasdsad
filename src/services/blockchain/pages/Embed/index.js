@@ -96,7 +96,15 @@ const Embed = () => {
                                 }}
                                 onClick={onMint}
                             >
-                                Mint {(price * mintCount).toString().substring(0, 5)} {prefix}
+																{chainId.indexOf('solana') == -1 ? (
+																	<div>
+																	Mint {(price * mintCount).toString().substring(0, 5)} {prefix}
+																	</div>
+																) : (
+																<div>
+																	Mint
+																</div>
+																)}
                             </LoadingButton>
                             {chainId.indexOf('solana') == -1 && (
                                 <Box
