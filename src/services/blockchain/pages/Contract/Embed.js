@@ -40,7 +40,7 @@ const Embed = ({ contract, id }) => {
 				window.location.hostname.indexOf("localhost") === -1
 					? window.location.hostname
 					: `${window.location.hostname}:3000`
-			}/smart-contracts/embed?contract=${contract.address}&chainId=${chainId}"
+			}/smart-contracts/embed/v1?contract=${contract.address}&chainId=${chainId}"
 			width="100%"
 			height="115px"
 			frameborder="0"

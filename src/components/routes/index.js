@@ -46,6 +46,11 @@ const GlobalRoutes = () => {
 			component: Embed,
 			exact: true 
 		},
+		{
+			path: '/smart-contracts/embed/v1',
+			component: Embed,
+			exact: true 
+		},
 
 
 
