@@ -13,10 +13,16 @@ import DownloadModal from './DownloadModal'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import { useContract } from 'services/blockchain/provider';
 
 const stripePromise = loadStripe(config.stripe.publicKey);
 
 const Collection = () => {
+	// const {
+	// 	compareNetwork,
+    //     wallet,
+    //     loadWalletProvider
+	// } = useWeb3();
 	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState(false);
 	const { settingsForm: { size, name, description }, metadataType } = useMetadata();
 	const { query: { layers }} = useLayerManager();

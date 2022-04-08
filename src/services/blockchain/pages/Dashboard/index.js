@@ -6,7 +6,7 @@ import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material'
 import { useContract } from 'services/blockchain/provider';
 import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-
+import { useWeb3 } from 'libs/web3';
 import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 
 const Dashboard = () => {
@@ -26,6 +26,10 @@ const Dashboard = () => {
 			})
 		}
 	})
+
+	const completedTransaction = () => {
+        console.log("TRANSCACTION DONE");
+    }
 
   const [anchorEl, setAnchorEl] = useState(null);
 	const [open, setOpen] = useState('');

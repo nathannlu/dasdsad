@@ -93,7 +93,7 @@ export const Web3Provider = ({ children }) => {
     const loginToWallet = async (walletType) => {
         try {
             const account = await loadWalletProvider(walletType);
-            setAccount(account);
+            await setAccount(account);
 
             console.log(account)
 
@@ -492,11 +492,14 @@ export const Web3Provider = ({ children }) => {
     }
 
 	const payInEth = async (size, callback) => {
-        compareNetwork('0x1', () => {
+        await compareNetwork('0x4', () => {
             const web3 = window.web3
             const inEth = 0.000034;
             const amount = inEth * size;
-    
+            
+            console.log(web3);
+            console.log(web3.eth);
+            console.log(account);
             web3.eth.sendTransaction({
                 from: account,
                 to: config.company.walletAddress,
@@ -518,6 +521,13 @@ export const Web3Provider = ({ children }) => {
             })
         })
 		return [loading]
+	}
+
+    const payGeneratorWithEth = async (size, callback) => {
+
+        await loginToWallet('metamask');
+        
+        return await payInEth(size, callback);
 	}
 
 	return (
@@ -543,6 +553,7 @@ export const Web3Provider = ({ children }) => {
 
 				loading,
 				payInEth,
+                payGeneratorWithEth,
                 getPrice,
                 getMaximumSupply,
 				getTotalMinted,

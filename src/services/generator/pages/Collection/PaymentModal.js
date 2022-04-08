@@ -14,7 +14,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
     const elements = useElements();
 	const { settingsForm  } = useMetadata();
 	const { generateImages, referral } = useGenerator();
-	const { payInEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
+	const { payInEth, payGeneratorWithEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
 
 	const {
 		paymentForm: { nameOnCard, email },
@@ -89,7 +89,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
 						<Stack gap={2}>
 							<LoadingButton 
 								startIcon={<LockIcon />} 
-								onClick={() => payInEth(settingsForm.size.value, completedTransaction)} 
+								onClick={() => payGeneratorWithEth(settingsForm.size.value, completedTransaction)} 
 								loading={ethPayLoading}
 								variant="contained" 
 								color="black"
