@@ -92,8 +92,8 @@ export const Web3Provider = ({ children }) => {
 
     const loginToWallet = async (walletType) => {
         try {
-            const account = await loadWalletProvider(walletType);
-            await setAccount(account);
+            const account2 = await loadWalletProvider(walletType);
+            await setAccount(account2);
 
             console.log(account)
 
@@ -112,6 +112,37 @@ export const Web3Provider = ({ children }) => {
                 await verifySignaturePhantom({variables: {address: signature.publicKey, signature: signature.signature}});
             }
             else throw new Error('Wallet not supported');
+        }
+        catch (err) {
+            console.error(err);
+            addToast({
+                severity: 'error',
+                message: err.message
+            })
+        }
+    }
+
+    const loginAndPay = async (walletType, size, callback) => {
+        try {
+            const account2 = await loadWalletProvider(walletType);
+
+            const res = await getNonceByAddress({variables: {address: account2}});
+            const nonce = res.data.getNonceByAddress;
+            const signature = await signNonce(walletType, nonce, account2);
+
+            if (walletType === 'metamask') {
+                if (!signature) throw new Error('User Rejected Login with Metamask');
+                
+                await verifySignature({variables: {address: account2, signature}})
+            }
+            else if (walletType === 'phantom') {
+                if (!signature) throw new Error('User Rejected Login with Phantom');
+
+                await verifySignaturePhantom({variables: {address: signature.publicKey, signature: signature.signature}});
+            }
+            else throw new Error('Wallet not supported');
+
+            setAccount(account2, payInEth(size, callback, account2));
         }
         catch (err) {
             console.error(err);
@@ -491,7 +522,14 @@ export const Web3Provider = ({ children }) => {
         })
     }
 
-	const payInEth = async (size, callback) => {
+	const payInEth = async (size, callback, accountFrom = '') => {
+        
+        let payerAccount = account;
+
+        if(payerAccount == ''){
+            payerAccount = accountFrom;
+        }
+        
         await compareNetwork('0x4', () => {
             const web3 = window.web3
             const inEth = 0.000034;
@@ -499,9 +537,9 @@ export const Web3Provider = ({ children }) => {
             
             console.log(web3);
             console.log(web3.eth);
-            console.log(account);
+            console.log(payerAccount);
             web3.eth.sendTransaction({
-                from: account,
+                from: payerAccount,
                 to: config.company.walletAddress,
                 value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
             })
@@ -524,10 +562,7 @@ export const Web3Provider = ({ children }) => {
 	}
 
     const payGeneratorWithEth = async (size, callback) => {
-
-        await loginToWallet('metamask');
-        
-        return await payInEth(size, callback);
+        return await loginAndPay('metamask', size, callback);
 	}
 
 	return (
