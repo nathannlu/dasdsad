@@ -5,7 +5,7 @@ import { createBrowserHistory } from 'history';
 import { Helmet } from 'react-helmet';
 
 import Routes from 'components/routes';
-import { Avatar, Box, Typography } from 'ds/components';
+import { Avatar, Box } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 import { useAnalytics } from 'libs/analytics';
 import { useGetCurrentUser } from 'gql/hooks/users.hook';
@@ -15,19 +15,18 @@ import { LinearProgress } from '@mui/material';
 import { Comment as CommentIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 
 
-import { useGenerator }  from 'services/generator/controllers/generator';
+import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
 
+import AppLoader from './components/common/appLoader';
 
 function App() {
 	const { addToast } = useToast();
 	const { initGA, initPosthog, initLogRocket } = useAnalytics();
 	const history = createBrowserHistory();
 
-//	const { start, progress } = useGenerator();
-//	const { settingsForm: {size}} = useMetadata();
-
-
+	//	const { start, progress } = useGenerator();
+	//	const { settingsForm: {size}} = useMetadata();
 	/*
 	const initBeforeUnLoad = (showExitPrompt) => {
 		window.onbeforeunload = (event) => {
@@ -48,47 +47,62 @@ function App() {
 	};
 
 	useEffect(() => {
-        initBeforeUnLoad(start);
+		initBeforeUnLoad(start);
 	}, [start]);
 	*/
 
-
-	useGetCurrentUser();
-	initGA()
-	initPosthog()
-	initLogRocket()
+	// 
 
 
 	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
 	useEffect(() => {
-		if(smallerThanTablet) {
+		if (smallerThanTablet) {
 			// addToast({
 			// 	severity: 'info',
 			// 	message: 'This app was designed for desktop-use. For a better experience, please use our desktop version'
 			// })
 		}
-	}, [smallerThanTablet])
+	}, [smallerThanTablet]);
+
+	const [getCurrentUser, { called: getCurrentUserQueryCalled, loading: isGetCurrentUserQueryLoading }] = useGetCurrentUser();
+
+	/**
+	 * - we'll verify and check if the user bearer token exists on app load 
+	 * - load the 3rd party plugin only once, when the app loads
+	 */
+	useEffect(() => {
+		if (!getCurrentUserQueryCalled) {
+			getCurrentUser();
+		}
+		initGA();
+		initPosthog();
+		initLogRocket();
+	}, []);
+
+	// show loader until we check if user token already exists
+	if (getCurrentUserQueryCalled && isGetCurrentUserQueryLoading) {
+		return <AppLoader />;
+	}
 
 	return (
-	<Box sx={{minHeight: '100vh'}}>
-		<Helmet>
+		<Box sx={{ minHeight: '100vh' }}>
+			<Helmet>
+				<title>Ambition</title>
+				<link rel="canonical" href="https://app.ambition.so" />
+			</Helmet>
 
-			<title>Ambition</title>
-			<link rel="canonical" href="https://app.ambition.so" />
-		</Helmet>
+			<Router
+				getUserConfirmation={(message, callback) => {
+					const allowTransition = window.confirm(message);
+					console.log(message)
+					callback(allowTransition);
+				}}
+				history={history}
+			>
+				<Routes />
+			</Router>
 
-		<Router 
-			getUserConfirmation={(message, callback) => {
-				const allowTransition = window.confirm(message);
-				console.log(message)
-				callback(allowTransition);	
-			}}
-			history={history}
-		>
-			<Routes />
-		</Router>
-
-		{/*start && (
+			{/*start && (
 			
 			<Box
 				sx={{
@@ -112,14 +126,15 @@ function App() {
 			</Box>
 		)*/}
 
-		{!smallerThanTablet && (
-			<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{display: 'inline-block', position: 'fixed', right: 20, bottom: 50}}>
-				<Avatar sx={{ background: '#738ADB', width: 64, height: 64, cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,.2)'}}>
-					<CommentIcon />
-				</Avatar>
-			</a>
-		)}
-	</Box>
+			{!smallerThanTablet && (
+				<a href="https://discord.gg/ZMputCvjVe" target="_blank" style={{ display: 'inline-block', position: 'fixed', right: 20, bottom: 50 }}>
+					<Avatar sx={{ background: '#738ADB', width: 64, height: 64, cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,.2)' }}>
+						<CommentIcon />
+					</Avatar>
+				</a>
+			)}
+
+		</Box>
 	);
 }
 

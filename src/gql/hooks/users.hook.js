@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';
 import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE, VERIFY_SIGNATURE_PHANTOM } from '../users.gql'
 import { useWeb3 } from '../../libs/web3';
@@ -51,30 +51,30 @@ export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
 		onError
 	})
 
-	return [ getNonceByAddress, { ...mutationResult }]
+	return [getNonceByAddress, { ...mutationResult }]
 };
 
 
 export const useVerifySignature = ({ onCompleted, onError }) => {
 	const { onLoginSuccess } = useAuth()
-//	let history = useHistory();
+	//	let history = useHistory();
 
 	const [verifySignature, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE, {
 		onCompleted: data => {
-//			console.log(data)
+			//			console.log(data)
 
 			onLoginSuccess(data.verifySignature)
-//			history.push('/dashboard');
+			//			history.push('/dashboard');
 
 
-			if(onCompleted) {
+			if (onCompleted) {
 				onCompleted(data)
 			}
 		},
 		onError
 	})
 
-	return [ verifySignature, { ...mutationResult }]
+	return [verifySignature, { ...mutationResult }]
 };
 
 export const useVerifySignaturePhantom = ({ onCompleted, onError }) => {
@@ -83,29 +83,28 @@ export const useVerifySignaturePhantom = ({ onCompleted, onError }) => {
 	const [verifySignaturePhantom, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE_PHANTOM, {
 		onCompleted: data => {
 			onLoginSuccess(data.verifySignaturePhantom)
-			if(onCompleted) {
+			if (onCompleted) {
 				onCompleted(data)
 			}
 		},
 		onError
 	})
 
-	return [ verifySignaturePhantom, { ...mutationResult }]
+	return [verifySignaturePhantom, { ...mutationResult }]
 };
 
-
-
-export const useGetCurrentUser = async () => {
+/**
+ * we need to lazy fetch the user details, so that it is called only once when app loads
+ */
+export const useGetCurrentUser = () => {
 	const { onReauthenticationSuccess, onReauthenticationError } = useAuth();
-//	const { setWebsite } = useWebsite();
-//k	const { actions: { setLayers }} = useLayerManager();
-//	const { updateSettingsForm  } = useMetadata();
 
+	//	const { setWebsite } = useWebsite();
+	//k	const { actions: { setLayers }} = useLayerManager();
+	//	const { updateSettingsForm  } = useMetadata();
 
-  const { ...queryResult } = useQuery(REAUTHENTICATE, {
+	return useLazyQuery(REAUTHENTICATE, {
 		onCompleted: async data => {
-
-
 			const user = data.getCurrentUser
 			const { websites, collections } = user;
 			const hasWebsite = websites?.length > 0;
@@ -149,10 +148,8 @@ export const useGetCurrentUser = async () => {
 			*/
 
 		},
-		onError: onReauthenticationError
+		onError: onReauthenticationError,
 	});
-
-	return { ...queryResult }
 }
 
 
@@ -164,15 +161,16 @@ export const useRegister = ({ name, email, password, onCompleted, onError }) => 
 		onError
 	})
 
-	return [ register, { ...mutationResult }];
+	return [register, { ...mutationResult }];
 };
 
 export const useLogin = ({ email, password, onError, onCompleted }) => {
 	const { onLoginSuccess } = useAuth();
 	const [login, { ...mutationResult }] = useMutation(LOGIN, {
-		variables: { email, password},
+		variables: { email, password },
 		onCompleted: data => {
 			if (data?.login) {
+				
 				if (onLoginSuccess) {
 					onLoginSuccess(data.login);
 				}

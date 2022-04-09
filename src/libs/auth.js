@@ -1,4 +1,4 @@
-import React, { useState, useContext }  from 'react';
+import React, { useState, useContext } from 'react';
 //import { useWebsite } from 'libs/website';
 //import { setAuthToken } from './api';
 
@@ -19,37 +19,24 @@ export const useAuth = () => useContext(AuthContext);
 
 const TOKEN_KEY = "token";
 
-
-
 export const AuthProvider = ({ children }) => {
-//	const { setWebsite } = useWebsite();
+	//	const { setWebsite } = useWebsite();
 
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [user, setUser] = useState();
-	const [token, setToken] = useState(window.localStorage.getItem(TOKEN_KEY))
+	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 
-	const updateToken = (t) => {
-		setToken(t)	
-		//setAuthToken(t)
-		t
-			? window.localStorage.setItem(TOKEN_KEY, t)
-			: window.localStorage.removeItem(TOKEN_KEY)
+	const setAuthTokenInLocalStorage = (authToken) => {
+		//setAuthToken(authToken)
+		authToken ? window.localStorage.setItem(TOKEN_KEY, authToken) : window.localStorage.removeItem(TOKEN_KEY);
 	}
 
 	const onLoginSuccess = ({ user, token }) => {
-		updateToken(token);	
+		setAuthTokenInLocalStorage(token);
 		setUser(user);
-
-		setIsAuthenticated(true);
 	}
 
-	// @TODO
-	// This function currently runs three times
-	// also user keeps getting set if there is no check
-	const onReauthenticationSuccess = ({id, address, email, name, stripeCustomerId}) => {
-
-		if(!user) {
+	const onReauthenticationSuccess = ({ id, address, email, name, stripeCustomerId }) => {
+		if (!user) {
 			setUser({
 				id,
 				address,
@@ -58,29 +45,25 @@ export const AuthProvider = ({ children }) => {
 				stripeCustomerId
 			});
 		}
-			
-		setIsAuthenticated(true);
 		setLoading(false);
 	}
 
 	const onReauthenticationError = () => {
-		setToken(null);
+		setUser(null);
 		setLoading(false);
 	}
 
 	const logout = () => {
-		updateToken(null);
+		setAuthTokenInLocalStorage(null);
 		setUser(null);
 		//setWebsite({});
-		setIsAuthenticated(false);
 	}
 
 	return (
 		<AuthContext.Provider
 			value={{
-				isAuthenticated,
+				isAuthenticated: !!user && !!window.localStorage.getItem(TOKEN_KEY),
 				user,
-				token,
 				onLoginSuccess,
 				logout,
 				loading,
@@ -88,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 				onReauthenticationError,
 			}}
 		>
-			{ children }
+			{children}
 		</AuthContext.Provider>
 	)
 }

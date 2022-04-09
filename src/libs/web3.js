@@ -59,8 +59,9 @@ export const Web3Provider = ({ children }) => {
 
     useEffect(() => {
         const curWallet = localStorage.getItem('ambition-wallet');
-        if (!curWallet || !curWallet.length) logout();
-        setWallet(curWallet);
+        // TODO check why logout() function is called?
+        // if (!curWallet || !curWallet.length) logout();
+        setWallet(curWallet || 'default');
     }, [])
 
     const loadWalletProvider = async (walletType) => {
