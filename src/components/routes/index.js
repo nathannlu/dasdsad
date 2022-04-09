@@ -15,9 +15,9 @@ import Collection from 'services/generator/pages/Collection';
 import AppRoutes from 'services/routes';
 
 // Published Website Route
-import Published from 'components/Published'; 
+import Published from 'components/Published';
 
-import Embed from 'services/blockchain/pages/Embed'; 
+import Embed from 'services/blockchain/pages/Embed';
 
 
 const GlobalRoutes = () => {
@@ -29,7 +29,7 @@ const GlobalRoutes = () => {
 		{ path: '/login', component: Login },
 		{ path: '/signup', component: Signup },
 
-//		{ path: '/generator', component: Generator },
+		//		{ path: '/generator', component: Generator },
 
 		{
 			path: '/generator',
@@ -44,21 +44,21 @@ const GlobalRoutes = () => {
 		{
 			path: '/smart-contracts/embed',
 			component: Embed,
-			exact: true 
+			exact: true
 		},
 		{
 			path: '/smart-contracts/embed/v1',
 			component: Embed,
-			exact: true 
+			exact: true
 		},
 
+		{ path: '/', component: () => <Redirect to="/login" />, exact: true },
 
-
-		{ path: '/', component: () => <Redirect to="/login" />, exact: true},
-
-
-		// Dashboard routes
-		{ path: '/', component: AppRoutes, private: true },
+		/**
+		 * if none of the above routes match, load dashboard routes
+		 * the broken routes (aka not-found-404) will be handled in <AppRoutes />
+		 */
+		{ path: '*', component: AppRoutes, private: true },
 	]
 
 	return <RouteBuilder routes={routes} />
