@@ -11,49 +11,37 @@ const Broken = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    mt: '8em'
-                }}
-            >
+                    mt: '8em',
+                }}>
                 <Box
-                    component='img'
+                    component="img"
                     sx={{
                         width: '70px',
                         objectFit: 'cover',
-                        mb: 5
+                        mb: 5,
                     }}
-                    alt='Broken Route Icon'
-                    src='https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61f1dc8561db0122a091c817_browser-error.png'
+                    alt="Broken Route Icon"
+                    src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61f1dc8561db0122a091c817_browser-error.png"
                 />
-                <Typography 
-                    fontSize='125pt'
-                    lineHeight='145px'
-                >
+                <Typography fontSize="125pt" lineHeight="145px">
                     404
                 </Typography>
-                <Typography 
-                    fontSize='32pt'
-                >
-                    Page Not Found
-                </Typography>
-                <Typography 
-                    fontSize='14pt'
+                <Typography fontSize="32pt">Page Not Found</Typography>
+                <Typography
+                    fontSize="14pt"
                     sx={{
-                        mb: 10
-                    }}
-                >
+                        mb: 10,
+                    }}>
                     Woops, this page doesnt exists!! 🚀
                 </Typography>
                 <Link to="/dashboard">
-                    <Button
-                        variant='contained'
-                        endIcon={<ArrowBackIcon />}
-                    >
+                    <Button variant="contained" endIcon={<ArrowBackIcon />}>
                         Go back to dashboard
                     </Button>
                 </Link>
             </Box>
         </Fade>
-    )
-}
+    );
+};
 
-export default Broken
+export default Broken;

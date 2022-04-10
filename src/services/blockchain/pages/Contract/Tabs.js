@@ -9,33 +9,36 @@ import Action from './Action';
 import Details from './Details';
 import Embed from './Embed';
 
+const View = ({ id, contract }) => {
+    const [value, setValue] = React.useState('details');
 
-const View = ({id, contract}) => {
-  const [value, setValue] = React.useState("details");
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Details" value="details" />
-          <Tab label="Action" value="action" />
-          <Tab label="Embed" value="embed" />
-        </Tabs>
-      </Box>
-			<Box py={2}>
-				{{
-					"details": <Details id={id} contract={contract} />,
-					"action": <Action id={id} contract={contract} />,
-					"embed": <Embed id={id} contract={contract} />
-				}[value]}
-			</Box>
-    </Box>
-  );
-}
-
+    return (
+        <Box sx={{ width: '100%' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="basic tabs example">
+                    <Tab label="Details" value="details" />
+                    <Tab label="Action" value="action" />
+                    <Tab label="Embed" value="embed" />
+                </Tabs>
+            </Box>
+            <Box py={2}>
+                {
+                    {
+                        details: <Details id={id} contract={contract} />,
+                        action: <Action id={id} contract={contract} />,
+                        embed: <Embed id={id} contract={contract} />,
+                    }[value]
+                }
+            </Box>
+        </Box>
+    );
+};
 
 export default View;

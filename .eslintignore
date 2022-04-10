@@ -1,0 +1,12 @@
+/node_modules
+
+/migrations
+/patches
+
+package.json
+package-lock.json
+yarn.lock
+
+.babelrc
+
+/src/assets

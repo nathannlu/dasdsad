@@ -17,61 +17,69 @@ export interface AuthContextType {
 export const AuthContext = React.createContext({});
 export const useAuth = () => useContext(AuthContext);
 
-const TOKEN_KEY = "token";
+const TOKEN_KEY = 'token';
 
 export const AuthProvider = ({ children }) => {
-	//	const { setWebsite } = useWebsite();
+    //	const { setWebsite } = useWebsite();
 
-	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-	const setAuthTokenInLocalStorage = (authToken) => {
-		//setAuthToken(authToken)
-		authToken ? window.localStorage.setItem(TOKEN_KEY, authToken) : window.localStorage.removeItem(TOKEN_KEY);
-	}
+    const setAuthTokenInLocalStorage = (authToken) => {
+        //setAuthToken(authToken)
+        authToken
+            ? window.localStorage.setItem(TOKEN_KEY, authToken)
+            : window.localStorage.removeItem(TOKEN_KEY);
+    };
 
-	const onLoginSuccess = ({ user, token }) => {
-		setAuthTokenInLocalStorage(token);
-		setUser(user);
-	}
+    const onLoginSuccess = ({ user, token }) => {
+        setAuthTokenInLocalStorage(token);
+        setUser(user);
+    };
 
-	const onReauthenticationSuccess = ({ id, address, email, name, stripeCustomerId }) => {
-		if (!user) {
-			setUser({
-				id,
-				address,
-				email,
-				name,
-				stripeCustomerId
-			});
-		}
-		setLoading(false);
-	}
+    const onReauthenticationSuccess = ({
+        id,
+        address,
+        email,
+        name,
+        stripeCustomerId,
+    }) => {
+        if (!user) {
+            setUser({
+                id,
+                address,
+                email,
+                name,
+                stripeCustomerId,
+            });
+        }
+        setLoading(false);
+    };
 
-	const onReauthenticationError = () => {
-		setUser(null);
-		setLoading(false);
-	}
+    const onReauthenticationError = () => {
+        setUser(null);
+        setLoading(false);
+    };
 
-	const logout = () => {
-		setAuthTokenInLocalStorage(null);
-		setUser(null);
-		//setWebsite({});
-	}
+    const logout = () => {
+        setAuthTokenInLocalStorage(null);
+        setUser(null);
+        //setWebsite({});
+    };
 
-	return (
-		<AuthContext.Provider
-			value={{
-				isAuthenticated: !!user && !!window.localStorage.getItem(TOKEN_KEY),
-				user,
-				onLoginSuccess,
-				logout,
-				loading,
-				onReauthenticationSuccess,
-				onReauthenticationError,
-			}}
-		>
-			{children}
-		</AuthContext.Provider>
-	)
-}
+    return (
+        <AuthContext.Provider
+            value={{
+                isAuthenticated:
+                    !!user && !!window.localStorage.getItem(TOKEN_KEY),
+                user,
+                onLoginSuccess,
+                logout,
+                loading,
+                onReauthenticationSuccess,
+                onReauthenticationError,
+            }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};

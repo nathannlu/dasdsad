@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { CollectionProvider } from '../../provider';
 import { useToast } from 'ds/hooks/useToast';
-import { Stack, IconButton, Divider, Typography, Box, Grid, Fade, TextField, FormLabel } from 'ds/components';
+import {
+    Stack,
+    IconButton,
+    Divider,
+    Typography,
+    Box,
+    Grid,
+    Fade,
+    TextField,
+    FormLabel,
+} from 'ds/components';
 import { AppBar, Toolbar } from '@mui/material';
 import { BrowserRouter as Router, Prompt, useHistory } from 'react-router-dom';
 import StepWizard from 'react-step-wizard';
@@ -14,24 +24,25 @@ import Payment from './05_Payment';
 import Model from './Model';
 
 const Generator = () => {
-	const [activeStep, setActiveStep] = useState(1);
-	const isLastStep = activeStep == 5 || activeStep == 6;
-	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
+    const [activeStep, setActiveStep] = useState(1);
+    const isLastStep = activeStep == 5 || activeStep == 6;
+    const smallerThanTablet = useMediaQuery((theme) =>
+        theme.breakpoints.down('md')
+    );
 
-	return (
-		<Fade in>
-			<Grid 
-				container
-				sx={{
-					minHeight: '100vh',
-					overflow: 'hidden',
-					bgcolor: '#191A24',
-					position: 'absolute',
-					zIndex: 1100,
-					top: 0,
-				}}
-			>
-				{/*
+    return (
+        <Fade in>
+            <Grid
+                container
+                sx={{
+                    minHeight: '100vh',
+                    overflow: 'hidden',
+                    bgcolor: '#191A24',
+                    position: 'absolute',
+                    zIndex: 1100,
+                    top: 0,
+                }}>
+                {/*
 				<AppBar position="fixed" sx={{bgcolor: 'grey.100', py: 2, boxShadow: 'none', borderBottom: '1px solid rgba(0,0,0,.2)', color: '#000'}}>
 					<Stack direction="row" px={2} gap={2} alignItems="center">
 						<IconButton onClick={() => history.goBack()}>
@@ -47,47 +58,48 @@ const Generator = () => {
 				</AppBar>
 				*/}
 
-				<Grid md={!isLastStep ? 6 : 4} item sx={{transition: 'all .5s'}}>
-					<Stack
-						p={4}
-						gap={2}
-						sx={{
-							backgroundColor: 'white',
-							height: '100%',
-						}}
-					>
-						<StepWizard transitions={{}} onStepChange={s => setActiveStep(s.activeStep)}>
-							<Settings />
-							<Layers />
-							<Traits />
-							<Rarity />
-							<Payment />
-						</StepWizard>
-					</Stack>
-				</Grid>
+                <Grid
+                    md={!isLastStep ? 6 : 4}
+                    item
+                    sx={{ transition: 'all .5s' }}>
+                    <Stack
+                        p={4}
+                        gap={2}
+                        sx={{
+                            backgroundColor: 'white',
+                            height: '100%',
+                        }}>
+                        <StepWizard
+                            transitions={{}}
+                            onStepChange={(s) => setActiveStep(s.activeStep)}>
+                            <Settings />
+                            <Layers />
+                            <Traits />
+                            <Rarity />
+                            <Payment />
+                        </StepWizard>
+                    </Stack>
+                </Grid>
 
-
-				{!smallerThanTablet ? (
-					<Grid 
-						md={!isLastStep ? 6 : 8} 
-						alignItems="center" 
-						justifyItems="center" 
-						item 
-						sx={{
-							transition: 'all .5s',
-							height: '100%',
-						}}
-					>
-						<Model activeStep={activeStep} isLastStep={isLastStep} />
-					</Grid>
-				): null}
-			</Grid>
-		</Fade>
-	)
+                {!smallerThanTablet ? (
+                    <Grid
+                        md={!isLastStep ? 6 : 8}
+                        alignItems="center"
+                        justifyItems="center"
+                        item
+                        sx={{
+                            transition: 'all .5s',
+                            height: '100%',
+                        }}>
+                        <Model
+                            activeStep={activeStep}
+                            isLastStep={isLastStep}
+                        />
+                    </Grid>
+                ) : null}
+            </Grid>
+        </Fade>
+    );
 };
 
-
-
-
 export default Generator;
-

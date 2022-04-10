@@ -3,7 +3,10 @@ import { Stack, CircularProgress } from '../../ds/components';
 
 const AppLoader = () => {
     return (
-        <Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
+        <Stack
+            alignItems="center"
+            justifyContent="center"
+            sx={{ height: '100vh' }}>
             <CircularProgress />
         </Stack>
     );

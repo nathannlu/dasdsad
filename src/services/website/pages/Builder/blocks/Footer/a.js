@@ -1,43 +1,48 @@
 import React from 'react';
-import { Fade } from "@material-ui/core";
+import { Fade } from '@material-ui/core';
 import Button from '../Button';
 import Link from '../Link';
 
-const Template = props => {
-	return (
-		<Fade in={true}>
-			<footer className="text-gray-600 body-font" style={{background: props.background.value}}>
-				<div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
-					<div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
-						<a className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
-							<img style={{width: '50px'}} src={props.image.value} />
-						</a>
-						<p className="mt-2 text-sm text-gray-500">
-							{props.description.value}
-						</p>
-					</div>
-					<div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
-						<div className="lg:w-1/4 md:w-1/2 w-full ml-auto px-4">
-							<nav className="list-none mb-10">
-								{props.links?.value.map((item, i) => (
-									<li>
-										<Link 
-											text={item.link.value.text.value}
-											link={item.link.value.link.value}
-										/>
-									</li>
-								))}
-							</nav>
-						</div>
-					</div>
-				</div>
+const Template = (props) => {
+    return (
+        <Fade in={true}>
+            <footer
+                className="text-gray-600 body-font"
+                style={{ background: props.background.value }}>
+                <div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
+                    <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
+                        <a className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
+                            <img
+                                style={{ width: '50px' }}
+                                src={props.image.value}
+                            />
+                        </a>
+                        <p className="mt-2 text-sm text-gray-500">
+                            {props.description.value}
+                        </p>
+                    </div>
+                    <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
+                        <div className="lg:w-1/4 md:w-1/2 w-full ml-auto px-4">
+                            <nav className="list-none mb-10">
+                                {props.links?.value.map((item, i) => (
+                                    <li key={i}>
+                                        <Link
+                                            text={item.link.value.text.value}
+                                            link={item.link.value.link.value}
+                                        />
+                                    </li>
+                                ))}
+                            </nav>
+                        </div>
+                    </div>
+                </div>
 
-				<div className="bg-gray-100">
-					<div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-						<p className="text-gray-500 text-sm text-center sm:text-left">
-							© 2021 All rights reserved.
-						</p>
-						{/*
+                <div className="bg-gray-100">
+                    <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+                        <p className="text-gray-500 text-sm text-center sm:text-left">
+                            © 2021 All rights reserved.
+                        </p>
+                        {/*
 						<span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
 							<a className="text-gray-500">
 								<svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" className="w-5 h-5" viewBox="0 0 24 24">
@@ -63,11 +68,11 @@ const Template = props => {
 							</a>
 						</span>
 						*/}
-					</div>
-				</div>
-			</footer>
-		</Fade>
-	)
+                    </div>
+                </div>
+            </footer>
+        </Fade>
+    );
 };
 
 export default Template;
