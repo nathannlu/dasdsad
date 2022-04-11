@@ -5,12 +5,16 @@ import { convertToList } from 'services/website/pages/Builder/helpers';
 //import FeaturesTemplate from './Feature/template';
 //import FooterTemplate from './Footer/template';
 
-import { NavAProps } from './Nav/defaults'; 
-import { FooterAProps } from './Footer/defaults'; 
+import { NavAProps } from './Nav/defaults';
+import { FooterAProps } from './Footer/defaults';
 import { CtaAProps } from './Cta/defaults';
 import { HeaderAProps, HeaderBProps, HeaderCProps } from './Header/defaults';
 import { ContentAProps, ContentBProps } from './Content/defaults';
-import { FeatureAProps, FeatureBProps, FeatureCProps } from './Feature/defaults';
+import {
+    FeatureAProps,
+    FeatureBProps,
+    FeatureCProps,
+} from './Feature/defaults';
 
 import ContainerTemplate from './Container/template';
 
@@ -47,27 +51,24 @@ import StatsCTemplate from './Stats/c';
 import MintATemplate from './Mint/a';
 
 const templatesArray = [
-	{key: 'Content_A', template: ContentATemplate, defaults: ContentAProps},
-	{key: 'Content_B', template: ContentBTemplate, defaults: ContentBProps},
+    { key: 'Content_A', template: ContentATemplate, defaults: ContentAProps },
+    { key: 'Content_B', template: ContentBTemplate, defaults: ContentBProps },
 
-	{key: 'CTA_A', template: CtaATemplate, defaults: CtaAProps},
+    { key: 'CTA_A', template: CtaATemplate, defaults: CtaAProps },
 
-	{key: 'Feature_A', template: FeatureATemplate, defaults: FeatureAProps},
-	{key: 'Feature_B', template: FeatureBTemplate, defaults: FeatureBProps},
-	{key: 'Feature_C', template: FeatureCTemplate, defaults: FeatureCProps},
+    { key: 'Feature_A', template: FeatureATemplate, defaults: FeatureAProps },
+    { key: 'Feature_B', template: FeatureBTemplate, defaults: FeatureBProps },
+    { key: 'Feature_C', template: FeatureCTemplate, defaults: FeatureCProps },
 
-	{key: 'Hero_A', template: HeaderATemplate, defaults: HeaderAProps},
-	{key: 'Hero_B', template: HeaderBTemplate, defaults: HeaderBProps},
-	{key: 'Hero_C', template: HeaderCTemplate, defaults: HeaderCProps},
+    { key: 'Hero_A', template: HeaderATemplate, defaults: HeaderAProps },
+    { key: 'Hero_B', template: HeaderBTemplate, defaults: HeaderBProps },
+    { key: 'Hero_C', template: HeaderCTemplate, defaults: HeaderCProps },
 
+    { key: 'Footer_A', template: FooterATemplate, defaults: FooterAProps },
+    { key: 'Header_A', template: NavATemplate, defaults: NavAProps },
 
-	{key: 'Footer_A', template: FooterATemplate, defaults: FooterAProps},
-	{key: 'Header_A', template: NavATemplate, defaults: NavAProps},
-
-
-
-	// depreciated
-	/*
+    // depreciated
+    /*
 	{key: 'Header_B', template: NavBTemplate},
 	{key: 'Header_C', template: NavCTemplate},
 	{key: 'Footer_B', template: FooterBTemplate},
@@ -94,14 +95,14 @@ const templatesArray = [
 	{key: 'Gallery_B', template: GalleryBTemplate},
 	{key: 'Gallery_C', template: GalleryCTemplate},
 	*/
-	//{key: 'Biography', template: BiographyTemplate, defaults: BiographyDefaultProps},
-	//{key: 'Header', template: HeaderTemplate, defaults: HeaderDefaultProps},
-	//{key: 'Footer', template: FooterTemplate},
-	//{key: 'Features', template: FeaturesTemplate},
-	{key: 'Container', template: ContainerTemplate},
+    //{key: 'Biography', template: BiographyTemplate, defaults: BiographyDefaultProps},
+    //{key: 'Header', template: HeaderTemplate, defaults: HeaderDefaultProps},
+    //{key: 'Footer', template: FooterTemplate},
+    //{key: 'Features', template: FeaturesTemplate},
+    { key: 'Container', template: ContainerTemplate },
 ];
 
 //console.log(convertToList(templatesArray, 'key'))
 
 // Turns into working templates
-export default convertToList(templatesArray, 'key')
+export default convertToList(templatesArray, 'key');

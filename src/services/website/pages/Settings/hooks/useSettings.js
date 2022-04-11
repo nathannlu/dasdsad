@@ -1,23 +1,40 @@
 import { useState, useEffect } from 'react';
 import { useWebsite } from 'services/website/provider';
-import { useDeleteWebsite, useSetWebsiteFavicon, 
-    useUpdateWebsiteSEO, useVerifyDns, 
-    useAddCustomDomain, useRemoveCustomDomain, 
-    useSetCustomDomain, useAddPageToPublish,
-    useRemovePageFromPublish, useSetContractAddress,
+import {
+    useDeleteWebsite,
+    useSetWebsiteFavicon,
+    useUpdateWebsiteSEO,
+    useVerifyDns,
+    useAddCustomDomain,
+    useRemoveCustomDomain,
+    useSetCustomDomain,
+    useAddPageToPublish,
+    useRemovePageFromPublish,
+    useSetContractAddress,
     useUpdateWebsiteCustom,
-} from 'services/website/gql/hooks/website.hook'
+} from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 
 const useSettings = () => {
     const { addToast } = useToast();
-    const { website, addImageToLocal, deleteImage, removeUnusedImages, websiteId, pageName } = useWebsite();
+    const {
+        website,
+        addImageToLocal,
+        deleteImage,
+        removeUnusedImages,
+        websiteId,
+        pageName,
+    } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
     const [confirmationData, setConfirmationData] = useState(null);
-    const [faviconImage, setFaviconImage] = useState('https://dummyimage.com/25x25');
-    const [displayImage, setDisplayImage] = useState('https://dummyimage.com/215x215');
+    const [faviconImage, setFaviconImage] = useState(
+        'https://dummyimage.com/25x25'
+    );
+    const [displayImage, setDisplayImage] = useState(
+        'https://dummyimage.com/215x215'
+    );
     const [styleSaveStatus, setStyleSaveStatus] = useState(false);
     const [seoSaveStatus, setSeoSaveStatus] = useState(false);
     const [showDomainModal, setShowDomainModal] = useState(false);
@@ -31,105 +48,128 @@ const useSettings = () => {
     const openContractAnchor = Boolean(contractAnchor);
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
-		onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-	})
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [setWebsiteFavicon] = useSetWebsiteFavicon({
         onCompleted: () => {
             addToast({
                 severity: 'success',
-                message: "Website Favicon Changed"
-            })
+                message: 'Website Favicon Changed',
+            });
         },
-		onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [updateWebsiteSEO] = useUpdateWebsiteSEO({
         onCompleted: () => {
             addToast({
                 severity: 'success',
-                message: "Saved changes"
-            })
+                message: 'Saved changes',
+            });
         },
-		onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [addCustomDomain] = useAddCustomDomain({
         websiteId: website._id,
         domain: domainName,
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [verifyDns] = useVerifyDns({
         domain: domainName,
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [removeCustomDomain] = useRemoveCustomDomain({
         domain: domainName,
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [setCustomDomain] = useSetCustomDomain({
         domain: domainName,
         isActive: domainIsActive,
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [addPageToPublish] = useAddPageToPublish({
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [removePageFromPublish] = useRemovePageFromPublish({
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [setContractAddress] = useSetContractAddress({
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     const [updateWebsiteCustom] = useUpdateWebsiteCustom({
-        onError: err => addToast({
-			severity: 'error',
-			message: err.message
-		})
-    })
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
     useGetContracts({
-		onCompleted: data => {
-            const availableContracts =  data.getContracts.filter((contract) => contract.address);
+        onCompleted: (data) => {
+            const availableContracts = data.getContracts.filter(
+                (contract) => contract.address
+            );
             if (!availableContracts.length) return;
             setContracts(availableContracts);
-		}
-	})
+        },
+    });
 
     useEffect(() => {
         if (!Object.keys(website).length) return;
         const update = async () => {
             // Set images and remove unused images
-            setFaviconImage(website.favicon ? website.favicon : "https://dummyimage.com/25x25");
+            setFaviconImage(
+                website.favicon
+                    ? website.favicon
+                    : 'https://dummyimage.com/25x25'
+            );
             setDisplayImage(website.seo.image);
-            const faviconUUID = website.favicon.substring(website.favicon.indexOf(".com/") + 5, website.favicon.length - 1);
-            const displayUUID = website.seo.image.substring(website.seo.image.indexOf(".com/") + 5, website.seo.image.length - 1);
+            const faviconUUID = website.favicon.substring(
+                website.favicon.indexOf('.com/') + 5,
+                website.favicon.length - 1
+            );
+            const displayUUID = website.seo.image.substring(
+                website.seo.image.indexOf('.com/') + 5,
+                website.seo.image.length - 1
+            );
             removeUnusedImages([faviconUUID, displayUUID], true);
 
             // Set Custom Codes
@@ -137,18 +177,17 @@ const useSettings = () => {
                 setCustomHead(website.custom.head);
                 setCustomBody(website.custom.body);
             }
-        }
+        };
         update();
-    }, [website])
-
+    }, [website]);
 
     const onDeleteDialog = () => {
         setConfirmationData({
             title: 'Are you sure?',
-            description: 'Do you want to delete this website?'
-        })
+            description: 'Do you want to delete this website?',
+        });
         setConfirmationState(true);
-    }
+    };
 
     const onProceedDelete = async () => {
         await removeUnusedImages([]);
@@ -156,157 +195,209 @@ const useSettings = () => {
         localStorage.removeItem(`${websiteId}-${pageName}-images-settings`);
         localStorage.removeItem(`${websiteId}-${pageName}-images`);
         await deleteWebsite();
-    }
+    };
 
     const onDeleteFavicon = async () => {
         setFaviconImage('https://dummyimage.com/25x25');
         setStyleSaveStatus(true);
-    }
+    };
 
     const onChangeFavicon = async (info) => {
         setFaviconImage(info.cdnUrl);
         addImageToLocal(info.uuid, true);
         setStyleSaveStatus(true);
-    }
+    };
 
     const onSaveFavicon = async () => {
         // Save new favicon
         if (faviconImage !== 'https://dummyimage.com/25x25') {
-            const uuid = faviconImage.substring(faviconImage.indexOf(".com/") + 5, faviconImage.length - 1);
+            const uuid = faviconImage.substring(
+                faviconImage.indexOf('.com/') + 5,
+                faviconImage.length - 1
+            );
             const faviconURL = `https://ucarecdn.com/${uuid}/`;
             setFaviconImage(faviconURL);
-            await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: faviconURL } });
+            await setWebsiteFavicon({
+                variables: { websiteId: website._id, imageUrl: faviconURL },
+            });
         } // Delete favicon
-        else if (website.favicon !== 'https://dummyimage.com/25x25' && faviconImage === 'https://dummyimage.com/25x25') {
-            const uuid = website.favicon.substring(website.favicon.indexOf(".com/") + 5, website.favicon.length - 1);
+        else if (
+            website.favicon !== 'https://dummyimage.com/25x25' &&
+            faviconImage === 'https://dummyimage.com/25x25'
+        ) {
+            const uuid = website.favicon.substring(
+                website.favicon.indexOf('.com/') + 5,
+                website.favicon.length - 1
+            );
             await deleteImage(uuid, true);
-            await setWebsiteFavicon({ variables: { websiteId: website._id, imageUrl: 'https://dummyimage.com/25x25' } });
+            await setWebsiteFavicon({
+                variables: {
+                    websiteId: website._id,
+                    imageUrl: 'https://dummyimage.com/25x25',
+                },
+            });
         }
 
         setStyleSaveStatus(false);
-    }
+    };
 
     const onSaveSEO = async (data) => {
-        let newData = {...data};
-        if (typeof newData.language === 'object' && Object.keys(newData.language).length && newData.language.data.length) newData.language = newData.language.data 
-        else newData.language = newData.language = "EN";
-        
+        let newData = { ...data };
+        if (
+            typeof newData.language === 'object' &&
+            Object.keys(newData.language).length &&
+            newData.language.data.length
+        )
+            newData.language = newData.language.data;
+        else newData.language = newData.language = 'EN';
+
         // Check if should delete display image
-        if (website.seo.image !== 'https://dummyimage.com/215x215' && displayImage === 'https://dummyimage.com/215x215') {
-            const uuid = website.seo.image.substring(website.seo.image.indexOf(".com/") + 5, website.seo.image.length - 1);
+        if (
+            website.seo.image !== 'https://dummyimage.com/215x215' &&
+            displayImage === 'https://dummyimage.com/215x215'
+        ) {
+            const uuid = website.seo.image.substring(
+                website.seo.image.indexOf('.com/') + 5,
+                website.seo.image.length - 1
+            );
             console.log(uuid);
             newData.image = 'https://dummyimage.com/215x215';
             await deleteImage(uuid, true);
         }
 
-        await updateWebsiteSEO({ variables: { websiteId: website._id, data: newData } });
+        await updateWebsiteSEO({
+            variables: { websiteId: website._id, data: newData },
+        });
         setSeoSaveStatus(false);
-    }
+    };
 
     const onChangeDisplayImage = async (info) => {
         setDisplayImage(info.cdnUrl);
         addImageToLocal(info.uuid, true);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onDeleteDisplayImage = async () => {
         setDisplayImage('https://dummyimage.com/215x215');
         setSeoSaveStatus(true);
-    }
+    };
 
     const onDomainNameChange = (e) => {
         setDomainName(e.target.value);
-    }
+    };
 
     const handleAddDomain = () => {
         setDomainName('');
         setShowDomainModal(true);
-    }
+    };
 
     const onAddDomain = async (domain) => {
         const domainList = website.domains.map((domain) => domain.name);
         if (domainList.indexOf(domain) == -1) {
             await addCustomDomain();
         }
-    }
+    };
 
     const onDeleteDomain = async (domain) => {
         setDomainName(domain);
-        await removeCustomDomain({variables: {websiteId: website._id, domain}});
-    }
+        await removeCustomDomain({
+            variables: { websiteId: website._id, domain },
+        });
+    };
 
     const onVerifyDomain = async (domain) => {
         setDomainName(domain);
-        await verifyDns({variables: {websiteId: website._id, domain}});
-    }
+        await verifyDns({ variables: { websiteId: website._id, domain } });
+    };
 
     const onMakeDefault = async (domain) => {
         setDomainName(domain);
         setDomainIsActive(false);
-        await setCustomDomain({variables: {websiteId: website._id, domain, isActive: false}});
-    }
+        await setCustomDomain({
+            variables: { websiteId: website._id, domain, isActive: false },
+        });
+    };
 
     const onPublishPage = async (pageIdx) => {
         const pageName = website.pages[pageIdx].name;
-        const indexOfPublished = website.published.findIndex(page => page.name === pageName);
+        const indexOfPublished = website.published.findIndex(
+            (page) => page.name === pageName
+        );
 
         if (indexOfPublished === -1) {
-            await addPageToPublish({variables: {websiteId: website._id, pageIdx}});
+            await addPageToPublish({
+                variables: { websiteId: website._id, pageIdx },
+            });
         } else {
-            await removePageFromPublish({variables: {websiteId: website._id, pageIdx: indexOfPublished}});
-        }     
-    }
+            await removePageFromPublish({
+                variables: {
+                    websiteId: website._id,
+                    pageIdx: indexOfPublished,
+                },
+            });
+        }
+    };
 
     const onDomainState = async () => {
-       try {
+        try {
             const curDomain = website.customDomain;
-            if (!curDomain.length) throw new Error('Please set a default custom domain first');
-            
+            if (!curDomain.length)
+                throw new Error('Please set a default custom domain first');
+
             const curState = website.isCustomDomainActive;
             setDomainName(curDomain);
             setDomainIsActive(!curState);
-            await setCustomDomain({variables: {websiteId: website._id, domain: curDomain, isActive: !curState}});
-       }
-       catch (err) {
+            await setCustomDomain({
+                variables: {
+                    websiteId: website._id,
+                    domain: curDomain,
+                    isActive: !curState,
+                },
+            });
+        } catch (err) {
             console.log(err);
             addToast({
                 severity: 'error',
-                message: err.message
-            })
+                message: err.message,
+            });
         }
-    }
+    };
 
     const onCloseContractAnchor = () => {
         setContractAnchor(null);
-    }
+    };
 
     const onSwitchContract = async (contract) => {
-        await setContractAddress({variables: {websiteId: website._id, address: contract.address}});
+        await setContractAddress({
+            variables: { websiteId: website._id, address: contract.address },
+        });
         onCloseContractAnchor();
-    }
+    };
 
     const onCustomHeadChange = (e) => {
         setCustomHead(e.target.value);
         setCustomSaveStatus(true);
-    }
+    };
 
     const onCustomBodyChange = (e) => {
         setCustomBody(e.target.value);
         setCustomSaveStatus(true);
-    }
+    };
 
     const onSaveCustom = async () => {
         const newCustom = {
             head: customHead,
-            body: customBody
-        }
-        await updateWebsiteCustom({variables: {websiteId: website._id, data: newCustom}});
+            body: customBody,
+        };
+        await updateWebsiteCustom({
+            variables: { websiteId: website._id, data: newCustom },
+        });
         addToast({
             severity: 'success',
-            message: "Updated Website's Custom Code"
-        })
+            message: "Updated Website's Custom Code",
+        });
         setCustomSaveStatus(false);
-    }
+    };
 
     return {
         tabValue,
@@ -352,7 +443,7 @@ const useSettings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
-    }
-}
+    };
+};
 
-export default useSettings
+export default useSettings;

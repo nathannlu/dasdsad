@@ -1,10 +1,10 @@
 export const NavAProps = {
-	image: {
-		_type: 'image',
-		value: 'https://via.placeholder.com/50'
-	},
+    image: {
+        _type: 'image',
+        value: 'https://via.placeholder.com/50',
+    },
 
-	/*
+    /*
 	links: {
 		_type: 'array',
 		value: [
@@ -56,27 +56,25 @@ export const NavAProps = {
 		],
 	},
 	*/
-	button: {
-		_type: 'button',
-		value: {
-			text: {
-				_type: 'textfield',
-				value: 'Button',
-			},
-			link: {
-				_type: 'textfield',
-				value: 'link',
-			},
-			isMint: {
-				_type: 'boolean',
-				value: false
-			}
-		}
-	},
-	background: {
-		value: '#fff',
-		_type: 'textfield',
-	}
+    button: {
+        _type: 'button',
+        value: {
+            text: {
+                _type: 'textfield',
+                value: 'Button',
+            },
+            link: {
+                _type: 'textfield',
+                value: 'link',
+            },
+            isMint: {
+                _type: 'boolean',
+                value: false,
+            },
+        },
+    },
+    background: {
+        value: '#fff',
+        _type: 'textfield',
+    },
 };
-
-

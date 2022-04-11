@@ -1,62 +1,71 @@
 import React, { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Stack, Typography, Box } from 'ds/components';
-import { AnimatePresence } from "framer-motion"
+import { AnimatePresence } from 'framer-motion';
 import { useLayerManager } from 'services/generator/controllers/manager';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Layer from './Layer';
 import GradientBackground from './GradientBackground';
 
-const Model = ({activeStep, isLastStep}) => {
-	const { query: {layers, selected}} = useLayerManager();
-	const smallerThanTablet = useMediaQuery(theme => theme.breakpoints.down('md'));
+const Model = ({ activeStep, isLastStep }) => {
+    const {
+        query: { layers, selected },
+    } = useLayerManager();
+    const smallerThanTablet = useMediaQuery((theme) =>
+        theme.breakpoints.down('md')
+    );
 
-	const controls = useAnimation();
-	useEffect(() => {
-		if(isLastStep) {
-			controls.start(i => ({
-				opacity: 1,
-				transition: { delay: i * 0.5 },
-			}))
-		} else {
-			controls.start(i => ({
-				opacity: 0,
-			}))
-		}
-	}, [isLastStep])
+    const controls = useAnimation();
+    useEffect(() => {
+        if (isLastStep) {
+            controls.start((i) => ({
+                opacity: 1,
+                transition: { delay: i * 0.5 },
+            }));
+        } else {
+            controls.start((i) => ({
+                opacity: 0,
+            }));
+        }
+    }, [isLastStep]);
 
+    return (
+        <Stack
+            alignItems="center"
+            justifyContent="center"
+            sx={{
+                minHeight: '100vh',
+                position: 'relative',
+                background: '#191A24',
+                transition: 'all .5s',
+            }}>
+            <AnimatePresence>
+                {isLastStep ? (
+                    <motion.div
+                        transition={{ duration: 0.5 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}>
+                        <GradientBackground />
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
 
-	return (
-		<Stack
-			alignItems="center"
-			justifyContent="center"
-			sx={{minHeight: '100vh', position: 'relative', background: '#191A24', transition: 'all .5s'}}
-		>
-			<AnimatePresence>
-				{isLastStep ? (
-					<motion.div
-						transition={{ duration: .5 }}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-					>
-						<GradientBackground />
-					</motion.div>
-				):null}
-			</AnimatePresence>
-
-			<Box sx={{position: smallerThanTablet ? 'static' : 'fixed'}}>
+            <Box sx={{ position: smallerThanTablet ? 'static' : 'fixed' }}>
                 {activeStep === 5 && (
-                    <Stack gap={50} alignItems="center" direction="row" sx={{zIndex: 10}}>
-                        <motion.div 
+                    <Stack
+                        gap={50}
+                        alignItems="center"
+                        direction="row"
+                        sx={{ zIndex: 10 }}>
+                        <motion.div
                             custom={1}
-                            initial={{opacity: 0}} 
+                            initial={{ opacity: 0 }}
                             animate={controls}
                             style={{
                                 background: 'white',
                                 borderRadius: '7px',
-                            }}
-                        >
+                            }}>
                             <AnimatePresence>
                                 {layers.map((layer, i) => (
                                     <Layer
@@ -84,15 +93,14 @@ const Model = ({activeStep, isLastStep}) => {
                                 </Typography>
                             </Stack> */}
                         </motion.div>
-                        <motion.div 
+                        <motion.div
                             custom={2}
-                            initial={{opacity: 0}} 
+                            initial={{ opacity: 0 }}
                             animate={controls}
                             style={{
                                 background: 'white',
                                 borderRadius: '7px',
-                            }}
-                        >
+                            }}>
                             <AnimatePresence>
                                 {layers.map((layer, i) => (
                                     <Layer
@@ -123,18 +131,14 @@ const Model = ({activeStep, isLastStep}) => {
                     </Stack>
                 )}
 
-				<AnimatePresence>
-					{layers.map((layer, i) => (
-						<Layer
-							activeStep={activeStep}
-							index={i}
-							key={i}
-						/>
-					))}
-				</AnimatePresence>
-			</Box>
-		</Stack>
-	)
+                <AnimatePresence>
+                    {layers.map((layer, i) => (
+                        <Layer activeStep={activeStep} index={i} key={i} />
+                    ))}
+                </AnimatePresence>
+            </Box>
+        </Stack>
+    );
 };
 
 export default Model;

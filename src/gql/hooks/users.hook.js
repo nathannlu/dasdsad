@@ -4,115 +4,126 @@ import { useWebsite } from 'services/website/provider';
 
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import { Redirect, useHistory } from 'react-router-dom';
-import { GET_NONCE, VERIFY_SIGNATURE, REGISTER, LOGIN, REAUTHENTICATE, VERIFY_SIGNATURE_PHANTOM } from '../users.gql'
+import {
+    GET_NONCE,
+    VERIFY_SIGNATURE,
+    REGISTER,
+    LOGIN,
+    REAUTHENTICATE,
+    VERIFY_SIGNATURE_PHANTOM,
+} from '../users.gql';
 import { useWeb3 } from '../../libs/web3';
-
-
 
 // Sends password reset email
 export const useForgotPassword = ({ email, onCompleted, onError }) => {
-	const [sendPasswordResetEmail, { ...queryResult }] = useLazyQuery(FORGOT_PASSWORD, {
-		fetchPolicy: 'network-only',
-		variables: { email },
-		onCompleted,
-		onError
-	});
+    const [sendPasswordResetEmail, { ...queryResult }] = useLazyQuery(
+        FORGOT_PASSWORD,
+        {
+            fetchPolicy: 'network-only',
+            variables: { email },
+            onCompleted,
+            onError,
+        }
+    );
 
-	return [sendPasswordResetEmail, { ...queryResult }]
+    return [sendPasswordResetEmail, { ...queryResult }];
 };
 
 // Reset password logic query
 export const useResetPassword = ({ token, password, onCompleted, onError }) => {
-	const [resetPassword, { ...mutationResult }] = useMutation(RESET_PASSWORD, {
-		variables: { token, password },
-		onCompleted,
-		onError
-	})
+    const [resetPassword, { ...mutationResult }] = useMutation(RESET_PASSWORD, {
+        variables: { token, password },
+        onCompleted,
+        onError,
+    });
 
-	return [resetPassword, { ...mutationResult }]
+    return [resetPassword, { ...mutationResult }];
 };
 
 // Used to validate token in reset password link
 export const useValidateToken = ({ token, onCompleted, onError }) => {
-	const { ...queryResult } = useQuery(VALIDATE_TOKEN, {
-		variables: { token },
-		onCompleted,
-		onError
-	});
+    const { ...queryResult } = useQuery(VALIDATE_TOKEN, {
+        variables: { token },
+        onCompleted,
+        onError,
+    });
 
-	return { ...queryResult }
+    return { ...queryResult };
 };
-
 
 export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
-	const [getNonceByAddress, { ...mutationResult }] = useMutation(GET_NONCE, {
-		variables: { address },
-		onCompleted,
-		onError
-	})
+    const [getNonceByAddress, { ...mutationResult }] = useMutation(GET_NONCE, {
+        variables: { address },
+        onCompleted,
+        onError,
+    });
 
-	return [getNonceByAddress, { ...mutationResult }]
+    return [getNonceByAddress, { ...mutationResult }];
 };
 
-
 export const useVerifySignature = ({ onCompleted, onError }) => {
-	const { onLoginSuccess } = useAuth()
-	//	let history = useHistory();
+    const { onLoginSuccess } = useAuth();
+    //	let history = useHistory();
 
-	const [verifySignature, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE, {
-		onCompleted: data => {
-			//			console.log(data)
+    const [verifySignature, { ...mutationResult }] = useMutation(
+        VERIFY_SIGNATURE,
+        {
+            onCompleted: (data) => {
+                //			console.log(data)
 
-			onLoginSuccess(data.verifySignature)
-			//			history.push('/dashboard');
+                onLoginSuccess(data.verifySignature);
+                //			history.push('/dashboard');
 
+                if (onCompleted) {
+                    onCompleted(data);
+                }
+            },
+            onError,
+        }
+    );
 
-			if (onCompleted) {
-				onCompleted(data)
-			}
-		},
-		onError
-	})
-
-	return [verifySignature, { ...mutationResult }]
+    return [verifySignature, { ...mutationResult }];
 };
 
 export const useVerifySignaturePhantom = ({ onCompleted, onError }) => {
-	const { onLoginSuccess } = useAuth()
+    const { onLoginSuccess } = useAuth();
 
-	const [verifySignaturePhantom, { ...mutationResult }] = useMutation(VERIFY_SIGNATURE_PHANTOM, {
-		onCompleted: data => {
-			onLoginSuccess(data.verifySignaturePhantom)
-			if (onCompleted) {
-				onCompleted(data)
-			}
-		},
-		onError
-	})
+    const [verifySignaturePhantom, { ...mutationResult }] = useMutation(
+        VERIFY_SIGNATURE_PHANTOM,
+        {
+            onCompleted: (data) => {
+                onLoginSuccess(data.verifySignaturePhantom);
+                if (onCompleted) {
+                    onCompleted(data);
+                }
+            },
+            onError,
+        }
+    );
 
-	return [verifySignaturePhantom, { ...mutationResult }]
+    return [verifySignaturePhantom, { ...mutationResult }];
 };
 
 /**
  * we need to lazy fetch the user details, so that it is called only once when app loads
  */
 export const useGetCurrentUser = () => {
-	const { onReauthenticationSuccess, onReauthenticationError } = useAuth();
+    const { onReauthenticationSuccess, onReauthenticationError } = useAuth();
 
-	//	const { setWebsite } = useWebsite();
-	//k	const { actions: { setLayers }} = useLayerManager();
-	//	const { updateSettingsForm  } = useMetadata();
+    //	const { setWebsite } = useWebsite();
+    //k	const { actions: { setLayers }} = useLayerManager();
+    //	const { updateSettingsForm  } = useMetadata();
 
-	return useLazyQuery(REAUTHENTICATE, {
-		onCompleted: async data => {
-			const user = data.getCurrentUser
-			const { websites, collections } = user;
-			const hasWebsite = websites?.length > 0;
-			const hasCollection = collections?.length > 0;
+    return useLazyQuery(REAUTHENTICATE, {
+        onCompleted: async (data) => {
+            const user = data.getCurrentUser;
+            const { websites, collections } = user;
+            const hasWebsite = websites?.length > 0;
+            const hasCollection = collections?.length > 0;
 
-			onReauthenticationSuccess(user);
+            onReauthenticationSuccess(user);
 
-			/*
+            /*
 			// Update layer maanger, traits manager
 			if (hasCollection) {
 				let layers = [...collections[0].layers]
@@ -146,45 +157,46 @@ export const useGetCurrentUser = () => {
 				setLayers(clonedLayers)
 			}
 			*/
-
-		},
-		onError: onReauthenticationError,
-	});
-}
-
+        },
+        onError: onReauthenticationError,
+    });
+};
 
 // Email login
-export const useRegister = ({ name, email, password, onCompleted, onError }) => {
-	const [register, { ...mutationResult }] = useMutation(REGISTER, {
-		variables: { name, email, password },
-		onCompleted,
-		onError
-	})
+export const useRegister = ({
+    name,
+    email,
+    password,
+    onCompleted,
+    onError,
+}) => {
+    const [register, { ...mutationResult }] = useMutation(REGISTER, {
+        variables: { name, email, password },
+        onCompleted,
+        onError,
+    });
 
-	return [register, { ...mutationResult }];
+    return [register, { ...mutationResult }];
 };
 
 export const useLogin = ({ email, password, onError, onCompleted }) => {
-	const { onLoginSuccess } = useAuth();
-	const [login, { ...mutationResult }] = useMutation(LOGIN, {
-		variables: { email, password },
-		onCompleted: data => {
-			if (data?.login) {
-				
-				if (onLoginSuccess) {
-					onLoginSuccess(data.login);
-				}
+    const { onLoginSuccess } = useAuth();
+    const [login, { ...mutationResult }] = useMutation(LOGIN, {
+        variables: { email, password },
+        onCompleted: (data) => {
+            if (data?.login) {
+                if (onLoginSuccess) {
+                    onLoginSuccess(data.login);
+                }
 
-				// If function has parameter onCompleted, run the function
-				if (onCompleted) {
-					onCompleted(data?.login);
-				}
-			}
-		},
-		onError
-	})
+                // If function has parameter onCompleted, run the function
+                if (onCompleted) {
+                    onCompleted(data?.login);
+                }
+            }
+        },
+        onError,
+    });
 
-	return [login, { ...mutationResult }];
-}
-
-
+    return [login, { ...mutationResult }];
+};

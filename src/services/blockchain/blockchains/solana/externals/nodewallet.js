@@ -1,17 +1,17 @@
-import { Buffer } from "buffer";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { Buffer } from 'buffer';
+import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
 
 /**
  * Node only wallet.
  */
 export default class NodeWallet {
-//  constructor(readonly payer: Keypair) {}
+    //  constructor(readonly payer: Keypair) {}
 
-	constructor(keypair) {
-		this.payer = keypair;
-	}
+    constructor(keypair) {
+        this.payer = keypair;
+    }
 
-	/*
+    /*
   static local() {
     const payer = Keypair.fromSecretKey(
       Buffer.from([250,198,88,219,95,186,86,42,141,139,158,202,48,60,49,34,120,169,71,222,72,218,184,243,52,128,63,244,245,30,61,29,0,73,114,112,87,75,67,11,212,182,193,17,29,222,23,63,5,89,155,72,191,85,51,105,87,89,155,55,11,21,29,75])
@@ -30,20 +30,20 @@ export default class NodeWallet {
 
 */
 
-  async signTransaction(tx) {
-    tx.partialSign(this.payer);
-    return tx;
-  }
+    async signTransaction(tx) {
+        tx.partialSign(this.payer);
+        return tx;
+    }
 
-  async signAllTransactions(txs) {
-    return txs.map((t) => {
-      t.partialSign(this.payer);
-      return t;
-    });
-  }
+    async signAllTransactions(txs) {
+        return txs.map((t) => {
+            t.partialSign(this.payer);
+            return t;
+        });
+    }
 
-  get publicKey() {
-		console.log(this)
-    return this.payer.publicKey;
-  }
+    get publicKey() {
+        console.log(this);
+        return this.payer.publicKey;
+    }
 }

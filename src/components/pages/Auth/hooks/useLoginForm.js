@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'ds/hooks/useForm';
-import { useAuth } from 'libs/auth'; 
-import { useToast } from 'ds/hooks/useToast'; 
+import { useAuth } from 'libs/auth';
+import { useToast } from 'ds/hooks/useToast';
 
 /*
 import { useCreateCollection } from 'services/generator/gql/hooks/collection.hook';
@@ -11,15 +11,15 @@ import { useMetadata } from 'services/generator/controllers/metadata';
 */
 
 export const useLoginForm = () => {
-	const { isAuthenticated } = useAuth();
-	const { addToast } = useToast();
-	const history = useHistory();
-	const searchParams = new URLSearchParams(location.search);
-	const redirect = searchParams.get("redirect");
+    const { isAuthenticated } = useAuth();
+    const { addToast } = useToast();
+    const history = useHistory();
+    const searchParams = new URLSearchParams(location.search);
+    const redirect = searchParams.get('redirect');
 
-//	const { query: {layers} } = useLayerManager();
-//	const { settingsForm } = useMetadata();
-	/*
+    //	const { query: {layers} } = useLayerManager();
+    //	const { settingsForm } = useMetadata();
+    /*
 	const [createCollection] = useCreateCollection({
 		onCompleted: data => {
 			console.log(data);
@@ -27,38 +27,38 @@ export const useLoginForm = () => {
 	});
 	*/
 
-	const { form: loginForm } = useForm({
-		email: {
-			default: '',
-			placeholder: 'Email',
-			rules: []
-		},
-		password: {
-			default: '',
-			placeholder: 'Password',
-			rules: []
-		}
-	})
+    const { form: loginForm } = useForm({
+        email: {
+            default: '',
+            placeholder: 'Email',
+            rules: [],
+        },
+        password: {
+            default: '',
+            placeholder: 'Password',
+            rules: [],
+        },
+    });
 
-	const handleLoginError = (err) => {
-		addToast({
-			severity: 'error',
-			message: err.message
-		});
-	}
+    const handleLoginError = (err) => {
+        addToast({
+            severity: 'error',
+            message: err.message,
+        });
+    };
 
-	const handleRedirect = () => {
-		// Check for redirect param
+    const handleRedirect = () => {
+        // Check for redirect param
 
-		history?.push(redirect ?? "/dashboard");
+        history?.push(redirect ?? '/dashboard');
 
-//		history.push('/dashboard');
-	}
+        //		history.push('/dashboard');
+    };
 
-	const handleLoginSuccess = async () => {
-		// On successful log in, save layers to person
+    const handleLoginSuccess = async () => {
+        // On successful log in, save layers to person
 
-		/*
+        /*
 		// If is first time
 		if(layers) {
 			let _layers = [...layers]
@@ -84,21 +84,21 @@ export const useLoginForm = () => {
 		}
 		*/
 
-		handleRedirect();
-	}
+        handleRedirect();
+    };
 
-	// Handle existing JWT token
-	useEffect(() => {
-		if (location.pathname == '/login' && isAuthenticated) {
-			handleRedirect();
-		}
-	}, [isAuthenticated])
+    // Handle existing JWT token
+    useEffect(() => {
+        if (location.pathname == '/login' && isAuthenticated) {
+            handleRedirect();
+        }
+    }, [isAuthenticated]);
 
-	return {
-		loginForm,
-		handleRedirect,
-		handleLoginError,
-		handleLoginSuccess,
-		redirect
-	}
-}
+    return {
+        loginForm,
+        handleRedirect,
+        handleLoginError,
+        handleLoginSuccess,
+        redirect,
+    };
+};

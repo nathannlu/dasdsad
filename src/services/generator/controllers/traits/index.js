@@ -1,1 +1,1 @@
-export * from './useTrait'
+export * from './useTrait';

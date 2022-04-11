@@ -1,11 +1,8 @@
 import React from 'react';
-import { Fade } from "@material-ui/core";
+import { Fade } from '@material-ui/core';
 
-const Template = props => {
-	return (
-		<Fade in={true}>
-		</Fade>
-	)
+const Template = (props) => {
+    return <Fade in={true}></Fade>;
 };
 
 export default Template;

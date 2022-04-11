@@ -19,66 +19,73 @@ const useSEOForm = (setSeoSaveStatus) => {
         setKeywords(website.seo.keywords);
 
         const languageMap = {
-            'EN':'English',
+            EN: 'English',
             'EN-GB': 'English - UK',
             'EN-US': 'English - US',
-            'ZH': 'Chinese',
-            'NL': 'Dutch',
-            'FI': 'Finnish',
-            'FR': 'French',
-            'DE': 'German',
-            'IW': 'Hebrew',
-            'HI': 'Hindi',
-            'IT': 'Italian',
-            'JA': 'Japanese',
-            'KO': 'Korean',
-            'NO': 'Norwegian',
-            'PL': 'Polish',
-            'PT': 'Portuguese',
-            'RO': 'Romanian',
-            'RU': 'Russian',
-            'ES': 'Spanish',
+            ZH: 'Chinese',
+            NL: 'Dutch',
+            FI: 'Finnish',
+            FR: 'French',
+            DE: 'German',
+            IW: 'Hebrew',
+            HI: 'Hindi',
+            IT: 'Italian',
+            JA: 'Japanese',
+            KO: 'Korean',
+            NO: 'Norwegian',
+            PL: 'Polish',
+            PT: 'Portuguese',
+            RO: 'Romanian',
+            RU: 'Russian',
+            ES: 'Spanish',
         };
 
-        setLanguage(website.seo.language ? {label: languageMap[website.seo.language], data: website.seo.language} : {label: "English", data: "EN"});
-        setRobots(website.seo.robots ? website.seo.robots : "index, follow");
+        setLanguage(
+            website.seo.language
+                ? {
+                      label: languageMap[website.seo.language],
+                      data: website.seo.language,
+                  }
+                : { label: 'English', data: 'EN' }
+        );
+        setRobots(website.seo.robots ? website.seo.robots : 'index, follow');
         setUrl(website.seo.url);
-    }, [website])
+    }, [website]);
 
     const onTitleChange = (e) => {
         setTitle(e.target.value);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onPreviewTitleChange = (e) => {
         setPreviewTitle(e.target.value);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onDescriptionChange = (e) => {
         setDescription(e.target.value);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onKeywordsChange = (e) => {
         setKeywords(e.target.value);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onLanguageChange = (e, target) => {
         setLanguage(target);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onRobotsChange = (e, target) => {
         setRobots(target);
         setSeoSaveStatus(true);
-    }
+    };
 
     const onUrlChange = (e) => {
         setUrl(e.target.value);
         setSeoSaveStatus(true);
-    }
+    };
 
     return {
         title,
@@ -95,7 +102,7 @@ const useSEOForm = (setSeoSaveStatus) => {
         onRobotsChange,
         url,
         onUrlChange,
-    }
-}
+    };
+};
 
-export default useSEOForm
+export default useSEOForm;
