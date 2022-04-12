@@ -23,9 +23,9 @@ export const ContractProvider = ({ children }) => {
     const [selectInput, setSelectInput] = useState('ethereum');
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [uploadedJson, setUploadedJson] = useState([]);
-    const [imagesUrl, setImagesUrl] = useState('');
-    const [metadataUrl, setMetadataUrl] = useState(''); //unused
-    const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const [imagesUrl, setImagesUrl] = useState(null);
+    const [metadataUrl, setMetadataUrl] = useState(null); //unused
+    const [ipfsUrl, setIpfsUrl] = useState(null); //metadata url
     const [cacheHash, setCacheHash] = useState('');
     const { account, loadBlockchainData, loadWeb3 } = useWeb3();
 

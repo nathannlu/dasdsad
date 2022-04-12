@@ -13,9 +13,20 @@ const Metadata = (props) => {
         setUploadedJson([...uploadedJson, ...acceptedFiles]);
     };
 
-    const callback = () => {
-        props.setActiveStep(2);
+    /**
+     * status marks if metadata was successfully pinned on pinata.cloud
+     * 
+     * if status === true, move to next step
+     * else
+     * user can try uploading the metadata again
+     */
+    const callback = (status) => {
+        if (!status) {
+            setUploadedJson([])
+        }
+        props.setActiveStep(status && 2 || 1);
     };
+
 
     return (
         <>

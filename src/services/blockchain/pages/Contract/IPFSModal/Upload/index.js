@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button, Stack } from 'ds/components';
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
@@ -28,7 +28,7 @@ const Steps = ({ id, setIsModalOpen }) => {
                 {
                     0: <Traits setActiveStep={setActiveStep} />,
                     1: <Metadata setActiveStep={setActiveStep} />,
-                    2: <Confirmation id={id} setIsModalOpen={setIsModalOpen} />,
+                    2: <Confirmation id={id} setIsModalOpen={setIsModalOpen} setActiveStep={setActiveStep} />,
                 }[activeStep]
             }
         </>
@@ -48,6 +48,25 @@ const Confirmation = (props) => {
             props.setIsModalOpen(false);
         },
     });
+
+    /**
+     * restrict user from proceeding if  
+     * - imagesUrl is null
+     *  or
+     * - metadataUrl is null
+     *  or
+     * - ipfsUrl is null
+     */
+    useEffect(() => {
+        if (!imagesUrl || !metadataUrl || !ipfsUrl) {
+            addToast({
+                severity: 'error',
+                message: 'Oops! something went wrong. Please try again!',
+            });
+            props.setActiveStep(0);
+            return;
+        }
+    }, [imagesUrl, metadataUrl, ipfsUrl]);
 
     return (
         <Stack gap={2}>

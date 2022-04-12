@@ -72,13 +72,17 @@ export const useIPFS = () => {
         } catch (e) {
             addToast({
                 severity: 'error',
-                message: e.message,
+                message: `Oops! something went wrong. Please try again!`,
             });
             setError(true);
+            setLoading(false);
+            console.log('Error: unable to pin images to pinata.cloud ', e);
+            callback(false); // Error occured while pinning images to pinata.cloud
+            return;
         }
 
         setLoading(false);
-        callback();
+        callback(true); // images added successfully to pinata navigate to next step
     };
 
     const updateAndSaveJson = async (file, data) => {
@@ -164,12 +168,16 @@ export const useIPFS = () => {
         } catch (e) {
             addToast({
                 severity: 'error',
-                message: e.message,
+                message: `Oops! something went wrong. Please try again!`,
             });
+            setLoading(false);
+            console.log('Error: unable to pin images to pinata.cloud ', e);
+            callback(false); // Error occured while pinning metadata to pinata.cloud
+            return;
         }
 
         setLoading(false);
-        callback();
+        callback(true); // metadata added successfully to pinata navigate to next step
     };
 
     return {
