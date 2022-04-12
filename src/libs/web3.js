@@ -530,7 +530,7 @@ export const Web3Provider = ({ children }) => {
             payerAccount = accountFrom;
         }
         
-        await compareNetwork('0x4', () => {
+        await compareNetwork('0x1', () => {
             const web3 = window.web3
             const inEth = 0.000034;
             const amount = inEth * size;
