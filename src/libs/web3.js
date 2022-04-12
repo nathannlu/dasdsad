@@ -92,8 +92,8 @@ export const Web3Provider = ({ children }) => {
 
     const loginToWallet = async (walletType) => {
         try {
-            const account2 = await loadWalletProvider(walletType);
-            await setAccount(account2);
+            const payerAccount = await loadWalletProvider(walletType);
+            await setAccount(payerAccount);
 
             console.log(account)
 
@@ -124,16 +124,16 @@ export const Web3Provider = ({ children }) => {
 
     const loginAndPay = async (walletType, size, callback) => {
         try {
-            const account2 = await loadWalletProvider(walletType);
+            const payerAccount = await loadWalletProvider(walletType);
 
-            const res = await getNonceByAddress({variables: {address: account2}});
+            const res = await getNonceByAddress({variables: {address: payerAccount}});
             const nonce = res.data.getNonceByAddress;
-            const signature = await signNonce(walletType, nonce, account2);
+            const signature = await signNonce(walletType, nonce, payerAccount);
 
             if (walletType === 'metamask') {
                 if (!signature) throw new Error('User Rejected Login with Metamask');
                 
-                await verifySignature({variables: {address: account2, signature}})
+                await verifySignature({variables: {address: payerAccount, signature}})
             }
             else if (walletType === 'phantom') {
                 if (!signature) throw new Error('User Rejected Login with Phantom');
@@ -142,7 +142,7 @@ export const Web3Provider = ({ children }) => {
             }
             else throw new Error('Wallet not supported');
 
-            setAccount(account2, payInEth(size, callback, account2));
+            setAccount(payerAccount, payInEth(size, callback, payerAccount));
         }
         catch (err) {
             console.error(err);
@@ -535,9 +535,6 @@ export const Web3Provider = ({ children }) => {
             const inEth = 0.000034;
             const amount = inEth * size;
             
-            console.log(web3);
-            console.log(web3.eth);
-            console.log(payerAccount);
             web3.eth.sendTransaction({
                 from: payerAccount,
                 to: config.company.walletAddress,

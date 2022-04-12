@@ -16,7 +16,7 @@ const Published = props => {
 //	const title = 'test';
 //	const pageName = 'home';
 
-	// const { loadWeb3 } = useWeb3();
+	const { loadWeb3 } = useWeb3();
 //	const { website } = useWebsite();
 
 
