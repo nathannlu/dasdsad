@@ -42,7 +42,7 @@ const Header = ({ contract }) => {
                         ),
                     }[contract.blockchain]
                 }
-                <Typography>ERC-721 contract</Typography>
+                <Typography>{contract?.blockchain?.indexOf('solana') !== -1 ? 'Solana' : 'ERC-721'} contract</Typography>
             </Stack>
             <Box>
                 <Typography variant="h4">Contract overview</Typography>
