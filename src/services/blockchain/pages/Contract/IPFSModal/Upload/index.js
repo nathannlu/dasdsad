@@ -28,7 +28,13 @@ const Steps = ({ id, setIsModalOpen }) => {
                 {
                     0: <Traits setActiveStep={setActiveStep} />,
                     1: <Metadata setActiveStep={setActiveStep} />,
-                    2: <Confirmation id={id} setIsModalOpen={setIsModalOpen} setActiveStep={setActiveStep} />,
+                    2: (
+                        <Confirmation
+                            id={id}
+                            setIsModalOpen={setIsModalOpen}
+                            setActiveStep={setActiveStep}
+                        />
+                    ),
                 }[activeStep]
             }
         </>
@@ -50,7 +56,7 @@ const Confirmation = (props) => {
     });
 
     /**
-     * restrict user from proceeding if  
+     * restrict user from proceeding if
      * - imagesUrl is null
      *  or
      * - metadataUrl is null

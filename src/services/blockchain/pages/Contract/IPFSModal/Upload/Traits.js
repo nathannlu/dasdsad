@@ -15,7 +15,7 @@ const Traits = (props) => {
 
     /**
      * status marks if images were successfully pinned on pinata.cloud
-     * 
+     *
      * if status === true, move to next step
      * else
      * user can try uploading the images again
@@ -24,7 +24,7 @@ const Traits = (props) => {
         if (!status) {
             setUploadedFiles([]);
         }
-        props.setActiveStep(status && 1 || 0);
+        props.setActiveStep((status && 1) || 0);
     };
 
     return (
