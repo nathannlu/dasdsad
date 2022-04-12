@@ -85,7 +85,7 @@
     "eject": "react-scripts eject",
     "postinstall": "patch-package",
     "test2": "jest",
-    "lint:fix": "eslint -c .eslintrc 'src/**/*.{js,jsx}' --fix"
+    "lint": "eslint -c .eslintrc 'src/**/*.{js,jsx}'"
   },
   "eslintConfig": {
     "extends": [
