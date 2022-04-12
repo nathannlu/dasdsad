@@ -154,7 +154,7 @@ const Upload = () => {
                     <Stack gap={2} py={4}>
                         <Stack>
                             <Typography gutterBottom variant="h4">
-                                Create ERC-721 smart contract
+                                Create {selectInput?.indexOf('solana') !== -1 ? 'Solana' : 'ERC-721'} smart contract
                             </Typography>
                             <Typography gutterBottom variant="body">
                                 Fill in and configure your smart contracts
