@@ -13,8 +13,18 @@ const Traits = (props) => {
         setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
     };
 
-    const callback = () => {
-        props.setActiveStep(1);
+    /**
+     * status marks if images were successfully pinned on pinata.cloud
+     *
+     * if status === true, move to next step
+     * else
+     * user can try uploading the images again
+     */
+    const callback = (status) => {
+        if (!status) {
+            setUploadedFiles([]);
+        }
+        props.setActiveStep((status && 1) || 0);
     };
 
     return (
