@@ -27,6 +27,7 @@ import {
 const actions = [
     { title: 'Update metadata', value: 'metadata' },
     { title: 'Update max per mint', value: 'max' },
+    { title: 'Update max per wallet', value: 'maxWallet' },
     { title: 'Update price', value: 'price' },
     { title: 'Airdrop addresses', value: 'airdrop' },
     { title: 'Set whitelist', value: 'whitelist' },
@@ -45,6 +46,7 @@ const Actions = ({ id, contract }) => {
             maxPerMintCount,
             newPrice,
             newMetadataUrl,
+            maxPerWalletCount,
         },
         updateBaseUri,
         setMaxPerMint,
@@ -56,6 +58,7 @@ const Actions = ({ id, contract }) => {
         presaleMint,
         mint,
         withdraw,
+        setMaxPerWallet,
     } = useContractActions(contract.address, getNetworkID());
     const [selectedUpdate, setSelectedUpdate] = useState('metadata');
 
@@ -72,7 +75,7 @@ const Actions = ({ id, contract }) => {
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                     Interact
                 </Typography>
-                {wallet != 'phantom' ? (
+                {contract?.blockchain?.indexOf('solana') === -1 ? (
                     <>
                         <Stack direction="row" gap={2}>
                             <Button
@@ -202,6 +205,22 @@ const Actions = ({ id, contract }) => {
                                                         variant="contained"
                                                         onClick={() =>
                                                             setMaxPerMint()
+                                                        }>
+                                                        <UploadIcon />
+                                                    </Button>
+                                                </Stack>
+                                            ),
+                                            maxWallet: (
+                                                <Stack direction="row">
+                                                    <TextField
+                                                        size="small"
+                                                        {...maxPerWalletCount}
+                                                    />
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            setMaxPerWallet()
                                                         }>
                                                         <UploadIcon />
                                                     </Button>
