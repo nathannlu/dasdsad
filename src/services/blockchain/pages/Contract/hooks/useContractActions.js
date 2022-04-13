@@ -29,6 +29,11 @@ export const useContractActions = (contractAddress) => {
             placeholder: '5',
             rules: [],
         },
+        maxPerWalletCount: {
+            default: '',
+            placeholder: '10',
+            rules: [],
+        },
         newPrice: {
             default: '',
             placeholder: '5',
@@ -81,6 +86,20 @@ export const useContractActions = (contractAddress) => {
     const setMaxPerMint = async (count = actionForm.maxPerMintCount.value) => {
         contract.methods
             .setMaxPerMint(parseInt(count))
+            .send(
+                {
+                    from: account,
+                    value: 0,
+                },
+                (err) => (err ? onTxnError(err) : onTxnInfo())
+            )
+            .once('error', (err) => onTxnError(err))
+            .once('confirmation', () => onTxnSuccess());
+    };
+
+    const setMaxPerWallet = async (count = actionForm.maxPerWalletCount.value) => {
+        contract.methods
+            .setMaxPerWallet(parseInt(count))
             .send(
                 {
                     from: account,
@@ -311,5 +330,6 @@ export const useContractActions = (contractAddress) => {
         presaleMint,
         withdraw,
         mint,
+        setMaxPerWallet
     };
 };
