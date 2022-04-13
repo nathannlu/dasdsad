@@ -54,7 +54,11 @@ module.exports = env => {
 								'@babel/plugin-transform-react-jsx',
 								"@babel/plugin-transform-runtime",
 								"@babel/plugin-syntax-dynamic-import",
-								"@babel/plugin-proposal-class-properties"
+								"@babel/plugin-proposal-class-properties",
+								[
+									'babel-plugin-direct-import',
+									{ modules: ['@mui/material', '@mui/icons-material', '@mui/lab'] },
+								],
 							],
 							presets: ['@babel/preset-react', '@babel/preset-env'],
 						}

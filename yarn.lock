@@ -5615,6 +5615,13 @@
   "resolved" "https://registry.npmjs.org/babel-node/-/babel-node-0.0.1-security.tgz"
   "version" "0.0.1-security"
 
+"babel-plugin-direct-import@^1.0.0":
+  "integrity" "sha512-WQCA5RJz/VVKHoxNKMrXc5YdsWw2d3vN2vrfKMdHLzf3+YROzKtlcZFhRjYx82nd30ijtWD4cxhV7RssUpCfjw=="
+  "resolved" "https://registry.npmjs.org/babel-plugin-direct-import/-/babel-plugin-direct-import-1.0.0.tgz"
+  "version" "1.0.0"
+  dependencies:
+    "resolve" "^1.20.0"
+
 "babel-plugin-dynamic-import-node@^2.3.3":
   "integrity" "sha512-jZVI+s9Zg3IqA/kdi0i6UDCybUI3aSBLnglhYbSSjKlV7yF1F/5LWv8MakQmvYpnbJDS6fcBL2KzHSxNCMtWSQ=="
   "resolved" "https://registry.npmjs.org/babel-plugin-dynamic-import-node/-/babel-plugin-dynamic-import-node-2.3.3.tgz"

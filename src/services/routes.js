@@ -25,13 +25,13 @@ const AppRoutes = () => {
         { path: '/smart-contracts', component: Blockchain },
         { path: '/websites', component: Website },
         /*
-		{
-			path: '/dashboard/settings',
-			component: Settings,
-			private: true,
-			exact: true
-		},
-		*/
+        {
+            path: '/dashboard/settings',
+            component: Settings,
+            private: true,
+            exact: true
+        },
+        */
         {
             path: '/billing',
             component: Payment,

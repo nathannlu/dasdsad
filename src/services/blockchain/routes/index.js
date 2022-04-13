@@ -12,12 +12,12 @@ const BlockchainRoutes = () => {
     const routes = [
         /*
         {
-			path: '/smart-contracts/embed',
-			component: Embed,
-			private: false,
-			exact: true 
-		},
-		*/
+            path: '/smart-contracts/embed',
+            component: Embed,
+            private: false,
+            exact: true 
+        },
+        */
         {
             path: '/smart-contracts/new',
             component: New,
