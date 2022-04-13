@@ -12,7 +12,7 @@ import {
 } from 'ds/components';
 
 const links = [
-    { value: 'Blockchain', link: '/smart-contracts' },
+    { value: 'Blockchain', link: '/dashboard' },
     { value: 'Website', link: '/websites' },
 ];
 

@@ -121,6 +121,7 @@
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
+    "babel-plugin-direct-import": "^1.0.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^6.5.1",
