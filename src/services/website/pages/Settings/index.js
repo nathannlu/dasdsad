@@ -46,6 +46,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import ReplayIcon from '@mui/icons-material/Replay';
 import EditIcon from '@mui/icons-material/Edit';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 
 const Settings = () => {
     const { website } = useWebsite();
@@ -365,10 +366,9 @@ const Settings = () => {
                                             anchorEl={contractAnchor}
                                             open={openContractAnchor}
                                             onClose={onCloseContractAnchor}>
-                                            <MenuItem disableRipple={true}>
+                                            {/* <MenuItem disableRipple={true}>
                                                 Choose Contract Address
-                                            </MenuItem>
-                                            <Divider />
+                                            </MenuItem> */}
                                             {contracts &&
                                                 contracts.map(
                                                     (contract, idx) => (
@@ -391,7 +391,17 @@ const Settings = () => {
                                                             </Stack>
                                                         </MenuItem>
                                                     )
-                                                )}
+                                                )
+                                            }
+                                            <Divider />
+                                            <MenuItem>
+                                                <Stack direction="row" spacing={1}>
+                                                    <Typography>
+                                                        Import Contract
+                                                    </Typography>
+                                                    <ImportExportIcon />
+                                                </Stack>
+                                            </MenuItem>
                                         </Menu>
                                     </Stack>
                                 </Box>
