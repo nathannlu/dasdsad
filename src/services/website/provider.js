@@ -22,6 +22,8 @@ export const WebsiteProvider = ({ children }) => {
         'https://dummyimage.com/',
     ]);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+    const [isImportContractOpen, setIsImportContractOpen] = useState(false);
+    const [importContractAddress, setImportContractAddress] = useState('');
     const { user } = useAuth();
     const [updatePageData] = useUpdatePageData({
         onCompleted: () =>
@@ -325,6 +327,10 @@ export const WebsiteProvider = ({ children }) => {
                 getPageName,
                 goToBuilder,
                 updateOldWebsites,
+                isImportContractOpen,
+                setIsImportContractOpen,
+                importContractAddress,
+                setImportContractAddress,
             }}>
             {children}
         </WebsiteContext.Provider>

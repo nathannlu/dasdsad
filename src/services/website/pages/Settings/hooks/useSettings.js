@@ -25,6 +25,7 @@ const useSettings = () => {
         removeUnusedImages,
         websiteId,
         pageName,
+        setIsImportContractOpen
     } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
@@ -399,6 +400,10 @@ const useSettings = () => {
         setCustomSaveStatus(false);
     };
 
+    const onImportContract = async () => {
+
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -443,6 +448,7 @@ const useSettings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
+        onImportContract
     };
 };
 
