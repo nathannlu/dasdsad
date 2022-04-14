@@ -19,6 +19,7 @@ export const CREATE_WEBSITE = gql`
             }
             settings {
                 connectedContractAddress
+                abi
             }
             favicon
             seo {
@@ -63,6 +64,7 @@ export const GET_WEBSITES = gql`
             }
             settings {
                 connectedContractAddress
+                abi
             }
             favicon
             seo {
@@ -105,6 +107,7 @@ export const GET_PUBLISHED = gql`
             }
             settings {
                 connectedContractAddress
+                abi
             }
             favicon
             seo {
@@ -258,6 +261,12 @@ export const REMOVE_PAGE_FROM_PUBLISH = gql`
 export const SET_CONTRACT_ADDRESS = gql`
     mutation SetContractAddress($websiteId: String!, $address: String!) {
         setContractAddress(websiteId: $websiteId, address: $address)
+    }
+`;
+
+export const SET_ABI = gql`
+    mutation SetABI($websiteId: String!, $abi: String!) {
+        setABI(websiteId: $websiteId, abi: $abi)
     }
 `;
 

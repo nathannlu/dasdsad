@@ -11,9 +11,9 @@ import {
     DialogContentText,
     Input
 } from '@mui/material';
-import { useToast } from 'ds/hooks/useToast';
 import Dropzone from 'react-dropzone';
 import useSettings from './hooks/useSettings';
+import useImportContract from './hooks/useImportContract'
 
 const ImportModal = () => {
     const {
@@ -27,24 +27,12 @@ const ImportModal = () => {
         onImportContract
     } = useSettings();
 
-    const { addToast } = useToast();
-
-    const [stepCount, setStepCount] = useState(0);
-
-    const validate = () => {
-        try {
-            if (!importContractAddress.length) throw new Error('Please enter the contract address you want to import');
-            if (importContractAddress.at(1) !== 'x') throw new Error('Please enter a valid contract address');
-
-            setStepCount(1);
-        }
-        catch (err) {
-            addToast({
-                severity: 'error',
-                message: err.message,
-            })
-        }
-    }
+    const {
+        stepCount,
+        setStepCount,
+        validate,
+        handleABIupload,
+    } = useImportContract();
 
     return (
         <Dialog onClose={() => setIsImportContractOpen(false)} open={isImportContractOpen} fullWidth maxWidth="sm">
@@ -62,7 +50,7 @@ const ImportModal = () => {
                             accept={['application/json']}
                             multiple
                             onDrop={(acceptedFiles) =>
-                                handleJsonUpload(acceptedFiles)
+                                handleABIupload(acceptedFiles)
                             }>
                             {({ getRootProps, getInputProps }) => (
                                 <Box

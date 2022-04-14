@@ -12,6 +12,7 @@ import {
     useRemovePageFromPublish,
     useSetContractAddress,
     useUpdateWebsiteCustom,
+    useSetABI,
 } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
@@ -25,7 +26,7 @@ const useSettings = () => {
         removeUnusedImages,
         websiteId,
         pageName,
-        setIsImportContractOpen
+        importContractAddress
     } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
@@ -130,6 +131,13 @@ const useSettings = () => {
             }),
     });
     const [setContractAddress] = useSetContractAddress({
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
+    const [setABI] = useSetABI({
         onError: (err) =>
             addToast({
                 severity: 'error',
@@ -401,7 +409,26 @@ const useSettings = () => {
     };
 
     const onImportContract = async () => {
+        try {
+            if (!importContractAddress.length) throw new Error('Please enter the contract address you want to import');
+            if (importContractAddress.at(1) !== 'x') throw new Error('Please enter a valid contract address');
 
+            // Set website's contract address
+            await setContractAddress({
+                variables: { websiteId: website._id, address: importContractAddress },
+            });
+
+            // Set website's ABI
+            // await setABI({
+            //     variables: { websiteId: website._id, abi: importContractAddress },
+            // });
+        }
+        catch (err) {
+            addToast({
+                severity: 'error',
+                message: err.message,
+            });
+        }
     }
 
     return {

@@ -24,6 +24,7 @@ export const WebsiteProvider = ({ children }) => {
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const [isImportContractOpen, setIsImportContractOpen] = useState(false);
     const [importContractAddress, setImportContractAddress] = useState('');
+    const [importABI, setImportABI] = useState('');
     const { user } = useAuth();
     const [updatePageData] = useUpdatePageData({
         onCompleted: () =>
@@ -331,6 +332,8 @@ export const WebsiteProvider = ({ children }) => {
                 setIsImportContractOpen,
                 importContractAddress,
                 setImportContractAddress,
+                importABI,
+                setImportABI,
             }}>
             {children}
         </WebsiteContext.Provider>
