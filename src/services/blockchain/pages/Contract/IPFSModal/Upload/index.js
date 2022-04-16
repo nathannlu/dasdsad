@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button, Stack } from 'ds/components';
-import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
+import { Stepper, Step, StepLabel, StepContent, Typography, TextField } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import { useSetBaseUri } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
@@ -44,6 +44,7 @@ const Steps = ({ id, setIsModalOpen }) => {
 const Confirmation = (props) => {
     const { imagesUrl, metadataUrl, ipfsUrl } = useContract();
     const { addToast } = useToast();
+    const [metadataPreview, setMetadataPreview] = useState('');
 
     const [setBaseUri] = useSetBaseUri({
         onCompleted: () => {
@@ -72,32 +73,71 @@ const Confirmation = (props) => {
             props.setActiveStep(0);
             return;
         }
+
+        // Get JSON from ipfsUrl
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                setMetadataPreview(JSON.stringify(JSON.parse(xhr.responseText), null, 2));
+            }
+        };
+        xhr.open('GET', `https://gateway.pinata.cloud/ipfs/${metadataUrl}/1.json`, true);
+        xhr.send();
     }, [imagesUrl, metadataUrl, ipfsUrl]);
 
     return (
         <Stack gap={2}>
-            <Box>
-                Your first NFT is stored at{' '}
-                <a
-                    style={{ color: 'blue' }}
-                    href={`https://gateway.pinata.cloud/ipfs/${imagesUrl}/1.png`}
-                    target="_blank"
-                    rel="noreferrer">
-                    ipfs://{imagesUrl}/
-                </a>
-                . Please verify the content is correct.
-            </Box>
-
-            <Box>
-                Metadata for your first NFT is stored at{' '}
-                <a
-                    style={{ color: 'blue' }}
-                    href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/1.json`}
-                    target="_blank"
-                    rel="noreferrer">
-                    {ipfsUrl}
-                </a>
-                . Please verify the content is correct.
+            <Box display='flex' sx={{ marginTop: '1em', justifyContent: 'center' }}>
+                <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
+                    <Typography>
+                        NFT Preview
+                    </Typography>
+                    <Box
+                        component="img"
+                        sx={{
+                            height: 300,
+                            width: 300,
+                            objectFit: 'cover'
+                        }}
+                        alt="NFT Preview"
+                        src={`https://gateway.pinata.cloud/ipfs/${imagesUrl}/1.png`}
+                    />
+                    <Typography fontSize='8pt'>
+                        Source:{' '}
+                        <a
+                            style={{ color: 'blue' }}
+                            href={`https://gateway.pinata.cloud/ipfs/${imagesUrl}/1.png`}
+                            target="_blank"
+                            rel="noreferrer">
+                            ipfs://{imagesUrl}/
+                        </a>
+                    </Typography>
+                </Box>
+                <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
+                    <Typography>
+                        Metadata Preview
+                    </Typography>
+                    <TextField
+                        label=""
+                        defaultValue=""
+                        variant="filled"
+                        value={metadataPreview}
+                        multiline
+                        rows={11}
+                        maxRows={11}
+                        fullWidth
+                    />
+                    <Typography fontSize='8pt'>
+                        Source:{' '}
+                        <a
+                            style={{ color: 'blue' }}
+                            href={`https://gateway.pinata.cloud/ipfs/${metadataUrl}/1.json`}
+                            target="_blank"
+                            rel="noreferrer">
+                            {ipfsUrl}
+                        </a>
+                    </Typography>
+                </Box>
             </Box>
 
             <Button
