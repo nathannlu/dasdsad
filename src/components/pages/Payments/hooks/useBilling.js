@@ -42,9 +42,7 @@ export const useBilling = () => {
         const productType = transactions[idx].productType;
         confirmationModalRef.current.show({
             title: 'Are you sure you want to cancel subscription?',
-            description: `Cancelling this subscription will render your ${
-                productType === 'Contract' ? 'NFT Collection' : 'Website'
-            } inactive`,
+            description: `${productType === 'Contract' ? 'Please make sure you updated your metadata url before you cancel, after you cancel we wont be hosting your images anymore' : 'Cancelling this subscription will render your website inactive'}`,
             data: {
                 transactionIndex: idx,
             },
