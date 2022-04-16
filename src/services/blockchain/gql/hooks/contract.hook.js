@@ -33,7 +33,7 @@ export const useDeleteContract = ({ onCompleted, onError }) => {
         DELETE_CONTRACT,
         {
             onCompleted: (data) => {
-                const newContract = contracts.filter(
+                const newContract = contracts?.filter(
                     (c) => c.id !== data?.deleteContract.id
                 );
 
