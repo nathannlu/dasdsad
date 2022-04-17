@@ -19,12 +19,14 @@ import { Edit as EditIcon, Add as AddIcon } from '@mui/icons-material';
 import { useContract } from 'services/blockchain/provider';
 import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-
 import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 
 const Dashboard = () => {
-    const { contracts } = useContract();
+    const { contracts, onDeleteContract } = useContract();
     const { addToast } = useToast();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [open, setOpen] = useState('');
+
     const [deleteContract] = useDeleteContract({
         onCompleted: (data) => {
             addToast({
@@ -40,12 +42,11 @@ const Dashboard = () => {
         },
     });
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [open, setOpen] = useState('');
     const handleClick = (event, id) => {
         setOpen(id);
         setAnchorEl(event.currentTarget);
     };
+
     const handleClose = () => {
         setOpen(null);
         setAnchorEl(null);
@@ -191,14 +192,7 @@ const Dashboard = () => {
                                                             horizontal: 'right',
                                                         }}>
                                                         <MenuItem
-                                                            onClick={() => {
-                                                                deleteContract({
-                                                                    variables: {
-                                                                        id: contract.id,
-                                                                    },
-                                                                });
-                                                                handleClose();
-                                                            }}>
+                                                            onClick={() => onDeleteContract(contract, deleteContract, handleClose)}>
                                                             Delete
                                                         </MenuItem>
                                                     </Menu>
