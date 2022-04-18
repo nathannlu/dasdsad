@@ -20,7 +20,7 @@ import {
 import { useGenerator } from 'services/generator/controllers/generator';
 import { useMetadata } from 'services/generator/controllers/metadata';
 
-import AppLoader from './components/common/appLoader';
+import AppLoader from 'components/common/appLoader';
 
 function App() {
     const { addToast } = useToast();
