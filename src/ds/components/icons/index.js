@@ -79,99 +79,99 @@ import TestimonialB from './testimonial/b';
 import TestimonialC from './testimonial/c';
 
 export default function getIcons() {
-  return {
-    Blog: {
-      BlogA: <BlogA />,
-      BlogB: <BlogB />,
-      BlogC: <BlogC />,
-      BlogD: <BlogD />,
-      BlogE: <BlogE />
-    },
-    Contact: {
-      ContactA: <ContactA />,
-      ContactB: <ContactB />,
-      ContactC: <ContactC />
-    },
-    Content: {
-      ContentA: <ContentA />,
-      ContentB: <ContentB />,
-      ContentC: <ContentC />,
-      ContentD: <ContentD />,
-      ContentE: <ContentE />,
-      ContentF: <ContentF />,
-      ContentG: <ContentG />,
-      ContentH: <ContentH />
-    },
-    CTA: {
-      CTAA: <CTAA />,
-      CTAB: <CTAB />,
-      CTAC: <CTAC />,
-      CTAD: <CTAD />
-    },
-    Mint: {
-      MintA: <MintA />,
-      MintB: <MintB />,
-      MintC: <MintC />
-    },
-    Feature: {
-      FeatureA: <FeatureA />,
-      FeatureB: <FeatureB />,
-      FeatureC: <FeatureC />,
-      FeatureD: <FeatureD />,
-      FeatureE: <FeatureE />,
-      FeatureF: <FeatureF />,
-      FeatureG: <FeatureG />,
-      FeatureH: <FeatureH />
-    },
-    Footer: {
-      FooterA: <FooterA />,
-      FooterB: <FooterB />,
-      FooterC: <FooterC />,
-      FooterD: <FooterD />,
-      FooterE: <FooterE />
-    },
-    Gallery: {
-      GalleryA: <GalleryA />,
-      GalleryB: <GalleryB />,
-      GalleryC: <GalleryC />
-    }, 
-    Header: {
-      HeaderA: <HeaderA />,
-      HeaderB: <HeaderB />,
-      HeaderC: <HeaderC />,
-      HeaderD: <HeaderD />
-    }, 
-    Hero: {
-      HeroA: <HeroA />,
-      HeroB: <HeroB />,
-      HeroC: <HeroC />,
-      HeroD: <HeroD />,
-      HeroE: <HeroE />,
-      HeroF: <HeroF />
-    },
-    Pricing: {
-      PricingA: <PricingA />,
-      PricingB: <PricingB />
-    }, 
-    Statistic: {
-      StatisticA: <StatisticA />,
-      StatisticB: <StatisticB />,
-      StatisticC: <StatisticC />
-    }, 
-    Step: {
-      StepA: <StepA />,
-      StepB: <StepB />,
-      StepC: <StepC />
-    },
-    Team: {
-      TeamA: <TeamA />,
-      TeamB: <TeamB />,
-      TeamC: <TeamC />
-    },
-    Testimonial: {
-      TestimonialA: <TestimonialA />,
-      TestimonialB: <TestimonialB />,
-      TestimonialC: <TestimonialC />
-    }
-  }
+    return {
+        Blog: {
+            BlogA: <BlogA />,
+            BlogB: <BlogB />,
+            BlogC: <BlogC />,
+            BlogD: <BlogD />,
+            BlogE: <BlogE />,
+        },
+        Contact: {
+            ContactA: <ContactA />,
+            ContactB: <ContactB />,
+            ContactC: <ContactC />,
+        },
+        Content: {
+            ContentA: <ContentA />,
+            ContentB: <ContentB />,
+            ContentC: <ContentC />,
+            ContentD: <ContentD />,
+            ContentE: <ContentE />,
+            ContentF: <ContentF />,
+            ContentG: <ContentG />,
+            ContentH: <ContentH />,
+        },
+        CTA: {
+            CTAA: <CTAA />,
+            CTAB: <CTAB />,
+            CTAC: <CTAC />,
+            CTAD: <CTAD />,
+        },
+        Mint: {
+            MintA: <MintA />,
+            MintB: <MintB />,
+            MintC: <MintC />,
+        },
+        Feature: {
+            FeatureA: <FeatureA />,
+            FeatureB: <FeatureB />,
+            FeatureC: <FeatureC />,
+            FeatureD: <FeatureD />,
+            FeatureE: <FeatureE />,
+            FeatureF: <FeatureF />,
+            FeatureG: <FeatureG />,
+            FeatureH: <FeatureH />,
+        },
+        Footer: {
+            FooterA: <FooterA />,
+            FooterB: <FooterB />,
+            FooterC: <FooterC />,
+            FooterD: <FooterD />,
+            FooterE: <FooterE />,
+        },
+        Gallery: {
+            GalleryA: <GalleryA />,
+            GalleryB: <GalleryB />,
+            GalleryC: <GalleryC />,
+        },
+        Header: {
+            HeaderA: <HeaderA />,
+            HeaderB: <HeaderB />,
+            HeaderC: <HeaderC />,
+            HeaderD: <HeaderD />,
+        },
+        Hero: {
+            HeroA: <HeroA />,
+            HeroB: <HeroB />,
+            HeroC: <HeroC />,
+            HeroD: <HeroD />,
+            HeroE: <HeroE />,
+            HeroF: <HeroF />,
+        },
+        Pricing: {
+            PricingA: <PricingA />,
+            PricingB: <PricingB />,
+        },
+        Statistic: {
+            StatisticA: <StatisticA />,
+            StatisticB: <StatisticB />,
+            StatisticC: <StatisticC />,
+        },
+        Step: {
+            StepA: <StepA />,
+            StepB: <StepB />,
+            StepC: <StepC />,
+        },
+        Team: {
+            TeamA: <TeamA />,
+            TeamB: <TeamB />,
+            TeamC: <TeamC />,
+        },
+        Testimonial: {
+            TestimonialA: <TestimonialA />,
+            TestimonialB: <TestimonialB />,
+            TestimonialC: <TestimonialC />,
+        },
+    };
 }

@@ -1,13 +1,13 @@
 export const FooterAProps = {
-	image: {
-		_type: 'image',
-		value: 'https://via.placeholder.com/50'
-	},
-	description: {
-		_type: 'textfield',
-		value: 'Air plant banjo lyft occupy retro adaptogen indego'
-	},
-	/*
+    image: {
+        _type: 'image',
+        value: 'https://via.placeholder.com/50',
+    },
+    description: {
+        _type: 'textfield',
+        value: 'Air plant banjo lyft occupy retro adaptogen indego',
+    },
+    /*
 	links: {
 		value: [
 			{
@@ -59,8 +59,8 @@ export const FooterAProps = {
 		_type: 'array',
 	},
 	*/
-	background: {
-		value: '#fff',
-		_type: 'textfield',
-	}
-}
+    background: {
+        value: '#fff',
+        _type: 'textfield',
+    },
+};

@@ -15,55 +15,51 @@ import Collection from 'services/generator/pages/Collection';
 import AppRoutes from 'services/routes';
 
 // Published Website Route
-import Published from 'components/Published'; 
+import Published from 'components/Published';
 
-import Embed from 'services/blockchain/pages/Embed'; 
-
+import Embed from 'services/blockchain/pages/Embed';
 
 const GlobalRoutes = () => {
-	const routes = [
+    const routes = [
+        // Auth routes
+        { path: '/login/forgot', component: ForgotPassword },
+        { path: '/login/reset', component: Reset },
+        { path: '/login', component: Login },
+        { path: '/signup', component: Signup },
 
-		// Auth routes
-		{ path: '/login/forgot', component: ForgotPassword },
-		{ path: '/login/reset', component: Reset },
-		{ path: '/login', component: Login },
-		{ path: '/signup', component: Signup },
+        //		{ path: '/generator', component: Generator },
 
-//		{ path: '/generator', component: Generator },
+        {
+            path: '/generator',
+            component: New,
+            exact: true,
+        },
+        {
+            path: '/generator/download',
+            component: Collection,
+            private: true,
+        },
+        {
+            path: '/smart-contracts/embed',
+            component: Embed,
+            exact: true,
+        },
+        {
+            path: '/smart-contracts/embed/v1',
+            component: Embed,
+            exact: true,
+        },
 
-		{
-			path: '/generator',
-			component: New,
-			exact: true
-		},
-		{
-			path: '/generator/download',
-			component: Collection,
-			private: true,
-		},
-		{
-			path: '/smart-contracts/embed',
-			component: Embed,
-			exact: true 
-		},
-		{
-			path: '/smart-contracts/embed/v1',
-			component: Embed,
-			exact: true 
-		},
+        { path: '/', component: () => <Redirect to="/login" />, exact: true },
 
+        /**
+         * if none of the above routes match, load dashboard routes
+         * the broken routes (aka not-found-404) will be handled in <AppRoutes />
+         */
+        { path: '*', component: AppRoutes, private: true },
+    ];
 
-
-		{ path: '/', component: () => <Redirect to="/login" />, exact: true},
-
-
-		// Dashboard routes
-		{ path: '/', component: AppRoutes, private: true },
-	]
-
-	return <RouteBuilder routes={routes} />
+    return <RouteBuilder routes={routes} />;
 };
 
 export default GlobalRoutes;
-
-

@@ -1,18 +1,26 @@
 import React from 'react';
 import { Button } from 'ds/components';
-import { Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import {
+    Dialog,
+    DialogTitle,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+} from '@mui/material';
 
-const ConfirmationDialog = ({confirmationState, onProceed, confirmationData, setConfirmationState}) => {
+const ConfirmationDialog = ({
+    confirmationState,
+    onProceed,
+    confirmationData,
+    setConfirmationState,
+}) => {
     return (
         <Dialog
             open={confirmationState}
-            onClose={() => setConfirmationState(false)}
-        >
+            onClose={() => setConfirmationState(false)}>
             {confirmationData && (
                 <>
-                    <DialogTitle>
-                        {confirmationData.title}
-                    </DialogTitle>
+                    <DialogTitle>{confirmationData.title}</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             {confirmationData.description}
@@ -20,28 +28,26 @@ const ConfirmationDialog = ({confirmationState, onProceed, confirmationData, set
                     </DialogContent>
                     <DialogActions>
                         <Button
-                            variant='contained'
-                            size='small'
-                            onClick={() => setConfirmationState(false)}
-                        >
+                            variant="contained"
+                            size="small"
+                            onClick={() => setConfirmationState(false)}>
                             Cancel
                         </Button>
                         <Button
-                            variant='contained'
-                            size='small'
-                            color='error'
+                            variant="contained"
+                            size="small"
+                            color="error"
                             onClick={() => {
                                 onProceed();
                                 setConfirmationState(false);
-                            }}
-                        >
+                            }}>
                             Delete
                         </Button>
                     </DialogActions>
                 </>
             )}
         </Dialog>
-    )
-}
+    );
+};
 
-export default ConfirmationDialog
+export default ConfirmationDialog;

@@ -1,10 +1,10 @@
-import { Buffer } from "buffer";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { Buffer } from 'buffer';
+import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
 
 export default class NodeWallet {
-	constructor(keypair) {
-		this.payer = keypair;
-	}
+    constructor(keypair) {
+        this.payer = keypair;
+    }
 
     async signTransaction(tx) {
         tx.partialSign(this.payer);
@@ -13,13 +13,13 @@ export default class NodeWallet {
 
     async signAllTransactions(txs) {
         return txs.map((t) => {
-        t.partialSign(this.payer);
-        return t;
+            t.partialSign(this.payer);
+            return t;
         });
     }
 
     get publicKey() {
-        console.log(this)
+        console.log(this);
         return this.payer.publicKey;
     }
 }

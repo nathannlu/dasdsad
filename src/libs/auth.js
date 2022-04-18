@@ -1,4 +1,4 @@
-import React, { useState, useContext }  from 'react';
+import React, { useState, useContext } from 'react';
 //import { useWebsite } from 'libs/website';
 //import { setAuthToken } from './api';
 
@@ -17,78 +17,69 @@ export interface AuthContextType {
 export const AuthContext = React.createContext({});
 export const useAuth = () => useContext(AuthContext);
 
-const TOKEN_KEY = "token";
-
-
+const TOKEN_KEY = 'token';
 
 export const AuthProvider = ({ children }) => {
-//	const { setWebsite } = useWebsite();
+    //	const { setWebsite } = useWebsite();
 
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [user, setUser] = useState();
-	const [token, setToken] = useState(window.localStorage.getItem(TOKEN_KEY))
-	const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-	const updateToken = (t) => {
-		setToken(t)	
-		//setAuthToken(t)
-		t
-			? window.localStorage.setItem(TOKEN_KEY, t)
-			: window.localStorage.removeItem(TOKEN_KEY)
-	}
+    const setAuthTokenInLocalStorage = (authToken) => {
+        //setAuthToken(authToken)
+        authToken
+            ? window.localStorage.setItem(TOKEN_KEY, authToken)
+            : window.localStorage.removeItem(TOKEN_KEY);
+    };
 
-	const onLoginSuccess = ({ user, token }) => {
-		updateToken(token);	
-		setUser(user);
+    const onLoginSuccess = ({ user, token }) => {
+        setAuthTokenInLocalStorage(token);
+        setUser(user);
+    };
 
-		setIsAuthenticated(true);
-	}
+    const onReauthenticationSuccess = ({
+        id,
+        address,
+        email,
+        name,
+        stripeCustomerId,
+    }) => {
+        if (!user) {
+            setUser({
+                id,
+                address,
+                email,
+                name,
+                stripeCustomerId,
+            });
+        }
+        setLoading(false);
+    };
 
-	// @TODO
-	// This function currently runs three times
-	// also user keeps getting set if there is no check
-	const onReauthenticationSuccess = ({id, address, email, name, stripeCustomerId}) => {
+    const onReauthenticationError = () => {
+        setUser(null);
+        setLoading(false);
+    };
 
-		if(!user) {
-			setUser({
-				id,
-				address,
-				email,
-				name,
-				stripeCustomerId
-			});
-		}
-			
-		setIsAuthenticated(true);
-		setLoading(false);
-	}
+    const logout = () => {
+        setAuthTokenInLocalStorage(null);
+        setUser(null);
+        //setWebsite({});
+    };
 
-	const onReauthenticationError = () => {
-		setToken(null);
-		setLoading(false);
-	}
-
-	const logout = () => {
-		updateToken(null);
-		setUser(null);
-		//setWebsite({});
-		setIsAuthenticated(false);
-	}
-
-	return (
-		<AuthContext.Provider
-			value={{
-				isAuthenticated,
-				user,
-				token,
-				onLoginSuccess,
-				logout,
-				loading,
-				onReauthenticationSuccess,
-				onReauthenticationError,
-			}}
-		>
-			{ children }
-		</AuthContext.Provider>
-	)
-}
+    return (
+        <AuthContext.Provider
+            value={{
+                isAuthenticated:
+                    !!user && !!window.localStorage.getItem(TOKEN_KEY),
+                user,
+                onLoginSuccess,
+                logout,
+                loading,
+                onReauthenticationSuccess,
+                onReauthenticationError,
+            }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};

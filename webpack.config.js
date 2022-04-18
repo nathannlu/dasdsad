@@ -4,11 +4,11 @@ const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack')
-
+const webpack = require('webpack');
+// const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = env => {
-  console.log('Development: ', env.dev); // true
+	console.log('Development: ', env.dev); // true
 
 	return {
 		mode: 'development',
@@ -25,7 +25,7 @@ module.exports = env => {
 				inject: true
 			}),
 			new InterpolateHtmlPlugin({
-			PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
+				PUBLIC_URL: './public' // can modify `static` to another name or get it from `process`
 			}),
 			new CopyWebpackPlugin([
 				{ from: 'public/assets/js', to: 'assets/js' }, // Copies webworkers
@@ -34,10 +34,11 @@ module.exports = env => {
 			new webpack.ProvidePlugin({
 				Buffer: ['buffer', 'Buffer'],
 			}),
-            new webpack.DefinePlugin({
-                'process.env.NODE_DEBUG': JSON.stringify('http')
-            })
-	//		new BundleAnalyzerPlugin
+			new webpack.DefinePlugin({
+				'process.env.NODE_DEBUG': JSON.stringify('http')
+			}),
+			// new ESLintPlugin()
+			//		new BundleAnalyzerPlugin
 		],
 		module: {
 			rules: [
@@ -53,7 +54,11 @@ module.exports = env => {
 								'@babel/plugin-transform-react-jsx',
 								"@babel/plugin-transform-runtime",
 								"@babel/plugin-syntax-dynamic-import",
-								"@babel/plugin-proposal-class-properties"
+								"@babel/plugin-proposal-class-properties",
+								[
+									'babel-plugin-direct-import',
+									{ modules: ['@mui/material', '@mui/icons-material', '@mui/lab'] },
+								],
 							],
 							presets: ['@babel/preset-react', '@babel/preset-env'],
 						}
@@ -75,7 +80,7 @@ module.exports = env => {
 			]
 		},
 		resolve: {
-			extensions: ['.mjs','.js', '.jsx', '.ts', '.tsx'],
+			extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx'],
 			alias: {
 				'react-hooks-worker': `${__dirname}/src`,
 				'ds': `${__dirname}/src/ds`,

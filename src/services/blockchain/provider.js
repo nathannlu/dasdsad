@@ -4,47 +4,45 @@ import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
 import bs58 from 'bs58';
 
-export const ContractContext = React.createContext({})
+export const ContractContext = React.createContext({});
 
-export const useContract = () => useContext(ContractContext)
+export const useContract = () => useContext(ContractContext);
 
 export const ContractProvider = ({ children }) => {
-	const { addToast } = useToast()
-	const { getNetworkID, setNetwork } = useWeb3()
+    const { addToast } = useToast();
+    const { getNetworkID, setNetwork } = useWeb3();
 
-	const [loading, setLoading] = useState(true)
-	const [activeStep, setActiveStep] = useState(0);
-	const [start, setStart] = useState(false);
-	const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [activeStep, setActiveStep] = useState(0);
+    const [start, setStart] = useState(false);
+    const [error, setError] = useState(false);
 
-	const [contracts, setContracts] = useState([]);
-	const [contract, setContract] = useState({});
+    const [contracts, setContracts] = useState([]);
+    const [contract, setContract] = useState({});
 
-
-	const [selectInput, setSelectInput] = useState('ethereum');
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [uploadedJson, setUploadedJson] = useState([]);
-	const [imagesUrl, setImagesUrl] = useState('')
-	const [metadataUrl, setMetadataUrl] = useState('') //unused 
-	const [ipfsUrl, setIpfsUrl] = useState(''); //metadata url
+    const [selectInput, setSelectInput] = useState('ethereum');
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [uploadedJson, setUploadedJson] = useState([]);
+    const [imagesUrl, setImagesUrl] = useState(null);
+    const [metadataUrl, setMetadataUrl] = useState(null); //unused
+    const [ipfsUrl, setIpfsUrl] = useState(null); //metadata url
     const [cacheHash, setCacheHash] = useState('');
     const { account, loadBlockchainData, loadWeb3 } = useWeb3();
 
-	// monkey patch
-Object.prototype.toBuffer = function (fn) {
-	const isBase58 = value => /^[A-HJ-NP-Za-km-z1-9]*$/.test(this);
-	if (typeof this == "string" && isBase58) {
-		console.log(this);
+    // monkey patch
+    Object.prototype.toBuffer = function (fn) {
+        const isBase58 = (value) => /^[A-HJ-NP-Za-km-z1-9]*$/.test(this);
+        if (typeof this == 'string' && isBase58) {
+            console.log(this);
 
-		const decoded = bs58.decode(this);
-		console.log(decoded);
+            const decoded = bs58.decode(this);
+            console.log(decoded);
 
-		return decoded;
-	}
-};
+            return decoded;
+        }
+    };
 
-
-	/*
+    /*
 
     const handleSelectNetwork = async (value) => {
 			console.log(value)
@@ -109,54 +107,68 @@ Object.prototype.toBuffer = function (fn) {
     }
 */
 
+    useEffect(() => {
+        (async () => {
+            await loadWeb3();
+            await loadBlockchainData();
+        })();
+    }, []);
 
-	useEffect(() => {
-		(async () => {
-			await loadWeb3();
-			await loadBlockchainData();
-		})()
-	}, [])
+    const onDeleteContract = async (curContract, deleteContract, handleClose) => {
+        try {
+            if (curContract.isSubscribed) throw new Error('You must cancel your subscription before you can delete this contract');
 
-	const controllers = {
-		imagesUrl,
-		setImagesUrl,
-		metadataUrl,
-		setMetadataUrl,
-		ipfsUrl,
-		setIpfsUrl,
-		uploadedFiles,
-		setUploadedFiles,
-		uploadedJson,
-		setUploadedJson,
+            deleteContract({
+                variables: {
+                    id: curContract.id,
+                },
+            });
+            handleClose();
+        }
+        catch (err) {
+            addToast({
+                severity: 'error',
+                message: err.message,
+            });
+        }
+    }
 
-		contracts,
-		setContracts,
-		contract,
-		setContract,
+    const controllers = {
+        imagesUrl,
+        setImagesUrl,
+        metadataUrl,
+        setMetadataUrl,
+        ipfsUrl,
+        setIpfsUrl,
+        uploadedFiles,
+        setUploadedFiles,
+        uploadedJson,
+        setUploadedJson,
 
-		loading,
-		setLoading,
-		activeStep,
-		setActiveStep,
-		start,
-		setStart,
-		error,
-		setError,
-		selectInput,
-		setSelectInput,
+        contracts,
+        setContracts,
+        contract,
+        setContract,
 
-//		validateNetwork,
-//		handleSelectNetwork,
-	}
+        loading,
+        setLoading,
+        activeStep,
+        setActiveStep,
+        start,
+        setStart,
+        error,
+        setError,
+        selectInput,
+        setSelectInput,
+        onDeleteContract
 
+        //		validateNetwork,
+        //		handleSelectNetwork,
+    };
 
-
-
-	return (
-		<ContractContext.Provider
-			value={controllers}
-		>
-			{ children }
-		</ContractContext.Provider>
-	)
-}
+    return (
+        <ContractContext.Provider value={controllers}>
+            {children}
+        </ContractContext.Provider>
+    );
+};

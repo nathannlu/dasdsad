@@ -6,7 +6,7 @@ import { useGetContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
 
 export const useMintButton = () => {
-	const { loadWalletProvider, mint, getOpen, presaleMint, getSize } = useWeb3();
+	const { loadWalletProvider, mint, getOpen, presaleMint, getSize, getPrice } = useWeb3();
 	const { website } = useWebsite();
 	const [price, setPrice] = useState('');
     const [open, setOpen] = useState(false);
@@ -19,7 +19,9 @@ export const useMintButton = () => {
 		address: website?.settings?.connectedContractAddress,
 		onCompleted: data => {
             setContract(data.getContract);
-			setPrice(data.getContract.nftCollection.price.toString())
+            if (data.getContract.blockchain.indexOf('solana') !== -1) {
+                setPrice(data.getContract.nftCollection.price);
+            }
 		}
 	})
 
@@ -30,7 +32,6 @@ export const useMintButton = () => {
             const blockchain =  contract.blockchain;
             if (blockchain.indexOf('solana') !== -1) { // Solana
                 const userAddress = await loadWalletProvider('phantom');
-                // idk hehe empty
             }
             else { // Metamask
                 const userAddress = await loadWalletProvider('metamask');
@@ -38,17 +39,19 @@ export const useMintButton = () => {
                 setOpen(isOpen);
                 const size = await getSize(website.settings.connectedContractAddress);
                 setSize(size);
+                const cost = await getPrice(website.settings.connectedContractAddress);
+                setPrice(cost);        
             }
 		})()
 
 	}, [website, contract])
 
-    useEffect(() => {
-        if (!contract) return;
+    // useEffect(() => {
+    //     if (!contract) return;
 
-        console.log(contract)
+    //     //console.log(contract)
 
-    }, [contract])
+    // }, [contract])
     
 
     const onMint = async () => {
@@ -60,17 +63,19 @@ export const useMintButton = () => {
 
             if (blockchain.indexOf('solana') !== -1) { // Solana
                 const userAddress = await loadWalletProvider('phantom');
-                //await mintV2(contract.blockchain === 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, userAddress);
+                await mintV2(contract.blockchain === 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, userAddress);
             }
             else { // Eth or Polygon
                 const userAddress = await loadWalletProvider('metamask');
-                // const isOpen = await getOpen(website.settings.connectedContractAddress);
+                //const isOpen = await getOpen(website.settings.connectedContractAddress);
 
                 if (open) {
+                    console.log('open')
                     await mint(price, website.settings.connectedContractAddress, userAddress, mintCount);
                 }
                 else {
-                    await presaleMint(price,contract.address, contract.nftCollection.whitelist, userAddress, mintCount);
+                    console.log('not open')
+                    await presaleMint(price, contract.address, contract.nftCollection.whitelist, userAddress, mintCount);
                 }
             }
         }
