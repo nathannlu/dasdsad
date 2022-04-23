@@ -100,7 +100,7 @@ export const useIPFS = () => {
                     ) {
                         jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`;
                     } else {
-                        jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.png`;
+											jsonMetadata.image = `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.png`;
                     }
 
                     // Attach JSON to formdata

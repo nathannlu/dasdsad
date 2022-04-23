@@ -4,7 +4,7 @@ import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/Asd.json';
 import posthog from 'posthog-js';
 
 export const useEthereum = () => {
@@ -68,10 +68,9 @@ export const useEthereum = () => {
             const contract = new web3.eth.Contract(NFTCollectible.abi);
             const priceInWei = web3.utils.toWei(cost.toString());
 
-            console.log(uri, name, symbol, totalSupply, priceInWei);
             const options = {
                 data: NFTCollectible.bytecode,
-                arguments: [uri, name, symbol, totalSupply, priceInWei, open],
+							arguments: [uri, name,totalSupply],
             };
             const senderInfo = {
                 from: account,
