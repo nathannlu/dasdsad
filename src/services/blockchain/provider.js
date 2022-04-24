@@ -114,6 +114,25 @@ export const ContractProvider = ({ children }) => {
         })();
     }, []);
 
+    const onDeleteContract = async (curContract, deleteContract, handleClose) => {
+        try {
+            if (curContract.isSubscribed) throw new Error('You must cancel your subscription before you can delete this contract');
+
+            deleteContract({
+                variables: {
+                    id: curContract.id,
+                },
+            });
+            handleClose();
+        }
+        catch (err) {
+            addToast({
+                severity: 'error',
+                message: err.message,
+            });
+        }
+    }
+
     const controllers = {
         imagesUrl,
         setImagesUrl,
@@ -141,6 +160,7 @@ export const ContractProvider = ({ children }) => {
         setError,
         selectInput,
         setSelectInput,
+        onDeleteContract
 
         //		validateNetwork,
         //		handleSelectNetwork,
