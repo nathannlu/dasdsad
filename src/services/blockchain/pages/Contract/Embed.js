@@ -51,7 +51,7 @@ const Embed = ({ contract, id }) => {
 		// />`);
 
         setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}"></ambition-button>
-        <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js"></script>`);
+        <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.v1.0.1.js"></script>`);
     }, [contract]);
 
     return (
