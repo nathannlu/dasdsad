@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
     useUpdatePageData,
     useUpdateWebsiteSEO,
@@ -9,6 +9,9 @@ import { useAuth } from 'libs/auth';
 import config from 'config';
 import axios from 'axios';
 import lz from 'lzutf8';
+import deflate from 'deflate-js';
+import CryptoJS from 'crypto-js';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 
 export const WebsiteContext = React.createContext({});
 
@@ -25,6 +28,7 @@ export const WebsiteProvider = ({ children }) => {
     const [isImportContractOpen, setIsImportContractOpen] = useState(false);
     const [importContractAddress, setImportContractAddress] = useState('');
     const [importABI, setImportABI] = useState('');
+    const [ABIFunctions, setABIFunctions] = useState([]);
     const { user } = useAuth();
     const [updatePageData] = useUpdatePageData({
         onCompleted: () =>
@@ -58,6 +62,11 @@ export const WebsiteProvider = ({ children }) => {
                 message: err.message,
             }),
     });
+
+    useEffect(() => {
+        if (!website) return;
+        getABIFunctions();
+    }, [website])
 
     const getWebsitePage = (pageName) => {
         return website?.pages.find((page) => page.name == pageName);
@@ -313,6 +322,27 @@ export const WebsiteProvider = ({ children }) => {
         setImportABI('');
     }
 
+    const getABIFunctions = () => {
+        if (website?.settings?.abi) {
+            const ABIwords2 = CryptoJS.enc.Base64.parse(website?.settings?.abi);
+            const ABIbase642 = CryptoJS.enc.Utf8.stringify(ABIwords2);
+            const ABIarr2 = ABIbase642.split(',').map(Number);
+            const ABIinflated = deflate.inflate(ABIarr2);
+
+            const ABI = ABIinflated.reduce((allString, char) => {
+                return allString += String.fromCharCode(char);
+            }, '');
+
+            const parsedABI = JSON.parse(ABI);
+            console.log(parsedABI);
+
+            setABIFunctions(parsedABI);
+        }
+        else {
+            setABIFunctions(NFTCollectible.abi);
+        }
+    }
+
     return (
         <WebsiteContext.Provider
             value={{
@@ -340,7 +370,9 @@ export const WebsiteProvider = ({ children }) => {
                 setImportContractAddress,
                 importABI,
                 setImportABI,
-                openImportModal
+                openImportModal,
+                ABIFunctions,
+                getABIFunctions
             }}>
             {children}
         </WebsiteContext.Provider>
