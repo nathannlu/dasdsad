@@ -50,7 +50,7 @@ import ImportExportIcon from '@mui/icons-material/ImportExport';
 import ImportModal from './ImportModal'
 
 const Settings = () => {
-    const { website, setIsImportContractOpen } = useWebsite();
+    const { website, openImportModal } = useWebsite();
     const {
         tabValue,
         setTabValue,
@@ -396,7 +396,7 @@ const Settings = () => {
                                                 )
                                             }
                                             <Divider />
-                                            <MenuItem onClick={() => setIsImportContractOpen(true)}>
+                                            <MenuItem onClick={openImportModal}>
                                                 <Stack direction="row" spacing={1}>
                                                     <Typography>
                                                         Import Contract

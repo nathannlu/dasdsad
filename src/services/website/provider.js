@@ -307,6 +307,12 @@ export const WebsiteProvider = ({ children }) => {
         }
     };
 
+    const openImportModal = () => {
+        setIsImportContractOpen(true);
+        setImportContractAddress('');
+        setImportABI('');
+    }
+
     return (
         <WebsiteContext.Provider
             value={{
@@ -334,6 +340,7 @@ export const WebsiteProvider = ({ children }) => {
                 setImportContractAddress,
                 importABI,
                 setImportABI,
+                openImportModal
             }}>
             {children}
         </WebsiteContext.Provider>

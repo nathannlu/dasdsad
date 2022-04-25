@@ -38,6 +38,7 @@
     "buffer": "^6.0.3",
     "canvas": "^2.8.0",
     "crypto-js": "^4.1.1",
+    "deflate-js": "^0.2.3",
     "file-saver": "^2.0.5",
     "framer-motion": "^5.5.5",
     "fs": "0.0.1-security",

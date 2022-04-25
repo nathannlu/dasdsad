@@ -8882,6 +8882,11 @@
     "is-descriptor" "^1.0.2"
     "isobject" "^3.0.1"
 
+"deflate-js@^0.2.3":
+  "integrity" "sha1-+Fq7WOvFFRowYUdHPVfD5PfkQms="
+  "resolved" "https://registry.npmjs.org/deflate-js/-/deflate-js-0.2.3.tgz"
+  "version" "0.2.3"
+
 "del@^4.1.1":
   "integrity" "sha512-QwGuEUouP2kVwQenAsOof5Fv8K9t3D8Ca8NxcXKrIpEHjTXK5J2nXLdP+ALI1cgv8wj7KuwBhTwBkOZSJKM5XQ=="
   "resolved" "https://registry.npmjs.org/del/-/del-4.1.1.tgz"

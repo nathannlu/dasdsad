@@ -26,7 +26,9 @@ const useSettings = () => {
         removeUnusedImages,
         websiteId,
         pageName,
-        importContractAddress
+        importContractAddress,
+        setIsImportContractOpen,
+        importABI
     } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
@@ -411,7 +413,8 @@ const useSettings = () => {
     const onImportContract = async () => {
         try {
             if (!importContractAddress.length) throw new Error('Please enter the contract address you want to import');
-            if (importContractAddress.at(1) !== 'x') throw new Error('Please enter a valid contract address');
+            if (importContractAddress.at(1) !== 'x' || importContractAddress.length < 5) throw new Error('Please enter a valid contract address');
+            if (!importABI.length) throw new Error('Please upload your ABI first');
 
             // Set website's contract address
             await setContractAddress({
@@ -419,9 +422,16 @@ const useSettings = () => {
             });
 
             // Set website's ABI
-            // await setABI({
-            //     variables: { websiteId: website._id, abi: importContractAddress },
-            // });
+            await setABI({
+                variables: { websiteId: website._id, abi: importABI },
+            });
+
+            addToast({
+                severity: 'success',
+                message: "Imported Contract Successfully",
+            });
+
+            setIsImportContractOpen(false);
         }
         catch (err) {
             addToast({

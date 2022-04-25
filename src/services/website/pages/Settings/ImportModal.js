@@ -20,7 +20,8 @@ const ImportModal = () => {
         isImportContractOpen,
         setIsImportContractOpen,
         importContractAddress, 
-        setImportContractAddress
+        setImportContractAddress,
+        importABI
     } = useWebsite();
 
     const {
@@ -31,7 +32,7 @@ const ImportModal = () => {
         stepCount,
         setStepCount,
         validate,
-        handleABIupload,
+        handleABIupload
     } = useImportContract();
 
     return (
@@ -46,40 +47,46 @@ const ImportModal = () => {
                 ) : (
                     <>
                         <DialogContentText>Upload your ABI</DialogContentText>
-                        <Dropzone
-                            accept={['application/json']}
-                            multiple
-                            onDrop={(acceptedFiles) =>
-                                handleABIupload(acceptedFiles)
-                            }>
-                            {({ getRootProps, getInputProps }) => (
-                                <Box
-                                    sx={{
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        borderRadius: '4px',
-                                        background: '#F8F8F8',
-                                        border: '1px solid #C4C4C4',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 0 10px rgba(0,0,0,.15)',
-                                        position: 'relative',
-                                    }}>
-                                    <div
-                                        style={{ padding: '64px' }}
-                                        {...getRootProps()}>
-                                        <input {...getInputProps()} />
-                                        <p
-                                            style={{
-                                                opacity: 0.5,
-                                                textAlign: 'center',
-                                            }}>
-                                            Drag &apos;n&apos; drop your contract ABI
-                                            here.
-                                        </p>
-                                    </div>
-                                </Box>
-                            )}
-                        </Dropzone>
+                        {!importABI?.length ? (
+                            <Dropzone
+                                accept={['application/json']}
+                                multiple
+                                onDrop={(acceptedFiles) =>
+                                    handleABIupload(acceptedFiles)
+                                }>
+                                {({ getRootProps, getInputProps }) => (
+                                    <Box
+                                        sx={{
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: '4px',
+                                            background: '#F8F8F8',
+                                            border: '1px solid #C4C4C4',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 0 10px rgba(0,0,0,.15)',
+                                            position: 'relative',
+                                        }}>
+                                        <div
+                                            style={{ padding: '64px' }}
+                                            {...getRootProps()}>
+                                            <input {...getInputProps()} />
+                                            <p
+                                                style={{
+                                                    opacity: 0.5,
+                                                    textAlign: 'center',
+                                                }}>
+                                                Drag &apos;n&apos; drop your contract ABI
+                                                here.
+                                            </p>
+                                        </div>
+                                    </Box>
+                                )}
+                            </Dropzone>
+                        ) : (
+                            <Typography color='green'>
+                                ABI successfully uploaded ✅
+                            </Typography>
+                        )}
                     </>
                 )}
             </DialogContent>
