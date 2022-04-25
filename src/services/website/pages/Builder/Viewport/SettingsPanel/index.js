@@ -35,12 +35,7 @@ export const Settings = () => {
         };
         return { selected };
     });
-    const { deleteImage, onSaveChanges, imagePlaceHolders, addImageToLocal } =
-        useWebsite();
-
-    useEffect(() => {
-        console.log(props);
-    }, []);
+    const { deleteImage, onSaveChanges, imagePlaceHolders, addImageToLocal } = useWebsite();
 
     const onChangeItem = (e, key, parentKey = '', componentIdx = -1) => {
         const { name, value } = e.target;
@@ -204,14 +199,7 @@ export const Settings = () => {
         await onSaveChanges(query);
     };
 
-    // I just did conditions instead of mapping because mapping will trigger all the keys for some reason
-    const generateField = (
-        component,
-        key,
-        type,
-        parentKey = '',
-        componentIdx = -1
-    ) => {
+    const generateField = (component, key, type, parentKey = '', componentIdx = -1) => {
         return (
             <Box width="100%">
                 {type === 'textfield' && (

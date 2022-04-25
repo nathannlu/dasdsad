@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { useWebsite } from 'services/website/provider';
 import { useGetContract } from 'services/blockchain/gql/hooks/contract.hook';
-//import { mintV2 } from 'solana/helpers/mint.js';
+import { mintV2 } from 'solana/helpers/mint.js';
 import { useToast } from 'ds/hooks/useToast';
 
 export const useMintButton = () => {
