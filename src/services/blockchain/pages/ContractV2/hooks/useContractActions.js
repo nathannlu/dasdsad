@@ -22,9 +22,46 @@ export const useContractActions = () => {
 		}
 	};
 
+	const updateReveal = () => {
+		const { methods: { updateReveal }} = retrieveContract(impl);
+
+		const revealed = false, uri = "ipfs://QmY3ru7ZeAihUU3xexCouSrbybaBV1hPe5EwvNqph1AYdS/"
+
+		const rawTxn = updateReveal(revealed, uri).encodeABI();
+		web3.eth.sendTransaction(
+			{
+				from,
+				to,
+				data: rawTxn,
+			},
+			function (error, hash) {
+				console.log(error);
+			}
+		);
+	}
+
+	const airdrop = () => {
+		const { methods: { airdrop }} = retrieveContract(impl);
+		const recipients = ["0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166"]
+		const amount = [1]
+
+		const rawTxn = airdrop(recipients, amount).encodeABI();
+		web3.eth.sendTransaction(
+			{
+				from,
+				to,
+				data: rawTxn,
+			},
+			function (error, hash) {
+				console.log(error);
+			}
+		);
+	}
+
 	const updateSale = () => {
 		const { methods: { updateSale }} = retrieveContract(impl);
-		const open= true,
+		const 
+			open= true,
 			cost= 1,
 			maxPerWallet= 10,
 			maxPerMint= 10
@@ -88,6 +125,8 @@ export const useContractActions = () => {
 	return {
 		mint,
 		updateSale,
-		getPublicVariables
+		getPublicVariables,
+		updateReveal,
+		airdrop,
 	};
 };

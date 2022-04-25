@@ -4,7 +4,7 @@ import keccak256 from 'keccak256';
 import { mintV2 } from 'solana/helpers/mint';
 import ERC721 from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 import ERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionCreatorImpl.json';
-import ProxyErc721a from 'services/blockchain/blockchains/ethereum/abis/Asd.json';
+import ProxyERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721ATestnet.json';
 
 /**
  * Compare array buffers
@@ -36,17 +36,10 @@ const getContractType = (blockchain) => {
 };
 
 /**
- * Transaction success handling
+ * Determine blockchain of contract based on its address
  */
-const onTxnSuccess = (msg) => {
-	console.log(msg);
-};
-
-/**
- * Transaction error handling
- */
-const onTxnError = (msg) => {
-	console.log(msg);
+const deriveBlockchain = (contractAddress) => {
+	
 };
 
 /**
@@ -90,7 +83,7 @@ export class ContractController {
 
 	constructor(contractAddress, blockchain, version) {
 		// Set contract methods (only needed for ethereum contracts)
-		if(blockchain == 'ethereum') {
+		if(getContractType(blockchain) == 'ethereum') {
 			this.contract = this.retrieveEthereumContract(contractAddress);
 		} else {
 			this.contract = {};
@@ -98,7 +91,6 @@ export class ContractController {
 		this.contract.contractAddress = contractAddress;
 		this.contract.type = getContractType(blockchain);
 		this.blockchain = blockchain;
-
 
 		// if contract is on chain
 		// populate these values
@@ -151,7 +143,7 @@ export class ContractController {
 
 
 	/**
-	 * Deploys new smart contract
+	 * Deploys new proxy contract
 	 *
 	 * @param deployerAddress - wallet address of the user deploying the contract
 	 * @param name - Name of the smart contract
@@ -161,33 +153,37 @@ export class ContractController {
 	 * @TODO Support solana
 	 */
 	async deployContract(deployerAddress, name, symbol, totalSupply) {
-		const { contract, blockchain } = this;
+		const { blockchain, contract: { type }} = this;
 
-		if (contract.type == 'ethereum') {
+		// Proxy contract
+		const proxyContract = new web3.eth.Contract(ProxyERC721a.abi);
+
+
+		if (type == 'ethereum') {
 			const options = {
 				data: ProxyERC721a.bytecode,
-				arguments: [name, symbol, totalSupply],
+				arguments: [name, symbol, parseInt(totalSupply)],
 			};
 			const senderInfo = {
 				from: deployerAddress,
 			};
 
-			contract
-				.deploy(options)
+			return proxyContract.deploy(options)
 				.send(senderInfo, (err, txnhash) => {
 					if (err) {
-						onTxnError(err.message);
+						throw new Error(err.message);
 					} else {
 						console.log(
 							'Deploying contract... should take a couple of seconds'
 						);
 					}
 				})
-				.on('error', (err) => onTxnError(err))
-				.then(async (newContractInstance) => onTxnSuccess());
+				.on('error', function(error){
+					throw new Error(error.message)
+				})
 		}
 
-		if (contract.type == 'solana') {
+		if (type == 'solana') {
 			// @TODO solana contract deploy
 			
 		}
@@ -227,7 +223,7 @@ export class ContractController {
 			let txnData;
 
 			if (isPresaleOpen == false && isPublicSaleOpen == false) {
-				onTxnError('Sales are not open');
+				throw new Error('Sales are not open');
 				return;
 			}
 
@@ -254,15 +250,17 @@ export class ContractController {
 
 			// Send transaction
 			// @TODO no error
-			web3.eth.sendTransaction(
+			return web3.eth.sendTransaction(
 				{
 					from: walletAddress,
 					to: contractAddress,
 					data: txnData,
 					value: price,
 				},
-				(error, hash) => {
-					onTxnError(error);
+				(err, hash) => {
+					if (err) {
+						throw new Error(err.message);
+					}
 				}
 			);
 		}
@@ -290,15 +288,17 @@ export class ContractController {
 
 		// Send transaction
 		// @TODO no error
-		web3.eth.sendTransaction(
+		return eeb3.eth.sendTransaction(
 			{
 				from: walletAddress,
 				to: contractAddress,
 				data: txnData,
 				value: 0,
 			},
-			(error, hash) => {
-				onTxnError(error);
+			(err) => {
+				if (err) {
+					throw new Error(err.message);
+				}
 			}
 		);
 	}
@@ -319,32 +319,26 @@ export class ContractController {
 
 		// @TODO load current states for non updating values
 
-		try {
-			if(version == 'erc721') {
-				throw new Error("Function not supported in this version")
-			}
-			if(version == 'erc721a') {
-				txnData = updateSale(open, cost, maxW, maxM).encodeABI();
-			}
-
-			// Send transaction
-			// @TODO no info
-			// @TODO no error
-			web3.eth.sendTransaction(
-				{
-					from: walletAddress,
-					to: contractAddress,
-					data: txnData,
-					value: 0,
-				},
-				(error, hash) => {
-					onTxnError(error);
-				}
-			);
-
-		} catch (e) {
-			onTxnError(e)
+		if(version == 'erc721') {
+			throw new Error("Function not supported in this version")
 		}
+		if(version == 'erc721a') {
+			txnData = updateSale(open, cost, maxW, maxM).encodeABI();
+		}
+
+		// Send transaction
+		// @TODO no info
+		return web3.eth.sendTransaction(
+			{
+				from: walletAddress,
+				to: contractAddress,
+				data: txnData,
+				value: 0,
+			},
+			(err) => {
+				throw new Error(err.message);
+			}
+		);
   }
 
 	/**
@@ -360,32 +354,26 @@ export class ContractController {
 
 		// @TODO load current states for non updating values
 
-		try {
-			if(version == 'erc721') {
-				throw new Error("Function not supported in this version")
-			}
-			if(version == 'erc721a') {
-				txnData = updatePresale(open, cost, maxW, maxM).encodeABI();
-			}
-
-			// Send transaction
-			// @TODO no info
-			// @TODO no error
-			web3.eth.sendTransaction(
-				{
-					from: walletAddress,
-					to: contractAddress,
-					data: txnData,
-					value: 0,
-				},
-				(error, hash) => {
-					onTxnError(error);
-				}
-			);
-
-		} catch (e) {
-			onTxnError(e)
+		if(version == 'erc721') {
+			throw new Error("Function not supported in this version")
 		}
+		if(version == 'erc721a') {
+			txnData = updatePresale(open, cost, maxW, maxM).encodeABI();
+		}
+
+		// Send transaction
+		// @TODO no info
+		return web3.eth.sendTransaction(
+			{
+				from: walletAddress,
+				to: contractAddress,
+				data: txnData,
+				value: 0,
+			},
+			(err) => {
+				throw new Error(err.message);
+			}
+		);
   }
 
 
@@ -402,32 +390,26 @@ export class ContractController {
 		const { version, contract: { contractAddress, methods: {updateReveal}}} = this;
 		let txnData;
 
-		try {
-			if(version == 'erc721') {
-				throw new Error("Function not supported in this version")
-			}
-			if(version == 'erc721a') {
-				txnData = updateReveal(open, cost, maxW, maxM).encodeABI();
-			}
-
-			// Send transaction
-			// @TODO no info
-			// @TODO no error
-			web3.eth.sendTransaction(
-				{
-					from: walletAddress,
-					to: contractAddress,
-					data: txnData,
-					value: 0,
-				},
-				(error, hash) => {
-					onTxnError(error);
-				}
-			);
-
-		} catch (e) {
-			onTxnError(e)
+		if(version == 'erc721') {
+			throw new Error("Function not supported in this version")
 		}
+		if(version == 'erc721a') {
+			txnData = updateReveal(open, cost, maxW, maxM).encodeABI();
+		}
+
+		// Send transaction
+		// @TODO no info
+		return web3.eth.sendTransaction(
+			{
+				from: walletAddress,
+				to: contractAddress,
+				data: txnData,
+				value: 0,
+			},
+			(err) => {
+				throw new Error(err.message);
+			}
+		);
   }
 
 	/**
@@ -446,16 +428,15 @@ export class ContractController {
 
 			// Send transaction
 			// @TODO no info
-			// @TODO no error
-			web3.eth.sendTransaction(
+			return web3.eth.sendTransaction(
 				{
 					from: walletAddress,
 					to: contractAddress,
 					data: txnData,
 					value: 0,
 				},
-				(error, hash) => {
-					onTxnError(error);
+				(err) => {
+					throw new Error(err.message);
 				}
 			);
 		}
@@ -463,7 +444,6 @@ export class ContractController {
 		if (type == 'solana') {
 			// @TODO Solana withdraw
 		}
-
   }
 }
 

@@ -95,6 +95,7 @@ module.exports = env => {
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
 				'solana': `${__dirname}/src/solana`,
+				'controllers': `${__dirname}/src/controllers`,
 			},
 			/*
 			fallback: {

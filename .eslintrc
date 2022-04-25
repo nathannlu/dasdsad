@@ -37,4 +37,5 @@
         "no-async-promise-executor": 0,
         "no-control-regex": 0
     }
+		useTabs: false
 }

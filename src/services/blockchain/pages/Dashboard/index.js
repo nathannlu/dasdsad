@@ -73,7 +73,7 @@ const Dashboard = () => {
                                         Generate your collection
                                     </Button>
                                 </a>
-                                <Link to="/smart-contracts/new">
+                                <Link to="/smart-contracts/v2/new">
                                     <Button
                                         size="small"
                                         startIcon={<AddIcon />}
@@ -89,7 +89,7 @@ const Dashboard = () => {
                                 <Grid key={i} p={1} item xs={3}>
                                     <Card variant="outlined">
                                         <Link
-                                            to={`/smart-contracts/${contract.id}`}>
+																					to={contract.type == 'erc721a' ? `/smart-contracts/v2/${contract.id}` : `/smart-contracts/${contract.id}` }>
                                             <Box
                                                 sx={{
                                                     bgcolor: 'grey.100',

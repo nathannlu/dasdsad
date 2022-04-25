@@ -1,12 +1,14 @@
 export const defaultCss = {
     height: '250px',
     width: '250px',
+    overflow: 'hidden',
+
     borderRadius: '10px',
     border: 'solid 2px white',
     background: 'rgba(255,255,255,.2)',
-    overflow: 'hidden',
     boxShadow: '0 4px 8px rgba(0,0,0,.1)',
     backdropFilter: 'blur(3px)',
+
     transition: 'all .5s',
 };
 

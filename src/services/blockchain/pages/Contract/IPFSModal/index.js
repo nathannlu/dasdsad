@@ -14,7 +14,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
 
     useEffect(() => {
         // If contract is subscribed, skip to next step
-        if (contract.isSubscribed) {
+        if (contract?.isSubscribed) {
             setInitialStep(4);
         }
     }, [contract]);

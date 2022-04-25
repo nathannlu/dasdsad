@@ -5,6 +5,8 @@ import { CircularProgress, Stack } from 'ds/components';
 // Dashboard Routes
 const Dashboard = lazy(() => import('services/blockchain/pages/Dashboard'));
 const New = lazy(() => import('services/blockchain/pages/New'));
+const NewV2 = lazy(() => import('services/blockchain/pages/NewV2'));
+const Success = lazy(() => import('services/blockchain/pages/NewV2/Success'));
 const Contract = lazy(() => import('services/blockchain/pages/Contract'));
 const ContractV2 = lazy(() => import('services/blockchain/pages/ContractV2'));
 const Embed = lazy(() => import('services/blockchain/pages/Embed'));
@@ -26,6 +28,12 @@ const BlockchainRoutes = () => {
             exact: true,
         },
         {
+            path: '/smart-contracts/v2/new',
+            component: NewV2,
+            private: true,
+            exact: true,
+        },
+        {
             path: '/smart-contracts',
             component: Dashboard,
             private: true,
@@ -40,6 +48,12 @@ const BlockchainRoutes = () => {
         {
             path: '/smart-contracts/v2/:id',
             component: ContractV2,
+            private: true,
+            exact: true,
+        },
+        {
+            path: '/smart-contracts/v2/:id/deploy/success',
+            component: Success,
             private: true,
             exact: true,
         },
