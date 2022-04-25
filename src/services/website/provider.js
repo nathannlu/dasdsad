@@ -334,8 +334,6 @@ export const WebsiteProvider = ({ children }) => {
             }, '');
 
             const parsedABI = JSON.parse(ABI);
-            console.log(parsedABI);
-
             setABIFunctions(parsedABI);
         }
         else {
