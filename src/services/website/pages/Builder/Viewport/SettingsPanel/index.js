@@ -206,16 +206,16 @@ export const Settings = () => {
         if (parentKey.length && componentIdx != -1) {
             // If inside array (Ex: features)
             setProp((props) => {
-                props[parentKey].value[componentIdx]['isMint'].value = funcName;
+                props[parentKey].value[componentIdx]['isMint'].func = funcName;
             });
         } else if (parentKey.length && componentIdx == -1) {
             // If value is an object (Ex. button)
             setProp((props) => {
-                props[parentKey].value['isMint'].value = funcName;
+                props[parentKey].value['isMint'].func = funcName;
             });
         } else {
             setProp((props) => {
-                props['isMint'].value = funcName;
+                props['isMint'].func = funcName;
             });
         }
 
