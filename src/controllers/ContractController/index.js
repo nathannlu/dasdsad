@@ -4,7 +4,8 @@ import keccak256 from 'keccak256';
 import { mintV2 } from 'solana/helpers/mint';
 import ERC721 from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 import ERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionCreatorImpl.json';
-import ProxyERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721ATestnet.json';
+import ProxyERC721aTestnet from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721ATestnet.json';
+import ProxyERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721A.json';
 
 /**
  * Compare array buffers
@@ -46,7 +47,8 @@ const deriveBlockchain = (contractAddress) => {
  * Logic smart contract address. Proxy contracts delegate function calls to this address.
  * Only used in this context to construct contract ABI
  */
-const impl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
+const testImpl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
+const impl = '0x4D54e39b4556c2B64F9B63A630A8ab558CA1a380';
 
 /**
  * Initial contract state
@@ -288,7 +290,7 @@ export class ContractController {
 
 		// Send transaction
 		// @TODO no error
-		return eeb3.eth.sendTransaction(
+		return web3.eth.sendTransaction(
 			{
 				from: walletAddress,
 				to: contractAddress,
@@ -394,7 +396,7 @@ export class ContractController {
 			throw new Error("Function not supported in this version")
 		}
 		if(version == 'erc721a') {
-			txnData = updateReveal(open, cost, maxW, maxM).encodeABI();
+			txnData = updateReveal(revealed, uri).encodeABI();
 		}
 
 		// Send transaction

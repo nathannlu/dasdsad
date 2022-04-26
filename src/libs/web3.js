@@ -4,7 +4,7 @@ import { useToast } from 'ds/hooks/useToast';
 import config from 'config';
 import { MerkleTree } from 'merkletreejs';
 import keccak256 from 'keccak256';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/Asd.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 import {
     useGetNonceByAddress,
     useVerifySignature,
