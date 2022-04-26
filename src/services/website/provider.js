@@ -111,12 +111,12 @@ export const WebsiteProvider = ({ children }) => {
                     Authorization: `Uploadcare.Simple ${config.uploadcare.publicKey}:${config.uploadcare.secretKey}`,
                 },
             };
-            const res = await axios.delete(
-                `https://api.uploadcare.com/files/${imageID}/`,
-                opt
-            );
+            // const res = await axios.delete(
+            //     `https://api.uploadcare.com/files/${imageID}/`,
+            //     opt
+            // );
 
-            removeImageFromLocal(imageID, isSettings);
+            // removeImageFromLocal(imageID, isSettings);
         } catch (e) {
             addToast({
                 severity: 'error',
@@ -127,9 +127,9 @@ export const WebsiteProvider = ({ children }) => {
 
     const deleteImageBulk = async (imageIdArray, isSettings = false) => {
         try {
-            imageIdArray.forEach((imageId) => {
-                removeImageFromLocal(imageId, isSettings);
-            });
+            // imageIdArray.forEach((imageId) => {
+            //     removeImageFromLocal(imageId, isSettings);
+            // });
 
             const opt = {
                 headers: {
@@ -139,10 +139,10 @@ export const WebsiteProvider = ({ children }) => {
                 data: imageIdArray,
             };
 
-            const res = await axios.delete(
-                `https://api.uploadcare.com/files/storage/`,
-                opt
-            );
+            // const res = await axios.delete(
+            //     `https://api.uploadcare.com/files/storage/`,
+            //     opt
+            // );
         } catch (e) {
             addToast({
                 severity: 'error',
