@@ -12,6 +12,7 @@ import {
     useRemovePageFromPublish,
     useSetContractAddress,
     useUpdateWebsiteCustom,
+    useSetABI,
 } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
@@ -25,6 +26,9 @@ const useSettings = () => {
         removeUnusedImages,
         websiteId,
         pageName,
+        importContractAddress,
+        setIsImportContractOpen,
+        importABI
     } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
@@ -129,6 +133,13 @@ const useSettings = () => {
             }),
     });
     const [setContractAddress] = useSetContractAddress({
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
+    const [setABI] = useSetABI({
         onError: (err) =>
             addToast({
                 severity: 'error',
@@ -399,6 +410,37 @@ const useSettings = () => {
         setCustomSaveStatus(false);
     };
 
+    const onImportContract = async () => {
+        try {
+            if (!importContractAddress.length) throw new Error('Please enter the contract address you want to import');
+            if (importContractAddress.at(1) !== 'x' || importContractAddress.length < 5) throw new Error('Please enter a valid contract address');
+            if (!importABI.length) throw new Error('Please upload your ABI first');
+
+            // Set website's contract address
+            await setContractAddress({
+                variables: { websiteId: website._id, address: importContractAddress },
+            });
+
+            // Set website's ABI
+            await setABI({
+                variables: { websiteId: website._id, abi: importABI },
+            });
+
+            addToast({
+                severity: 'success',
+                message: "Imported Contract Successfully",
+            });
+
+            setIsImportContractOpen(false);
+        }
+        catch (err) {
+            addToast({
+                severity: 'error',
+                message: err.message,
+            });
+        }
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -443,6 +485,7 @@ const useSettings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
+        onImportContract
     };
 };
 

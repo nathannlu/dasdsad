@@ -66,6 +66,7 @@ export const ContentAProps = {
             isMint: {
                 _type: 'boolean',
                 value: false,
+                func: ''
             },
         },
     },
