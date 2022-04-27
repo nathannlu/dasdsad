@@ -3,7 +3,7 @@ import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
 import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { ContractController } from 'controllers/contract/ContractController';
-import { WalletController } from 'controllers/WalletController';
+import { WalletController } from 'controllers/wallet/WalletController';
 import posthog from 'posthog-js';
 
 export const useDeployContractForm = () => {
