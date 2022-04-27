@@ -1,138 +1,110 @@
 import React from 'react';
+import NFT from './NFT';
 import {
-    Fade,
-    Container,
-    Link,
-    TextField,
-    Stack,
-    Box,
-    Grid,
-    Typography,
-    Button,
-    Divider,
+	Fade,
+	Container,
+	Link,
+	TextField,
+	Stack,
+	Box,
+	Grid,
+	Typography,
+	Button,
+	Divider,
 } from 'ds/components';
-import { Chip, Stepper, Step, StepLabel, StepContent } from '@mui/material';
+import {
+	Chip,
+	Stepper,
+	Step,
+	StepLabel,
+	StepContent,
+} from '@mui/material';
 
-
-const Overview = ({setIsModalOpen}) => {
+const Overview = ({ setIsModalOpen }) => {
 	return (
-		<Stack mt={8}>
-			<Container>
-				<Grid container>
-					<Grid item>
-						<Box>
-							<Stack gap={2} direction="horizontal" alignItems="center">
-								<Typography variant="h4">
-									Contract Name Here
-								</Typography>
-								<Chip label="Rinkeby" color="warning" />
-							</Stack>
-							<Typography>
-								ERC721
-							</Typography>
-						</Box>
+		<Box>
 
-
-						<Box mt={4}>
-							<Typography sx={{fontWeight:'500'}} variant="h5">
-								Next steps
-							</Typography>
-							<Stepper sx={{
-									width: '400px',
-								}} 
-								activeStep={1} 
-								orientation="vertical"
-							>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Deploy contract on Rinkeby
-										</Typography>
-										<Typography>
-											Configure your contract and deploy it on the Rinkeby Test Network
-										</Typography>
-									</StepLabel>
-								</Step>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Connect token image & metadata
-										</Typography>
-										<Typography>
-											Test out your contract by minting a test token
-										</Typography>
-										<Button onClick={setIsModalOpen}>
-											Connect your images & metadata
-										</Button>
-									</StepLabel>
-								</Step>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Mint a token on Rinkeby
-										</Typography>
-										<Typography>
-											Test out your contract by minting a test token
-										</Typography>
-									</StepLabel>
-								</Step>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Deploy contract on Mainnet
-										</Typography>
-										<Typography>
-											You're officially ready for showtime!
-										</Typography>
-									</StepLabel>
-								</Step>
-							</Stepper>
-						</Box>
-					</Grid>
-					<Grid 
-						item
-						ml="auto"
-						xs={6}
-						sx={{
-							borderRadius: '10px',
-							border: 'solid 2px white',
-							background: 'rgba(0,0,0,.2)',
-							boxShadow: '0 4px 8px rgba(0,0,0,.1)',
-							backdropFilter: 'blur(3px)',
-						}}
-						p={3}
-					>
-
-						<Stack sx={{border: '1px solid black', height: '100%'}}>
-							<Box sx={{height: '500px'}}>
-
-							</Box>
-							<Stack p={2} sx={{borderTop: '1px solid black'}}>
-								<Typography variant="body" sx={{fontWeight: 'bold'}}>
-									Collection name
-								</Typography>
-							</Stack>
-							<Stack direction="horizontal">
-								<Stack p={2} sx={{ flex: 1,borderRight: '1px solid black', borderTop: '1px solid black'}}>
-									<Typography variant="body" sx={{fontWeight: 'bold'}}>
-										Symbol
+			<Stack mt={8}>
+				<Container>
+					<Grid container>
+						<Grid item>
+							<Box>
+								<Stack
+									gap={2}
+									direction="horizontal"
+									alignItems="center">
+									<Typography variant="h4">
+										Moonbirds
 									</Typography>
+									<Chip label="Rinkeby" color="warning" />
 								</Stack>
-								<Stack p={2} sx={{ flex: 1, borderTop: '1px solid black' }}>
-									<Typography variant="body" sx={{fontWeight: 'bold'}}>
+								<Typography>ERC-721A</Typography>
+							</Box>
+
+							<Stack gap={2} mt={4}>
+								<Box>
+									<Typography
+										sx={{ fontWeight: '600' }}
+										variant="h6">
+										Address
+									</Typography>
+									<Typography variant="body">
+										0x123adsa123dsa123
+									</Typography>
+								</Box>
+
+								<Box>
+									<Typography
+										sx={{ fontWeight: '600' }}
+										variant="h6">
+										Details
+									</Typography>
+									<Stack>
+									<Typography variant="body">
 										Collection size
 									</Typography>
-								</Stack>
-
+									<Typography variant="body">
+										Balance:
+									</Typography>
+									<Typography variant="body">
+										NFTs sold:
+									</Typography>
+									<Typography variant="body">
+										Metadata URL
+									</Typography>
+									<Typography variant="body">
+										Max per mint
+									</Typography>
+									<Typography variant="body">
+										Max per wallet 
+									</Typography>
+									<Typography variant="body">
+										sale status
+									</Typography>
+									</Stack>
+								</Box>
 							</Stack>
-						</Stack>
-
+						</Grid>
+						<Grid sx={{position:'relative'}} item ml="auto" xs={5}>
+							<Box sx={{position:'absolute', top: 0}}>
+								<NFT />
+							</Box>
+							<Box sx={{position:'absolute', top: 40, transform: 'scale(1.05)'}}>
+								<NFT />
+							</Box>
+							<Box sx={{
+								position:'absolute',
+								top: 80,
+								transform: 'scale(1.1)'
+							}}>
+								<NFT />
+							</Box>
+						</Grid>
 					</Grid>
-				</Grid>
-
-			</Container>
-		</Stack>
-	)
+				</Container>
+			</Stack>
+		</Box>
+	);
 };
 
 export default Overview;

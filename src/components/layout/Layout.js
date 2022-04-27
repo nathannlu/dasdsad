@@ -32,6 +32,7 @@ const Layout = ({ children }) => {
         <main className="ambition-main" style={{ paddingTop: '107px' }}>
             <header className="ambition-header">
                 <Navbar />
+							{/*
                 <Box
                     sx={{
                         borderBottom: 1,
@@ -74,9 +75,9 @@ const Layout = ({ children }) => {
 							<Tab label="Blockchain" value="smart-contracts" />
 							<Tab label="Website" value="websites" />
 						</Tabs>
-						*/}
                     </Container>
                 </Box>
+							*/}
             </header>
             {children}
         </main>

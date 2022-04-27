@@ -1,14 +1,15 @@
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
-import { useContract } from 'services/blockchain/provider';
 import { useHistory } from 'react-router-dom';
 import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
-import { ContractController } from 'controllers/ContractController';
+import { ContractController } from 'controllers/contract/ContractController';
+import { WalletController } from 'controllers/WalletController';
 import posthog from 'posthog-js';
 
 export const useDeployContractForm = () => {
 	const blockchain = 'rinkeby';
-	const contract = new ContractController(null, blockchain, 'erc721a');
+	const contractController = new ContractController(null, blockchain, 'erc721a');
+	const walletController = new WalletController();
 	const { addToast } = useToast();
 	const history = useHistory();
 	const [createContract, { loading }] = useCreateContract({
@@ -62,19 +63,23 @@ export const useDeployContractForm = () => {
 		const { name, symbol, maxSupply } = deployContractForm;
 		const from = '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166';
 
-		// switch network to rinkeby
-
-		// deploy contract
 		try {
-			const deployedContract = await contract.deployContract(
-				from,
-				name.value,
-				symbol.value,
-				maxSupply.value
-			);
-			if (deployedContract) {
-				onCreateContract(deployedContract.options.address);
-			}
+			// switch network to testnet
+			await walletController.compareNetwork("rinkeby", async () => {
+				// deploy contract
+				const deployedContract = await contractController.deployContract(
+					from,
+					name.value,
+					symbol.value,
+					maxSupply.value
+				);
+
+				// Update backend
+				if (deployedContract) {
+					onCreateContract(deployedContract.options.address);
+				}
+			})
+
 		} catch (e) {
 			onError(e);
 		}
@@ -110,7 +115,6 @@ export const useDeployContractForm = () => {
 			};
 			await createContract({ variables: { contract: ContractInput } });
 		} catch (err) {
-			console.log(err)
 			onError(new Error("Transaction succeeded but failed to update backend. Please contact an administrator."));
 		}
 	};

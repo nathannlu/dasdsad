@@ -51,7 +51,8 @@ const testImpl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
 const impl = '0x4D54e39b4556c2B64F9B63A630A8ab558CA1a380';
 
 /**
- * Initial contract state
+ * Initial contract state.
+ * Sets all the variables used by controller functions.
  *
  * @property balance - Balance of smart contract
  * @property metadataUrl - Target URL of baseUri
@@ -78,11 +79,20 @@ const ContractState = {
 };
 
 /**
- * Controller responsible for submitting and managing contract transactions
+ * Controller responsible for submitting 
+ * and managing contract transactions
  */
 export class ContractController {
+	/**
+	 * smart contract version constant. Corresponds to contract.type
+	 * in mongoDB. Current options are 'whitelist' & 'erc721a'
+	 *
+	 */
 	version = 'erc721a';
 
+	/**
+	 * Creates a ContractController instance
+	 */
 	constructor(contractAddress, blockchain, version) {
 		// Set contract methods (only needed for ethereum contracts)
 		if(getContractType(blockchain) == 'ethereum') {
@@ -101,7 +111,8 @@ export class ContractController {
 
 
 	/**
-	 * Generates runnable "method" functions for interacting with smart contract
+	 * Generates runnable "method" functions for 
+	 * interacting with smart contract
 	 */
 	retrieveEthereumContract(contractAddress) {
 		const { version } = this;
@@ -158,12 +169,19 @@ export class ContractController {
 		const { blockchain, contract: { type }} = this;
 
 		// Proxy contract
-		const proxyContract = new web3.eth.Contract(ProxyERC721a.abi);
+		let compiledProxy;
+		if (blockchain == 'ethereum') {
+			compiledProxy = ProxyERC721a;
+		} else if (blockchain == 'rinkeby') {
+			compiledProxy = ProxyERC721aTestnet;
+		}
+
+		const proxyContract = new web3.eth.Contract(compiledProxy.abi);
 
 
 		if (type == 'ethereum') {
 			const options = {
-				data: ProxyERC721a.bytecode,
+				data: compiledProxy.bytecode,
 				arguments: [name, symbol, parseInt(totalSupply)],
 			};
 			const senderInfo = {
@@ -447,6 +465,42 @@ export class ContractController {
 			// @TODO Solana withdraw
 		}
   }
+
+	/**
+	 * Returns https image url from json metadata.
+	 * Resolves IPFS url.
+	 *
+	 * @param metadata - parsed json metadata
+	 */
+	async getResolvedImageUrl(metadata) {
+
+		// parse metadata.image url to pinata gateway
+
+		// return link
+	}
+
+	/**
+	 * Retrieves parsed json metadata from token id
+	 * 
+	 *
+	 * @param tokenId - parsed json metadata
+	 */
+	async getTokenMetadata(tokenId) {
+		const { contract: { contractAddress }} = this;
+
+		// Retrieve token URI from smart contract
+
+		// Parse IPFS url into pinata gateway
+		
+		// Parse raw text into json
+		// return {
+		//		name: '',
+		//		description: '',
+		//		image: '',
+		//		traits: {...}
+		// }
+		
+	}
 }
 
 
