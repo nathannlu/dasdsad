@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 import {
     useDeleteWebsite,
@@ -12,12 +13,15 @@ import {
     useRemovePageFromPublish,
     useSetContractAddress,
     useUpdateWebsiteCustom,
-    useSetABI,
+    useSetABI
 } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 
+import { GENERATE_SSL_CERTIFICATE } from 'services/website/gql/website.gql';
+
 const useSettings = () => {
+    const { isAuthenticated } = useAuth();
     const { addToast } = useToast();
     const {
         website,
@@ -28,7 +32,8 @@ const useSettings = () => {
         pageName,
         importContractAddress,
         setIsImportContractOpen,
-        importABI
+        importABI,
+        setWebsite
     } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
@@ -118,6 +123,7 @@ const useSettings = () => {
                 message: err.message,
             }),
     });
+
     const [addPageToPublish] = useAddPageToPublish({
         onError: (err) =>
             addToast({
@@ -329,6 +335,53 @@ const useSettings = () => {
         });
     };
 
+    const onGenerateSSlCertificate = async (domain) => {
+        setDomainName(domain);
+        const TOKEN_KEY = 'token';
+        const getHeaders = () => {
+            const headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            const token = window.localStorage.getItem(TOKEN_KEY);
+            if (isAuthenticated && token) {
+                headers.append('authorization', `Bearer ${token}`);
+            }
+            return headers;
+        }
+
+        const url = process.env.CONFIG === 'dev' || process.env.NODE_ENV === 'development' && 'http://localhost:5000/graphql' || 'https://api.ambition.so/main/graphql';
+
+        try {
+            const response = await fetch(url, { method: 'POST', headers: getHeaders(), body: JSON.stringify({ query: GENERATE_SSL_CERTIFICATE, variables: { websiteId: website._id, domain } }) });
+            const responseBody = await response.json();
+            console.log(responseBody);
+            if (!responseBody.data) {
+                const errorMessage = responseBody.errors[0]?.message;
+                addToast({
+                    severity: 'error',
+                    message: errorMessage,
+                });
+                return;
+            }
+
+            setWebsite({
+                ...website,
+                domains: website.domains.map(d => {
+                    if (d.domain === domain) {
+                        return { ...d, isCustomDomainSslGenerated: true };
+                    }
+                    return d;
+                })
+            });
+
+            addToast({
+                severity: 'success',
+                message: responseBody.data.generateSSlCertificate
+            });
+        } catch (e) {
+            console.error(e, 'ERROR fetching results from apollo query!');
+        }
+    };
+
     const onPublishPage = async (pageIdx) => {
         const pageName = website.pages[pageIdx].name;
         const indexOfPublished = website.published.findIndex(
@@ -485,7 +538,8 @@ const useSettings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
-        onImportContract
+        onImportContract,
+        onGenerateSSlCertificate
     };
 };
 

@@ -61,6 +61,7 @@ export const GET_WEBSITES = gql`
             domains {
                 domain
                 isActive
+                isCustomDomainSslGenerated
             }
             settings {
                 connectedContractAddress
@@ -236,6 +237,18 @@ export const SET_CUSTOM_DOMAIN = gql`
             websiteId: $websiteId
             domain: $domain
             isActive: $isActive
+        )
+    }
+`;
+
+export const GENERATE_SSL_CERTIFICATE = `
+    mutation GenerateSSlCertificate(
+        $websiteId: String!
+        $domain: String!
+    ) {
+        generateSSlCertificate(
+            websiteId: $websiteId
+            domain: $domain
         )
     }
 `;
