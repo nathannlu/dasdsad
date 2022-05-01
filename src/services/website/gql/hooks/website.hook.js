@@ -1,4 +1,3 @@
-import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 import { useQuery, useMutation } from '@apollo/client';
 import {
@@ -59,7 +58,6 @@ export const useCreateWebsite = ({
     onCompleted,
     onError,
 }) => {
-    const { user } = useAuth();
     const { setWebsite } = useWebsite();
 
     const [createWebsite, { data }] = useMutation(CREATE_WEBSITE, {
