@@ -2,9 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import {
 	Box,
-	LoadingButton,
 	IconButton,
-	FormLabel,
 	TextField,
 	Divider,
 	Fade,
@@ -12,23 +10,126 @@ import {
 	Stack,
 	Container,
 	Typography,
-	Card,
 	Button,
 } from 'ds/components';
 import { useDeployContractForm } from './hooks/useDeployContractForm';
-import { Radio, RadioGroup, FormControlLabel } from '@mui/material';
-import { AppBar, Toolbar } from '@mui/material';
+import { AppBar, Radio, FormControlLabel, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+
+import solanaLogo from 'assets/images/solana.png';
+import etherLogo from 'assets/images/ether.png';
+import polygonLogo from 'assets/images/polygon.png';
+
+const Description = ({ activeFocusKey }) => {
+	switch (activeFocusKey) {
+		default:
+		case 'SYMBOL':
+			return (
+				<React.Fragment>
+					<Typography sx={{ fontWeight: 'bold' }} variant="h4">
+						Choosing a symbol
+					</Typography>
+					<Typography variant="body">
+						The token symbol will be displayed on Etherscan when others come to view your smart contract. The symbol is also used when sharing links to your smart contracts, and platforms where NFT sales and transfer activity are displayed.
+					</Typography>
+					<Typography variant="body">
+						This field accepts alpha numeric
+						characters and spaces and can be any
+						length.
+					</Typography>
+					<Typography variant="body">
+						Input is limited here to 5 alphanumeric characters.
+					</Typography>
+				</React.Fragment>
+			)
+		case 'MAX_SUPPLY':
+			return (
+				<React.Fragment>
+					<Typography sx={{ fontWeight: 'bold' }} variant="h4">
+						Collection size
+					</Typography>
+					<Typography variant="body">
+						Creating an NFT collection is fun, interesting and profitable.
+					</Typography>
+					<Typography variant="body">
+						This field accepts numeric values and sky is the limit.
+					</Typography>
+				</React.Fragment>
+			)
+		case 'NAME':
+			return (
+				<React.Fragment>
+					<Typography sx={{ fontWeight: 'bold' }} variant="h4">
+						Your contract name
+					</Typography>
+					<Typography variant="body">
+						The contract name is the main identifier
+						for your contract and will appear
+						anywhere your contract is mentioned.
+						This is usually your artist name, brand,
+						or identity.
+					</Typography>
+					<Typography variant="body">
+						This field accepts alpha numeric
+						characters and spaces and can be any
+						length.
+					</Typography>
+					<Typography variant="body">
+						We recommend less than 15 characters,
+						however this is not a hard requirement.
+					</Typography>
+				</React.Fragment>
+			);
+	}
+}
+
+const RadioLabel = ({ type, isTestnetEnabled }) => {
+	const content = { imgSrc: null, description: null };
+	switch (type) {
+		case 'ethereum':
+			content.imgSrc = etherLogo;
+			content.description = `Deploy on ${isTestnetEnabled && 'Ethereum Testnet (Rinkeby)' || 'Ethereum'}`;
+			break;
+		case 'polygon':
+			content.imgSrc = polygonLogo;
+			content.description = `Deploy on ${isTestnetEnabled && 'Polygon Testnet (Mumbai)' || 'Polygon'}`;
+			break;
+		case 'solana':
+			content.imgSrc = solanaLogo;
+			content.description = `Deploy on ${isTestnetEnabled && 'Solana Devnet' || 'Solana'}`;
+			break;
+		default:
+			content.imgSrc = null;
+			content.description = null;
+	}
+
+	if (!content.imgSrc || !content.description) {
+		return null;
+	}
+
+	return (
+		<Grid container={true} justifyContent="center" alignItems="center">
+			<img style={{ height: 42, width: 'auto', marginRight: 16 }} src={content.imgSrc} />
+			<Typography>{content.description}</Typography>
+		</Grid>
+	)
+}
 
 const New = () => {
 	const history = useHistory();
-	const { 
+	const {
 		deployContractForm: {
 			name,
 			symbol,
 			maxSupply,
 		},
-		deployOnRinkeby
+		deployContract,
+		activeFocusKey,
+		activeBlockchain,
+		isTestnetEnabled,
+		setActiveFocusKey,
+		setActiveBlockchain,
+		setIsTestnetEnabled,
 	} = useDeployContractForm();
 
 	return (
@@ -55,6 +156,7 @@ const New = () => {
 					}}
 				>
 					<Stack direction="row" px={2} gap={2} alignItems="center">
+						{/* @TODO history.goBack() will not work if page is hardrefreshed */}
 						<IconButton onClick={() => history.goBack()}>
 							<CloseIcon sx={{ fontSize: '18px' }} />
 						</IconButton>
@@ -84,17 +186,17 @@ const New = () => {
 								}}
 								p={3}
 							>
-								<Stack sx={{border: '1px solid black', height: '100%'}}>
-									<Stack p={2} sx={{borderBottom: '1px solid black'}}>
-										<Typography variant="body" sx={{fontWeight: 'bold'}}>
+								<Stack sx={{ border: '1px solid black', height: '100%' }}>
+									<Stack p={2} sx={{ borderBottom: '1px solid black' }}>
+										<Typography variant="body" sx={{ fontWeight: 'bold' }}>
 											Collection name
 										</Typography>
-										<TextField 
+										<TextField
 											variant="standard"
 											placeholder="E.g. Bored Ape Yacht Club"
 											{...name}
 											sx={{
-												'&.MuiInput-root':{
+												'&.MuiInput-root': {
 													fontSize: '30px',
 
 													'&::before': {
@@ -105,26 +207,31 @@ const New = () => {
 													}
 												}
 											}}
+											onFocus={e => setActiveFocusKey('NAME')}
 										/>
 									</Stack>
 									<Stack direction="horizontal">
-										<Stack p={2} sx={{ flex: 1,borderRight: '1px solid black', borderBottom: '1px solid black'}}>
-											<Typography variant="body" sx={{fontWeight: 'bold'}}>
+										<Stack p={2} sx={{ flex: 1, borderRight: '1px solid black', borderBottom: '1px solid black' }}>
+											<Typography variant="body" sx={{ fontWeight: 'bold' }}>
 												Symbol
 											</Typography>
-											<TextField 
+											<TextField
 												variant="standard"
 												sx={{ flex: 1 }}
 												{...symbol}
+												inputProps={{ maxLength: 5 }}
+												onFocus={e => setActiveFocusKey('SYMBOL')}
 											/>
 										</Stack>
 										<Stack p={2} sx={{ flex: 1, borderBottom: '1px solid black' }}>
-											<Typography variant="body" sx={{fontWeight: 'bold'}}>
+											<Typography variant="body" sx={{ fontWeight: 'bold' }}>
 												Collection size
 											</Typography>
-											<TextField 
+											<TextField
 												variant="standard"
 												{...maxSupply}
+												type="number"
+												onFocus={e => setActiveFocusKey('MAX_SUPPLY')}
 											/>
 										</Stack>
 
@@ -132,49 +239,55 @@ const New = () => {
 								</Stack>
 							</Box>
 						</Grid>
-						<Grid item sx={{flex: 1, px:4}}>
+						<Grid item sx={{ flex: 1, px: 4 }}>
 							<Stack gap={2}>
-								<Stack direction="horizontal">
-									<Stack>
-										<Radio />
-										Ethereum
+								<Stack>
+									<Stack sx={{ mb: 2 }}>
+										<FormControlLabel onChange={e => setIsTestnetEnabled(e.target.checked)} checked={isTestnetEnabled} control={<Switch />} label="Deploy To Testnet" />
 									</Stack>
-									<Stack>
-										<Radio />
-										Polygon
+									<Stack sx={{ mb: 2 }}>
+										<FormControlLabel
+											name="blockchain-radio-buttons"
+											value="ethereum"
+											checked={activeBlockchain === 'ethereum'}
+											onChange={e => setActiveBlockchain(e.target.value)}
+											control={<Radio />}
+											label={<RadioLabel type="ethereum" isTestnetEnabled={isTestnetEnabled} />}
+											labelPlacement="end"
+										/>
 									</Stack>
-									<Stack>
-										<Radio />
-										Solana
+									<Stack sx={{ mb: 2 }}>
+										<FormControlLabel
+											name="blockchain-radio-buttons"
+											value="polygon"
+											checked={activeBlockchain === 'polygon'}
+											onChange={e => setActiveBlockchain(e.target.value)}
+											control={<Radio />}
+											label={<RadioLabel type="polygon" isTestnetEnabled={isTestnetEnabled} />}
+											labelPlacement="end"
+										/>
+									</Stack>
+									<Stack sx={{ mb: 2 }}>
+										<FormControlLabel
+											name="blockchain-radio-buttons"
+											value="solana"
+											checked={activeBlockchain === 'solana'}
+											onChange={e => setActiveBlockchain(e.target.value)}
+											control={<Radio />}
+											label={<RadioLabel type="solana" isTestnetEnabled={isTestnetEnabled} />}
+											labelPlacement="end"
+										/>
 									</Stack>
 								</Stack>
 
 								<Box>
-									<Button onClick={deployOnRinkeby} variant="contained" size="small">
-										Deploy to testnet
+									<Button onClick={deployContract} variant="contained" size="small">
+										Create Contract
 									</Button>
 								</Box>
 
 								<Stack gap={2} mt={6}>
-									<Typography sx={{fontWeight: 'bold'}} variant="h4">
-										Your contract name
-									</Typography>
-									<Typography variant="body">
-										The contract name is the main identifier
-										for your contract and will appear
-										anywhere your contract is mentioned.
-										This is usually your artist name, brand,
-										or identity.
-									</Typography>
-									<Typography variant="body">
-										This field accepts alpha numeric
-										characters and spaces and can be any
-										length.
-									</Typography>
-									<Typography variant="body">
-										We recommend less than 15 characters,
-										however this is not a hard requirement.
-									</Typography>
+									<Description activeFocusKey={activeFocusKey} />
 								</Stack>
 							</Stack>
 						</Grid>

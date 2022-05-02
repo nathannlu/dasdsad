@@ -7,6 +7,31 @@ import ERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionCreat
 import ProxyERC721aTestnet from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721ATestnet.json';
 import ProxyERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721A.json';
 
+export const blockchainCurrencyMap = {
+	ethereum: 'eth',
+	rinkeby: 'eth',
+	polygon: 'matic',
+	mumbai: 'matic',
+	solana: 'sol',
+	solanadevnet: 'sol',
+};
+
+/**
+ * Determine Blockchain Type if testnet is enabled
+ */
+export const getBlockchainType = (blockchain, isTestnet = false) => {
+	switch (blockchain) {
+		case 'ethereum':
+			return isTestnet && 'rinkeby' || 'ethereum';
+		case 'polygon':
+			return isTestnet && 'mumbai' || 'polygon';
+		case 'solana':
+			return isTestnet && 'solana' || 'solanadevnet';
+		default:
+			throw new Error('Blockchain tye not supported!');
+	}
+}
+
 /**
  * Compare array buffers
  */
@@ -40,7 +65,7 @@ const getContractType = (blockchain) => {
  * Determine blockchain of contract based on its address
  */
 const deriveBlockchain = (contractAddress) => {
-	
+
 };
 
 /**
@@ -67,7 +92,7 @@ const impl = '0x4D54e39b4556c2B64F9B63A630A8ab558CA1a380';
  * @TODO turn into type.
  */
 const ContractState = {
-	balance: '',	
+	balance: '',
 	metadataUrl: '',
 	price: 1,
 	collectionSize: '',
@@ -95,7 +120,7 @@ export class ContractController {
 	 */
 	constructor(contractAddress, blockchain, version) {
 		// Set contract methods (only needed for ethereum contracts)
-		if(getContractType(blockchain) == 'ethereum') {
+		if (getContractType(blockchain) == 'ethereum') {
 			this.contract = this.retrieveEthereumContract(contractAddress);
 		} else {
 			this.contract = {};
@@ -136,7 +161,7 @@ export class ContractController {
 	 */
 	populateContractInfo = () => {
 		// if erc721
-		const { contract: { type }} = this;
+		const { contract: { type } } = this;
 
 		if (type == 'ethereum') {
 			if (version == 'erc721') {
@@ -166,18 +191,14 @@ export class ContractController {
 	 * @TODO Support solana
 	 */
 	async deployContract(deployerAddress, name, symbol, totalSupply) {
-		const { blockchain, contract: { type }} = this;
+		const { blockchain, contract: { type } } = this;
 
 		// Proxy contract
-		let compiledProxy;
-		if (blockchain == 'ethereum') {
-			compiledProxy = ProxyERC721a;
-		} else if (blockchain == 'rinkeby') {
-			compiledProxy = ProxyERC721aTestnet;
-		}
+		const compiledProxy = (blockchain === 'ethereum' || blockchain === 'polygon') && ProxyERC721a
+			|| (blockchain === 'rinkeby' || blockchain === 'mumbai') && ProxyERC721aTestnet
+			|| null;
 
 		const proxyContract = new web3.eth.Contract(compiledProxy.abi);
-
 
 		if (type == 'ethereum') {
 			const options = {
@@ -198,14 +219,14 @@ export class ContractController {
 						);
 					}
 				})
-				.on('error', function(error){
+				.on('error', function (error) {
 					throw new Error(error.message)
 				})
 		}
 
 		if (type == 'solana') {
 			// @TODO solana contract deploy
-			
+
 		}
 	};
 
@@ -228,23 +249,18 @@ export class ContractController {
 		} = this;
 
 		// Solana minting
-		if(blockchain == 'solana') {
-			await mintV2('mainnet', contractAddress, walletAddress);
-			return;
-		}
-		if(blockchain == 'solanadevnet') {
-			await mintV2('devnet', contractAddress, walletAddress);
+		if (type === 'solana') {
+			await mintV2(blockchain === 'solanadevnet' && 'devnet' || 'mainnet', contractAddress, walletAddress);
 			return;
 		}
 
 		//  Ethereum minting
-		if (type == 'ethereum') {
-			const {	contract: { methods: { presaleMint, mint }}} = this;
+		if (type === 'ethereum') {
+			const { contract: { methods: { presaleMint, mint } } } = this;
 			let txnData;
 
 			if (isPresaleOpen == false && isPublicSaleOpen == false) {
 				throw new Error('Sales are not open');
-				return;
 			}
 
 			// Presale mint
@@ -284,6 +300,8 @@ export class ContractController {
 				}
 			);
 		}
+
+		throw new Error('Blockchain not supported');
 	}
 
 	/**
@@ -294,15 +312,15 @@ export class ContractController {
 	 * @param amount - Array of NFTs to airdrop per address, with index corresponding to address index
 	 */
 	async airdrop(walletAddress, recipients, amount) {
-		const { version, contract: { contractAddress, methods: {airdrop}}} = this;
+		const { version, contract: { contractAddress, methods: { airdrop } } } = this;
 		let txnData;
 
 		// ERC-721 doesn't have ability to set specific amount of tokens to airdrop per address
 		// like 721a does
-		if(version == 'erc721') {
+		if (version == 'erc721') {
 			txnData = airdrop(recipients).encodeABI();
 		}
-		if(version == 'erc721a') {
+		if (version == 'erc721a') {
 			txnData = airdrop(recipients, amount).encodeABI();
 		}
 
@@ -333,16 +351,16 @@ export class ContractController {
 	 * @param maxW - Max per wallet
 	 * @param maxM - Max per mint
 	 */
-  async updateSale(walletAddress, open, cost, maxW, maxM) {
-		const { version, contract: { contractAddress, methods: {updateSale}}} = this;
+	async updateSale(walletAddress, open, cost, maxW, maxM) {
+		const { version, contract: { contractAddress, methods: { updateSale } } } = this;
 		let txnData;
 
 		// @TODO load current states for non updating values
 
-		if(version == 'erc721') {
+		if (version == 'erc721') {
 			throw new Error("Function not supported in this version")
 		}
-		if(version == 'erc721a') {
+		if (version == 'erc721a') {
 			txnData = updateSale(open, cost, maxW, maxM).encodeABI();
 		}
 
@@ -359,7 +377,7 @@ export class ContractController {
 				throw new Error(err.message);
 			}
 		);
-  }
+	}
 
 	/**
 	 * Updates presale in smart contract
@@ -368,16 +386,16 @@ export class ContractController {
 	 * @param open - Boolean presale state
 	 * @param root - Merkleroot of all addresses on the whitelist. Used to verify address for presale mint,
 	 */
-  async updatePresale(open, root) {
-		const { version, contract: { contractAddress, methods: {updatePresale}}} = this;
+	async updatePresale(open, root) {
+		const { version, contract: { contractAddress, methods: { updatePresale } } } = this;
 		let txnData;
 
 		// @TODO load current states for non updating values
 
-		if(version == 'erc721') {
+		if (version == 'erc721') {
 			throw new Error("Function not supported in this version")
 		}
-		if(version == 'erc721a') {
+		if (version == 'erc721a') {
 			txnData = updatePresale(open, cost, maxW, maxM).encodeABI();
 		}
 
@@ -394,7 +412,7 @@ export class ContractController {
 				throw new Error(err.message);
 			}
 		);
-  }
+	}
 
 
 	/**
@@ -406,14 +424,14 @@ export class ContractController {
 	 * @param revealed - Uri to update. Also functions as a toggle for which uri to display.
 	 * @param uri - Metadata uri
 	 */
-  async updateReveal(walletAddress, revealed, uri) {
-		const { version, contract: { contractAddress, methods: {updateReveal}}} = this;
+	async updateReveal(walletAddress, revealed, uri) {
+		const { version, contract: { contractAddress, methods: { updateReveal } } } = this;
 		let txnData;
 
-		if(version == 'erc721') {
+		if (version == 'erc721') {
 			throw new Error("Function not supported in this version")
 		}
-		if(version == 'erc721a') {
+		if (version == 'erc721a') {
 			txnData = updateReveal(revealed, uri).encodeABI();
 		}
 
@@ -430,7 +448,7 @@ export class ContractController {
 				throw new Error(err.message);
 			}
 		);
-  }
+	}
 
 	/**
 	 * Withdraws funds from smart contract. In the case of Solana,
@@ -439,8 +457,8 @@ export class ContractController {
 	 * 
 	 * @TODO support solana
 	 */
-  async withdraw() {
-		const { version, contract: { contractAddress, type, methods: {withdraw}}} = this;
+	async withdraw() {
+		const { version, contract: { contractAddress, type, methods: { withdraw } } } = this;
 		let txnData;
 
 		if (type == 'ethereum') {
@@ -464,7 +482,7 @@ export class ContractController {
 		if (type == 'solana') {
 			// @TODO Solana withdraw
 		}
-  }
+	}
 
 	/**
 	 * Returns https image url from json metadata.
@@ -486,12 +504,12 @@ export class ContractController {
 	 * @param tokenId - parsed json metadata
 	 */
 	async getTokenMetadata(tokenId) {
-		const { contract: { contractAddress }} = this;
+		const { contract: { contractAddress } } = this;
 
 		// Retrieve token URI from smart contract
 
 		// Parse IPFS url into pinata gateway
-		
+
 		// Parse raw text into json
 		// return {
 		//		name: '',
@@ -499,7 +517,7 @@ export class ContractController {
 		//		image: '',
 		//		traits: {...}
 		// }
-		
+
 	}
 }
 
