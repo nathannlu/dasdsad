@@ -20,6 +20,8 @@ import { useContract } from 'services/blockchain/provider';
 import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
+import { createSolanaContract } from 'solana';
+import { mintV2 } from 'solana/helpers/mint';
 
 const Dashboard = () => {
     const { contracts, onDeleteContract } = useContract();
@@ -66,6 +68,34 @@ const Dashboard = () => {
                                     A list of your deployed contracts
                                 </Typography>
                             </Box>
+                            
+                            <Button onClick={() => createSolanaContract(
+                                {
+                                    uri: "https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/",
+                                    name: "whiteListTester",
+                                    address: "SeiEkykWvqgjxxuGmqLQBLxMBdoVnBXyAdZzY5XxuVu",
+                                    symbol: "WLT",
+                                    size: 10,
+                                    price: 0.001,
+                                    liveDate:  "25 Dec 2022 00:00:00 GMT",
+                                    creators: [
+                                        { address: "SeiEkykWvqgjxxuGmqLQBLxMBdoVnBXyAdZzY5XxuVu", verified: true, share: 100 }
+                                    ],
+                                    cacheHash:null,
+                                    id: null,
+                                    env : 'devnet', 
+                                }
+                            )}>
+                                CANDY
+                            </Button>
+
+                            <Button onClick={() => mintV2(
+                               'devnet', 
+                                'Cv1J7KjfSNeAHiHqmEDprrzqz7mqnfkAtCc1hF1SF5ki',
+                                'WLArDcnsnxVjjWd4rDhmyRrgU8jP6XGbxqugwowGXdy'
+                            )}>
+                                MINT
+                            </Button>
 
                             <Stack gap={1} direction="row" sx={{ ml: 'auto' }}>
                                 <a href="/generator">

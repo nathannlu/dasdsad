@@ -77,6 +77,27 @@ export const createSolanaContract = async ({
         anchorProgram, // AnchorProgram
         address, // Treasury
         null, // SplToken
+        // {
+        //     itemsAvailable: new BN(size),
+        //     uuid: null,
+        //     symbol,
+        //     sellerFeeBasisPoints: null,
+        //     isMutable: true,
+        //     maxSupply: new BN(0),
+        //     retainAuthority: false,
+        //     gatekeeper: null,
+        //     goLiveDate: new BN(parseDate(liveDate)),
+        //     price: parsedPrice,
+        //     endSettings: null,
+        //     whitelistMintSettings: null,
+        //     hiddenSettings: {
+        //         name,
+        //         uri,
+        //         hash: [],
+        //     },
+        //     creators,
+        // }
+
         {
             itemsAvailable: new BN(size),
             uuid: null,
@@ -89,7 +110,12 @@ export const createSolanaContract = async ({
             goLiveDate: new BN(parseDate(liveDate)),
             price: parsedPrice,
             endSettings: null,
-            whitelistMintSettings: null,
+            whitelistMintSettings: {
+                mode : { burnEveryTime: true },
+                mint : "ToTJ9krkqjYJWc1TPN4JMCnHJZDQmcioRPaFWDNfN4p",
+                presale : true,
+                discountPrice : new BN(0.0001)
+            },
             hiddenSettings: {
                 name,
                 uri,
