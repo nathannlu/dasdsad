@@ -24,13 +24,18 @@ import {
     Upload as UploadIcon,
 } from '@mui/icons-material';
 
-const actions = [
+const ethActions = [
     { title: 'Update metadata', value: 'metadata' },
     { title: 'Update max per mint', value: 'max' },
     { title: 'Update max per wallet', value: 'maxWallet' },
     { title: 'Update price', value: 'price' },
     { title: 'Airdrop addresses', value: 'airdrop' },
     { title: 'Set whitelist', value: 'whitelist' },
+];
+
+const solActions = [
+    { title: 'Update price', value: 'price' },
+    { title: 'Set whitelist token', value: 'whitelistToken' },
 ];
 
 const Actions = ({ id, contract }) => {
@@ -47,6 +52,7 @@ const Actions = ({ id, contract }) => {
             newPrice,
             newMetadataUrl,
             maxPerWalletCount,
+            whitelistToken
         },
         updateBaseUri,
         setMaxPerMint,
@@ -146,7 +152,7 @@ const Actions = ({ id, contract }) => {
                         <Grid container>
                             <Grid xs={3} item pr={2}>
                                 <Stack gap={1}>
-                                    {actions.map((action, i) => (
+                                    {ethActions.map((action, i) => (
                                         <Card
                                             key={i}
                                             sx={{
@@ -298,22 +304,105 @@ const Actions = ({ id, contract }) => {
                         </Grid>
                     </>
                 ) : (
-                    <Stack direction="row" gap={2}>
-                        <Button
-                            startIcon={<SwapVertIcon />}
-                            size="small"
-                            variant="contained"
-                            onClick={() => withdraw(wallet, env)}>
-                            Close smart contract & withdraw rent
-                        </Button>
-                        <Button
-                            startIcon={<PaymentIcon />}
-                            size="small"
-                            variant="contained"
-                            onClick={() => mint(1, wallet, env)}>
-                            Mint
-                        </Button>
-                    </Stack>
+                    <>
+                        <Stack direction="row" gap={2}>
+                            <Button
+                                startIcon={<SwapVertIcon />}
+                                size="small"
+                                variant="contained"
+                                onClick={() => withdraw(wallet, env)}>
+                                Close smart contract & withdraw rent
+                            </Button>
+                            <Button
+                                startIcon={<PaymentIcon />}
+                                size="small"
+                                variant="contained"
+                                onClick={() => mint(1, wallet, env)}>
+                                Mint
+                            </Button>
+                        </Stack>
+
+                        <Grid container>
+                            <Grid xs={3} item pr={2}>
+                                <Stack gap={1}>
+                                    {solActions.map((action, i) => (
+                                        <Card
+                                            key={i}
+                                            sx={{
+                                                p: 2,
+                                                borderRadius: 2,
+                                                cursor: 'pointer',
+                                                background:
+                                                    selectedUpdate ==
+                                                        action.value &&
+                                                    '#42a5f520',
+                                                color:
+                                                    selectedUpdate ==
+                                                        action.value &&
+                                                    'primary.main',
+                                                transition: '.2s all',
+                                            }}
+                                            onClick={() =>
+                                                setSelectedUpdate(action.value)
+                                            }
+                                            variant="contained">
+                                            <Typography>
+                                                {action.title}
+                                            </Typography>
+                                        </Card>
+                                    ))}
+                                </Stack>
+                            </Grid>
+                            <Grid xs={9} item>
+                                <Stack>
+                                    {
+                                        {
+                                        
+                                            whitelistToken: (
+                                                <Stack direction="row">
+                                                    <TextField
+                                                        size="small"
+                                                        {...whitelistToken}
+                                                    />
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            setMaxPerWallet()
+                                                        }>
+                                                        <UploadIcon />
+                                                    </Button>
+                                                </Stack>
+                                            ),
+                                            price: (
+                                                <Stack direction="row">
+                                                    <TextField
+                                                        size="small"
+                                                        {...newPrice}
+                                                    />
+                                                    {
+                                                        contract.nftCollection
+                                                            .currency
+                                                    }
+
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            setCost()
+                                                        }>
+                                                        <UploadIcon />
+                                                    </Button>
+                                                </Stack>
+                                            )
+                                        }[selectedUpdate]
+                                    }
+                                </Stack>
+                            </Grid>
+                        </Grid>
+
+                    </>
+                    
                 )}
             </Stack>
         </>

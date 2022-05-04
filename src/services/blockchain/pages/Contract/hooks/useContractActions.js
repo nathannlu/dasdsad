@@ -39,6 +39,11 @@ export const useContractActions = (contractAddress) => {
             placeholder: '5',
             rules: [],
         },
+        whitelistToken: {
+            default: '',
+            placeholder: '6L2i8gKP...',
+            rules: [],
+        },
         newMetadataUrl: {
             default: '',
             placeholder: 'New metadata URL',
