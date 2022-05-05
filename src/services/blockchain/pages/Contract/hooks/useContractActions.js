@@ -7,6 +7,12 @@ import keccak256 from 'keccak256';
 import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { mintV2 } from 'solana/helpers/mint';
 import { withdrawV2 } from 'solana/helpers/withdraw';
+import { loadCandyProgramV2 } from 'solana/helpers/accounts';
+import { BN } from '@project-serum/anchor';
+import {
+    PublicKey,
+} from '@solana/web3.js';
+import { updateCandyMachine } from 'solana/helpers/updateContract';
 
 export const useContractActions = (contractAddress) => {
     const { addToast } = useToast();
@@ -318,6 +324,84 @@ export const useContractActions = (contractAddress) => {
 		*/
     };
 
+    const updateWhiteListToken = async ( wallet, env = 'mainnet', turnOnWhiteList = false,
+        newMint = actionForm.whitelistToken.value // nonly token for now
+      ) => {
+        if (wallet == 'phantom') {
+            console.log('updating white');
+           
+        } else{
+            onTxnError("Please connect with Phantom wallet");
+        }
+
+        // console.log(window.solana);
+        // const sol = await window.solana.connect();
+        // console.log(sol)
+        // const payerPublicAddress = new PublicKey(
+        //     sol.publicKey.toString().toBuffer()
+        // );
+
+        // console.log(window.solana.publicKey.toString())
+
+        // needs to be dynamic
+        const anchorProgram = await loadCandyProgramV2(null, 'devnet');
+        const candyMachineAddress = contractAddress;
+        const connection = anchorProgram.provider.connection;
+        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
+            candyMachineAddress,
+        );
+
+        console.log(candyMachineObj);
+
+        let newWhiteList;
+
+        if(turnOnWhiteList){
+            newWhiteList =  {
+                mode:  { burnEveryTime: true },
+                mint: new PublicKey(newMint),
+                presale: true ,
+                discountPrice : null
+            }
+        } else {
+            newWhiteList = null;
+        }
+
+        
+
+        // let toModifyCandyMachineData = candyMachineObj.data;
+
+        // console.log(toModifyCandyMachineData)
+
+
+        const newSettings = {
+            itemsAvailable:  candyMachineObj.data.itemsAvailable,
+            uuid: candyMachineObj.data.uuid,
+            symbol: candyMachineObj.data.symbol,
+            sellerFeeBasisPoints: candyMachineObj.data.sellerFeeBasisPoints,
+            isMutable: true,
+            maxSupply: new BN(0),
+            retainAuthority: false,
+            gatekeeper: candyMachineObj.data.gatekeeper,
+            goLiveDate: candyMachineObj.data.goLiveDate,
+            endSettings: candyMachineObj.data.endSettings,
+            price: candyMachineObj.data.price,
+            whitelistMintSettings: newWhiteList ,
+            hiddenSetting: candyMachineObj.data.hiddenSetting,
+            creators: candyMachineObj.data.creators.map(creator => {
+            return {
+                address: new PublicKey(creator.address),
+                verified: true,
+                share: creator.share,
+            };
+            }),
+        };
+
+        console.log(newSettings);
+
+        updateCandyMachine(candyMachineAddress, env, newSettings);
+
+    };
+
     useEffect(() => {
         const c = retrieveContract(contractAddress);
         setContract(c);
@@ -332,9 +416,12 @@ export const useContractActions = (contractAddress) => {
         openPresale,
         airdrop,
         setMerkleRoot,
+        updateWhiteListToken,
         presaleMint,
         withdraw,
         mint,
         setMaxPerWallet
     };
 };
+
+

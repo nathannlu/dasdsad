@@ -1,4 +1,5 @@
 import {
+    Connection,
     Keypair,
     PublicKey,
     SystemProgram,

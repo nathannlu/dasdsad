@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useContractDetails } from './hooks/useContractDetails';
-import { useContractActions } from './hooks/useContractActions';
+import { useContractActions, useSolanaContractActions } from './hooks/useContractActions';
 import { useWeb3 } from 'libs/web3';
 import { Chip } from '@mui/material';
 import {
@@ -61,6 +61,7 @@ const Actions = ({ id, contract }) => {
         openSales,
         openPresale,
         setMerkleRoot,
+        updateWhiteListToken,
         presaleMint,
         mint,
         withdraw,
@@ -317,7 +318,7 @@ const Actions = ({ id, contract }) => {
                                 startIcon={<PaymentIcon />}
                                 size="small"
                                 variant="contained"
-                                onClick={() => mint(1, wallet, env)}>
+                                onClick={() => mint(1, wallet, env, true, {})}>
                                 Mint
                             </Button>
                         </Stack>
@@ -368,7 +369,7 @@ const Actions = ({ id, contract }) => {
                                                         size="small"
                                                         variant="contained"
                                                         onClick={() =>
-                                                            setMaxPerWallet()
+                                                            updateWhiteListToken( wallet, env, true )
                                                         }>
                                                         <UploadIcon />
                                                     </Button>
