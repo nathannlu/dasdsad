@@ -52,7 +52,7 @@ export class WalletController {
 		if (curNetwork !== target) {
 			const status = await setNetwork(target);
 			if (status === 'prompt_successful' && callback != null) callback();
-			else if (status === 'prompt_cancled') {
+			else if (status === 'prompt_canceled') {
 				throw new Error('User canceled switching networks');
 			}
 		} else {

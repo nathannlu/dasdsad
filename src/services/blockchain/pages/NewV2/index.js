@@ -11,6 +11,7 @@ import {
 	Container,
 	Typography,
 	Button,
+	CircularProgress
 } from 'ds/components';
 import { useDeployContractForm } from './hooks/useDeployContractForm';
 import { AppBar, Radio, FormControlLabel, Switch } from '@mui/material';
@@ -123,13 +124,15 @@ const New = () => {
 			symbol,
 			maxSupply,
 		},
-		deployContract,
+		formValidationErrors,
+		isLoading,
 		activeFocusKey,
 		activeBlockchain,
 		isTestnetEnabled,
 		setActiveFocusKey,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
+		deployContract
 	} = useDeployContractForm();
 
 	return (
@@ -156,8 +159,7 @@ const New = () => {
 					}}
 				>
 					<Stack direction="row" px={2} gap={2} alignItems="center">
-						{/* @TODO history.goBack() will not work if page is hardrefreshed */}
-						<IconButton onClick={() => history.goBack()}>
+						<IconButton onClick={() => history.push('/smart-contracts')}>
 							<CloseIcon sx={{ fontSize: '18px' }} />
 						</IconButton>
 						<Divider
@@ -208,6 +210,7 @@ const New = () => {
 												}
 											}}
 											onFocus={e => setActiveFocusKey('NAME')}
+											error={Boolean(formValidationErrors.name)}
 										/>
 									</Stack>
 									<Stack direction="horizontal">
@@ -221,6 +224,7 @@ const New = () => {
 												{...symbol}
 												inputProps={{ maxLength: 5 }}
 												onFocus={e => setActiveFocusKey('SYMBOL')}
+												error={Boolean(formValidationErrors.symbol)}
 											/>
 										</Stack>
 										<Stack p={2} sx={{ flex: 1, borderBottom: '1px solid black' }}>
@@ -232,6 +236,7 @@ const New = () => {
 												{...maxSupply}
 												type="number"
 												onFocus={e => setActiveFocusKey('MAX_SUPPLY')}
+												error={Boolean(formValidationErrors.maxSupply)}
 											/>
 										</Stack>
 
@@ -242,10 +247,10 @@ const New = () => {
 						<Grid item sx={{ flex: 1, px: 4 }}>
 							<Stack gap={2}>
 								<Stack>
-									<Stack sx={{ mb: 2 }}>
+									<Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel onChange={e => setIsTestnetEnabled(e.target.checked)} checked={isTestnetEnabled} control={<Switch />} label="Deploy To Testnet" />
 									</Stack>
-									<Stack sx={{ mb: 2 }}>
+									<Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel
 											name="blockchain-radio-buttons"
 											value="ethereum"
@@ -256,7 +261,7 @@ const New = () => {
 											labelPlacement="end"
 										/>
 									</Stack>
-									<Stack sx={{ mb: 2 }}>
+									<Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel
 											name="blockchain-radio-buttons"
 											value="polygon"
@@ -267,7 +272,7 @@ const New = () => {
 											labelPlacement="end"
 										/>
 									</Stack>
-									<Stack sx={{ mb: 2 }}>
+									<Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel
 											name="blockchain-radio-buttons"
 											value="solana"
@@ -281,9 +286,13 @@ const New = () => {
 								</Stack>
 
 								<Box>
-									<Button onClick={deployContract} variant="contained" size="small">
+									<Button onClick={deployContract} variant="contained" size="small" disabled={isLoading}>
+										{isLoading && <CircularProgress isButtonSpinner={true} /> || null}
 										Create Contract
 									</Button>
+									{isLoading && <Typography sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }} color="GrayText">
+										Creating Contract! Please be patient it will take couple of seconds...
+									</Typography>}
 								</Box>
 
 								<Stack gap={2} mt={6}>

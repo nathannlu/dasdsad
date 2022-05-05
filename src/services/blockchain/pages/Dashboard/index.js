@@ -89,7 +89,7 @@ const Dashboard = () => {
                                 <Grid key={i} p={1} item xs={3}>
                                     <Card variant="outlined">
                                         <Link
-																					to={contract.type == 'erc721a' ? `/smart-contracts/v2/${contract.id}` : `/smart-contracts/${contract.id}` }>
+                                            to={contract.type == 'erc721a' ? `/smart-contracts/v2/${contract.id}` : `/smart-contracts/${contract.id}`}>
                                             <Box
                                                 sx={{
                                                     bgcolor: 'grey.100',

@@ -17,6 +17,20 @@ export const blockchainCurrencyMap = {
 };
 
 /**
+ * Determine Blockchain Type is testnet
+ */
+export const isTestnetBlockchain = (blockchain) => {
+	switch (blockchain) {
+		case 'rinkeby':
+		case 'mumbai':
+		case 'solanadevnet':
+			return true;
+		default:
+			return false;
+	}
+}
+
+/**
  * Determine Blockchain Type if testnet is enabled
  */
 export const getBlockchainType = (blockchain, isTestnet = false) => {
@@ -26,7 +40,7 @@ export const getBlockchainType = (blockchain, isTestnet = false) => {
 		case 'polygon':
 			return isTestnet && 'mumbai' || 'polygon';
 		case 'solana':
-			return isTestnet && 'solana' || 'solanadevnet';
+			return isTestnet && 'solanadevnet' || 'solana';
 		default:
 			throw new Error('Blockchain tye not supported!');
 	}
@@ -79,8 +93,8 @@ const impl = '0x4D54e39b4556c2B64F9B63A630A8ab558CA1a380';
  * Initial contract state.
  * Sets all the variables used by controller functions.
  *
- * @property balance - Balance of smart contract
- * @property metadataUrl - Target URL of baseUri
+ * @property balance - Balance of smart contract //@TODO wiring pending
+ * @property metadataUrl - Target URL of baseUri //@TODO wiring pending
  * @property price - Cost of minting a single NFT
  * @property collectionSize - Size of NFT collection
  * @property amountSold - Number of NFTs sold
@@ -132,8 +146,8 @@ export class ContractController {
 		// if contract is on chain
 		// populate these values
 		this.state = ContractState;
+		this.version = version;
 	}
-
 
 	/**
 	 * Generates runnable "method" functions for 
@@ -149,7 +163,8 @@ export class ContractController {
 				return new web3.eth.Contract(ERC721.abi, contractAddress);
 			}
 			if (version == 'erc721a') {
-				return new web3.eth.Contract(ERC721a.abi, impl);
+				return new web3.eth.Contract(ERC721a.abi, contractAddress);
+				// return new web3.eth.Contract(ERC721a.abi, impl); // @TIDO remove this
 			}
 		}
 	};
@@ -159,23 +174,50 @@ export class ContractController {
 	 *
 	 * @TODO add support for ERC-721
 	 */
-	populateContractInfo = () => {
-		// if erc721
-		const { contract: { type } } = this;
+	async populateContractInfo() {
+		try {
+			const { contract, version } = this;
 
-		if (type == 'ethereum') {
-			if (version == 'erc721') {
-				// @TODO add support
+			if (contract.type == 'ethereum') {
+				if (version === 'erc721') {
+					// @TODO add support
 
+					return null;
+				}
+
+				if (version === 'erc721a') {
+					const maxPerMint = await contract.methods.maxPerMint().call();
+
+					const cost = await contract.methods.cost().call();
+					const costInEth = window.web3.utils.fromWei(cost);
+
+					const amountSold = await contract.methods.supply().call();
+					const collectionSize = await contract.methods.totalSupply().call();
+
+					const isPresaleOpen = await contract.methods.presaleOpen().call();
+					const maxPerWallet = await contract.methods.maxPerWallet().call();
+					const isPublicSaleOpen = await contract.methods.open().call();
+				
+					return {
+						...this.state,
+						price: costInEth,
+						collectionSize,
+						amountSold,
+						maxPerMint,
+						maxPerWallet,
+						isPresaleOpen,
+						isPublicSaleOpen
+					}
+				}
 			}
 
-			if (version == 'erc721a') {
-
+			if (contract.type == 'solana') {
+				// @TODO needs support
+				return null;
 			}
-		}
-
-		if (type == 'solana') {
-			// @TODO needs support
+		} catch (e) {
+			console.log('Error: populateContractInfo', e);
+			return null;
 		}
 	};
 
@@ -190,7 +232,7 @@ export class ContractController {
 	 *
 	 * @TODO Support solana
 	 */
-	async deployContract(deployerAddress, name, symbol, totalSupply) {
+	async deployContract(deployerAddress, name, symbol, totalSupply, onError) {
 		const { blockchain, contract: { type } } = this;
 
 		// Proxy contract
@@ -205,23 +247,18 @@ export class ContractController {
 				data: compiledProxy.bytecode,
 				arguments: [name, symbol, parseInt(totalSupply)],
 			};
-			const senderInfo = {
-				from: deployerAddress,
-			};
 
-			return proxyContract.deploy(options)
-				.send(senderInfo, (err, txnhash) => {
-					if (err) {
-						throw new Error(err.message);
-					} else {
-						console.log(
-							'Deploying contract... should take a couple of seconds'
-						);
-					}
-				})
-				.on('error', function (error) {
-					throw new Error(error.message)
-				})
+			const senderInfo = { from: deployerAddress };
+
+			return proxyContract.deploy(options).send(senderInfo, (err, txnhash) => {
+				if (err) {
+					onError(err);
+					return;
+				}
+				console.log('Deploying contract... should take a couple of seconds');
+			}).on('error', function (error) {
+				onError(error);
+			});
 		}
 
 		if (type == 'solana') {

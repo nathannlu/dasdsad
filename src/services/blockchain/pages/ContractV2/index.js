@@ -12,16 +12,31 @@ import IPFSModal from '../Contract/IPFSModal';
 import Overview from './Overview';
 
 const ContractV2 = () => {
-  const [contract, setContract] = useState({});
+	const [contract, setContract] = useState(null);
+	const [contractState, setContractState] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
 	const { contracts } = useContract();
 	const { id } = useParams();
 
-	// Load single contract
-	useEffect(() => {
-		setContract(contracts.find((c) => c.id == id))
-	}, [contracts]);
+	const init = async () => {
+		const contract = contracts.find((c) => c.id === id);
+		if (contract) {
+			// Set single contract
+			setContract(contract);
 
+			const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
+			const contractState = await contractController.populateContractInfo();
+
+			console.log(contractState, 'contractState');
+			
+			setContractState(contractState);
+		}
+	}
+
+	useEffect(() => {
+		if (contracts.length) { init(); }
+	}, [contracts]);
 
 	return (
 		<Stack>
@@ -44,7 +59,8 @@ const ContractV2 = () => {
 					</Tabs>
 				</Container>
 			</Box>
-			<Overview setIsModalOpen={setIsModalOpen} />
+
+			<Overview setIsModalOpen={setIsModalOpen} contract={contract} contractState={contractState} />
 
 			<IPFSModal
 				id={id}

@@ -45,7 +45,7 @@ export const ContractProvider = ({ children }) => {
     /*
 
     const handleSelectNetwork = async (value) => {
-			console.log(value)
+            console.log(value)
         try {
             if (!window.ethereum) throw new Error("Please install Metamask Wallet");
             const id = getNetworkID();
@@ -67,10 +67,10 @@ export const ContractProvider = ({ children }) => {
         }
         catch (e) {
             addToast({
-				severity: 'error',
-				message: e.message
-			});
-			setError(true);
+                severity: 'error',
+                message: e.message
+            });
+            setError(true);
         }
     }
 
@@ -98,10 +98,10 @@ export const ContractProvider = ({ children }) => {
         }
         catch (e) {
             addToast({
-				severity: 'error',
-				message: e.message
-			});
-			setError(true);
+                severity: 'error',
+                message: e.message
+            });
+            setError(true);
             return false;
         }
     }
