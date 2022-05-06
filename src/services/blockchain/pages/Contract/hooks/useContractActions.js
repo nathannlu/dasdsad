@@ -46,7 +46,7 @@ export const useContractActions = (contractAddress) => {
             rules: [],
         },
         whitelistToken: {
-            default: '',
+            default: '6L2i8gKPJtjCj1TA7vQLYQn52xmubn3Fz6rTaFV5qMvM',
             placeholder: '6L2i8gKP...',
             rules: [],
         },
@@ -379,14 +379,14 @@ export const useContractActions = (contractAddress) => {
             symbol: candyMachineObj.data.symbol,
             sellerFeeBasisPoints: candyMachineObj.data.sellerFeeBasisPoints,
             isMutable: true,
-            maxSupply: new BN(0),
+            maxSupply: candyMachineObj.data.maxSupply,
             retainAuthority: false,
             gatekeeper: candyMachineObj.data.gatekeeper,
             goLiveDate: candyMachineObj.data.goLiveDate,
             endSettings: candyMachineObj.data.endSettings,
             price: candyMachineObj.data.price,
             whitelistMintSettings: newWhiteList ,
-            hiddenSetting: candyMachineObj.data.hiddenSetting,
+            hiddenSettings: candyMachineObj.data.hiddenSettings,
             creators: candyMachineObj.data.creators.map(creator => {
             return {
                 address: new PublicKey(creator.address),

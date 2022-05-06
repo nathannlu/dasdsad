@@ -37,7 +37,7 @@ export const updateCandyMachine = async (contractAddress, env = 'devnet', newSet
     // needs to be dynamic
     const anchorProgram = await loadCandyProgramV2(null, env);
     const candyMachineAddress = contractAddress;
-    const candyMachine = new PublicKey(candyMachineAddress);
+    const candyMachine = new PublicKey(candyMachineAddress.toBuffer());
     const connection = anchorProgram.provider.connection;
     const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
       candyMachineAddress,
@@ -47,23 +47,88 @@ export const updateCandyMachine = async (contractAddress, env = 'devnet', newSet
 
     // let ipfsHash = 'QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs';
     let remainingAccounts = [];
-    let payerWalletAddress = window.solana.publicKey.toString().toBuffer()
+    // const payerWallet = new PublicKey(window.solana.publicKey.toString().toBuffer());
 
-      console.log(candyMachineAddress, payerWalletAddress);
+      console.log(candyMachineAddress, payerPublicAddress);
 
       console.log(newSettings);
 
-    const tx = await anchorProgram.rpc.updateCandyMachine(newSettings, {
-      accounts: {
-        candyMachine,
-        authority: payerWalletAddress,
-        wallet: payerWalletAddress,
-      },
-      remainingAccounts:
-        remainingAccounts.length > 0 ? remainingAccounts : undefined,
+    // const tx = await anchorProgram.rpc.updateCandyMachine(newSettings, {
+    //   accounts: {
+    //     candyMachine,
+    //     authority: payerPublicAddress,
+    //     wallet: payerPublicAddress,
+    //   },
+    //   remainingAccounts:
+    //     remainingAccounts.length > 0 ? remainingAccounts : undefined,
+    // });
+
+    const r = 
+    
+        {
+            txId : await anchorProgram.instruction.updateCandyMachine(
+              newSettings, {
+                accounts: {
+                  candyMachine,
+                  authority: payerPublicAddress,
+                  wallet: payerPublicAddress,
+                },
+              remainingAccounts:
+                remainingAccounts.length > 0 ? remainingAccounts : undefined,
+            }
+          )
+        };
+
+    
+
+    console.log(r);
+
+    let instructions = [
+      // await createUpdateMetadataInstruction(
+      //     candyMachine,
+      //     payerPublicAddress,
+      //     r.txId,
+      // ),
+      r.txId,
+    ];
+
+    // Sign transaction
+    let recentBlockhash =
+        await anchorProgram.provider.connection.getRecentBlockhash();
+    const transaction = new Transaction({
+        recentBlockhash: recentBlockhash.blockhash,
+        feePayer: payerPublicAddress,
+    });
+    transaction.add(instructions[0]);
+
+
+    console.log(transaction)
+    // transaction.add(instructions[1]);
+
+    let transactionBuffer = transaction.serializeMessage();
+
+    const signature1 = await window.solana.request({
+        method: 'signTransaction',
+        params: {
+            message: bs58.encode(transactionBuffer),
+        },
     });
 
-    console.log(tx);
+    transaction.addSignature(
+        payerPublicAddress,
+        bs58.decode(signature1.signature)
+    );
+
+    let isVerifiedSignature = transaction.verifySignatures();
+    console.log(`The signatures were verifed: ${isVerifiedSignature}`);
+    let rawTransaction = transaction.serialize();
+
+    const asd = await sendAndConfirmRawTransaction(
+        anchorProgram.provider.connection,
+        rawTransaction
+    );
+    console.log(asd);
+
     //   const openSales = async (status = true) => {
     //     contract.methods
     //         .setOpen(status)
