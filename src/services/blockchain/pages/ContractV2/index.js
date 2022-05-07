@@ -31,7 +31,7 @@ const ContractV2 = () => {
 			const contractState = await contractController.populateContractInfo();
 
 			console.log(contractState, 'contractState');
-			
+
 			setContractState(contractState);
 		}
 	}
