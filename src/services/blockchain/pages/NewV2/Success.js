@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { Container, Box, Typography, Stack, Button, Link } from 'ds/components';
-import { ContractController, getBlockchainType, blockchainCurrencyMap } from 'controllers/contract/ContractController';
+import { Container, Box, Typography, Button, Link } from 'ds/components';
 import { useContract } from 'services/blockchain/provider';
 
 const Success = () => {

@@ -26,6 +26,8 @@ const ContractV2 = () => {
 			setContract(contract);
 
 			const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
+			console.log(contractController, 'contractController');
+
 			const contractState = await contractController.populateContractInfo();
 
 			console.log(contractState, 'contractState');

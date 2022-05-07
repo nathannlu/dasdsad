@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
 
-import { ContractController, getBlockchainType, blockchainCurrencyMap } from 'controllers/contract/ContractController';
+import { ContractController, getBlockchainType, getBlockchainCurrency } from 'controllers/contract/ContractController';
 import { WalletController } from 'controllers/wallet/WalletController';
 
 import posthog from 'posthog-js';
@@ -165,7 +165,7 @@ export const useDeployContractForm = () => {
 				nftCollection: {
 					// price: parseFloat(priceInEth.value), // @TODO savein DB too it is going to be always 1 SOL or 1 ETH
 					size: parseInt(maxSupply.value),
-					currency: blockchainCurrencyMap[blockchain]
+					currency: getBlockchainCurrency(blockchain)
 				},
 			};
 			await createContract({ variables: { contract: ContractInput } });

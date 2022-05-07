@@ -7,14 +7,71 @@ import ERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionCreat
 import ProxyERC721aTestnet from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721ATestnet.json';
 import ProxyERC721a from 'services/blockchain/blockchains/ethereum/abis/AmbitionERC721A.json';
 
-export const blockchainCurrencyMap = {
-	ethereum: 'eth',
-	rinkeby: 'eth',
-	polygon: 'matic',
-	mumbai: 'matic',
-	solana: 'sol',
-	solanadevnet: 'sol',
-};
+/**
+ * Determine Blockchain Currency
+ */
+export const getBlockchainChainId = (blockchain) => {
+	switch (blockchain) {
+		case 'rinkeby':
+			return '0x4';
+		case 'ethereum':
+			return '0x1';
+		case 'mumbai':
+			return '0x13881';
+		case 'polygon':
+			return '0x89';
+		case 'solanadevnet':
+			return 'solanadevnet';
+		case 'solana':
+			return 'solana';
+		default:
+			throw new Error('Blockchain tye not supported!');
+	}
+}
+
+/**
+ * Determine Blockchain Currency
+ */
+export const getBlockchainCurrencyByChainId = (chainId) => {
+	switch (chainId) {
+		case '0x89':
+		case '0x13881':
+		case '89':
+		case '13881':
+			return 'MATIC';
+		case '0x1':
+		case '0x4':
+		case '1':
+		case '4':
+			return 'ETH';
+		case 'solana':
+		case 'solanadevnet':
+			return 'SOL';
+		default:
+			throw new Error('Blockchain tye not supported!');
+	}
+}
+
+/**
+ * Determine Blockchain Currency
+ * 
+ * @ input: 
+ */
+export const getBlockchainCurrency = (blockchain) => {
+	switch (blockchain) {
+		case 'rinkeby':
+		case 'ethereum':
+			return 'ETH';
+		case 'mumbai':
+		case 'polygon':
+			return 'MATIC';
+		case 'solanadevnet':
+		case 'solana':
+			return 'SOL';
+		default:
+			throw new Error('Blockchain tye not supported!');
+	}
+}
 
 /**
  * Determine Blockchain Type is testnet
@@ -102,10 +159,12 @@ const impl = '0x4D54e39b4556c2B64F9B63A630A8ab558CA1a380';
  * @property maxPerWallet - Number of NFTs a minter's wallet can hold
  * @property isPresaleOpen - Presale state
  * @property isPublicSaleOpen - Public sale state
+ * @property symbol - Symbol associated to NFT
  * 
  * @TODO turn into type.
  */
 const ContractState = {
+	symbol: null,
 	balance: '',
 	metadataUrl: '',
 	price: 1,
@@ -197,16 +256,25 @@ export class ContractController {
 					const isPresaleOpen = await contract.methods.presaleOpen().call();
 					const maxPerWallet = await contract.methods.maxPerWallet().call();
 					const isPublicSaleOpen = await contract.methods.open().call();
-				
+
+					// const metadataUrl = await contract.methods.tokenURI().call();
+					const symbol = await contract.methods.symbol().call();
+
+					const balance = await window.web3.eth.getBalance(contract.contractAddress);
+					const balanceInEth = window.web3.utils.fromWei(balance);
+
 					return {
 						...this.state,
-						price: costInEth,
 						collectionSize,
 						amountSold,
 						maxPerMint,
 						maxPerWallet,
 						isPresaleOpen,
-						isPublicSaleOpen
+						isPublicSaleOpen,
+						// metadataUrl,
+						price: costInEth,
+						balance: balanceInEth,
+						symbol
 					}
 				}
 			}
