@@ -81,7 +81,7 @@ const Metadata = (props) => {
 
                     <LoadingButton
                         loading={loading}
-                        onClick={() => pinMetadata(callback)}>
+                        onClick={() => pinMetadata(props.contract.blockchain, callback)}>
                         Upload
                     </LoadingButton>
                 </Stack>
