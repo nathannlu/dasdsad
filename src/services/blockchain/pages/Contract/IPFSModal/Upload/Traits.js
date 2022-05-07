@@ -82,7 +82,7 @@ const Traits = (props) => {
                     <LoadingButton
                         variant="contained"
                         loading={loading}
-                        onClick={() => pinImages(callback)}>
+                        onClick={() => pinImages(props.contract.blockchain, callback)}>
                         Upload
                     </LoadingButton>
                 </Stack>
