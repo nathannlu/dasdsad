@@ -50,6 +50,10 @@ export const useContractActions = (contractAddress) => {
             placeholder: '6L2i8gKP...',
             rules: [],
         },
+        goLiveDate: {
+            value:'2017-06-01T08:30',
+            rules: [],
+        },
         newMetadataUrl: {
             default: '',
             placeholder: 'New metadata URL',
@@ -402,6 +406,59 @@ export const useContractActions = (contractAddress) => {
 
     };
 
+    const updateGoLiveDate = async ( wallet, env = 'mainnet', newGoLiveDate = actionForm.goLiveDate.value) => {
+        if (wallet == 'phantom') {
+            console.log('updating white');
+           
+        } else{
+            onTxnError("Please connect with Phantom wallet");
+        }
+
+        const epoch = new Date(newGoLiveDate).getTime()
+        console.log(newGoLiveDate);
+        console.log(epoch);
+        console.log(new BN(epoch).toString());
+
+        // return;
+
+        const anchorProgram = await loadCandyProgramV2(null, 'devnet');
+        const candyMachineAddress = contractAddress;
+        const connection = anchorProgram.provider.connection;
+        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
+            candyMachineAddress,
+        );
+
+        console.log(candyMachineObj);
+
+        const newSettings = {
+            itemsAvailable:  candyMachineObj.data.itemsAvailable,
+            uuid: candyMachineObj.data.uuid,
+            symbol: candyMachineObj.data.symbol,
+            sellerFeeBasisPoints: candyMachineObj.data.sellerFeeBasisPoints,
+            isMutable: true,
+            maxSupply: candyMachineObj.data.maxSupply,
+            retainAuthority: false,
+            gatekeeper: candyMachineObj.data.gatekeeper,
+            goLiveDate: new BN(epoch/1000),
+            endSettings: candyMachineObj.data.endSettings,
+            price: candyMachineObj.data.price,
+            whitelistMintSettings: candyMachineObj.data.whitelistMintSettings ,
+            hiddenSettings: candyMachineObj.data.hiddenSettings,
+            creators: candyMachineObj.data.creators.map(creator => {
+            return {
+                address: new PublicKey(creator.address),
+                verified: true,
+                share: creator.share,
+            };
+            }),
+        };
+
+        console.log(newSettings);
+
+        updateCandyMachine(candyMachineAddress, env, newSettings);
+
+    };
+
     useEffect(() => {
         const c = retrieveContract(contractAddress);
         setContract(c);
@@ -420,7 +477,8 @@ export const useContractActions = (contractAddress) => {
         presaleMint,
         withdraw,
         mint,
-        setMaxPerWallet
+        setMaxPerWallet,
+        updateGoLiveDate
     };
 };
 

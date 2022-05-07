@@ -36,6 +36,7 @@ const ethActions = [
 const solActions = [
     { title: 'Update price', value: 'price' },
     { title: 'Set whitelist token', value: 'whitelistToken' },
+    { title: 'Set live date', value: 'livedate' },
 ];
 
 const Actions = ({ id, contract }) => {
@@ -52,7 +53,8 @@ const Actions = ({ id, contract }) => {
             newPrice,
             newMetadataUrl,
             maxPerWalletCount,
-            whitelistToken
+            whitelistToken,
+            goLiveDate,
         },
         updateBaseUri,
         setMaxPerMint,
@@ -66,6 +68,7 @@ const Actions = ({ id, contract }) => {
         mint,
         withdraw,
         setMaxPerWallet,
+        updateGoLiveDate
     } = useContractActions(contract.address, getNetworkID());
     const [selectedUpdate, setSelectedUpdate] = useState('metadata');
 
@@ -391,6 +394,23 @@ const Actions = ({ id, contract }) => {
                                                         variant="contained"
                                                         onClick={() =>
                                                             setCost()
+                                                        }>
+                                                        <UploadIcon />
+                                                    </Button>
+                                                </Stack>
+                                            ),
+                                            livedate: (
+                                                <Stack direction="row">
+                                                    <input type = "datetime-local"
+                                                        // value="2017-06-01T08:30"
+                                                         {...goLiveDate}
+                                                    />
+
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            updateGoLiveDate( wallet, env)
                                                         }>
                                                         <UploadIcon />
                                                     </Button>
