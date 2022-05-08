@@ -1,31 +1,28 @@
 import React from 'react';
-import NFT from './NFT';
+
 import {
-	Fade,
 	Container,
-	Link,
-	TextField,
 	Stack,
 	Box,
 	Grid,
 	Typography,
-	Button,
-	Divider,
 } from 'ds/components';
-import {
-	Chip,
-	Stepper,
-	Step,
-	StepLabel,
-	StepContent,
-	Skeleton
-} from '@mui/material';
-import { ContractController, isTestnetBlockchain } from 'controllers/contract/ContractController';
 
-const Overview = ({ setIsModalOpen, contract, contractState }) => {
+import { Skeleton, Link, Chip } from '@mui/material';
+
+import { NFTStack, ContractDetails } from '../../widgets';
+
+const Details = ({ primary, secondary, isLoading }) => {
+	return (
+		<Typography sx={{ fontWeight: 'bold', display: 'flex', my: 1, gap: 1.5 }}>
+			{primary}: {!isLoading && <Typography color="GrayText" sx={{ fontWeight: '400' }}>{secondary}</Typography> || <Skeleton sx={{ width: '50%' }} />}
+		</Typography>
+	);
+}
+
+const Overview = ({ contract, contractState }) => {
 	console.log(contract);
-
-	const isContractDeployedOnTestnet = isTestnetBlockchain(contract?.blockchain);
+	const isLoading = !contractState;
 
 	return (
 		<Box>
@@ -33,82 +30,62 @@ const Overview = ({ setIsModalOpen, contract, contractState }) => {
 				<Container>
 					<Grid container>
 						<Grid item>
-							<Box>
-								<Stack
-									gap={2}
-									direction="horizontal"
-									alignItems="center">
-									<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
-										{contract?.name || <Skeleton />}
-									</Typography>
-
-									{contract?.blockchain && <Chip sx={{ textTransform: 'capitalize' }} label={contract?.blockchain} color={isContractDeployedOnTestnet && 'warning' || 'primary'} /> || null}
-								</Stack>
-
-								<Typography sx={{ textTransform: 'capitalize' }}>
-									{contract?.type || <Skeleton />}
-								</Typography>
-							</Box>
+							<ContractDetails contract={contract} />
 
 							<Stack gap={2} mt={4}>
-								<Box>
-									<Typography
-										sx={{ fontWeight: '600' }}
-										variant="h6">
-										Address
-									</Typography>
-									<Typography variant="body">
-										{contract?.address || <Skeleton />}
-									</Typography>
-								</Box>
-
 								<Box>
 									<Typography sx={{ fontWeight: '600' }} variant="h6">
 										Details
 									</Typography>
 									<Stack>
-										<Typography variant="body">
-											Collection size: {contractState?.collectionSize && <Typography color="GrayText" sx={{ fontWeight: '600' }}>{contractState?.collectionSize}</Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											Balance: {contractState?.a && <Typography color="GrayText" sx={{ fontWeight: '600' }}></Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											NFTs sold:{contractState?.amountSold && <Typography color="GrayText" sx={{ fontWeight: '600' }}>{contractState?.amountSold}</Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											Metadata URL: {contractState?.a && <Typography color="GrayText" sx={{ fontWeight: '600' }}></Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											Max per mint: {contractState?.maxPerMint && <Typography color="GrayText" sx={{ fontWeight: '600' }}>{contractState?.maxPerMint}</Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											Max per wallet: {contractState?.maxPerWallet && <Typography color="GrayText" sx={{ fontWeight: '600' }}>{contractState?.maxPerWallet}</Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											Pre sale status: {contractState?.isPresaleOpen !== null && <Typography color="GrayText" sx={{ fontWeight: '600' }}>{contractState?.isPresaleOpen && 'OPEN' || 'CLOSED'}</Typography> || <Skeleton />}
-										</Typography>
-										<Typography variant="body">
-											Public sale status: {contractState?.isPublicSaleOpen !== null && <Typography color="GrayText" sx={{ fontWeight: '600' }}>{contractState?.isPublicSaleOpen && 'OPEN' || 'CLOSED'}</Typography> || <Skeleton />}
-										</Typography>
+										<Details
+											primary="Collection size"
+											secondary={contractState?.collectionSize}
+											isLoading={isLoading}
+										/>
+										<Details
+											primary="Balance"
+											secondary={''} // @TODO wiring
+											isLoading={isLoading}
+										/>
+										<Details
+											primary="NFTs sold"
+											secondary={contractState?.amountSold}
+											isLoading={isLoading}
+										/>
+										<Details
+											primary="Metadata URL"
+											secondary={''} // @TODO wiring
+											isLoading={isLoading}
+										/>
+										<Details
+											primary="Max per mint"
+											secondary={contractState?.maxPerMint}
+											isLoading={isLoading}
+										/>
+										<Details
+											primary="Max per wallet"
+											secondary={contractState?.maxPerWallet}
+											isLoading={isLoading}
+										/>
+
+										<Details
+											primary="Pre sale status"
+											secondary={<Chip label={contractState?.isPresaleOpen && 'OPEN' || 'CLOSED'} color={contractState?.isPresaleOpen && 'success' || 'error'} size="small" />}
+											isLoading={isLoading}
+										/>
+
+										<Details
+											primary="Public sale status"
+											secondary={<Chip label={contractState?.isPublicSaleOpen && 'OPEN' || 'CLOSED'} color={contractState?.isPublicSaleOpen && 'success' || 'error'} size="small" />}
+											isLoading={isLoading}
+										/>
 									</Stack>
 								</Box>
 							</Stack>
 						</Grid>
-						<Grid sx={{ position: 'relative' }} item ml="auto" xs={5}>
-							<Box sx={{ position: 'absolute', top: 0 }}>
-								<NFT />
-							</Box>
-							<Box sx={{ position: 'absolute', top: 40, transform: 'scale(1.05)' }}>
-								<NFT />
-							</Box>
-							<Box sx={{
-								position: 'absolute',
-								top: 80,
-								transform: 'scale(1.1)'
-							}}>
-								<NFT />
-							</Box>
+						<Grid item ml="auto" xs={5}>
+							<NFTStack contract={contract} />
 						</Grid>
 					</Grid>
 				</Container>

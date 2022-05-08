@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { Container, Box, Typography, Button, Link } from 'ds/components';
+import { Container, Box, Typography, Button, Link as RouterLink } from 'ds/components';
+import { Link } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 
 const Success = () => {
@@ -23,14 +24,14 @@ const Success = () => {
 				</Typography>
 
 				<Box sx={{ my: 2 }}>
-					<Link to={`/smart-contracts/v2/${id}`} >
+					<RouterLink to={`/smart-contracts/v2/${id}`} >
 						<Button variant="contained" size="small" color="black" sx={{ color: 'white' }}>
 							Go to Dashboard
 						</Button>
-					</Link>
+					</RouterLink>
 				</Box>
 
-				<Link sx={{ my: 2 }} to={`https://etherscan.io/address/${contract.address}`}>
+				<Link target="_blank" sx={{ my: 2 }} href={`https://etherscan.io/address/${contract.address}`}>
 					View on Etherscan
 				</Link>
 			</Container>

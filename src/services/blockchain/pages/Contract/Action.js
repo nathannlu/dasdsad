@@ -85,6 +85,7 @@ const Actions = ({ id, contract }) => {
                                 onClick={() => withdraw()}>
                                 Pay out to bank
                             </Button>
+
                             {isPublicSaleOpen ? (
                                 <Button
                                     startIcon={<LockIcon />}
@@ -155,11 +156,11 @@ const Actions = ({ id, contract }) => {
                                                 cursor: 'pointer',
                                                 background:
                                                     selectedUpdate ==
-                                                        action.value &&
+                                                    action.value &&
                                                     '#42a5f520',
                                                 color:
                                                     selectedUpdate ==
-                                                        action.value &&
+                                                    action.value &&
                                                     'primary.main',
                                                 transition: '.2s all',
                                             }}
@@ -187,9 +188,7 @@ const Actions = ({ id, contract }) => {
                                                     <Button
                                                         size="small"
                                                         variant="contained"
-                                                        onClick={() =>
-                                                            updateBaseUri()
-                                                        }>
+                                                        onClick={() => updateBaseUri()}>
                                                         <UploadIcon />
                                                     </Button>
                                                 </Stack>
