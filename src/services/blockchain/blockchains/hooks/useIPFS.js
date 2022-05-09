@@ -24,7 +24,7 @@ export const useIPFS = () => {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
-    const getIpfsUrl = (blockchain) => blockchain === 'solana' || blockchain === 'solanadevnet' && `https://gateway.pinata.cloud/ipfs/` || `ipfs://`;
+    const getIpfsUrl = (blockchain) => (blockchain === 'solana' || blockchain === 'solanadevnet') && `https://gateway.pinata.cloud/ipfs/` || `ipfs://`;
 
     const pinImages = async (blockchain, callback) => {
         const folder = uploadedFiles;
