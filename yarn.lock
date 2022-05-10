@@ -5203,10 +5203,10 @@
   "resolved" "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   "version" "4.2.2"
 
-"@yaman-apple-frog/controllers@^1.0.4":
-  "integrity" "sha512-LLgtb7NRni9amoY6LTv1/PiWeIzRUxPggO6/F+YgdXHdHcijDpypkUV4Ura6l94GGtqzREvW0u9dt8nP/Hnntw=="
-  "resolved" "https://registry.npmjs.org/@yaman-apple-frog/controllers/-/controllers-1.0.4.tgz"
-  "version" "1.0.4"
+"@yaman-apple-frog/controllers@^1.0.5":
+  "integrity" "sha512-IRr+f+3ul7AkBhju1fSyqQBYq2F1YGbHQw93NbBUdqO9oZkFQgLMFe4suajZaBmKUw7LUNGGs2waBZX1PD3Ffg=="
+  "resolved" "https://registry.npmjs.org/@yaman-apple-frog/controllers/-/controllers-1.0.5.tgz"
+  "version" "1.0.5"
   dependencies:
     "@babel/core" "^7.17.9"
     "@babel/preset-env" "^7.16.11"
