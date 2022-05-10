@@ -101,20 +101,9 @@ export const useIPFS = () => {
                         || jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'video/mp4' && 'mp4'
                         || 'png';
 
-<<<<<<< HEAD
-                    if (
-                        jsonMetadata.properties?.files &&
-                        jsonMetadata.properties?.files[0]?.type == 'image/webp'
-                    ) {
-                        jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`;
-                    } else {
-											jsonMetadata.image = `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.png`;
-                    }
-=======
                     const ipfsUrl = getIpfsUrl(blockchain);
 
                     jsonMetadata.image = `${ipfsUrl}${imagesUrl}/${tokenId}.${fileExtension}`;
->>>>>>> master
 
                     // Attach JSON to formdata
                     const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
