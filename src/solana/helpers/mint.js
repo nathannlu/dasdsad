@@ -283,9 +283,6 @@ export async function mintV2(
     if(whitelistBurnAuthority){
         const whiteListSignature = nacl.sign.detached(transactionBuffer, whitelistBurnAuthority.secretKey);
         transaction.addSignature(whitelistBurnAuthority.publicKey, (whiteListSignature));
-
-        // const transferAuthoritySignature = nacl.sign.detached(transactionBuffer, transferAuthority.secretKey);
-        // transaction.addSignature(transferAuthority.publicKey, (transferAuthoritySignature));
     }
 
     let isVerifiedSignature = transaction.verifySignatures();

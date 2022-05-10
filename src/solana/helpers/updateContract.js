@@ -44,24 +44,11 @@ export const updateCandyMachine = async (contractAddress, env = 'devnet', newSet
     );
 
 
-
-    // let ipfsHash = 'QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs';
     let remainingAccounts = [];
-    // const payerWallet = new PublicKey(window.solana.publicKey.toString().toBuffer());
 
-      console.log(candyMachineAddress, payerPublicAddress);
+    console.log(candyMachineAddress, payerPublicAddress);
 
-      console.log(newSettings);
-
-    // const tx = await anchorProgram.rpc.updateCandyMachine(newSettings, {
-    //   accounts: {
-    //     candyMachine,
-    //     authority: payerPublicAddress,
-    //     wallet: payerPublicAddress,
-    //   },
-    //   remainingAccounts:
-    //     remainingAccounts.length > 0 ? remainingAccounts : undefined,
-    // });
+    console.log(newSettings);
 
     const r = 
     
@@ -84,11 +71,6 @@ export const updateCandyMachine = async (contractAddress, env = 'devnet', newSet
     console.log(r);
 
     let instructions = [
-      // await createUpdateMetadataInstruction(
-      //     candyMachine,
-      //     payerPublicAddress,
-      //     r.txId,
-      // ),
       r.txId,
     ];
 
@@ -103,7 +85,6 @@ export const updateCandyMachine = async (contractAddress, env = 'devnet', newSet
 
 
     console.log(transaction)
-    // transaction.add(instructions[1]);
 
     let transactionBuffer = transaction.serializeMessage();
 
@@ -128,31 +109,6 @@ export const updateCandyMachine = async (contractAddress, env = 'devnet', newSet
         rawTransaction
     );
     console.log(asd);
-
-    //   const openSales = async (status = true) => {
-    //     contract.methods
-    //         .setOpen(status)
-    //         .send(
-    //             {
-    //                 from: account,
-    //                 value: 0,
-    //             },
-    //             (err) => (err ? onTxnError(err) : onTxnInfo())
-    //         )
-    //         .once('error', (err) => onTxnError(err))
-    //         .once('confirmation', () => onTxnSuccess());
-    // };
-
-
-    /*
-  const metadataByCandyMachine = await getAccountsByCreatorAddress(
-    (await getCandyMachineCreator(new PublicKey(candyMachineAddress)))[0].toBase58(),
-    connection,
-  );
-
-	console.log(metadataByCandyMachine);
-	*/
-
     
 };
 

@@ -338,15 +338,6 @@ export const useContractActions = (contractAddress) => {
             onTxnError("Please connect with Phantom wallet");
         }
 
-        // console.log(window.solana);
-        // const sol = await window.solana.connect();
-        // console.log(sol)
-        // const payerPublicAddress = new PublicKey(
-        //     sol.publicKey.toString().toBuffer()
-        // );
-
-        // console.log(window.solana.publicKey.toString())
-
         // needs to be dynamic
         const anchorProgram = await loadCandyProgramV2(null, 'devnet');
         const candyMachineAddress = contractAddress;
@@ -370,12 +361,6 @@ export const useContractActions = (contractAddress) => {
             newWhiteList = null;
         }
 
-        
-
-        // let toModifyCandyMachineData = candyMachineObj.data;
-
-        // console.log(toModifyCandyMachineData)
-
 
         const newSettings = {
             itemsAvailable:  candyMachineObj.data.itemsAvailable,
@@ -392,11 +377,11 @@ export const useContractActions = (contractAddress) => {
             whitelistMintSettings: newWhiteList ,
             hiddenSettings: candyMachineObj.data.hiddenSettings,
             creators: candyMachineObj.data.creators.map(creator => {
-            return {
-                address: new PublicKey(creator.address),
-                verified: true,
-                share: creator.share,
-            };
+                return {
+                    address: new PublicKey(creator.address),
+                    verified: true,
+                    share: creator.share,
+                };
             }),
         };
 
@@ -418,8 +403,6 @@ export const useContractActions = (contractAddress) => {
         console.log(newGoLiveDate);
         console.log(epoch);
         console.log(new BN(epoch).toString());
-
-        // return;
 
         const anchorProgram = await loadCandyProgramV2(null, 'devnet');
         const candyMachineAddress = contractAddress;
@@ -445,11 +428,11 @@ export const useContractActions = (contractAddress) => {
             whitelistMintSettings: candyMachineObj.data.whitelistMintSettings ,
             hiddenSettings: candyMachineObj.data.hiddenSettings,
             creators: candyMachineObj.data.creators.map(creator => {
-            return {
-                address: new PublicKey(creator.address),
-                verified: true,
-                share: creator.share,
-            };
+                return {
+                    address: new PublicKey(creator.address),
+                    verified: true,
+                    share: creator.share,
+                };
             }),
         };
 
