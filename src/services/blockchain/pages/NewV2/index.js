@@ -247,9 +247,13 @@ const New = () => {
 						<Grid item sx={{ flex: 1, px: 4 }}>
 							<Stack gap={2}>
 								<Stack>
-									<Stack sx={{ mb: 2, width: 'max-content' }}>
+
+									{/* not required we'll always create a new contract on testnet by default */}
+
+									{/* <Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel onChange={e => setIsTestnetEnabled(e.target.checked)} checked={isTestnetEnabled} control={<Switch />} label="Deploy To Testnet" />
-									</Stack>
+									</Stack> */}
+
 									<Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel
 											name="blockchain-radio-buttons"

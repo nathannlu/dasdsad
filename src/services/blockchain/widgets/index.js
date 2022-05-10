@@ -73,7 +73,7 @@ export const BlankNFT = ({ setIsModalOpen, contract }) => {
             <Stack sx={{ border: '1px solid black', height: '100%' }}>
 
                 <Box sx={{ height: '500px' }}>
-                    <Button onClick={setIsModalOpen}>
+                    <Button onClick={e => setIsModalOpen(true)}>
                         <Fade in={animate}>
                             <span>
                                 Connect your images &amp; metadata

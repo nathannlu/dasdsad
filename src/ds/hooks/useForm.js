@@ -10,6 +10,7 @@ const convertToFormState = (config) => {
         state[key] = {
             value: config[key].default,
             placeholder: config[key].placeholder,
+            label: config[key].label,
         };
     });
     return state;

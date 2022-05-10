@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -21,36 +21,33 @@ import {
 
 import { Skeleton } from '@mui/material';
 
-import { useContractActions } from './hooks/useContractActions';
+import { useContractSettings } from './hooks/useContractSettings';
 
 import { ContractDetails } from '../../widgets';
 
 const actions = [
-	{ title: 'Update metadata url', value: 'newMetadataUrl' },
-	{ title: 'Update max per mint', value: 'max' },
-	{ title: 'Update max per wallet', value: 'maxWallet' },
-	{ title: 'Update price', value: 'price' },
+	{ title: 'Update metadata url', value: 'metadataUrl' },
 	{ title: 'Airdrop addresses', value: 'airdrop' },
 	{ title: 'Set whitelist', value: 'whitelist' },
 ];
 
-const Settings = ({ contract, contractController, contractState }) => {
+const Settings = ({ contract, contractController, contractState, setContractState }) => {
 	const {
-		actionForm: { airdropList, whitelistAddresses, maxPerMintCount, newPrice, newMetadataUrl, maxPerWalletCount, },
+		actionForm: { airdropList, whitelistAddresses, maxPerMint, maxPerWallet, newPrice, metadataUrl },
 		withdraw,
-		setOpenSales,
+		setPublicSales,
 		setOpenPresale,
 		updateReveal,
-		setMaxPerMint,
-		setMaxPerWallet,
-		setCost,
 		setAirdropList,
 		setMerkleRoot,
+		setMaxPerMint,
+		setMaxPerWallet,
+		setPrice,
 		isSaving
-	} = useContractActions();
+	} = useContractSettings();
 
 	// const [airdropList, setAirdropList] = useState('');
-	const [selectedUpdate, setSelectedUpdate] = useState('newMetadataUrl');
+	const [selectedUpdate, setSelectedUpdate] = useState('metadataUrl');
 
 	// const contractAddress = '0xd4975541438a06e5b6dc7dd2d5bc646aed652616'
 
@@ -71,6 +68,14 @@ const Settings = ({ contract, contractController, contractState }) => {
 	// 	const ipfsUri = 'ipfs://QmY3ru7ZeAihUU3xexCouSrbybaBV1hPe5EwvNqph1AYdS/'
 	// 	contract.updateReveal(from, true, ipfsUri)
 	// }
+
+	const methodProps = { contractController, setContractState, walletAddress };
+
+	useEffect(() => {
+		setMaxPerMint(contractState?.maxPerMint || '1');
+		setMaxPerWallet(contractState?.maxPerWallet || '1');
+		setPrice(contractState?.price || '1');
+	}, []);
 
 	if (!contractState || !contractController) {
 		return (
@@ -145,74 +150,25 @@ const Settings = ({ contract, contractController, contractState }) => {
 						<Grid xs={9} md={6} item>
 							<Stack>
 								{{
-									newMetadataUrl: (
-										<Stack direction="column">
-											<TextField size="small" value={contractState?.metadataUrl} {...newMetadataUrl} />
-
-											<Button
-												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-												size="small"
-												variant="contained"
-												onClick={() => updateReveal(contractController, walletAddress)}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												UPDATE
-											</Button>
-
-										</Stack>
-									),
-									max: (
-										<Stack direction="column">
-											<TextField size="small" value={contractState?.maxPerMint}  {...maxPerMintCount} />
-
-											<Button
-												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-												size="small"
-												variant="contained"
-												onClick={() => setMaxPerMint(contractController)}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												UPDATE
-											</Button>
-										</Stack>
-									),
-									maxWallet: (
-										<Stack direction="column">
-											<TextField size="small" value={contractState?.maxPerWallet} {...maxPerWalletCount} />
-
-											<Button
-												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-												size="small"
-												variant="contained"
-												onClick={() => setMaxPerWallet(contractController)}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												UPDATE
-											</Button>
-										</Stack>
-									),
-									price: (
+									metadataUrl: (
 										<Stack direction="column">
 											<TextField
+												{...metadataUrl}
 												size="small"
-												InputProps={{ endAdornment: contract.nftCollection.currency }}
-												value={contractState?.price}
-												{...newPrice}
+												value={contractState?.metadataUrl}
 											/>
 
 											<Button
 												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
 												size="small"
 												variant="contained"
-												onClick={() => setCost(contractController)}
+												onClick={() => updateReveal(methodProps)}
 												disabled={isSaving}
 											>
 												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
 												UPDATE
 											</Button>
+
 										</Stack>
 									),
 									airdrop: (
@@ -229,7 +185,7 @@ const Settings = ({ contract, contractController, contractState }) => {
 												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
 												size="small"
 												variant="contained"
-												onClick={() => setAirdropList(contractController)}
+												onClick={() => setAirdropList(methodProps)}
 												disabled={isSaving}
 											>
 												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
@@ -309,22 +265,39 @@ const Settings = ({ contract, contractController, contractState }) => {
 							Mint
 						</Button>
 				</Stack> */}
-				
-					<Stack direction="row" gap={2} mt={4}>
-						<Button
-							startIcon={<SwapVertIcon />}
-							size="small"
-							variant="contained"
-							onClick={() => withdraw()}>
-							Pay out to bank
-						</Button>
+
+					<Stack gap={2}>
+						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+							Public Sales Settings
+						</Typography>
+
+						<Stack gap={2} direction="horizontal">
+
+							<Stack direction="column">
+								<TextField {...maxPerMint} size="small" label='Max per mint' />
+							</Stack>
+
+							<Stack direction="column">
+								<TextField {...maxPerWallet} size="small" label='Max per wallet' />
+							</Stack>
+
+							<Stack direction="column">
+								<TextField
+									{...newPrice}
+									label='Price'
+									size="small"
+									InputProps={{ endAdornment: contract.nftCollection.currency }}
+								/>
+							</Stack>
+
+						</Stack>
 
 						{contractState?.isPublicSaleOpen ? (
 							<Button
 								startIcon={<LockIcon />}
 								size="small"
 								variant="contained"
-								onClick={() => setOpenSales(false)}
+								onClick={() => setPublicSales(methodProps, false)}
 								color="error"
 							>
 								Close Public Sales
@@ -334,11 +307,23 @@ const Settings = ({ contract, contractController, contractState }) => {
 								startIcon={<LockOpenIcon />}
 								size="small"
 								variant="contained"
-								onClick={() => setOpenSales(true)}
+								onClick={() => setPublicSales(methodProps, true)}
 							>
 								Open Public Sales
 							</Button>
 						)}
+
+					</Stack>
+
+					<Stack direction="row" gap={2} mt={4}>
+						<Button
+							startIcon={<SwapVertIcon />}
+							size="small"
+							variant="contained"
+							onClick={() => withdraw()}>
+							Pay out to bank
+						</Button>
+
 
 						{contractState?.isPresaleOpen ? (
 							<Button

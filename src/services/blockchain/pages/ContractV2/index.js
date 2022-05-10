@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Box, Container, TextField } from 'ds/components';
-import { useContractActions } from './hooks/useContractActions';
+import { Stack, Box, Container } from 'ds/components';
 import { ContractController } from '@yaman-apple-frog/controllers';
 
 import { useParams } from 'react-router-dom';
-import { useWeb3 } from 'libs/web3';
+// import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 
 import IPFSModal from '../Contract/IPFSModal';
@@ -31,6 +30,8 @@ const ContractV2 = () => {
 			// Set single contract
 			setContract(contract);
 			setIsLoading(false);
+
+			console.log(contract, 'contract');
 
 			const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
 			setContractController(contractController);

@@ -1,12 +1,11 @@
 import React from 'react';
 import {
-	Stack,
 	Box,
 	Grid,
 	Typography,
 	Button,
 } from 'ds/components';
-import { Stepper, Step, StepLabel, Link } from '@mui/material';
+import { Stepper, Step, StepLabel } from '@mui/material';
 import { BlankNFT, NFTStack, ContractDetails } from '../../widgets';
 
 const NotComplete = ({ setIsModalOpen, contract }) => {
@@ -41,7 +40,7 @@ const NotComplete = ({ setIsModalOpen, contract }) => {
 											e.preventDefault();
 											return;
 										}
-										setIsModalOpen();
+										setIsModalOpen(true);
 									}}
 									sx={{ cursor: activeStep === 1 && 'pointer' || undefined }}
 								>

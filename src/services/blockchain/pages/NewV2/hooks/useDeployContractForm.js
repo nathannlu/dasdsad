@@ -21,7 +21,7 @@ export const useDeployContractForm = () => {
 		},
 		activeFocusKey: 'NAME', // default,
 		activeBlockchain: 'ethereum', // default,
-		isTestnetEnabled: false,
+		isTestnetEnabled: true, // default
 		isLoading: false
 	});
 
@@ -164,7 +164,7 @@ export const useDeployContractForm = () => {
 				blockchain,
 				type: CONTRACT_VERSION,
 				nftCollection: {
-					// price: parseFloat(priceInEth.value), // @TODO savein DB too it is going to be always 1 SOL or 1 ETH
+					price: 1, // save in DB it is going to be always 1 SOL or 1 ETH
 					size: parseInt(maxSupply.value),
 					currency: getBlockchainCurrency(blockchain)
 				},

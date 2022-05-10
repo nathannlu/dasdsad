@@ -3,40 +3,39 @@ import React, { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
-export const useContractActions = () => {
+import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
+
+export const useContractSettings = () => {
 	const { addToast } = useToast();
 	const [state, setState] = useState({ isSaving: false });
+	const [setWhitelist] = useSetWhitelist({});
 
-	const { form: actionForm } = useForm({
+	const { form: actionForm, setFormState: setActionFormState } = useForm({
 		airdropList: {
 			default: '',
 			placeholder: `0x123\n0x456\n0x789`,
-			rules: [],
 		},
 		whitelistAddresses: {
 			default: '',
 			placeholder: `0x123\n0x456\n0x789`,
-			rules: [],
 		},
-		maxPerMintCount: {
+		maxPerMint: {
 			default: '',
 			placeholder: '5',
-			rules: [],
 		},
-		maxPerWalletCount: {
+		maxPerWallet: {
 			default: '',
 			placeholder: '10',
-			rules: [],
+
 		},
-		newPrice: {
+		price: {
 			default: '',
 			placeholder: '5',
-			rules: [],
+
 		},
-		newMetadataUrl: {
+		metadataUrl: {
 			default: '',
 			placeholder: 'New metadata URL',
-			rules: [],
 		},
 	});
 
@@ -53,68 +52,66 @@ export const useContractActions = () => {
 		setState(prevState => ({ ...prevState, isSaving: false }));
 	};
 
-	const updateReveal = async (contractController, walletAddress) => {
-		const { newMetadataUrl } = actionForm;
+	const updateReveal = async ({ contractController, setContractState, walletAddress }) => {
+		const { metadataUrl } = actionForm;
 
-		console.log(newMetadataUrl.value);
+		console.log(metadataUrl.value);
 
-		if (!newMetadataUrl.value) {
+		if (!metadataUrl.value) {
 			return;
 		}
 
 		setState(prevState => ({ ...prevState, isSaving: true }));
 		try {
 			// @TODO ask to set reveal as true or false
-			await contractController.updateReveal(walletAddress, true, newMetadataUrl.value);
+			const contractState = await contractController.updateReveal(walletAddress, true, metadataUrl.value);
+			setContractState(contractState);
 			onSuccess('Metadata Url updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
 	}
 
-	const setMaxPerMint = async (contractController) => {
-		const { maxPerMintCount } = actionForm;
+	const setPublicSales = async ({ contractController, setContractState, walletAddress }, isOpen) => {
+		const maxPerMint = actionForm.maxPerMint.value;
+		const maxPerWallet = actionForm.maxPerWallet.value;
+		const price = actionForm.price.value;
 
-		console.log(maxPerMintCount.value);
-
-		if (!maxPerMintCount.value) {
+		if (!maxPerMint || maxPerMint === 0) {
+			addToast({ severity: 'error', message: `max per mint can't be zero` });
 			return;
 		}
+
+		if (!maxPerWallet || maxPerWallet === 0) {
+			addToast({ severity: 'error', message: `max per wallet can't be zero` });
+			return;
+		}
+
+		if (!price || price === 0) {
+			addToast({ severity: 'error', message: `max per wallet can't be zero` });
+			return;
+		}
+
+		const web3 = window.web3;
+		const priceInWei = web3.utils.toWei(`${parseFloat(actionForm.price.value)}`);
 
 		setState(prevState => ({ ...prevState, isSaving: true }));
 
 		try {
-			// @TODO ask to set reveal as true or false
-			onSuccess('Max per mint updated successfully!');
+			const contractState = await contractController.updateSale(walletAddress, isOpen, priceInWei, maxPerWallet, maxPerMint);
+			setContractState(contractState);
+			onSuccess('Public Sale settings updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
 	}
 
-	const setMaxPerWallet = async (contractController) => {
-		const { maxPerWalletCount } = actionForm;
-
-		console.log(maxPerWalletCount.value);
-
-		if (!maxPerWalletCount.value) {
-			return;
-		}
-
-		setState(prevState => ({ ...prevState, isSaving: true }));
-		try {
-			// @TODO ask to set reveal as true or false
-			onSuccess('Max per wallet updated successfully!');
-		} catch (e) {
-			onError(e);
-		}
+	const setOpenPresale = async ({ contractController, setContractState, walletAddress }) => {
+		// updatePresale
+		// setWhitelist({ variables: { id, whitelist: addresses } });
 	}
 
-	const setOpenSales = async (contractController) => { }
-	const setOpenPresale = async (contractController) => { }
-
-	const setCost = async (contractController) => { }
-
-	const setAirdropList = async (contractController) => {
+	const setAirdropList = async ({ contractController, setContractState, walletAddress }) => {
 		const { airdropList } = actionForm;
 
 		console.log(airdropList.value);
@@ -140,8 +137,7 @@ export const useContractActions = () => {
 		}
 	}
 
-	const setMerkleRoot = async (contractController) => { }
-
+	const setMerkleRoot = async ({ contractController, setContractState, walletAddress }) => { }
 
 	// const airdrop = () => {
 	// 	const { methods: { airdrop } } = retrieveContract(impl);
@@ -160,28 +156,6 @@ export const useContractActions = () => {
 	// 		}
 	// 	);
 	// }
-
-	const updateSale = () => {
-		const { methods: { updateSale } } = retrieveContract(impl);
-		const
-			open = true,
-			cost = 1,
-			maxPerWallet = 10,
-			maxPerMint = 10
-
-		const rawTxn = updateSale(open, cost, maxPerWallet, maxPerMint).encodeABI();
-
-		web3.eth.sendTransaction(
-			{
-				from,
-				to,
-				data: rawTxn,
-			},
-			function (error, hash) {
-				console.log(error);
-			}
-		);
-	};
 
 	// const mint = () => {
 	// 	const to = '0xa8C801F27164E840c9F931147aCDe37fdCCBea4c';
@@ -207,20 +181,23 @@ export const useContractActions = () => {
 	// 	);
 	// };
 
+	const setMaxPerMint = (maxPerMint) => setActionFormState(prevState => ({ ...prevState, maxPerMint: { ...prevState.maxPerMint, value: maxPerMint } }));
+	const setMaxPerWallet = (maxPerWallet) => setActionFormState(prevState => ({ ...prevState, maxPerWallet: { ...prevState.maxPerWallet, value: maxPerWallet } }));
+	const setPrice = (price) => setActionFormState(prevState => ({ ...prevState, price: { ...prevState.price, value: price } }));
+
 	return {
 		// mint,
 		updateReveal,
 
-		updateSale,
-
-		setOpenSales,
+		setPublicSales,
 		setOpenPresale,
 
 		setAirdropList,
+		setMerkleRoot,
+
 		setMaxPerMint,
 		setMaxPerWallet,
-		setCost,
-		setMerkleRoot,
+		setPrice,
 
 		actionForm,
 		isSaving: state.isSaving
