@@ -1,4 +1,3 @@
-import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 import { useQuery, useMutation } from '@apollo/client';
 import {
@@ -21,6 +20,7 @@ import {
     REMOVE_PAGE_FROM_PUBLISH,
     SET_CONTRACT_ADDRESS,
     UPDATE_WEBSITE_CUSTOM,
+    SET_ABI
 } from '../website.gql';
 import { REAUTHENTICATE } from 'gql/users.gql';
 
@@ -58,7 +58,6 @@ export const useCreateWebsite = ({
     onCompleted,
     onError,
 }) => {
-    const { user } = useAuth();
     const { setWebsite } = useWebsite();
 
     const [createWebsite, { data }] = useMutation(CREATE_WEBSITE, {
@@ -375,6 +374,24 @@ export const useSetContractAddress = ({ onError }) => {
     );
 
     return [setContractAddress, { ...mutationResult }];
+};
+
+export const useSetABI = ({ onError }) => {
+    const { website, setWebsite } = useWebsite();
+
+    const [setABI, { ...mutationResult }] = useMutation(
+        SET_ABI,
+        {
+            onCompleted: (data) => {
+                let newWebsite = { ...website };
+                newWebsite.settings.abi = data.setABI;
+                setWebsite(newWebsite);
+            },
+            onError,
+        }
+    );
+
+    return [setABI, { ...mutationResult }];
 };
 
 export const useUpdateWebsiteCustom = ({ onError }) => {

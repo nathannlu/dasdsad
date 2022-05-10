@@ -33,6 +33,7 @@ export const HeaderAProps = {
             isMint: {
                 _type: 'boolean',
                 value: false,
+                func: ''
             },
         },
     },
@@ -65,6 +66,7 @@ export const HeaderBProps = {
             isMint: {
                 _type: 'boolean',
                 value: false,
+                func: ''
             },
         },
     },
@@ -117,6 +119,7 @@ export const HeaderCProps = {
             isMint: {
                 _type: 'boolean',
                 value: false,
+                func: ''
             },
         },
     },

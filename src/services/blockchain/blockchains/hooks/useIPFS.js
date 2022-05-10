@@ -24,7 +24,9 @@ export const useIPFS = () => {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
-    const pinImages = async (callback) => {
+    const getIpfsUrl = (blockchain) => (blockchain === 'solana' || blockchain === 'solanadevnet') && `https://gateway.pinata.cloud/ipfs/` || `ipfs://`;
+
+    const pinImages = async (blockchain, callback) => {
         const folder = uploadedFiles;
         setStart(true);
         setLoading(true);
@@ -60,13 +62,15 @@ export const useIPFS = () => {
             },
         };
 
+        const ipfsUrl = getIpfsUrl(blockchain);
+
         try {
             const res = await axios.post(url, data, opt);
             setImagesUrl(res.data.IpfsHash);
             addToast({
                 severity: 'success',
                 message:
-                    'Added images to IPFS under URL: ipfs//' +
+                    `Added images to IPFS under URL: ${ipfsUrl}` +
                     res.data.IpfsHash,
             });
         } catch (e) {
@@ -85,7 +89,7 @@ export const useIPFS = () => {
         callback(true); // images added successfully to pinata navigate to next step
     };
 
-    const updateAndSaveJson = async (file, data) => {
+    const updateAndSaveJson = async (file, data, blockchain) => {
         return new Promise((resolve, reject) => {
             if (file.name !== 'metadata.json') {
                 const fileReader = new FileReader();
@@ -93,7 +97,11 @@ export const useIPFS = () => {
                     // Parse JSON and modify
                     const jsonMetadata = JSON.parse(evt.target.result);
                     const tokenId = file.name.split('.')[0];
+                    const fileExtension = jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'image/webp' && 'webp'
+                        || jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'video/mp4' && 'mp4'
+                        || 'png';
 
+<<<<<<< HEAD
                     if (
                         jsonMetadata.properties?.files &&
                         jsonMetadata.properties?.files[0]?.type == 'image/webp'
@@ -102,16 +110,15 @@ export const useIPFS = () => {
                     } else {
 											jsonMetadata.image = `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.png`;
                     }
+=======
+                    const ipfsUrl = getIpfsUrl(blockchain);
+
+                    jsonMetadata.image = `${ipfsUrl}${imagesUrl}/${tokenId}.${fileExtension}`;
+>>>>>>> master
 
                     // Attach JSON to formdata
-                    const metadataFile = new Blob([
-                        JSON.stringify(jsonMetadata),
-                    ]);
-                    data.append(
-                        'file',
-                        metadataFile,
-                        `/metadata/${tokenId}.json`
-                    );
+                    const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
+                    data.append('file', metadataFile, `/metadata/${tokenId}.json`);
 
                     resolve(data);
                 };
@@ -123,7 +130,7 @@ export const useIPFS = () => {
         });
     };
 
-    const pinMetadata = async (callback) => {
+    const pinMetadata = async (blockchain, callback) => {
         const folder = uploadedJson;
         let data = new FormData();
         const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
@@ -137,7 +144,7 @@ export const useIPFS = () => {
 
         // Update metadata
         for (let i = 0; i < folder.length; i++) {
-            await updateAndSaveJson(folder[i], data);
+            await updateAndSaveJson(folder[i], data, blockchain);
         }
 
         const metadata = JSON.stringify({
@@ -155,15 +162,17 @@ export const useIPFS = () => {
             },
         };
 
+        const ipfsUrl = getIpfsUrl(blockchain);
+
         try {
             const res = await axios.post(url, data, opt);
             addToast({
                 severity: 'success',
                 message:
-                    'Added json metadata to IPFS under URL: ipfs://' +
+                    `Added json metadata to IPFS under URL: ${ipfsUrl}` +
                     res.data.IpfsHash,
             });
-            setIpfsUrl('ipfs://' + res.data.IpfsHash + '/');
+            setIpfsUrl(`${ipfsUrl}${res.data.IpfsHash}/`);
             setMetadataUrl(res.data.IpfsHash);
         } catch (e) {
             addToast({
@@ -181,6 +190,7 @@ export const useIPFS = () => {
     };
 
     return {
+        getIpfsUrl,
         pinMetadata,
         pinImages,
         loading,

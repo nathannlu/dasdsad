@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
     useUpdatePageData,
     useUpdateWebsiteSEO,
@@ -9,6 +9,9 @@ import { useAuth } from 'libs/auth';
 import config from 'config';
 import axios from 'axios';
 import lz from 'lzutf8';
+import deflate from 'deflate-js';
+import CryptoJS from 'crypto-js';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 
 export const WebsiteContext = React.createContext({});
 
@@ -22,6 +25,10 @@ export const WebsiteProvider = ({ children }) => {
         'https://dummyimage.com/',
     ]);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+    const [isImportContractOpen, setIsImportContractOpen] = useState(false);
+    const [importContractAddress, setImportContractAddress] = useState('');
+    const [importABI, setImportABI] = useState('');
+    const [ABIFunctions, setABIFunctions] = useState([]);
     const { user } = useAuth();
     const [updatePageData] = useUpdatePageData({
         onCompleted: () =>
@@ -55,6 +62,11 @@ export const WebsiteProvider = ({ children }) => {
                 message: err.message,
             }),
     });
+
+    useEffect(() => {
+        if (!website) return;
+        getABIFunctions();
+    }, [website])
 
     const getWebsitePage = (pageName) => {
         return website?.pages.find((page) => page.name == pageName);
@@ -111,12 +123,12 @@ export const WebsiteProvider = ({ children }) => {
                     Authorization: `Uploadcare.Simple ${config.uploadcare.publicKey}:${config.uploadcare.secretKey}`,
                 },
             };
-            const res = await axios.delete(
-                `https://api.uploadcare.com/files/${imageID}/`,
-                opt
-            );
+            // const res = await axios.delete(
+            //     `https://api.uploadcare.com/files/${imageID}/`,
+            //     opt
+            // );
 
-            removeImageFromLocal(imageID, isSettings);
+            // removeImageFromLocal(imageID, isSettings);
         } catch (e) {
             addToast({
                 severity: 'error',
@@ -127,9 +139,9 @@ export const WebsiteProvider = ({ children }) => {
 
     const deleteImageBulk = async (imageIdArray, isSettings = false) => {
         try {
-            imageIdArray.forEach((imageId) => {
-                removeImageFromLocal(imageId, isSettings);
-            });
+            // imageIdArray.forEach((imageId) => {
+            //     removeImageFromLocal(imageId, isSettings);
+            // });
 
             const opt = {
                 headers: {
@@ -139,10 +151,10 @@ export const WebsiteProvider = ({ children }) => {
                 data: imageIdArray,
             };
 
-            const res = await axios.delete(
-                `https://api.uploadcare.com/files/storage/`,
-                opt
-            );
+            // const res = await axios.delete(
+            //     `https://api.uploadcare.com/files/storage/`,
+            //     opt
+            // );
         } catch (e) {
             addToast({
                 severity: 'error',
@@ -304,6 +316,31 @@ export const WebsiteProvider = ({ children }) => {
         }
     };
 
+    const openImportModal = () => {
+        setIsImportContractOpen(true);
+        setImportContractAddress('');
+        setImportABI('');
+    }
+
+    const getABIFunctions = () => {
+        if (website?.settings?.abi) {
+            const ABIwords2 = CryptoJS.enc.Base64.parse(website?.settings?.abi);
+            const ABIbase642 = CryptoJS.enc.Utf8.stringify(ABIwords2);
+            const ABIarr2 = ABIbase642.split(',').map(Number);
+            const ABIinflated = deflate.inflate(ABIarr2);
+
+            const ABI = ABIinflated.reduce((allString, char) => {
+                return allString += String.fromCharCode(char);
+            }, '');
+
+            const parsedABI = JSON.parse(ABI);
+            setABIFunctions(parsedABI);
+        }
+        else {
+            setABIFunctions(NFTCollectible.abi);
+        }
+    }
+
     return (
         <WebsiteContext.Provider
             value={{
@@ -325,6 +362,15 @@ export const WebsiteProvider = ({ children }) => {
                 getPageName,
                 goToBuilder,
                 updateOldWebsites,
+                isImportContractOpen,
+                setIsImportContractOpen,
+                importContractAddress,
+                setImportContractAddress,
+                importABI,
+                setImportABI,
+                openImportModal,
+                ABIFunctions,
+                getABIFunctions
             }}>
             {children}
         </WebsiteContext.Provider>

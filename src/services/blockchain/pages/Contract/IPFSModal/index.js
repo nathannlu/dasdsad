@@ -50,7 +50,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
 
                     {/* uploads to ipfs with us */}
                     <Payment contractId={id} contract={contract} />
-                    <Upload id={id} setIsModalOpen={setIsModalOpen} />
+                    <Upload id={id} contract={contract} setIsModalOpen={setIsModalOpen} />
                 </StepWizard>
             </Box>
         </Modal>

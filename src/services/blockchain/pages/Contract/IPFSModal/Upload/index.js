@@ -8,7 +8,7 @@ import { useToast } from 'ds/hooks/useToast';
 import Traits from './Traits';
 import Metadata from './Metadata';
 
-const Steps = ({ id, setIsModalOpen }) => {
+const Steps = ({ id, setIsModalOpen, contract }) => {
     const [activeStep, setActiveStep] = useState(0);
 
     return (
@@ -26,8 +26,8 @@ const Steps = ({ id, setIsModalOpen }) => {
             </Stepper>
             {
                 {
-                    0: <Traits setActiveStep={setActiveStep} />,
-                    1: <Metadata setActiveStep={setActiveStep} />,
+                    0: <Traits setActiveStep={setActiveStep} contract={contract} />,
+                    1: <Metadata setActiveStep={setActiveStep} contract={contract} />,
                     2: (
                         <Confirmation
                             id={id}

@@ -40,6 +40,12 @@ const Website = (props) => {
             });
             history.push('/websites');
         },
+        onError: (e) => {
+            addToast({
+                severity: 'error',
+                message: e.message,
+            });
+        }
     });
 
     useGetContracts({

@@ -1,16 +1,7 @@
 import React, { useEffect } from 'react';
 import { Fade } from '@material-ui/core';
-import { useWeb3 } from 'libs/web3';
 
 const Template = (props) => {
-    const { loadWeb3, loadBlockchainData, account, mint } = useWeb3();
-    useEffect(() => {
-        (async () => {
-            await loadWeb3();
-            await loadBlockchainData();
-        })();
-    }, []);
-
     return (
         <Fade in={true}>
             <section className="text-gray-600 body-font overflow-hidden">
