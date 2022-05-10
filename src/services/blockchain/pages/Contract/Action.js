@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useContractDetails } from './hooks/useContractDetails';
 import { useContractActions, useSolanaContractActions } from './hooks/useContractActions';
 import { useWeb3 } from 'libs/web3';
-import { Chip } from '@mui/material';
+import { CardHeader, Chip } from '@mui/material';
 import {
     Fade,
     Container,
@@ -34,7 +34,7 @@ const ethActions = [
 ];
 
 const solActions = [
-    { title: 'Update price', value: 'price' },
+    // { title: 'Update price', value: 'price' },
     { title: 'Set whitelist token', value: 'whitelistToken' },
     { title: 'Set live date', value: 'livedate' },
 ];
@@ -350,9 +350,18 @@ const Actions = ({ id, contract }) => {
                                                 setSelectedUpdate(action.value)
                                             }
                                             variant="contained">
+
+                                            <CardHeader       
+                                                action={
+                                                    <p style = {{color:'red'}}> Beta! </p>
+                                                }  
+                                            />
                                             <Typography>
                                                 {action.title}
                                             </Typography>
+                                               
+                                             
+                                        
                                         </Card>
                                     ))}
                                 </Stack>

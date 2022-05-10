@@ -46,7 +46,7 @@ export const useContractActions = (contractAddress) => {
             rules: [],
         },
         whitelistToken: {
-            default: '6L2i8gKPJtjCj1TA7vQLYQn52xmubn3Fz6rTaFV5qMvM',
+            default: '',
             placeholder: '6L2i8gKP...',
             rules: [],
         },
