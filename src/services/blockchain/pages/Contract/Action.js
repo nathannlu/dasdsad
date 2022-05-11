@@ -372,20 +372,27 @@ const Actions = ({ id, contract }) => {
                                         {
                                         
                                             whitelistToken: (
-                                                <Stack direction="row">
-                                                    <TextField
-                                                        size="small"
-                                                        {...whitelistToken}
-                                                    />
-                                                    <Button
-                                                        size="small"
-                                                        variant="contained"
-                                                        onClick={() =>
-                                                            updateWhiteListToken( wallet, env, true )
-                                                        }>
-                                                        <UploadIcon />
-                                                    </Button>
-                                                </Stack>
+                                                <Grid>
+                                                    <Stack direction="row">
+                                                        <TextField
+                                                            size="small"
+                                                            {...whitelistToken}
+                                                        />
+                                                        
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            onClick={() =>
+                                                                updateWhiteListToken( wallet, env, true )
+                                                            }>
+                                                            <UploadIcon />
+                                                        </Button>
+                                                    </Stack>
+                                                    <Typography>
+                                                        Please refer to <a href="https://spl.solana.com/token" target="_blank">SPL-Token documentation </a>
+ about how to use these for WL! 
+                                                    </Typography>
+                                                </Grid>
                                             ),
                                             price: (
                                                 <Stack direction="row">
@@ -409,21 +416,26 @@ const Actions = ({ id, contract }) => {
                                                 </Stack>
                                             ),
                                             livedate: (
-                                                <Stack direction="row">
-                                                    <input type = "datetime-local"
-                                                        // value="2017-06-01T08:30"
-                                                         {...goLiveDate}
-                                                    />
+                                                <Grid>
+                                                    <Stack direction="row">
+                                                        <input type = "datetime-local"
+                                                            // value="2017-06-01T08:30"
+                                                                {...goLiveDate}
+                                                        />
 
-                                                    <Button
-                                                        size="small"
-                                                        variant="contained"
-                                                        onClick={() =>
-                                                            updateGoLiveDate( wallet, env)
-                                                        }>
-                                                        <UploadIcon />
-                                                    </Button>
-                                                </Stack>
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            onClick={() =>
+                                                                updateGoLiveDate( wallet, env)
+                                                            }>
+                                                            <UploadIcon />
+                                                        </Button>
+                                                    </Stack>
+                                                    <Typography>
+                                                            Set date for public sale! SPL token required for presale.
+                                                    </Typography>
+                                                </Grid>
                                             )
                                         }[selectedUpdate]
                                     }
