@@ -23,7 +23,9 @@ import { Skeleton } from '@mui/material';
 
 import { useContractSettings } from './hooks/useContractSettings';
 
-import { ContractDetails } from '../../widgets';
+import { ContractDetails, EmptyAddressList, AddressList } from '../../widgets';
+import AppDialog from '../../widgets/AppDialog';
+import CSVWidget from '../../widgets/CSVWidget';
 
 const actions = [
 	{ title: 'Update metadata url', value: 'metadataUrl' },
@@ -33,17 +35,19 @@ const actions = [
 
 const Settings = ({ contract, contractController, contractState, setContractState }) => {
 	const {
-		actionForm: { airdropList, whitelistAddresses, maxPerMint, maxPerWallet, newPrice, metadataUrl },
+		actionForm: { airdropList, maxPerMint, maxPerWallet, newPrice, metadataUrl },
 		withdraw,
 		setPublicSales,
-		setOpenPresale,
+		setPresales,
 		updateReveal,
 		setAirdropList,
 		setMerkleRoot,
 		setMaxPerMint,
 		setMaxPerWallet,
 		setPrice,
-		isSaving
+		setWhitelistAddresses,
+		isSaving,
+		whitelistAddresses
 	} = useContractSettings();
 
 	// const [airdropList, setAirdropList] = useState('');
@@ -71,11 +75,29 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 
 	const methodProps = { contractController, setContractState, walletAddress };
 
+	const dummyArray = ['0x389a0ba726B0B93a5aE9D11F09e3A0386ADAb081', '0x389a0ba726B0B93a5aE9D11F09e3A0386ADAb081', '0x389a0ba726B0B93a5aE9D11F09e3A0386ADAb081'];
+
 	useEffect(() => {
 		setMaxPerMint(contractState?.maxPerMint || '1');
 		setMaxPerWallet(contractState?.maxPerWallet || '1');
 		setPrice(contractState?.price || '1');
+		setWhitelistAddresses(contract?.nftCollection?.whitelist || [...dummyArray]);
 	}, []);
+
+	const cardStyle = {
+		maxWidth: 760,
+		boxShadow: "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+		padding: 3,
+		borderRadius: 4
+	};
+
+	const [state, setState] = React.useState({
+		isWhitelistAddressDialogOpen: false,
+		isAirdropDialogOpen: false
+	});
+
+	const toggleWhitelistAddressDialog = (isWhitelistAddressDialogOpen) => setState(prevState => ({ ...prevState, isWhitelistAddressDialogOpen }));
+	const toggleAirdropDialog = (isAirdropDialogOpen) => setState(prevState => ({ ...prevState, isAirdropDialogOpen }));
 
 	if (!contractState || !contractController) {
 		return (
@@ -193,28 +215,28 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 											</Button>
 										</Stack>
 									),
-									whitelist: (
-										<Stack direction="column">
-											<TextField
-												sx={{ maxWidth: '600px' }}
-												multiline
-												rows={7}
-												size="small"
-												value={contractState?.metadataUrl}
-												{...whitelistAddresses}
-											/>
-											<Button
-												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-												size="small"
-												variant="contained"
-												onClick={() => setMerkleRoot(id)}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												UPDATE
-											</Button>
-										</Stack>
-									),
+									// whitelist: (
+									// 	<Stack direction="column">
+									// 		<TextField
+									// 			sx={{ maxWidth: '600px' }}
+									// 			multiline
+									// 			rows={7}
+									// 			size="small"
+									// 			value={contractState?.metadataUrl}
+									// 			{...whitelistAddresses}
+									// 		/>
+									// 		<Button
+									// 			sx={{ width: 'max-content', my: 2, ml: 'auto' }}
+									// 			size="small"
+									// 			variant="contained"
+									// 			onClick={() => setMerkleRoot(id)}
+									// 			disabled={isSaving}
+									// 		>
+									// 			{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
+									// 			UPDATE
+									// 		</Button>
+									// 	</Stack>
+									// ),
 								}[selectedUpdate]}
 							</Stack>
 						</Grid>
@@ -266,13 +288,12 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						</Button>
 				</Stack> */}
 
-					<Stack gap={2}>
+					<Stack gap={2} mt={8} sx={cardStyle}>
 						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
-							Public Sales Settings
+							Public Sale Settings
 						</Typography>
 
 						<Stack gap={2} direction="horizontal">
-
 							<Stack direction="column">
 								<TextField {...maxPerMint} size="small" label='Max per mint' />
 							</Stack>
@@ -289,30 +310,81 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 									InputProps={{ endAdornment: contract.nftCollection.currency }}
 								/>
 							</Stack>
-
 						</Stack>
 
-						{contractState?.isPublicSaleOpen ? (
-							<Button
-								startIcon={<LockIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => setPublicSales(methodProps, false)}
-								color="error"
-							>
-								Close Public Sales
-							</Button>
-						) : (
-							<Button
-								startIcon={<LockOpenIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => setPublicSales(methodProps, true)}
-							>
-								Open Public Sales
-							</Button>
-						)}
+						<Stack>
+							{contractState?.isPublicSaleOpen ? (
+								<Button
+									startIcon={<LockIcon />}
+									size="small"
+									variant="contained"
+									onClick={() => setPublicSales(methodProps, false)}
+									color="error"
+									sx={{ ml: 'auto' }}
+								>
+									Close Public Sales
+								</Button>
+							) : (
+								<Button
+									startIcon={<LockOpenIcon />}
+									size="small"
+									variant="contained"
+									onClick={() => setPublicSales(methodProps, true)}
+									sx={{ ml: 'auto' }}
+								>
+									Open Public Sales
+								</Button>
+							)}
+						</Stack>
+					</Stack>
 
+					<Stack gap={2} mt={8} sx={cardStyle}>
+						<Grid container={true} justifyContent="space-between">
+							<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+								Pre Sale Settings
+							</Typography>
+
+							<Button
+								size="small"
+								variant="contained"
+								onClick={() => toggleWhitelistAddressDialog(true)}
+								color="secondary"
+								sx={{ margin: 'auto 0' }}
+							>
+								Set Whitelist
+							</Button>
+						</Grid>
+
+						<Stack gap={2} direction="horizontal">
+							{!whitelistAddresses.length && <EmptyAddressList message="Please add whitelist addresses to open pre-sales" /> || null}
+							{whitelistAddresses.length && <AddressList addresses={whitelistAddresses} /> || null}
+						</Stack>
+
+						<Stack>
+							{contractState?.isPresaleOpen ? (
+								<Button
+									startIcon={<LockIcon />}
+									size="small"
+									variant="contained"
+									onClick={() => setPresales(methodProps, false)}
+									color="error"
+									sx={{ ml: 'auto' }}
+								>
+									Close Pre-Sales
+								</Button>
+							) : (
+								<Button
+									startIcon={<LockOpenIcon />}
+									size="small"
+									variant="contained"
+									onClick={() => setPresales(methodProps, true)}
+									sx={{ ml: 'auto' }}
+									disabled={!whitelistAddresses.length}
+								>
+									Open Pre-Sales
+								</Button>
+							)}
+						</Stack>
 					</Stack>
 
 					<Stack direction="row" gap={2} mt={4}>
@@ -325,26 +397,6 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						</Button>
 
 
-						{contractState?.isPresaleOpen ? (
-							<Button
-								startIcon={<LockIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => setOpenPresale(false)}
-								color="error"
-							>
-								Close Pre-Sales
-							</Button>
-						) : (
-							<Button
-								startIcon={<LockOpenIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => setOpenPresale(true)}
-							>
-								Open Pre-Sales
-							</Button>
-						)}
 
 						{/* @TODO wire minting 
 						
@@ -371,6 +423,36 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 					</Stack>
 				</Box>
 			</Stack>
+
+			<AppDialog
+				maxWidth="xl"
+				open={state.isWhitelistAddressDialogOpen}
+				handleClose={() => toggleWhitelistAddressDialog(false)}
+				handleSave={() => {
+					toggleWhitelistAddressDialog(false);
+				}}
+				whitelistAddresses={whitelistAddresses}
+				heading="Whitelist"
+				subHeading={
+					<Grid container={true} flexDirection="column">
+						<Typography color="black"><b>Who do you want to Whitelist to?</b></Typography>
+						<Typography color="GrayText">To add a receiver put their wallet address below. If you'd like to insert a batch of wallet addresses you can upload a CSV with all the addresses.</Typography>
+					</Grid>
+				}
+				content={
+					<CSVWidget
+						addresses={whitelistAddresses.map(a => ({ address: a }))}
+						onChange={addresses => setWhitelistAddresses(addresses.map(({ address }) => address))}
+					/>
+				}
+				submitButtonText="SAVE"
+			/>
+
+			{/* <AppDialog
+				open={state.isWhitelistAddressDialogOpen}
+				handleClose={() => toggleWhitelistAddressDialog(false)}
+				whitelistAddresses={whitelistAddresses}
+			/> */}
 		</Box>
 	);
 };

@@ -7,15 +7,11 @@ import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js'
 
 export const useContractSettings = () => {
 	const { addToast } = useToast();
-	const [state, setState] = useState({ isSaving: false });
+	const [state, setState] = useState({ isSaving: false, whitelistAddresses: [] });
 	const [setWhitelist] = useSetWhitelist({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
 		airdropList: {
-			default: '',
-			placeholder: `0x123\n0x456\n0x789`,
-		},
-		whitelistAddresses: {
 			default: '',
 			placeholder: `0x123\n0x456\n0x789`,
 		},
@@ -106,8 +102,34 @@ export const useContractSettings = () => {
 		}
 	}
 
-	const setOpenPresale = async ({ contractController, setContractState, walletAddress }) => {
-		// updatePresale
+	const setPresales = async ({ contractController, setContractState, walletAddress }, isOpen) => {
+		if (!maxPerMint || maxPerMint === 0) {
+			addToast({ severity: 'error', message: `max per mint can't be zero` });
+			return;
+		}
+
+		if (!maxPerWallet || maxPerWallet === 0) {
+			addToast({ severity: 'error', message: `max per wallet can't be zero` });
+			return;
+		}
+
+		if (!price || price === 0) {
+			addToast({ severity: 'error', message: `max per wallet can't be zero` });
+			return;
+		}
+
+		const web3 = window.web3;
+		const priceInWei = web3.utils.toWei(`${parseFloat(actionForm.price.value)}`);
+
+		setState(prevState => ({ ...prevState, isSaving: true }));
+
+		try {
+			const contractState = await contractController.updateSale(walletAddress, isOpen, priceInWei, maxPerWallet, maxPerMint);
+			setContractState(contractState);
+			onSuccess('Public Sale settings updated successfully!');
+		} catch (e) {
+			onError(e);
+		}
 		// setWhitelist({ variables: { id, whitelist: addresses } });
 	}
 
@@ -184,13 +206,16 @@ export const useContractSettings = () => {
 	const setMaxPerMint = (maxPerMint) => setActionFormState(prevState => ({ ...prevState, maxPerMint: { ...prevState.maxPerMint, value: maxPerMint } }));
 	const setMaxPerWallet = (maxPerWallet) => setActionFormState(prevState => ({ ...prevState, maxPerWallet: { ...prevState.maxPerWallet, value: maxPerWallet } }));
 	const setPrice = (price) => setActionFormState(prevState => ({ ...prevState, price: { ...prevState.price, value: price } }));
+	const setWhitelistAddresses = (whitelistAddresses) => setState(prevState => ({ ...prevState, whitelistAddresses }));
 
 	return {
 		// mint,
+		...state,
+
 		updateReveal,
 
 		setPublicSales,
-		setOpenPresale,
+		setPresales,
 
 		setAirdropList,
 		setMerkleRoot,
@@ -199,7 +224,7 @@ export const useContractSettings = () => {
 		setMaxPerWallet,
 		setPrice,
 
-		actionForm,
-		isSaving: state.isSaving
+		setWhitelistAddresses,
+		actionForm
 	};
 };

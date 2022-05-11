@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getMainnetBlockchainType, isTestnetBlockchain } from '@yaman-apple-frog/controllers';
 
-import { Chip, Link } from '@mui/material';
+import { Chip, Link, Grid } from '@mui/material';
 import {
     Fade,
     Link as RouterLink,
@@ -226,3 +226,43 @@ export const ContractDetails = ({ contract }) => {
         </Box>
     );
 };
+
+export const EmptyAddressList = ({ message }) => {
+    return (<Typography color="error" sx={{ my: 4 }}>{message}</Typography>);
+}
+
+export const AddressList = ({ addresses }) => {
+    const length = addresses.length;
+
+    const count = (
+        <Typography key={4} sx={{ mb: 1 }}>
+            <b>Total Count:</b>
+            <Typography component="span" color="green">&nbsp;&nbsp;{length}</Typography>
+        </Typography>
+    );
+
+    if (length <= 3) {
+        return (
+            <Grid container={true} flexDirection="column">
+                {addresses.map((a, i) => <Typography key={i} sx={{ mb: 1 }}>{a}</Typography>)}
+                {count}
+            </Grid>
+        );
+    }
+
+    return (
+        <Grid container={true} flexDirection="column">
+            <Typography key={1} sx={{ mb: 1 }}>{addresses[0]}</Typography>
+            <Typography key={2}>{addresses[1]}</Typography>
+
+            <Grid container={true} flexDirection="column">
+                <span style={{ lineHeight: '1em' }}>.</span>
+                <span style={{ lineHeight: '1em' }}>.</span>
+                <span style={{ lineHeight: '1em', marginBottom: 6 }}>.</span>
+            </Grid>
+
+            <Typography key={3} sx={{ mb: 1 }}>{addresses[length - 1]}</Typography>
+            {count}
+        </Grid>
+    );
+}
