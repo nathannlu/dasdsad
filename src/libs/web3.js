@@ -340,9 +340,10 @@ export const Web3Provider = ({ children }) => {
     const getPublicContractVariables = async (contractAddress, chainid) => {
         if (!contractAddress || !chainid) return;
 
+			console.log(contractAddress)
+
         console.log('getting contract variables', chainid);
 
-        try {
             if (chainid.indexOf('solana') != -1) {
                 // If Solana Contract
                 setContractVarsState(false);
@@ -364,12 +365,10 @@ export const Web3Provider = ({ children }) => {
                 console.log('balance', balance);
                 const balanceInEth = window.web3.utils.fromWei(balance);
                 console.log('balanceInEth', balanceInEth);
-                const baseTokenUri = await contract.methods
-                    .baseTokenURI()
-                    .call();
-                console.log('baseTokenUri', baseTokenUri);
-                const open = await contract.methods.open().call();
+
+								                const open = await contract.methods.open().call();
                 console.log('open', open);
+
 
                 let presaleOpen = false; // Temporary, presaleOpen is not working
                 try {
@@ -392,6 +391,16 @@ export const Web3Provider = ({ children }) => {
                 const owner = await contract.methods.owner().call();
                 console.log('owner', owner);
 
+							let baseTokenUri
+							try {
+							baseTokenUri = await contract.methods
+											.baseTokenURI()
+											.call();
+							}catch (e) { baseTokenUri = 'Error fetching URI'
+									
+								}
+									console.log('baseTokenUri', baseTokenUri);
+
                 setContractVarsState(true);
 
                 return {
@@ -408,9 +417,7 @@ export const Web3Provider = ({ children }) => {
                     owner,
                 };
             }
-        } catch (e) {
-            console.log(e.message);
-        }
+        
     };
 
     const retrieveContract = (contractAddress) => {
