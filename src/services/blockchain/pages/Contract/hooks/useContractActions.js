@@ -176,9 +176,7 @@ export const useContractActions = (contractAddress) => {
         addresses = actionForm.whitelistAddresses.value.split('\n')
     ) => {
         const leafNodes = addresses.map((addr) => keccak256(addr));
-        const merkleTree = new MerkleTree(leafNodes, keccak256, {
-            sortPairs: true,
-        });
+        const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
         const root = merkleTree.getRoot();
 
         contract.methods
@@ -275,42 +273,42 @@ export const useContractActions = (contractAddress) => {
             .once('confirmation', () => onTxnSuccess());
 
         /*
-		try {
-			// Support depreciated method
-			await methods.mintNFTs(count).estimateGas({
-				from: account,
-				value: price
-			}, (err, gasAmount) => {
-				if(!err && gasAmount !== undefined) {
-					methods.mintNFTs(count).send({ 
-						from: account,
-						value: price
-					}, err => err ? onTxnError(err) : onTxnInfo())
-					.once('error', err => onTxnError(err))
-					.once("confirmation", () => onTxnSuccess())
-				}
-			})
+        try {
+            // Support depreciated method
+            await methods.mintNFTs(count).estimateGas({
+                from: account,
+                value: price
+            }, (err, gasAmount) => {
+                if(!err && gasAmount !== undefined) {
+                    methods.mintNFTs(count).send({ 
+                        from: account,
+                        value: price
+                    }, err => err ? onTxnError(err) : onTxnInfo())
+                    .once('error', err => onTxnError(err))
+                    .once("confirmation", () => onTxnSuccess())
+                }
+            })
 
-			await methods.mint(count).estimateGas({
-				from: account,
-				value: price
-			}, (err, gasAmount) => {
-				if(!err && gasAmount !== undefined) {
-					methods.mint(count).send({ 
-						from: account,
-						value: price
-					}, err => err ? onTxnError(err) : onTxnInfo())
-					.once('error', err => onTxnError(err))
-					.once("confirmation", () => onTxnSuccess())
-				}
-			})
-		} catch (e) {
-			addToast({
-				severity: 'error',
-				message: e.message
-			});
-		}
-		*/
+            await methods.mint(count).estimateGas({
+                from: account,
+                value: price
+            }, (err, gasAmount) => {
+                if(!err && gasAmount !== undefined) {
+                    methods.mint(count).send({ 
+                        from: account,
+                        value: price
+                    }, err => err ? onTxnError(err) : onTxnInfo())
+                    .once('error', err => onTxnError(err))
+                    .once("confirmation", () => onTxnSuccess())
+                }
+            })
+        } catch (e) {
+            addToast({
+                severity: 'error',
+                message: e.message
+            });
+        }
+        */
     };
 
     useEffect(() => {

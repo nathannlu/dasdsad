@@ -12,7 +12,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
     [`&.${buttonClasses.root}`]: {
         backgroundColor: theme.palette.common.black,
         color: theme.palette.common.white,
-    },
+    }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -38,7 +38,7 @@ const AppDialog = ({ open, handleClose, handleSave, heading, subHeading, submitB
             </DialogContent>
             <DialogActions>
                 <Button size="small" onClick={handleClose}>CANCEL</Button>
-                <StyledButton size="small" variant="contained" color="success" onClick={handleSave}>{submitButtonText || 'SUBMIT'}</StyledButton>
+                {handleSave && <StyledButton size="small" variant="contained" color="success" onClick={handleSave}>{submitButtonText || 'SUBMIT'}</StyledButton> || null}
             </DialogActions>
         </Dialog>
     );

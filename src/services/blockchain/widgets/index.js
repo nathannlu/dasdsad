@@ -236,7 +236,7 @@ export const AddressList = ({ addresses }) => {
 
     const count = (
         <Typography key={4} sx={{ mb: 1 }}>
-            <b>Total Count:</b>
+            <b>Total Address Count:</b>
             <Typography component="span" color="green">&nbsp;&nbsp;{length}</Typography>
         </Typography>
     );

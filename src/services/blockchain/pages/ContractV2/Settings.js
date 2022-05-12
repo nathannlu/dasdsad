@@ -35,22 +35,24 @@ const actions = [
 
 const Settings = ({ contract, contractController, contractState, setContractState }) => {
 	const {
-		actionForm: { airdropList, maxPerMint, maxPerWallet, newPrice, metadataUrl },
+		actionForm: { maxPerMint, maxPerWallet, newPrice, metadataUrl },
 		withdraw,
 		setPublicSales,
 		setPresales,
 		updateReveal,
-		setAirdropList,
-		setMerkleRoot,
 		setMaxPerMint,
 		setMaxPerWallet,
 		setPrice,
+
+		airdrop,
 		setWhitelistAddresses,
+		setAirdropAddresses,
+
 		isSaving,
-		whitelistAddresses
+		whitelistAddresses,
+		airdropAddresses
 	} = useContractSettings();
 
-	// const [airdropList, setAirdropList] = useState('');
 	const [selectedUpdate, setSelectedUpdate] = useState('metadataUrl');
 
 	// const contractAddress = '0xd4975541438a06e5b6dc7dd2d5bc646aed652616'
@@ -73,15 +75,13 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 	// 	contract.updateReveal(from, true, ipfsUri)
 	// }
 
-	const methodProps = { contractController, setContractState, walletAddress };
-
-	const dummyArray = ['0x389a0ba726B0B93a5aE9D11F09e3A0386ADAb081', '0x389a0ba726B0B93a5aE9D11F09e3A0386ADAb081', '0x389a0ba726B0B93a5aE9D11F09e3A0386ADAb081'];
+	const methodProps = { contractController, setContractState, walletAddress, contractId: id };
 
 	useEffect(() => {
 		setMaxPerMint(contractState?.maxPerMint || '1');
 		setMaxPerWallet(contractState?.maxPerWallet || '1');
 		setPrice(contractState?.price || '1');
-		setWhitelistAddresses(contract?.nftCollection?.whitelist || [...dummyArray]);
+		setWhitelistAddresses(contract?.nftCollection?.whitelist || []);
 	}, []);
 
 	const cardStyle = {
@@ -193,28 +193,28 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 
 										</Stack>
 									),
-									airdrop: (
-										<Stack direction="column">
-											<TextField
-												sx={{ maxWidth: '600px' }}
-												multiline
-												rows={7}
-												size="small"
-												value={contractState?.metadataUrl}
-												{...airdropList}
-											/>
-											<Button
-												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-												size="small"
-												variant="contained"
-												onClick={() => setAirdropList(methodProps)}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												UPDATE
-											</Button>
-										</Stack>
-									),
+									// airdrop: (
+									// 	<Stack direction="column">
+									// 		<TextField
+									// 			sx={{ maxWidth: '600px' }}
+									// 			multiline
+									// 			rows={7}
+									// 			size="small"
+									// 			value={contractState?.metadataUrl}
+									// 			{...airdropList}
+									// 		/>
+									// 		<Button
+									// 			sx={{ width: 'max-content', my: 2, ml: 'auto' }}
+									// 			size="small"
+									// 			variant="contained"
+									// 			onClick={() => setAirdropList(methodProps)}
+									// 			disabled={isSaving}
+									// 		>
+									// 			{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
+									// 			UPDATE
+									// 		</Button>
+									// 	</Stack>
+									// ),
 									// whitelist: (
 									// 	<Stack direction="column">
 									// 		<TextField
@@ -387,6 +387,41 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						</Stack>
 					</Stack>
 
+					<Stack gap={2} mt={8} sx={cardStyle}>
+						<Grid container={true} justifyContent="space-between">
+							<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+								Airdrop Settings
+							</Typography>
+
+							<Button
+								size="small"
+								variant="contained"
+								onClick={() => toggleAirdropDialog(true)}
+								color="secondary"
+								sx={{ margin: 'auto 0' }}
+							>
+								Set Airdrop list
+							</Button>
+						</Grid>
+
+						<Stack gap={2} direction="horizontal">
+							{!airdropAddresses.length && <EmptyAddressList message="Please add airdrop addresses to Send NFTs to a list of beneficiaries." /> || null}
+							{airdropAddresses.length && <AddressList addresses={airdropAddresses.map(({ address }) => address)} /> || null}
+						</Stack>
+
+						<Stack>
+							<Button
+								size="small"
+								variant="contained"
+								onClick={() => airdrop(methodProps)}
+								sx={{ ml: 'auto' }}
+							>
+								Airdrop
+							</Button>
+						</Stack>
+					</Stack>
+
+
 					<Stack direction="row" gap={2} mt={4}>
 						<Button
 							startIcon={<SwapVertIcon />}
@@ -408,6 +443,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 							disabled={!isPublicSaleOpen}>
 							Mint
 						</Button>
+
 						<Button
 							startIcon={<PaymentIcon />}
 							size="small"
@@ -428,31 +464,47 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 				maxWidth="xl"
 				open={state.isWhitelistAddressDialogOpen}
 				handleClose={() => toggleWhitelistAddressDialog(false)}
-				handleSave={() => {
-					toggleWhitelistAddressDialog(false);
-				}}
-				whitelistAddresses={whitelistAddresses}
 				heading="Whitelist"
 				subHeading={
 					<Grid container={true} flexDirection="column">
 						<Typography color="black"><b>Who do you want to Whitelist to?</b></Typography>
-						<Typography color="GrayText">To add a receiver put their wallet address below. If you'd like to insert a batch of wallet addresses you can upload a CSV with all the addresses.</Typography>
+						<Typography color="GrayText">To add a receiver put their wallet address below.</Typography>
 					</Grid>
 				}
 				content={
 					<CSVWidget
+						count={1}
 						addresses={whitelistAddresses.map(a => ({ address: a }))}
-						onChange={addresses => setWhitelistAddresses(addresses.map(({ address }) => address))}
+						onSave={addresses => {
+							setWhitelistAddresses(addresses.map(({ address }) => address));
+							toggleWhitelistAddressDialog(false);
+						}}
 					/>
 				}
-				submitButtonText="SAVE"
 			/>
 
-			{/* <AppDialog
-				open={state.isWhitelistAddressDialogOpen}
-				handleClose={() => toggleWhitelistAddressDialog(false)}
-				whitelistAddresses={whitelistAddresses}
-			/> */}
+			<AppDialog
+				maxWidth="xl"
+				open={state.isAirdropDialogOpen}
+				handleClose={() => toggleAirdropDialog(false)}
+				heading="Airdrop"
+				subHeading={
+					<Grid container={true} flexDirection="column">
+						<Typography color="black"><b>Who do you want to airdrop to?</b></Typography>
+						<Typography color="GrayText">To add a receiver put their wallet address below.</Typography>
+					</Grid>
+				}
+				content={
+					<CSVWidget
+						addresses={airdropAddresses}
+						onSave={addresses => {
+							setAirdropAddresses(addresses.map(({ address, count }) => ({ address, count })));
+							toggleAirdropDialog(false);
+						}}
+					/>
+				}
+			/>
+
 		</Box>
 	);
 };

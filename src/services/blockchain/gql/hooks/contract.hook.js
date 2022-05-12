@@ -121,16 +121,13 @@ export const useSetWhitelist = ({ onCompleted, onError }) => {
                             nftCollection: updated.nftCollection,
                         };
                     }
-
                     return contract;
                 });
-
                 return newState;
             });
-
             onCompleted && onCompleted(data);
         },
-        onError,
+        onError
     });
 
     return [setWhitelist, { ...mutationResult }];

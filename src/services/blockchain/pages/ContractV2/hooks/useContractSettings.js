@@ -4,17 +4,14 @@ import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
 import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
+import { getMerkleTreeRoot } from '@yaman-apple-frog/controllers';
 
 export const useContractSettings = () => {
 	const { addToast } = useToast();
-	const [state, setState] = useState({ isSaving: false, whitelistAddresses: [] });
+	const [state, setState] = useState({ isSaving: false, whitelistAddresses: [], airdropAddresses: [] });
 	const [setWhitelist] = useSetWhitelist({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
-		airdropList: {
-			default: '',
-			placeholder: `0x123\n0x456\n0x789`,
-		},
 		maxPerMint: {
 			default: '',
 			placeholder: '5',
@@ -102,82 +99,45 @@ export const useContractSettings = () => {
 		}
 	}
 
-	const setPresales = async ({ contractController, setContractState, walletAddress }, isOpen) => {
-		if (!maxPerMint || maxPerMint === 0) {
-			addToast({ severity: 'error', message: `max per mint can't be zero` });
+	const setPresales = async ({ contractController, setContractState, walletAddress, contractId }, isOpen) => {
+		if (!state.whitelistAddresses.length) {
+			addToast({ severity: 'error', message: `Whitelist can't be empty!` });
 			return;
 		}
 
-		if (!maxPerWallet || maxPerWallet === 0) {
-			addToast({ severity: 'error', message: `max per wallet can't be zero` });
-			return;
-		}
-
-		if (!price || price === 0) {
-			addToast({ severity: 'error', message: `max per wallet can't be zero` });
-			return;
-		}
-
-		const web3 = window.web3;
-		const priceInWei = web3.utils.toWei(`${parseFloat(actionForm.price.value)}`);
+		const markleRoot = getMerkleTreeRoot(state.whitelistAddresses);
 
 		setState(prevState => ({ ...prevState, isSaving: true }));
 
 		try {
-			const contractState = await contractController.updateSale(walletAddress, isOpen, priceInWei, maxPerWallet, maxPerMint);
+			const contractState = await contractController.updatePresale(walletAddress, isOpen, markleRoot);
 			setContractState(contractState);
-			onSuccess('Public Sale settings updated successfully!');
+			setWhitelist({ variables: { id: contractId, whitelist: state.whitelistAddresses } });
+			onSuccess('Pre Sale settings updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
-		// setWhitelist({ variables: { id, whitelist: addresses } });
 	}
 
-	const setAirdropList = async ({ contractController, setContractState, walletAddress }) => {
-		const { airdropList } = actionForm;
-
-		console.log(airdropList.value);
-
-		if (!airdropList.value) {
+	const airdrop = async ({ contractController, setContractState, walletAddress }) => {
+		if (!state.airdropAddresses.length) {
+			addToast({ severity: 'error', message: `Airdrop list can't be empty!` });
 			return;
 		}
 
+		const recipients = state.airdropAddresses.map(({ address }) => address);
+		const count = state.airdropAddresses.map(({ count }) => count);
+
 		setState(prevState => ({ ...prevState, isSaving: true }));
 
-		const count = airdropList.split('\n').length;
-		const amount = new Array(count).fill(1);
-
-		console.log(airdropList.split('\n'));
-		console.log(amount);
-
-		contract.airdrop(from, airdropList.split('\n'), amount);
 		try {
-			// @TODO ask to set reveal as true or false
-			onSuccess('Max per wallet updated successfully!');
+			const contractState = await contractController.airdrop(walletAddress, recipients, count);
+			setContractState(contractState);
+			onSuccess(`Nft's Airdroped successfully!`);
 		} catch (e) {
 			onError(e);
 		}
 	}
-
-	const setMerkleRoot = async ({ contractController, setContractState, walletAddress }) => { }
-
-	// const airdrop = () => {
-	// 	const { methods: { airdrop } } = retrieveContract(impl);
-	// 	const recipients = ["0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166"]
-	// 	const amount = [1]
-
-	// 	const rawTxn = airdrop(recipients, amount).encodeABI();
-	// 	web3.eth.sendTransaction(
-	// 		{
-	// 			from,
-	// 			to,
-	// 			data: rawTxn,
-	// 		},
-	// 		function (error, hash) {
-	// 			console.log(error);
-	// 		}
-	// 	);
-	// }
 
 	// const mint = () => {
 	// 	const to = '0xa8C801F27164E840c9F931147aCDe37fdCCBea4c';
@@ -207,6 +167,7 @@ export const useContractSettings = () => {
 	const setMaxPerWallet = (maxPerWallet) => setActionFormState(prevState => ({ ...prevState, maxPerWallet: { ...prevState.maxPerWallet, value: maxPerWallet } }));
 	const setPrice = (price) => setActionFormState(prevState => ({ ...prevState, price: { ...prevState.price, value: price } }));
 	const setWhitelistAddresses = (whitelistAddresses) => setState(prevState => ({ ...prevState, whitelistAddresses }));
+	const setAirdropAddresses = (airdropAddresses) => setState(prevState => ({ ...prevState, airdropAddresses }));
 
 	return {
 		// mint,
@@ -216,15 +177,14 @@ export const useContractSettings = () => {
 
 		setPublicSales,
 		setPresales,
-
-		setAirdropList,
-		setMerkleRoot,
+		airdrop,
 
 		setMaxPerMint,
 		setMaxPerWallet,
 		setPrice,
 
 		setWhitelistAddresses,
+		setAirdropAddresses,
 		actionForm
 	};
 };
