@@ -8,7 +8,17 @@ import { getMerkleTreeRoot } from '@yaman-apple-frog/controllers';
 
 export const useContractSettings = () => {
 	const { addToast } = useToast();
-	const [state, setState] = useState({ isSaving: false, whitelistAddresses: [], airdropAddresses: [] });
+	const [state, setState] = useState({
+		isSavingMetadatUrl: false,
+		isSavingAirdrop: false,
+		isSavingPublicSales: false,
+		isSavingPreSales: false,
+		isMinting: false,
+		isWithdrawing: false,
+
+		whitelistAddresses: [],
+		airdropAddresses: []
+	});
 	const [setWhitelist] = useSetWhitelist({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
@@ -38,11 +48,27 @@ export const useContractSettings = () => {
 
 	const onError = (err) => {
 		addToast({ severity: 'error', message: err.message });
-		setState(prevState => ({ ...prevState, isSaving: false }));
+		setState(prevState => ({
+			...prevState,
+			isSavingMetadatUrl: false,
+			isSavingAirdrop: false,
+			isSavingPublicSales: false,
+			isSavingPreSales: false,
+			isMinting: false,
+			isWithdrawing: false,
+		}));
 	};
 	const onSuccess = (message) => {
 		addToast({ severity: 'success', message });
-		setState(prevState => ({ ...prevState, isSaving: false }));
+		setState(prevState => ({
+			...prevState,
+			isSavingMetadatUrl: false,
+			isSavingAirdrop: false,
+			isSavingPublicSales: false,
+			isSavingPreSales: false,
+			isMinting: false,
+			isWithdrawing: false,
+		}));
 	};
 
 	const updateReveal = async ({ contractController, setContractState, walletAddress }) => {
@@ -54,7 +80,7 @@ export const useContractSettings = () => {
 			return;
 		}
 
-		setState(prevState => ({ ...prevState, isSaving: true }));
+		setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
 		try {
 			// @TODO ask to set reveal as true or false
 			const contractState = await contractController.updateReveal(walletAddress, true, metadataUrl.value);
@@ -88,7 +114,7 @@ export const useContractSettings = () => {
 		const web3 = window.web3;
 		const priceInWei = web3.utils.toWei(`${parseFloat(actionForm.price.value)}`);
 
-		setState(prevState => ({ ...prevState, isSaving: true }));
+		setState(prevState => ({ ...prevState, isSavingPublicSales: true }));
 
 		try {
 			const contractState = await contractController.updateSale(walletAddress, isOpen, priceInWei, maxPerWallet, maxPerMint);
@@ -107,7 +133,7 @@ export const useContractSettings = () => {
 
 		const markleRoot = getMerkleTreeRoot(state.whitelistAddresses);
 
-		setState(prevState => ({ ...prevState, isSaving: true }));
+		setState(prevState => ({ ...prevState, isSavingPreSales: true }));
 
 		try {
 			const contractState = await contractController.updatePresale(walletAddress, isOpen, markleRoot);
@@ -128,7 +154,7 @@ export const useContractSettings = () => {
 		const recipients = state.airdropAddresses.map(({ address }) => address);
 		const count = state.airdropAddresses.map(({ count }) => count);
 
-		setState(prevState => ({ ...prevState, isSaving: true }));
+		setState(prevState => ({ ...prevState, isSavingAirdrop: true }));
 
 		try {
 			const contractState = await contractController.airdrop(walletAddress, recipients, count);
@@ -139,29 +165,29 @@ export const useContractSettings = () => {
 		}
 	}
 
-	// const mint = () => {
-	// 	const to = '0xa8C801F27164E840c9F931147aCDe37fdCCBea4c';
-	// 	const from = '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166';
-	// 	const impl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
-	// 	const { methods: { mint } } = retrieveContract(impl);
+	const withdraw = async ({ contractController, setContractState, walletAddress }) => {
+		setState(prevState => ({ ...prevState, isWithdrawing: true }));
 
-	// 	//		const code = '0x1d02161d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+		try {
+			const contractState = await contractController.withdraw(walletAddress);
+			setContractState(contractState);
+			onSuccess(`Contract withdrawn successfully!`);
+		} catch (e) {
+			onError(e);
+		}
+	}
 
-	// 	const rawTxn = mint(1).encodeABI();
-	// 	console.log(rawTxn)
+	const mint = async ({ contractController, setContractState, walletAddress }, count) => {
+		setState(prevState => ({ ...prevState, isMinting: true }));
 
-	// 	web3.eth.sendTransaction(
-	// 		{
-	// 			from,
-	// 			to,
-	// 			data: rawTxn,
-	// 			value: 1
-	// 		},
-	// 		function (error, hash) {
-	// 			console.log(error);
-	// 		}
-	// 	);
-	// };
+		try {
+			const contractState = await contractController.mint(walletAddress, count, state.whitelistAddresses);
+			setContractState(contractState);
+			onSuccess(`Nft's Minted successfully!`);
+		} catch (e) {
+			onError(e);
+		}
+	}
 
 	const setMaxPerMint = (maxPerMint) => setActionFormState(prevState => ({ ...prevState, maxPerMint: { ...prevState.maxPerMint, value: maxPerMint } }));
 	const setMaxPerWallet = (maxPerWallet) => setActionFormState(prevState => ({ ...prevState, maxPerWallet: { ...prevState.maxPerWallet, value: maxPerWallet } }));
@@ -170,7 +196,6 @@ export const useContractSettings = () => {
 	const setAirdropAddresses = (airdropAddresses) => setState(prevState => ({ ...prevState, airdropAddresses }));
 
 	return {
-		// mint,
 		...state,
 
 		updateReveal,
@@ -178,6 +203,8 @@ export const useContractSettings = () => {
 		setPublicSales,
 		setPresales,
 		airdrop,
+		withdraw,
+		mint,
 
 		setMaxPerMint,
 		setMaxPerWallet,

@@ -6,7 +6,6 @@ import {
 	Stack,
 	Box,
 	Grid,
-	Card,
 	Typography,
 	Button,
 	CircularProgress
@@ -15,8 +14,7 @@ import {
 	LockOpen as LockOpenIcon,
 	Lock as LockIcon,
 	SwapVert as SwapVertIcon,
-	// Payment as PaymentIcon,
-	// Upload as UploadIcon,
+	Payment as PaymentIcon
 } from '@mui/icons-material';
 
 import { Skeleton } from '@mui/material';
@@ -27,28 +25,38 @@ import { ContractDetails, EmptyAddressList, AddressList } from '../../widgets';
 import AppDialog from '../../widgets/AppDialog';
 import CSVWidget from '../../widgets/CSVWidget';
 
-const actions = [
-	{ title: 'Update metadata url', value: 'metadataUrl' },
-	{ title: 'Airdrop addresses', value: 'airdrop' },
-	{ title: 'Set whitelist', value: 'whitelist' },
+const cards = [
+	{ title: 'Update metadata url' },
+	{ title: 'Public Sale Settings' },
+	{ title: 'Pre Sale Settings' },
+	{ title: 'Airdrop Settings' },
+	{ title: 'Mint' },
+	{ title: 'Withdraw' },
 ];
 
 const Settings = ({ contract, contractController, contractState, setContractState }) => {
 	const {
 		actionForm: { maxPerMint, maxPerWallet, newPrice, metadataUrl },
-		withdraw,
 		setPublicSales,
 		setPresales,
 		updateReveal,
 		setMaxPerMint,
 		setMaxPerWallet,
 		setPrice,
-
-		airdrop,
 		setWhitelistAddresses,
 		setAirdropAddresses,
 
-		isSaving,
+		mint,
+		withdraw,
+		airdrop,
+
+		isSavingMetadatUrl,
+		isSavingAirdrop,
+		isSavingPublicSales,
+		isSavingPreSales,
+		isMinting,
+		isWithdrawing,
+
 		whitelistAddresses,
 		airdropAddresses
 	} = useContractSettings();
@@ -105,30 +113,19 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 				<Stack mt={8}>
 					<ContractDetails contract={contract} />
 					<Grid sx={{ maxWidth: 600, width: 'auto' }} xs={12} item pr={2}>
-						<Stack gap={1} mt={4}>
-							{actions.map((action, i) => (
-								<Card
-									key={i}
-									sx={{
-										p: 2,
-										borderRadius: 2,
-										cursor: 'pointer',
-										background:
-											selectedUpdate ==
-											action.value &&
-											'#42a5f520',
-										color:
-											selectedUpdate ==
-											action.value &&
-											'primary.main',
-										transition: '.2s all',
-									}}
-									variant="contained">
-									<Typography> {action.title} </Typography>
+						{cards.map((c, i) => (
+							<Stack gap={2} mt={8} sx={cardStyle}>
+								<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+									{c.title}
+								</Typography>
+
+								<Stack gap={2}>
 									<Skeleton />
-								</Card>
-							))}
-						</Stack>
+									<Skeleton />
+									<Skeleton />
+								</Stack>
+							</Stack>
+						))}
 					</Grid>
 				</Stack>
 			</Box>
@@ -139,325 +136,236 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 		<Box>
 			<Stack mt={8}>
 				<ContractDetails contract={contract} />
-				<Box mt={4}>
-					<Grid container>
-						<Grid xs={3} item pr={2}>
-							<Stack gap={1}>
-								{actions.map((action, i) => (
-									<Card
-										key={i}
-										sx={{
-											p: 2,
-											borderRadius: 2,
-											cursor: 'pointer',
-											background: isSaving && 'rgba(0, 0, 0, 0.06)' || selectedUpdate === action.value && '#42a5f520',
-											color: isSaving && 'rgba(0, 0, 0, 0.87)' || selectedUpdate === action.value && 'primary.main',
-											transition: '.2s all'
-										}}
-										style={{ pointerEvents: isSaving && 'none' || undefined }}
-										onClick={() => {
-											if (isSaving) {
-												return;
-											}
-											setSelectedUpdate(action.value);
-										}}
-										variant="contained"
-									>
-										<Typography> {action.title} </Typography>
-									</Card>
-								))}
-							</Stack>
-						</Grid>
 
-						<Grid xs={9} md={6} item>
-							<Stack>
-								{{
-									metadataUrl: (
-										<Stack direction="column">
-											<TextField
-												{...metadataUrl}
-												size="small"
-												value={contractState?.metadataUrl}
-											/>
-
-											<Button
-												sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-												size="small"
-												variant="contained"
-												onClick={() => updateReveal(methodProps)}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												UPDATE
-											</Button>
-
-										</Stack>
-									),
-									// airdrop: (
-									// 	<Stack direction="column">
-									// 		<TextField
-									// 			sx={{ maxWidth: '600px' }}
-									// 			multiline
-									// 			rows={7}
-									// 			size="small"
-									// 			value={contractState?.metadataUrl}
-									// 			{...airdropList}
-									// 		/>
-									// 		<Button
-									// 			sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-									// 			size="small"
-									// 			variant="contained"
-									// 			onClick={() => setAirdropList(methodProps)}
-									// 			disabled={isSaving}
-									// 		>
-									// 			{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-									// 			UPDATE
-									// 		</Button>
-									// 	</Stack>
-									// ),
-									// whitelist: (
-									// 	<Stack direction="column">
-									// 		<TextField
-									// 			sx={{ maxWidth: '600px' }}
-									// 			multiline
-									// 			rows={7}
-									// 			size="small"
-									// 			value={contractState?.metadataUrl}
-									// 			{...whitelistAddresses}
-									// 		/>
-									// 		<Button
-									// 			sx={{ width: 'max-content', my: 2, ml: 'auto' }}
-									// 			size="small"
-									// 			variant="contained"
-									// 			onClick={() => setMerkleRoot(id)}
-									// 			disabled={isSaving}
-									// 		>
-									// 			{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-									// 			UPDATE
-									// 		</Button>
-									// 	</Stack>
-									// ),
-								}[selectedUpdate]}
-							</Stack>
-						</Grid>
-					</Grid>
-
-					{/*
-			<Overview setIsModalOpen={setIsModalOpen} />
-
-			<button onClick={()=>contract.mint(from, 1)}>
-				Mint
-			</button>
-			*/}
-
-					{/* <button onClick={() => setMetadataUrl()}>
+				{/* <button onClick={() => setMetadataUrl()}>
 					Set metadata URL
 				</button> */}
 
-					{/* <button onClick={() => airdropAddresses()}>
-						airdrop
-					</button>
+				{/* @TODO wiring solana */}
 
-					<TextField
-						sx={{ width: '500px' }}
-						multiline
-						rows={7}
-						size="small"
-						onChange={e => setAirdropList(e.target.value)}
-					/> */}
+				<Stack gap={2} mt={8} sx={cardStyle}>
+					<Grid container={true} justifyContent="space-between">
+						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+							Metadata url
+						</Typography>
+					</Grid>
 
+					<Stack gap={2} direction="horizontal">
+						<TextField
+							{...metadataUrl}
+							size="small"
+							value={contractState?.metadataUrl}
+						/>
 
-					{/* @TODO wiring solana */}
+					</Stack>
 
-					{/* <Stack direction="row" gap={2}>
-					<Button
-						startIcon={<SwapVertIcon />}
-						size="small"
-						variant="contained"
-						onClick={() => withdraw(wallet, env)}>
-						Close smart contract &amp; withdraw rent
-					</Button>
+					<Stack>
+						<Button
+							size="small"
+							variant="contained"
+							onClick={() => updateReveal(methodProps)}
+							disabled={isSavingMetadatUrl}
+							sx={{ ml: 'auto' }}
+						>
+							{isSavingMetadatUrl && <CircularProgress isButtonSpinner={true} /> || null}
+							update
+						</Button>
+					</Stack>
+				</Stack>
 
-					{/* @TODO wiring */}
-					{/* <Button
+				<Stack gap={2} mt={8} sx={cardStyle}>
+					<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+						Public Sale Settings
+					</Typography>
+
+					<Stack gap={2} direction="horizontal">
+						<Stack direction="column">
+							<TextField {...maxPerMint} size="small" label='Max per mint' />
+						</Stack>
+
+						<Stack direction="column">
+							<TextField {...maxPerWallet} size="small" label='Max per wallet' />
+						</Stack>
+
+						<Stack direction="column">
+							<TextField
+								{...newPrice}
+								label='Price'
+								size="small"
+								InputProps={{ endAdornment: contract.nftCollection.currency }}
+							/>
+						</Stack>
+					</Stack>
+
+					<Stack>
+						{contractState?.isPublicSaleOpen ? (
+							<Button
+								startIcon={<LockIcon />}
+								size="small"
+								variant="contained"
+								onClick={() => setPublicSales(methodProps, false)}
+								color="error"
+								sx={{ ml: 'auto' }}
+								disabled={isSavingPublicSales}
+							>
+								{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
+								Close Public Sales
+							</Button>
+						) : (
+							<Button
+								startIcon={<LockOpenIcon />}
+								size="small"
+								variant="contained"
+								onClick={() => setPublicSales(methodProps, true)}
+								sx={{ ml: 'auto' }}
+								disabled={isSavingPublicSales}
+							>
+								{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
+								Open Public Sales
+							</Button>
+						)}
+					</Stack>
+				</Stack>
+
+				<Stack gap={2} mt={8} sx={cardStyle}>
+					<Grid container={true} justifyContent="space-between">
+						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+							Pre Sale Settings
+						</Typography>
+
+						<Button
+							size="small"
+							variant="contained"
+							onClick={() => toggleWhitelistAddressDialog(true)}
+							color="secondary"
+							sx={{ margin: 'auto 0' }}
+						>
+							Set Whitelist
+						</Button>
+					</Grid>
+
+					<Stack gap={2} direction="horizontal">
+						{!whitelistAddresses.length && <EmptyAddressList message="Please add whitelist addresses to open pre-sales" /> || null}
+						{whitelistAddresses.length && <AddressList addresses={whitelistAddresses} /> || null}
+					</Stack>
+
+					<Stack>
+						{contractState?.isPresaleOpen ? (
+							<Button
+								startIcon={<LockIcon />}
+								size="small"
+								variant="contained"
+								onClick={() => setPresales(methodProps, false)}
+								color="error"
+								sx={{ ml: 'auto' }}
+								disabled={isSavingPreSales}
+							>
+								{isSavingPreSales && <CircularProgress isButtonSpinner={true} /> || null}
+								Close Pre-Sales
+							</Button>
+						) : (
+							<Button
+								startIcon={<LockOpenIcon />}
+								size="small"
+								variant="contained"
+								onClick={() => setPresales(methodProps, true)}
+								sx={{ ml: 'auto' }}
+								disabled={!whitelistAddresses.length || isSavingPreSales}
+							>
+								{isSavingPreSales && <CircularProgress isButtonSpinner={true} /> || null}
+								Open Pre-Sales
+							</Button>
+						)}
+					</Stack>
+				</Stack>
+
+				<Stack gap={2} mt={8} sx={cardStyle}>
+					<Grid container={true} justifyContent="space-between">
+						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+							Airdrop Settings
+						</Typography>
+
+						<Button
+							size="small"
+							variant="contained"
+							onClick={() => toggleAirdropDialog(true)}
+							color="secondary"
+							sx={{ margin: 'auto 0' }}
+						>
+							Set Airdrop list
+						</Button>
+					</Grid>
+
+					<Stack gap={2} direction="horizontal">
+						{!airdropAddresses.length && <EmptyAddressList message="Please add airdrop addresses to Send NFTs to a list of beneficiaries." /> || null}
+						{airdropAddresses.length && <AddressList addresses={airdropAddresses.map(({ address }) => address)} /> || null}
+					</Stack>
+
+					<Stack>
+						<Button
+							size="small"
+							variant="contained"
+							onClick={() => airdrop(methodProps)}
+							sx={{ ml: 'auto' }}
+							disabled={isSavingAirdrop}
+						>
+							{isSavingAirdrop && <CircularProgress isButtonSpinner={true} /> || null}
+							Airdrop
+						</Button>
+					</Stack>
+				</Stack>
+
+				<Stack gap={2} mt={8} sx={cardStyle}>
+					<Grid container={true} justifyContent="space-between">
+						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+							Mint
+						</Typography>
+
+						<Button
 							startIcon={<PaymentIcon />}
 							size="small"
 							variant="contained"
-							onClick={() => mint(1, wallet, env)}>
-							Mint
+							onClick={() => mint(methodProps, 1)}
+							disabled={!contractState?.isPublicSaleOpen || isMinting}
+						>
+							{isMinting && <CircularProgress isButtonSpinner={true} /> || null}
+							Mint to {contract.blockchain}
 						</Button>
-				</Stack> */}
 
-					<Stack gap={2} mt={8} sx={cardStyle}>
+						{!contractState?.isPublicSaleOpen && <Stack gap={2} direction="horizontal">
+							<Typography color="error" sx={{ my: 4 }}>Enable public sale to start minting!</Typography>
+						</Stack>}
+
+					</Grid>
+				</Stack>
+
+				<Stack gap={2} mt={8} sx={cardStyle}>
+					<Grid container={true} justifyContent="space-between">
 						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
-							Public Sale Settings
+							Withdraw
 						</Typography>
 
-						<Stack gap={2} direction="horizontal">
-							<Stack direction="column">
-								<TextField {...maxPerMint} size="small" label='Max per mint' />
-							</Stack>
-
-							<Stack direction="column">
-								<TextField {...maxPerWallet} size="small" label='Max per wallet' />
-							</Stack>
-
-							<Stack direction="column">
-								<TextField
-									{...newPrice}
-									label='Price'
-									size="small"
-									InputProps={{ endAdornment: contract.nftCollection.currency }}
-								/>
-							</Stack>
-						</Stack>
-
-						<Stack>
-							{contractState?.isPublicSaleOpen ? (
-								<Button
-									startIcon={<LockIcon />}
-									size="small"
-									variant="contained"
-									onClick={() => setPublicSales(methodProps, false)}
-									color="error"
-									sx={{ ml: 'auto' }}
-								>
-									Close Public Sales
-								</Button>
-							) : (
-								<Button
-									startIcon={<LockOpenIcon />}
-									size="small"
-									variant="contained"
-									onClick={() => setPublicSales(methodProps, true)}
-									sx={{ ml: 'auto' }}
-								>
-									Open Public Sales
-								</Button>
-							)}
-						</Stack>
-					</Stack>
-
-					<Stack gap={2} mt={8} sx={cardStyle}>
-						<Grid container={true} justifyContent="space-between">
-							<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
-								Pre Sale Settings
-							</Typography>
-
-							<Button
-								size="small"
-								variant="contained"
-								onClick={() => toggleWhitelistAddressDialog(true)}
-								color="secondary"
-								sx={{ margin: 'auto 0' }}
-							>
-								Set Whitelist
-							</Button>
-						</Grid>
-
-						<Stack gap={2} direction="horizontal">
-							{!whitelistAddresses.length && <EmptyAddressList message="Please add whitelist addresses to open pre-sales" /> || null}
-							{whitelistAddresses.length && <AddressList addresses={whitelistAddresses} /> || null}
-						</Stack>
-
-						<Stack>
-							{contractState?.isPresaleOpen ? (
-								<Button
-									startIcon={<LockIcon />}
-									size="small"
-									variant="contained"
-									onClick={() => setPresales(methodProps, false)}
-									color="error"
-									sx={{ ml: 'auto' }}
-								>
-									Close Pre-Sales
-								</Button>
-							) : (
-								<Button
-									startIcon={<LockOpenIcon />}
-									size="small"
-									variant="contained"
-									onClick={() => setPresales(methodProps, true)}
-									sx={{ ml: 'auto' }}
-									disabled={!whitelistAddresses.length}
-								>
-									Open Pre-Sales
-								</Button>
-							)}
-						</Stack>
-					</Stack>
-
-					<Stack gap={2} mt={8} sx={cardStyle}>
-						<Grid container={true} justifyContent="space-between">
-							<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
-								Airdrop Settings
-							</Typography>
-
-							<Button
-								size="small"
-								variant="contained"
-								onClick={() => toggleAirdropDialog(true)}
-								color="secondary"
-								sx={{ margin: 'auto 0' }}
-							>
-								Set Airdrop list
-							</Button>
-						</Grid>
-
-						<Stack gap={2} direction="horizontal">
-							{!airdropAddresses.length && <EmptyAddressList message="Please add airdrop addresses to Send NFTs to a list of beneficiaries." /> || null}
-							{airdropAddresses.length && <AddressList addresses={airdropAddresses.map(({ address }) => address)} /> || null}
-						</Stack>
-
-						<Stack>
-							<Button
-								size="small"
-								variant="contained"
-								onClick={() => airdrop(methodProps)}
-								sx={{ ml: 'auto' }}
-							>
-								Airdrop
-							</Button>
-						</Stack>
-					</Stack>
-
-
-					<Stack direction="row" gap={2} mt={4}>
 						<Button
 							startIcon={<SwapVertIcon />}
 							size="small"
 							variant="contained"
-							onClick={() => withdraw()}>
+							onClick={() => withdraw(methodProps)}
+							disabled={isWithdrawing}
+						>
+							{isWithdrawing && <CircularProgress isButtonSpinner={true} /> || null}
 							Pay out to bank
 						</Button>
 
-
-
-						{/* @TODO wire minting 
-						
-						<Button
-							startIcon={<PaymentIcon />}
+						{/* <Button
+							startIcon={<SwapVertIcon />}
 							size="small"
 							variant="contained"
-							onClick={() => mint(1)}
-							disabled={!isPublicSaleOpen}>
-							Mint
-						</Button>
-
-						<Button
-							startIcon={<PaymentIcon />}
-							size="small"
-							variant="contained"
-							onClick={() =>
-								presaleMint(
-									contract.nftCollection.whitelist || ['']
-								)
-							}
-							disabled={!isPresaleOpen}>
-							Presale Mint
+							onClick={() => withdraw(wallet, env)}>
+							Close smart contract &amp; withdraw rent
 						</Button> */}
-					</Stack>
-				</Box>
+
+					</Grid>
+				</Stack>
 			</Stack>
 
 			<AppDialog
@@ -504,7 +412,6 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 					/>
 				}
 			/>
-
 		</Box>
 	);
 };
