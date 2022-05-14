@@ -21,7 +21,7 @@ import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 
-import { isTestnetBlockchain } from '@yaman-apple-frog/controllers';
+import { isTestnetBlockchain } from '@ambition-blockchain/controllers';
 import { BlockchainLogo } from '../../widgets';
 
 const Dashboard = () => {

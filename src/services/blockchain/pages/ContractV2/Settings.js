@@ -322,6 +322,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						</Typography>
 
 						<Button
+							sx={{ margin: 'auto 0' }}
 							startIcon={<PaymentIcon />}
 							size="small"
 							variant="contained"
@@ -346,6 +347,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						</Typography>
 
 						<Button
+							sx={{ margin: 'auto 0' }}
 							startIcon={<SwapVertIcon />}
 							size="small"
 							variant="contained"

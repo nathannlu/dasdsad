@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getMainnetBlockchainType, isTestnetBlockchain } from '@yaman-apple-frog/controllers';
+import { getMainnetBlockchainType, isTestnetBlockchain } from '@ambition-blockchain/controllers';
 
 import { Chip, Link, Grid } from '@mui/material';
 import {

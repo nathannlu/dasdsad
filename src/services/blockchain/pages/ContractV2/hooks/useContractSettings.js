@@ -4,7 +4,7 @@ import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
 import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
-import { getMerkleTreeRoot } from '@yaman-apple-frog/controllers';
+import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
 export const useContractSettings = () => {
 	const { addToast } = useToast();
@@ -58,6 +58,7 @@ export const useContractSettings = () => {
 			isWithdrawing: false,
 		}));
 	};
+	
 	const onSuccess = (message) => {
 		addToast({ severity: 'success', message });
 		setState(prevState => ({

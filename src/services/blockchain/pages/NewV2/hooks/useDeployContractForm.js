@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
 
-import { ContractController, WalletController, getBlockchainType, getBlockchainCurrency } from '@yaman-apple-frog/controllers';
+import { ContractController, WalletController, getBlockchainType, getBlockchainCurrency } from '@ambition-blockchain/controllers';
 
 import posthog from 'posthog-js';
 

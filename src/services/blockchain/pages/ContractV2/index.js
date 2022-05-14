@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Container } from 'ds/components';
-import { ContractController } from '@yaman-apple-frog/controllers';
+import { ContractController } from '@ambition-blockchain/controllers';
 
 import { useParams } from 'react-router-dom';
 // import { useWeb3 } from 'libs/web3';

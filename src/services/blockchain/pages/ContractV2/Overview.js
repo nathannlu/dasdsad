@@ -12,7 +12,7 @@ import {
 import { Skeleton, Chip } from '@mui/material';
 
 import { NFTStack, ContractDetails } from '../../widgets';
-import { getIpfsUrl } from '@yaman-apple-frog/controllers';
+import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
 const Details = ({ primary, secondary, isLoading }) => {
 	return (
