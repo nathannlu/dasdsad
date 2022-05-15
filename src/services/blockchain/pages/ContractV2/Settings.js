@@ -34,10 +34,10 @@ const cards = [
 	{ title: 'Withdraw' },
 ];
 
-const Settings = ({ contract, contractController, contractState, setContractState }) => {
+const Settings = ({ contract, contractController, contractState, setContractState, setIsModalOpen }) => {
 	const {
-		actionForm: { maxPerMint, maxPerWallet, newPrice, metadataUrl },
-		setPublicSales,
+		actionForm: { maxPerMint, maxPerWallet, price, metadataUrl },
+		updateSales,
 		setPresales,
 		updateReveal,
 		setMaxPerMint,
@@ -61,8 +61,6 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 		airdropAddresses
 	} = useContractSettings();
 
-	const [selectedUpdate, setSelectedUpdate] = useState('metadataUrl');
-
 	// const contractAddress = '0xd4975541438a06e5b6dc7dd2d5bc646aed652616'
 
 	// @TODO wire wallet address
@@ -72,17 +70,6 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 	// const impl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
 
 	const { id } = useParams();
-
-	// const blockchain = 'ethereum';
-	// const version = 'erc721a';
-
-	// const contract = new ContractController(contractAddress, blockchain, version)
-
-	// const setMetadataUrl = () => {
-	// 	const ipfsUri = 'ipfs://QmY3ru7ZeAihUU3xexCouSrbybaBV1hPe5EwvNqph1AYdS/'
-	// 	contract.updateReveal(from, true, ipfsUri)
-	// }
-
 	const methodProps = { contractController, setContractState, walletAddress, contractId: id };
 
 	useEffect(() => {
@@ -90,7 +77,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 		setMaxPerWallet(contractState?.maxPerWallet || '1');
 		setPrice(contractState?.price || '1');
 		setWhitelistAddresses(contract?.nftCollection?.whitelist || []);
-	}, []);
+	}, [contractState]);
 
 	const cardStyle = {
 		maxWidth: 760,
@@ -137,10 +124,6 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 			<Stack mt={8}>
 				<ContractDetails contract={contract} />
 
-				{/* <button onClick={() => setMetadataUrl()}>
-					Set metadata URL
-				</button> */}
-
 				{/* @TODO wiring solana */}
 
 				<Stack gap={2} mt={8} sx={cardStyle}>
@@ -148,6 +131,16 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
 							Metadata url
 						</Typography>
+
+						<Button
+							sx={{ margin: 'auto 0' }}
+							size="small"
+							variant="contained"
+							onClick={() => setIsModalOpen(true)}
+						>
+							Deploy new token images &amp; metadata
+						</Button>
+						
 					</Grid>
 
 					<Stack gap={2} direction="horizontal">
@@ -156,7 +149,6 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 							size="small"
 							value={contractState?.metadataUrl}
 						/>
-
 					</Stack>
 
 					<Stack>
@@ -174,9 +166,38 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 				</Stack>
 
 				<Stack gap={2} mt={8} sx={cardStyle}>
-					<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
-						Public Sale Settings
-					</Typography>
+					<Grid container={true} justifyContent="space-between">
+						<Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+							Public Sale Settings
+						</Typography>
+
+						{contractState?.isPublicSaleOpen ? (
+							<Button
+								startIcon={<LockIcon />}
+								size="small"
+								variant="contained"
+								onClick={() => updateSales(methodProps, false)}
+								color="error"
+								sx={{ margin: 'auto 0' }}
+								disabled={isSavingPublicSales}
+							>
+								{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
+								Close Public Sales
+							</Button>
+						) : (
+							<Button
+								startIcon={<LockOpenIcon />}
+								size="small"
+								variant="contained"
+								onClick={() => updateSales(methodProps, true)}
+								sx={{ margin: 'auto 0' }}
+								disabled={isSavingPublicSales}
+							>
+								{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
+								Open Public Sales
+							</Button>
+						)}
+					</Grid>
 
 					<Stack gap={2} direction="horizontal">
 						<Stack direction="column">
@@ -189,7 +210,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 
 						<Stack direction="column">
 							<TextField
-								{...newPrice}
+								{...price}
 								label='Price'
 								size="small"
 								InputProps={{ endAdornment: contract.nftCollection.currency }}
@@ -198,32 +219,16 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 					</Stack>
 
 					<Stack>
-						{contractState?.isPublicSaleOpen ? (
-							<Button
-								startIcon={<LockIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => setPublicSales(methodProps, false)}
-								color="error"
-								sx={{ ml: 'auto' }}
-								disabled={isSavingPublicSales}
-							>
-								{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
-								Close Public Sales
-							</Button>
-						) : (
-							<Button
-								startIcon={<LockOpenIcon />}
-								size="small"
-								variant="contained"
-								onClick={() => setPublicSales(methodProps, true)}
-								sx={{ ml: 'auto' }}
-								disabled={isSavingPublicSales}
-							>
-								{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
-								Open Public Sales
-							</Button>
-						)}
+						<Button
+							size="small"
+							variant="contained"
+							onClick={() => updateSales(methodProps, contractState?.isPublicSaleOpen)}
+							color="secondary"
+							sx={{ ml: 'auto' }}
+							disabled={isSavingPublicSales}
+						>
+							UPDATE
+						</Button>
 					</Stack>
 				</Stack>
 

@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { getMainnetBlockchainType, isTestnetBlockchain } from '@ambition-blockchain/controllers';
+import { getMainnetBlockchainType, isTestnetBlockchain, getIpfsUrl } from '@ambition-blockchain/controllers';
 
 import { Chip, Link, Grid } from '@mui/material';
 import {
     Fade,
-    Link as RouterLink,
     Stack,
     Box,
     Typography,
     Button,
+    CircularProgress,
 } from 'ds/components';
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
 import polygonLogo from 'assets/images/polygon.png';
+import imageNotFound from 'assets/images/image-not-found.png';
 
 export const BlockchainLogo = ({ blockchain }) => {
     const blockchainType = getMainnetBlockchainType(blockchain);
@@ -114,7 +115,7 @@ export const BlankNFT = ({ setIsModalOpen, contract }) => {
     );
 };
 
-export const NFT = ({ contract }) => {
+export const NFT = ({ contract, nftImage, nftPrice }) => {
     return (
         <Box
             sx={{
@@ -132,15 +133,15 @@ export const NFT = ({ contract }) => {
                     height: '100%',
                 }}>
                 <Box sx={{ height: '400px' }}>
-                    <img
+                    {nftImage.isLoading && <CircularProgress style={{ height: '100%', alignItems: 'center' }} /> || null}
+                    {!nftImage.isLoading && <img
                         style={{
                             height: '100%',
                             width: '100%',
                             objectFit: 'cover',
                         }}
-                        // @TODO wire image + mimetype
-                        src="https://lucky-trader-cms-prod.s3.us-east-2.amazonaws.com/Moonbirds_6a578f3f94.webp"
-                    />
+                        src={nftImage.src || imageNotFound}
+                    /> || null}
                 </Box>
                 <Stack p={2} sx={{ borderTop: '1px solid black' }}>
                     <Typography variant="body" sx={{ fontWeight: 'bold' }}>
@@ -174,7 +175,7 @@ export const NFT = ({ contract }) => {
                         <Typography variant="body" sx={{ fontWeight: 'bold' }}>
                             Price:&nbsp;
                             <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-                                {/* @TODO wire price */}
+                                {nftPrice.price} {nftPrice.currency}
                             </Typography>
                         </Typography>
                     </Stack>
@@ -184,17 +185,17 @@ export const NFT = ({ contract }) => {
     );
 };
 
-export const NFTStack = ({ contract }) => {
+export const NFTStack = ({ contract, nftPrice, nftImage }) => {
     return (
-        <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+        <Box sx={{ position: 'relative', width: '100%', maxWidth: 460, display: 'flex', justifyContent: 'flex-end', marginLeft: 'auto' }}>
             <Box sx={{ position: 'absolute', top: 0 }}>
-                <NFT contract={contract} />
+                <NFT contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
             </Box>
             <Box sx={{ position: 'absolute', top: 40, transform: 'scale(1.05)' }}>
-                <NFT contract={contract} />
+                <NFT contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
             </Box>
             <Box sx={{ position: 'absolute', top: 80, transform: 'scale(1.1)' }}>
-                <NFT contract={contract} />
+                <NFT contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
             </Box>
         </Box>
     );

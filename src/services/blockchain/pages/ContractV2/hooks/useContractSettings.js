@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
-import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
+import { useSetWhitelist, useSetBaseUri, useSetNftPrice } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
 export const useContractSettings = () => {
@@ -19,7 +19,10 @@ export const useContractSettings = () => {
 		whitelistAddresses: [],
 		airdropAddresses: []
 	});
+	
 	const [setWhitelist] = useSetWhitelist({});
+	const [setBaseUri] = useSetBaseUri({});
+	const [setNftPrice] = useSetNftPrice({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
 		maxPerMint: {
@@ -58,7 +61,7 @@ export const useContractSettings = () => {
 			isWithdrawing: false,
 		}));
 	};
-	
+
 	const onSuccess = (message) => {
 		addToast({ severity: 'success', message });
 		setState(prevState => ({
@@ -72,7 +75,7 @@ export const useContractSettings = () => {
 		}));
 	};
 
-	const updateReveal = async ({ contractController, setContractState, walletAddress }) => {
+	const updateReveal = async ({ contractController, setContractState, walletAddress, contractId }) => {
 		const { metadataUrl } = actionForm;
 
 		console.log(metadataUrl.value);
@@ -86,13 +89,14 @@ export const useContractSettings = () => {
 			// @TODO ask to set reveal as true or false
 			const contractState = await contractController.updateReveal(walletAddress, true, metadataUrl.value);
 			setContractState(contractState);
+			setBaseUri({ variables: { id: contractId, baseUri: metadataUrl.value } });
 			onSuccess('Metadata Url updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
 	}
 
-	const setPublicSales = async ({ contractController, setContractState, walletAddress }, isOpen) => {
+	const updateSales = async ({ contractController, setContractState, walletAddress }, isOpen) => {
 		const maxPerMint = actionForm.maxPerMint.value;
 		const maxPerWallet = actionForm.maxPerWallet.value;
 		const price = actionForm.price.value;
@@ -120,6 +124,7 @@ export const useContractSettings = () => {
 		try {
 			const contractState = await contractController.updateSale(walletAddress, isOpen, priceInWei, maxPerWallet, maxPerMint);
 			setContractState(contractState);
+			setNftPrice({ variables: { id: contractId, price } });
 			onSuccess('Public Sale settings updated successfully!');
 		} catch (e) {
 			onError(e);
@@ -200,8 +205,7 @@ export const useContractSettings = () => {
 		...state,
 
 		updateReveal,
-
-		setPublicSales,
+		updateSales,
 		setPresales,
 		airdrop,
 		withdraw,

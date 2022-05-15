@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Container } from 'ds/components';
-import { ContractController } from '@ambition-blockchain/controllers';
+import { ContractController, getIpfsUrl } from '@ambition-blockchain/controllers';
 
 import { useParams } from 'react-router-dom';
 // import { useWeb3 } from 'libs/web3';
@@ -18,17 +18,41 @@ const ContractV2 = () => {
 	const [contractController, setContractController] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true); // default
+	const [nftImage, setNftImage] = useState({ src: null, isLoading: true }); // default
+	const [nftPrice, setNftPrice] = useState({ currency: null, price: null });
 
 	const { contracts } = useContract();
 	const { id } = useParams();
 
 	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address;
 
+	const fetchImageSrc = async (metadataUrl) => {
+		try {
+			const fetchResponse = await fetch(`${metadataUrl}/1.json`);
+			const json = await fetchResponse.json();
+			const ipfsUrl = getIpfsUrl(undefined, true);
+			const baseUri = json.image.indexOf('ipfs://') !== -1 ? json.image.split('ipfs://') : null;
+			const imageSrc = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || json.image;
+
+			setNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+		} catch (e) {
+			console.log('Error fetchImageSrc:', e);
+			setNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+		}
+	}
+
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
 		if (contract) {
+			const ipfsUrl = getIpfsUrl(undefined, true);
+			const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
+			const metadataUrl = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
+
+			fetchImageSrc(metadataUrl);
+
 			// Set single contract
-			setContract(contract);
+			setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
+			setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
 			setIsLoading(false);
 
 			console.log(contract, 'contract');
@@ -68,6 +92,7 @@ const ContractV2 = () => {
 					{!isSetupComplete ? (
 						<NotComplete
 							id={id}
+							contractState={contractState}
 							contract={contract}
 							setIsModalOpen={setIsModalOpen}
 						/>
@@ -78,6 +103,9 @@ const ContractV2 = () => {
 							contractState={contractState}
 							setContractState={setContractState}
 							contractController={contractController}
+							nftImage={nftImage}
+							nftPrice={nftPrice}
+							setIsModalOpen={setIsModalOpen}
 						/>
 					)}
 				</Box>}

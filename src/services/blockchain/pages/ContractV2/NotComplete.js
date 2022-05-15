@@ -7,9 +7,11 @@ import {
 } from 'ds/components';
 import { Stepper, Step, StepLabel } from '@mui/material';
 import { BlankNFT, NFTStack, ContractDetails } from '../../widgets';
+import { useContractSettings } from './hooks/useContractSettings';
 
-const NotComplete = ({ setIsModalOpen, contract }) => {
+const NotComplete = ({ setIsModalOpen, contract, nftImage, nftPrice, contractState }) => {
 	const activeStep = contract?.nftCollection?.baseUri && 2 || 1;
+	const { mint, isMinting } = useContractSettings();
 
 	return (
 		<React.Fragment>
@@ -62,9 +64,14 @@ const NotComplete = ({ setIsModalOpen, contract }) => {
 										Test out your contract by minting a test token
 									</Typography>
 
-									{(activeStep !== 1) && <Button variant="contained" size="small">
-										Mint a test token
-										{/* @TODO wiring mint button */}
+									{(activeStep !== 1) && <Button
+										variant="contained"
+										size="small"
+										onClick={() => mint(methodProps, 1)}
+										disabled={!contractState?.isPublicSaleOpen || isMinting}
+									>
+										{isMinting && <CircularProgress isButtonSpinner={true} /> || null}
+										Mint a {contract?.blockchain} token
 									</Button> || null}
 
 								</StepLabel>
@@ -91,11 +98,11 @@ const NotComplete = ({ setIsModalOpen, contract }) => {
 					md={6}
 				>
 					{activeStep === 1 && <BlankNFT contract={contract} setIsModalOpen={setIsModalOpen} /> || null}
-					{activeStep !== 1 && <NFTStack contract={contract} /> || null}
+					{activeStep !== 1 && <NFTStack contract={contract} nftImage={nftImage} nftPrice={nftPrice} /> || null}
 
 				</Grid>
 			</Grid>
-		</React.Fragment>
+		</React.Fragment >
 	)
 };
 

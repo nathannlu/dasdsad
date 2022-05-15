@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import {
 	Container,
@@ -9,10 +8,9 @@ import {
 	Typography,
 } from 'ds/components';
 
-import { Skeleton, Chip } from '@mui/material';
+import { Skeleton, Chip, Link } from '@mui/material';
 
 import { NFTStack, ContractDetails } from '../../widgets';
-import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
 const Details = ({ primary, secondary, isLoading }) => {
 	return (
@@ -28,13 +26,10 @@ const Details = ({ primary, secondary, isLoading }) => {
 	);
 }
 
-const Overview = ({ contract, contractState }) => {
+const Overview = ({ contract, contractState, nftImage, nftPrice }) => {
 	console.log(contract);
 	const isLoading = !contractState;
-
-	const ipfsUrl = contract?.blockchain && getIpfsUrl(contract.blockchain);
-	const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-	const metadataUrl = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
+	const metadataUrl = contract?.nftCollection?.metadataUrl;
 
 	return (
 		<Box>
@@ -66,18 +61,11 @@ const Overview = ({ contract, contractState }) => {
 											isLoading={isLoading}
 										/>
 
-										{baseUri && <Details
+										{metadataUrl && <Details
 											primary={<span style={{ minWidth: 110, marginRight: -12 }}>Metadata URL</span>}
-											secondary={
-												<Link
-													target="_blank"
-													to={metadataUrl}
-												>
-													{metadataUrl}
-												</Link>
-											}
+											secondary={<Link target="_blank" href={metadataUrl}>{metadataUrl}</Link>}
 											isLoading={isLoading}
-										/>}
+										/> || null}
 
 										<Details
 											primary="Max per mint"
@@ -107,11 +95,11 @@ const Overview = ({ contract, contractState }) => {
 						</Grid>
 
 						<Grid item md={5} xs={12}>
-							<NFTStack contract={contract} />
+							<NFTStack contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
 						</Grid>
 					</Grid>
 				</Container>
-			</Stack >
+			</Stack>
 		</Box>
 	);
 };

@@ -11,8 +11,6 @@ import Overview from './Overview';
 import Settings from './Settings';
 
 const ContractDetailTabs = (props) => {
-    const { id, contract, contractState } = props;
-
     const [value, setValue] = React.useState('overview');
     const handleChange = (event, newValue) => setValue(newValue);
 
@@ -28,14 +26,12 @@ const ContractDetailTabs = (props) => {
             </Container>
 
             <Box py={2}>
-                {
-                    {
-                        overview: <Overview contract={contract} contractState={contractState} />,
-                        actions: <Actions id={id} contract={contract} contractState={contractState} />,
-                        settings: <Settings {...props} />,
-                        balance: <Balance id={id} contract={contract} />
-                    }[value]
-                }
+                {{
+                    overview: <Overview {...props} />,
+                    actions: <Actions {...props} />,
+                    settings: <Settings {...props} />,
+                    balance: <Balance {...props} />
+                }[value]}
             </Box>
         </React.Fragment>
     );

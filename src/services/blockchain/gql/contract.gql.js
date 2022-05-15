@@ -115,6 +115,22 @@ export const SET_BASE_URI = gql`
     }
 `;
 
+export const SET_NFT_PRICE = gql`
+    mutation SetNftPrice($price: String!, $id: ID!) {
+        setNftPrice(price: $price, id: $id) {
+            id
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                whitelist
+            }
+        }
+    }
+`;
+
 export const SET_WHITELIST = gql`
     mutation SetWhitelist($whitelist: [String!]!, $id: ID!) {
         setWhitelist(whitelist: $whitelist, id: $id) {

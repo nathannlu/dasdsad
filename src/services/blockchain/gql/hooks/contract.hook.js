@@ -7,6 +7,7 @@ import {
     SET_WHITELIST,
     GET_CONTRACT,
     DELETE_CONTRACT,
+    SET_NFT_PRICE
 } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
@@ -103,6 +104,30 @@ export const useSetBaseUri = ({ onCompleted, onError }) => {
     });
 
     return [setBaseUri, { ...mutationResult }];
+};
+
+export const useSetNftPrice = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+    const [setNftPrice, { ...mutationResult }] = useMutation(SET_NFT_PRICE, {
+        onCompleted: async (data) => {
+            const updated = data.setNftPrice;
+
+            // Find obj in arr and updated
+            setContracts((prevState) => {
+                const newState = prevState.map((contract) => {
+                    if (contract.id == updated.id) {
+                        return { ...contract, nftCollection: updated.nftCollection };
+                    }
+                    return contract;
+                });
+                return newState;
+            });
+            onCompleted && onCompleted(data);
+        },
+        onError
+    });
+
+    return [setNftPrice, { ...mutationResult }];
 };
 
 export const useSetWhitelist = ({ onCompleted, onError }) => {

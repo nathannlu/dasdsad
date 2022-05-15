@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, CircularProgress } from '@mui/material';
 
-const Spinner = ({ isButtonSpinner }) => {
+const Spinner = ({ isButtonSpinner, style }) => {
     const buttonSpinnerStyles = {
         width: 20,
         height: 20,
@@ -15,6 +15,7 @@ const Spinner = ({ isButtonSpinner }) => {
                 display: 'flex',
                 alignItem: 'center',
                 justifyContent: 'center',
+                ...style
             }}>
             <CircularProgress style={isButtonSpinner && buttonSpinnerStyles || undefined} />
         </Box>
