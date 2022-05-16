@@ -11,13 +11,11 @@ import {
 	Container,
 	Typography,
 	Button,
-	CircularProgress,
+	CircularProgress
 } from 'ds/components';
 import { useDeployContractForm } from './hooks/useDeployContractForm';
-import { AppBar, Radio, FormControlLabel, Switch, Card, CardContent, Zoom } from '@mui/material';
+import { AppBar, Radio, FormControlLabel, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
-import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
@@ -125,20 +123,16 @@ const New = () => {
 			name,
 			symbol,
 			maxSupply,
-			price
 		},
 		formValidationErrors,
 		isLoading,
 		activeFocusKey,
 		activeBlockchain,
 		isTestnetEnabled,
-		isNftRevealEnabled,
 		setActiveFocusKey,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
-		setIsNftRevealEnabled,
-		deployContract,
-		saveContract
+		deployContract
 	} = useDeployContractForm();
 
 	return (
@@ -169,7 +163,7 @@ const New = () => {
 							<CloseIcon sx={{ fontSize: '18px' }} />
 						</IconButton>
 						<Divider
-							sx={{ height: '20px', borderWidth: 0.5, mt: 2 }}
+							sx={{ height: '20px', borderWidth: 0.5 }}
 							orientation="vertical"
 						/>
 						<Box>
@@ -182,74 +176,83 @@ const New = () => {
 
 				<Container>
 					<Grid container mt={4}>
-						<Grid container={true} flexDirection="column" sx={{ mb: 5 }}>
-							<Stack>
-								<Typography color="primary" component="h1" sx={{ fontWeight: 600, fontSize: 45 }}>
-									Create your NFT collection
-								</Typography>
-							</Stack>
-							<Stack>
-								<Typography variant="body" sx={{ fontSize: 24 }}>
-									ERC-721A smart contract
-								</Typography>
-							</Stack>
+						<Grid item xs={7}>
+							<Box
+								sx={{
+									borderRadius: '10px',
+									border: 'solid 2px white',
+									background: 'rgba(0,0,0,.2)',
+									boxShadow: '0 4px 8px rgba(0,0,0,.1)',
+									backdropFilter: 'blur(3px)',
+									height: '850px',
+								}}
+								p={3}
+							>
+								<Stack sx={{ border: '1px solid black', height: '100%' }}>
+									<Stack p={2} sx={{ borderBottom: '1px solid black' }}>
+										<Typography variant="body" sx={{ fontWeight: 'bold' }}>
+											Collection name
+										</Typography>
+										<TextField
+											variant="standard"
+											placeholder="E.g. Bored Ape Yacht Club"
+											{...name}
+											sx={{
+												'&.MuiInput-root': {
+													fontSize: '30px',
+
+													'&::before': {
+														borderBottom: 'none'
+													},
+													'&::after': {
+														borderBottom: 'none'
+													}
+												}
+											}}
+											onFocus={e => setActiveFocusKey('NAME')}
+											error={Boolean(formValidationErrors.name)}
+										/>
+									</Stack>
+									<Stack direction="horizontal">
+										<Stack p={2} sx={{ flex: 1, borderRight: '1px solid black', borderBottom: '1px solid black' }}>
+											<Typography variant="body" sx={{ fontWeight: 'bold' }}>
+												Symbol
+											</Typography>
+											<TextField
+												variant="standard"
+												sx={{ flex: 1 }}
+												{...symbol}
+												inputProps={{ maxLength: 5 }}
+												onFocus={e => setActiveFocusKey('SYMBOL')}
+												error={Boolean(formValidationErrors.symbol)}
+											/>
+										</Stack>
+										<Stack p={2} sx={{ flex: 1, borderBottom: '1px solid black' }}>
+											<Typography variant="body" sx={{ fontWeight: 'bold' }}>
+												Collection size
+											</Typography>
+											<TextField
+												variant="standard"
+												{...maxSupply}
+												type="number"
+												onFocus={e => setActiveFocusKey('MAX_SUPPLY')}
+												error={Boolean(formValidationErrors.maxSupply)}
+											/>
+										</Stack>
+
+									</Stack>
+								</Stack>
+							</Box>
 						</Grid>
-
-						<Grid item xs={6}>
-							<Stack sx={{ mb: 4 }}>
-								<TextField
-									variant="outlined"
-									{...name}
-									sx={{
-										'&.MuiInput-root': {
-											fontSize: '30px',
-
-											'&::before': {
-												borderBottom: 'none'
-											},
-											'&::after': {
-												borderBottom: 'none'
-											}
-										}
-									}}
-									error={Boolean(formValidationErrors.name)}
-								/>
-							</Stack>
-							<Stack sx={{ mb: 4 }}>
-								<TextField
-									variant="outlined"
-									sx={{ flex: 1 }}
-									{...symbol}
-									inputProps={{ maxLength: 5 }}
-									error={Boolean(formValidationErrors.symbol)}
-								/>
-							</Stack>
-							<Stack sx={{ mb: 4 }}>
-								<TextField
-									variant="outlined"
-									{...maxSupply}
-									type="number"
-									error={Boolean(formValidationErrors.maxSupply)}
-								/>
-							</Stack>
-							<Stack sx={{ mb: 4 }}>
-								<TextField
-									variant="outlined"
-									{...price}
-									type="number"
-									error={Boolean(formValidationErrors.maxSupply)}
-								/>
-							</Stack>
+						<Grid item sx={{ flex: 1, px: 4 }}>
 							<Stack gap={2}>
 								<Stack>
-									<Typography sx={{}}>Select a blockchain to deploy</Typography>
-									<Typography sx={{ fontStyle: 'italic', fontSize: 13 }} color="GrayText">
-										If this is your first time deploying a smart contract, we recommend you try it with testnet first.
-									</Typography>
 
-									<Stack sx={{ my: 2, width: 'max-content' }}>
+									{/* not required we'll always create a new contract on testnet by default */}
+
+									{/* <Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel onChange={e => setIsTestnetEnabled(e.target.checked)} checked={isTestnetEnabled} control={<Switch />} label="Deploy To Testnet" />
-									</Stack>
+									</Stack> */}
 
 									<Stack sx={{ mb: 2, width: 'max-content' }}>
 										<FormControlLabel
@@ -285,60 +288,25 @@ const New = () => {
 										/>
 									</Stack>
 								</Stack>
-							</Stack>
 
-							<Stack direction="row" py={2} gap={2} alignItems="center">
-								<Button onClick={deployContract} variant="contained" disabled={isLoading}>
-									{isLoading && <CircularProgress isButtonSpinner={true} /> || null}
-									Deploy Contract
-								</Button>
-								<Button onClick={saveContract} disabled={isLoading}>
-									{isLoading && <CircularProgress isButtonSpinner={true} /> || null}
-									Save Contract
-								</Button>
-								{isLoading && <Typography sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }} color="GrayText">
-									Creating Contract! Please be patient it will take couple of seconds...
-								</Typography>}
-							</Stack>
-						</Grid>
-						<Grid item sx={{ flex: 1, px: 4 }}>
-							<Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0' }}>
+								<Box>
+									<Button onClick={deployContract} variant="contained" size="small" disabled={isLoading}>
+										{isLoading && <CircularProgress isButtonSpinner={true} /> || null}
+										Create Contract
+									</Button>
+									{isLoading && <Typography sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }} color="GrayText">
+										Creating Contract! Please be patient it will take couple of seconds...
+									</Typography>}
+								</Box>
 
-								<Stack sx={{ width: 'max-content' }}>
-									<FormControlLabel onChange={e => setIsNftRevealEnabled(e.target.checked)} checked={isNftRevealEnabled} control={<Switch />} label="Enable NFT reveal" />
+								<Stack gap={2} mt={6}>
+									<Description activeFocusKey={activeFocusKey} />
 								</Stack>
-
-								<Button size="small">
-									<AutorenewIcon />&nbsp;Toggle reveal state
-								</Button>
-
-							</Grid>
-							<Card sx={{ width: '100%', maxWidth: 592, height: 742, borderRadius: 16 }} raised={true}>
-								<CardContent sx={{ padding: '0 !important', height: '100%' }}>
-									<Box
-										sx={{
-											backgroundColor: '#3C3C41',
-											height: 'calc(100% - 152px)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											flexDirection: 'column'
-										}}
-									>
-										<UploadFileRoundedIcon sx={{ fontSize: 136, color: '#fff' }} />
-										<Typography sx={{ color: '#fff', fontStyle: 'italic', fontWeight: 600 }}>Click to add your collection here</Typography>
-									</Box>
-									<Box sx={{ height: 152 }}>
-										<Typography color="GrayText">{name.value}</Typography>
-										<Typography color="GrayText">Price</Typography>
-										{/* TODO wire currency */}
-									</Box>
-								</CardContent>
-							</Card>
+							</Stack>
 						</Grid>
 					</Grid>
 				</Container>
-			</Grid >
+			</Grid>
 		</Fade>
 	);
 };

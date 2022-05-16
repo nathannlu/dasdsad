@@ -22,8 +22,7 @@ export const useDeployContractForm = () => {
 		activeFocusKey: 'NAME', // default,
 		activeBlockchain: 'ethereum', // default,
 		isTestnetEnabled: true, // default
-		isNftRevealEnabled: true, // default
-		isLoading: false,
+		isLoading: false
 	});
 
 	const walletController = new WalletController();
@@ -45,23 +44,15 @@ export const useDeployContractForm = () => {
 	const { form: deployContractForm } = useForm({
 		name: {
 			default: '',
-			placeholder: 'Ambition',
-			label: 'Name of your collection'
+			placeholder: 'Bored Ape Yacht Club',
 		},
 		symbol: {
 			default: '',
-			placeholder: 'AMB',
-			label: 'Symbol of your collection',
+			placeholder: 'BAYC',
 		},
 		maxSupply: {
 			default: '',
-			placeholder: '1000',
-			label: 'Collection size',
-		},
-		price: {
-			default: '',
-			placeholder: '0.5',
-			label: 'Price per mint',
+			placeholder: '3,333',
 		},
 	});
 
@@ -149,7 +140,7 @@ export const useDeployContractForm = () => {
 				// Update backend
 				if (deployedContract) {
 					setState(prevState => ({ ...prevState, contractAddress: deployedContract.options.address }));
-					// onCreateContract(deployedContract.options.address);
+					onCreateContract(deployedContract.options.address);
 				}
 			});
 		} catch (e) {
@@ -161,7 +152,7 @@ export const useDeployContractForm = () => {
 	/**
 	 * Creates contract in backend
 	 */
-	const saveContract = async (contractAddress) => {
+	const onCreateContract = async (contractAddress) => {
 		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
 		const { name, symbol, maxSupply } = deployContractForm;
 
@@ -175,8 +166,7 @@ export const useDeployContractForm = () => {
 				nftCollection: {
 					price: 1, // save in DB it is going to be always 1 SOL or 1 ETH
 					size: parseInt(maxSupply.value),
-					currency: getBlockchainCurrency(blockchain),
-					// unRevealedBaseUri:
+					currency: getBlockchainCurrency(blockchain)
 				},
 			};
 			await createContract({ variables: { contract: ContractInput } });
@@ -196,20 +186,16 @@ export const useDeployContractForm = () => {
 
 	const setIsTestnetEnabled = (isTestnetEnabled) => setState(prevState => ({ ...prevState, isTestnetEnabled }));
 
-	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, isNftRevealEnabled }));
-
 	const setLoading = (isLoading) => setState(prevState => ({ ...prevState, isLoading }));
 
 	return {
 		...state,
 		deployContractForm,
 		deployContract,
-		saveContract,
 		onDeploy,
 		onError,
 		setActiveFocusKey,
 		setActiveBlockchain,
-		setIsTestnetEnabled,
-		setIsNftRevealEnabled
+		setIsTestnetEnabled
 	};
 };
