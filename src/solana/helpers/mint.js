@@ -15,6 +15,7 @@ import {
     getMetadata,
     getMasterEdition,
     getCandyMachineCreator,
+    getAtaForMint
 } from './accounts';
 import { MintLayout, Token } from '@solana/spl-token';
 import * as anchor from '@project-serum/anchor';
@@ -279,10 +280,10 @@ export async function mintV2(
     // transaction.addSignature(transferAuthority.publicKey, (transferSignature));
     // }
 
-    // if(whitelistBurnAuthority){
-    // const whiteListSignature = nacl.sign.detached(transactionBuffer, whitelistBurnAuthority.secretKey);
-    // transaction.addSignature(whitelistBurnAuthority.publicKey, (whiteListSignature));
-    // }
+    if(whitelistBurnAuthority){
+        const whiteListSignature = nacl.sign.detached(transactionBuffer, whitelistBurnAuthority.secretKey);
+        transaction.addSignature(whitelistBurnAuthority.publicKey, (whiteListSignature));
+    }
 
     let isVerifiedSignature = transaction.verifySignatures();
     console.log(`The signatures were verifed: ${isVerifiedSignature}`);

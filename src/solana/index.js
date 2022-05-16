@@ -97,6 +97,7 @@ export const createSolanaContract = async ({
             },
             creators,
         }
+
     );
 
     console.log('uri', uri);
