@@ -24,6 +24,21 @@ export const useDeployContractForm = () => {
 		isTestnetEnabled: true, // default
 		isNftRevealEnabled: true, // default
 		isLoading: false,
+		contractState: {
+			id: null,
+			name: null,
+			symbol: null,
+			address: null,
+			blockchain: null,
+			type: CONTRACT_VERSION,
+			nftCollection: {
+				baseUri: null,
+				unRevealedBaseUri: null,
+				price: 1,
+				size: null,
+				currency: null
+			},
+		}
 	});
 
 	const walletController = new WalletController();

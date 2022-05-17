@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Container } from 'ds/components';
-import { ContractController, getIpfsUrl } from '@ambition-blockchain/controllers';
+import { ContractController, getIpfsUrl, getResolvedImageUrl } from '@ambition-blockchain/controllers';
 
 import { useParams } from 'react-router-dom';
 // import { useWeb3 } from 'libs/web3';
@@ -28,12 +28,7 @@ const ContractV2 = () => {
 
 	const fetchImageSrc = async (metadataUrl) => {
 		try {
-			const fetchResponse = await fetch(`${metadataUrl}/1.json`);
-			const json = await fetchResponse.json();
-			const ipfsUrl = getIpfsUrl(undefined, true);
-			const baseUri = json.image.indexOf('ipfs://') !== -1 ? json.image.split('ipfs://') : null;
-			const imageSrc = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || json.image;
-
+			const imageSrc = getResolvedImageUrl(metadataUrl);
 			setNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
 		} catch (e) {
 			console.log('Error fetchImageSrc:', e);
@@ -44,14 +39,19 @@ const ContractV2 = () => {
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
 		if (contract) {
-			const ipfsUrl = getIpfsUrl(undefined, true);
-			const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-			const metadataUrl = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
 
-			fetchImageSrc(metadataUrl);
+			if (contract?.nftCollection?.baseUri) {
+				const ipfsUrl = getIpfsUrl(undefined, true);
+				const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
+				const metadataUrl = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
+
+				fetchImageSrc(metadataUrl);
+				setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
+			} else {
+				setContract(contract);
+			}
 
 			// Set single contract
-			setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
 			setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
 			setIsLoading(false);
 

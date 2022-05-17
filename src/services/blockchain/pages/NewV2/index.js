@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { getResolvedImageUrl } from '@ambition-blockchain/controllers';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 import {
 	Box,
 	IconButton,
@@ -14,77 +17,15 @@ import {
 	CircularProgress,
 } from 'ds/components';
 import { useDeployContractForm } from './hooks/useDeployContractForm';
-import { AppBar, Radio, FormControlLabel, Switch, Card, CardContent, Zoom } from '@mui/material';
+import { AppBar, Radio, FormControlLabel, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
-import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
 import polygonLogo from 'assets/images/polygon.png';
 
-const Description = ({ activeFocusKey }) => {
-	switch (activeFocusKey) {
-		default:
-		case 'SYMBOL':
-			return (
-				<React.Fragment>
-					<Typography sx={{ fontWeight: 'bold' }} variant="h4">
-						Choosing a symbol
-					</Typography>
-					<Typography variant="body">
-						The token symbol will be displayed on Etherscan when others come to view your smart contract. The symbol is also used when sharing links to your smart contracts, and platforms where NFT sales and transfer activity are displayed.
-					</Typography>
-					<Typography variant="body">
-						This field accepts alpha numeric
-						characters and spaces and can be any
-						length.
-					</Typography>
-					<Typography variant="body">
-						Input is limited here to 5 alphanumeric characters.
-					</Typography>
-				</React.Fragment>
-			)
-		case 'MAX_SUPPLY':
-			return (
-				<React.Fragment>
-					<Typography sx={{ fontWeight: 'bold' }} variant="h4">
-						Collection size
-					</Typography>
-					<Typography variant="body">
-						Creating an NFT collection is fun, interesting and profitable.
-					</Typography>
-					<Typography variant="body">
-						This field accepts numeric values and sky is the limit.
-					</Typography>
-				</React.Fragment>
-			)
-		case 'NAME':
-			return (
-				<React.Fragment>
-					<Typography sx={{ fontWeight: 'bold' }} variant="h4">
-						Your contract name
-					</Typography>
-					<Typography variant="body">
-						The contract name is the main identifier
-						for your contract and will appear
-						anywhere your contract is mentioned.
-						This is usually your artist name, brand,
-						or identity.
-					</Typography>
-					<Typography variant="body">
-						This field accepts alpha numeric
-						characters and spaces and can be any
-						length.
-					</Typography>
-					<Typography variant="body">
-						We recommend less than 15 characters,
-						however this is not a hard requirement.
-					</Typography>
-				</React.Fragment>
-			);
-	}
-}
+import { NFTStack } from '../../widgets';
 
 const RadioLabel = ({ type, isTestnetEnabled }) => {
 	const content = { imgSrc: null, description: null };
@@ -120,6 +61,13 @@ const RadioLabel = ({ type, isTestnetEnabled }) => {
 
 const New = () => {
 	const history = useHistory();
+	const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: true }); // default
+	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: true }); // default
+	const [activeNFTImageType, setActiveNFTImageType] = useState('REVEALED'); // "REVEALED" | "UNREVEALED"
+
 	const {
 		deployContractForm: {
 			name,
@@ -127,19 +75,43 @@ const New = () => {
 			maxSupply,
 			price
 		},
+		contractState,
 		formValidationErrors,
 		isLoading,
-		activeFocusKey,
 		activeBlockchain,
 		isTestnetEnabled,
 		isNftRevealEnabled,
-		setActiveFocusKey,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
 		setIsNftRevealEnabled,
 		deployContract,
 		saveContract
 	} = useDeployContractForm();
+
+	const nftPrice = { currency: contractState?.nftCollection?.currency, price: contractState?.nftCollection?.price };
+
+	const fetchRevealedNftImage = async (metadataUrl) => {
+		try {
+			const imageSrc = await getResolvedImageUrl(metadataUrl);
+			setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+		} catch (e) {
+			console.log('Error fetchImageSrc:', e);
+			setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+		}
+	}
+
+	const fetchUnRevealedtNftImage = async (metadataUrl) => {
+		try {
+			const imageSrc = await getResolvedImageUrl(metadataUrl);
+			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+		} catch (e) {
+			console.log('Error fetchImageSrc:', e);
+			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+		}
+	}
+
+	useEffect(() => { fetchRevealedNftImage(contractState.nftCollection.baseUri); }, [contractState.nftCollection.baseUri]);
+	useEffect(() => { fetchUnRevealedtNftImage(contractState.nftCollection.unRevealedBaseUri); }, [contractState.nftCollection.unRevealedBaseUri]);
 
 	return (
 		<Fade in>
@@ -181,21 +153,29 @@ const New = () => {
 				</AppBar>
 
 				<Container>
-					<Grid container mt={4}>
-						<Grid container={true} flexDirection="column" sx={{ mb: 5 }}>
-							<Stack>
-								<Typography color="primary" component="h1" sx={{ fontWeight: 600, fontSize: 45 }}>
-									Create your NFT collection
-								</Typography>
-							</Stack>
-							<Stack>
+
+					<Grid container={true} flexDirection="column" sx={{ mb: 5 }} mt={4}>
+						<Stack>
+							<Typography color="primary" component="h1" sx={{ fontWeight: 600, fontSize: 45 }}>
+								Create your NFT collection
+							</Typography>
+						</Stack>
+						{isLargeScreen && <Stack>
+							<Typography variant="body" sx={{ fontSize: 24 }}>
+								ERC-721A smart contract
+							</Typography>
+						</Stack> || null}
+					</Grid>
+
+					<Grid container direction={isLargeScreen && 'row' || 'column-reverse'}>
+						<Grid item xs={12} lg={6}>
+
+							{!isLargeScreen && <Stack sx={{ my: 8 }}>
 								<Typography variant="body" sx={{ fontSize: 24 }}>
 									ERC-721A smart contract
 								</Typography>
-							</Stack>
-						</Grid>
+							</Stack> || null}
 
-						<Grid item xs={6}>
 							<Stack sx={{ mb: 4 }}>
 								<TextField
 									variant="outlined"
@@ -243,8 +223,8 @@ const New = () => {
 							<Stack gap={2}>
 								<Stack>
 									<Typography sx={{}}>Select a blockchain to deploy</Typography>
-									<Typography sx={{ fontStyle: 'italic', fontSize: 13 }} color="GrayText">
-										If this is your first time deploying a smart contract, we recommend you try it with testnet first.
+									<Typography sx={{ fontStyle: 'italic', fontSize: 14 }} color="GrayText">
+										**If this is your first time deploying a smart contract, we recommend you try it with testnet first.
 									</Typography>
 
 									<Stack sx={{ my: 2, width: 'max-content' }}>
@@ -301,44 +281,45 @@ const New = () => {
 								</Typography>}
 							</Stack>
 						</Grid>
-						<Grid item sx={{ flex: 1, px: 4 }}>
-							<Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0' }}>
 
+						<Grid item xs={12} lg={6} sx={{ flex: 1, px: 4 }}>
+							<Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0', maxWidth: 600, margin: !isLargeScreen && 'auto' || undefined }}>
 								<Stack sx={{ width: 'max-content' }}>
-									<FormControlLabel onChange={e => setIsNftRevealEnabled(e.target.checked)} checked={isNftRevealEnabled} control={<Switch />} label="Enable NFT reveal" />
+									<FormControlLabel disabled={!contractState?.id} onChange={e => setIsNftRevealEnabled(e.target.checked)} checked={isNftRevealEnabled} control={<Switch />} label="Enable NFT reveal" />
 								</Stack>
 
-								<Button size="small">
+								<Button disabled={!contractState?.id} size="small" onClick={e => setActiveNFTImageType(prevState => prevState === 'REVEALED' ? 'UNREVEALED' : 'REVEALED')}>
 									<AutorenewIcon />&nbsp;Toggle reveal state
 								</Button>
-
 							</Grid>
-							<Card sx={{ width: '100%', maxWidth: 592, height: 742, borderRadius: 16 }} raised={true}>
-								<CardContent sx={{ padding: '0 !important', height: '100%' }}>
-									<Box
-										sx={{
-											backgroundColor: '#3C3C41',
-											height: 'calc(100% - 152px)',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											flexDirection: 'column'
-										}}
-									>
-										<UploadFileRoundedIcon sx={{ fontSize: 136, color: '#fff' }} />
-										<Typography sx={{ color: '#fff', fontStyle: 'italic', fontWeight: 600 }}>Click to add your collection here</Typography>
-									</Box>
-									<Box sx={{ height: 152 }}>
-										<Typography color="GrayText">{name.value}</Typography>
-										<Typography color="GrayText">Price</Typography>
-										{/* TODO wire currency */}
-									</Box>
-								</CardContent>
-							</Card>
+
+							<NFTStack
+								isLargeScreen={isLargeScreen}
+								disabled={!contractState?.id}
+								contract={contractState}
+								nftPrice={nftPrice}
+								unRevealedtNftImage={unRevealedtNftImage}
+								revealedNftImage={revealedNftImage}
+								activeNFTImageType={activeNFTImageType}
+								setIsModalOpen={setIsModalOpen}
+							/>
+
+							<Typography sx={{ fontStyle: 'italic', fontSize: 14, mt: 8 }} color="GrayText">
+								**Deploy or save the contract to upload your collection.
+							</Typography>
 						</Grid>
 					</Grid>
+
 				</Container>
-			</Grid >
+
+				{contractState?.id && <IPFSModal
+					id={contractState?.id}
+					contract={contractState}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
+				/>}
+
+			</Grid>
 		</Fade>
 	);
 };
