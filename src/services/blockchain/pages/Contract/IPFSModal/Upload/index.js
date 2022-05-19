@@ -119,16 +119,16 @@ const Confirmation = (props) => {
                             objectFit: 'cover'
                         }}
                         alt="Un-revealed NFT Preview"
-                        src={`https://gateway.pinata.cloud/ipfs/${unRevealedBaseUri}/1.png`}
+                        src={unRevealedBaseUri}
                     />
                     <Typography fontSize='8pt'>
                         Source:{' '}
                         <a
                             style={{ color: 'blue' }}
-                            href={`https://gateway.pinata.cloud/ipfs/${unRevealedBaseUri}/1.png`}
+                            href={unRevealedBaseUri}
                             target="_blank"
                             rel="noreferrer">
-                            https://gateway.pinata.cloud/ipfs/${unRevealedBaseUri}/1.png
+                            {unRevealedBaseUri}
                         </a>
                     </Typography>
                 </Box>}
@@ -190,7 +190,7 @@ const Confirmation = (props) => {
                 variant="contained"
                 onClick={() => {
                     if (props.hasUnrevealedImage) {
-                        setUnRevealedBaseUri({ variables: { baseUri: unRevealedBaseUri, id: props.id } });
+                        setUnRevealedBaseUri({ variables: { unRevealedBaseUri, id: props.id } });
                     }
                     setBaseUri({ variables: { baseUri: ipfsUrl, id: props.id } });
                 }}

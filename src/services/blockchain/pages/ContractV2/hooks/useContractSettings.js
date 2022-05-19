@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/AmbitionCreatorImpl.json';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
@@ -19,7 +18,7 @@ export const useContractSettings = () => {
 		whitelistAddresses: [],
 		airdropAddresses: []
 	});
-	
+
 	const [setWhitelist] = useSetWhitelist({});
 	const [setBaseUri] = useSetBaseUri({});
 	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({});
@@ -46,10 +45,6 @@ export const useContractSettings = () => {
 			placeholder: 'New metadata URL',
 		},
 	});
-
-	const to = '0xa8C801F27164E840c9F931147aCDe37fdCCBea4c';
-	const from = '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166';
-	const impl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
 
 	const onError = (err) => {
 		addToast({ severity: 'error', message: err.message });
@@ -98,7 +93,7 @@ export const useContractSettings = () => {
 		}
 	}
 
-	const updateSales = async ({ contractController, setContractState, walletAddress }, isOpen) => {
+	const updateSales = async ({ contractController, setContractState, walletAddress, contractId }, isOpen) => {
 		const maxPerMint = actionForm.maxPerMint.value;
 		const maxPerWallet = actionForm.maxPerWallet.value;
 		const price = actionForm.price.value;

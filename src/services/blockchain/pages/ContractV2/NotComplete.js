@@ -6,17 +6,17 @@ import {
 	Button,
 } from 'ds/components';
 import { Stepper, Step, StepLabel } from '@mui/material';
-import { BlankNFT, NFTStack, ContractDetails } from '../../widgets';
+import { NFTStack, ContractDetails } from '../../widgets';
 import { useContractSettings } from './hooks/useContractSettings';
 
-const NotComplete = ({ setIsModalOpen, contract, nftImage, nftPrice, contractState }) => {
+const NotComplete = ({ setIsModalOpen, contract, unRevealedtNftImage, revealedNftImage, nftPrice, contractState, setIsNftRevealEnabled }) => {
 	const activeStep = contract?.nftCollection?.baseUri && 2 || 1;
 	const { mint, isMinting } = useContractSettings();
 
 	return (
 		<React.Fragment>
 			<Grid container>
-				<Grid item>
+				<Grid item xs={12} md={7}>
 					<ContractDetails contract={contract} />
 
 					<Box mt={4}>
@@ -95,14 +95,21 @@ const NotComplete = ({ setIsModalOpen, contract, nftImage, nftPrice, contractSta
 					item
 					ml="auto"
 					xs={12}
-					md={6}
+					md={5}
 				>
-					{activeStep === 1 && <BlankNFT contract={contract} setIsModalOpen={setIsModalOpen} /> || null}
-					{activeStep !== 1 && <NFTStack contract={contract} nftImage={nftImage} nftPrice={nftPrice} /> || null}
+					<NFTStack
+						contract={contract}
+						nftPrice={nftPrice}
+						disabled={!contract?.id}
+						unRevealedtNftImage={unRevealedtNftImage}
+						revealedNftImage={revealedNftImage}
+						setIsModalOpen={setIsModalOpen}
+						setIsNftRevealEnabled={setIsNftRevealEnabled}
+					/>
 
 				</Grid>
 			</Grid>
-		</React.Fragment >
+		</React.Fragment>
 	)
 };
 

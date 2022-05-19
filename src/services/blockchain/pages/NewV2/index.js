@@ -19,13 +19,14 @@ import {
 import { useDeployContractForm } from './hooks/useDeployContractForm';
 import { AppBar, Radio, FormControlLabel, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
 import polygonLogo from 'assets/images/polygon.png';
 
 import { NFTStack } from '../../widgets';
+
+import AppDialog from '../../widgets/AppDialog';
 import IPFSModal from '../Contract/IPFSModal';
 
 const RadioLabel = ({ type, isTestnetEnabled }) => {
@@ -65,9 +66,9 @@ const New = () => {
 	const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: true }); // default
-	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: true }); // default
-	const [activeNFTImageType, setActiveNFTImageType] = useState('REVEALED'); // "REVEALED" | "UNREVEALED"
+	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
+	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: false });
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	const {
 		deployContractForm: {
@@ -94,6 +95,7 @@ const New = () => {
 
 	const fetchRevealedNftImage = async (metadataUrl) => {
 		try {
+			setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
 			const imageSrc = await getResolvedImageUrl(metadataUrl);
 			setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
 		} catch (e) {
@@ -102,18 +104,25 @@ const New = () => {
 		}
 	}
 
-	const fetchUnRevealedtNftImage = async (metadataUrl) => {
-		try {
-			const imageSrc = await getResolvedImageUrl(metadataUrl);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchImageSrc:', e);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+	useEffect(() => {
+		if (!contractState.nftCollection.baseUri) {
+			return;
 		}
-	}
+		fetchRevealedNftImage(contractState.nftCollection.baseUri);
+	}, [contractState.nftCollection.baseUri]);
 
-	useEffect(() => { fetchRevealedNftImage(contractState.nftCollection.baseUri); }, [contractState.nftCollection.baseUri]);
-	useEffect(() => { fetchUnRevealedtNftImage(contractState.nftCollection.unRevealedBaseUri); }, [contractState.nftCollection.unRevealedBaseUri]);
+	useEffect(() => {
+		if (!contractState.nftCollection.unRevealedBaseUri) {
+			return;
+		}
+		setRevealedNftImage(prevState => ({ ...prevState, src: contractState.nftCollection.unRevealedBaseUri, isLoading: false }));
+	}, [contractState.nftCollection.unRevealedBaseUri]);
+
+	useEffect(() => {
+		if (activeBlockchain === 'solana') {
+			setIsDialogOpen(true);
+		}
+	}, [activeBlockchain]);
 
 	return (
 		<Fade in>
@@ -270,12 +279,26 @@ const New = () => {
 							</Stack>
 
 							<Stack direction="row" py={2} gap={2} alignItems="center">
-								<Button onClick={deployContract} variant="contained" disabled={isDeploying}>
+								<Button
+									onClick={() => {
+										if (activeBlockchain === 'solana') {
+											setIsDialogOpen(true);
+											return;
+										}
+										deployContract();
+									}}
+									variant="contained"
+									disabled={isDeploying}
+								>
 									{isDeploying && <CircularProgress isButtonSpinner={true} /> || null}
 									Deploy Contract
 								</Button>
 								<Button
 									onClick={() => {
+										if (activeBlockchain === 'solana') {
+											setIsDialogOpen(true);
+											return;
+										}
 										if (contractState?.id) {
 											updateContract();
 											return;
@@ -294,25 +317,14 @@ const New = () => {
 						</Grid>
 
 						<Grid item xs={12} lg={6} sx={{ flex: 1, px: 4 }}>
-							<Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0', maxWidth: 600, margin: !isLargeScreen && 'auto' || undefined }}>
-								<Stack sx={{ width: 'max-content' }}>
-									<FormControlLabel onChange={e => setIsNftRevealEnabled(e.target.checked)} checked={contractState.isNftRevealEnabled} control={<Switch />} label="Enable NFT reveal" />
-								</Stack>
-
-								<Button disabled={!contractState?.id} size="small" onClick={e => setActiveNFTImageType(prevState => prevState === 'REVEALED' ? 'UNREVEALED' : 'REVEALED')}>
-									<AutorenewIcon />&nbsp;Toggle reveal state
-								</Button>
-							</Grid>
-
 							<NFTStack
-								isLargeScreen={isLargeScreen}
 								disabled={!contractState?.id}
 								contract={contractState}
 								nftPrice={nftPrice}
 								unRevealedtNftImage={unRevealedtNftImage}
 								revealedNftImage={revealedNftImage}
-								activeNFTImageType={activeNFTImageType}
 								setIsModalOpen={setIsModalOpen}
+								setIsNftRevealEnabled={setIsNftRevealEnabled}
 							/>
 
 							<Typography sx={{ fontStyle: 'italic', fontSize: 14, mt: 8 }} color="GrayText">
@@ -329,6 +341,23 @@ const New = () => {
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
 				/>}
+
+				<AppDialog
+					open={isDialogOpen}
+					handleClose={() => setIsDialogOpen(false)}
+					heading="REDIRECT TO ERC-721 PAGE"
+					subHeading={
+						<Grid container={true} flexDirection="column">
+							<Typography color="black" align='center'><b>ERC-721a contract are currently not supported for solana deployment.</b></Typography>
+							<Typography color="black" align='center'>Please Redirect to ERC-721 version to deploy NFT's with Solana.</Typography>
+						</Grid>
+					}
+					submitButtonText="redirect"
+					handleSave={() => {
+						history.push('/smart-contracts/new');
+						setIsDialogOpen(false);
+					}}
+				/>
 
 			</Grid>
 		</Fade>

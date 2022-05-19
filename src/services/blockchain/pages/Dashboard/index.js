@@ -231,7 +231,7 @@ const Dashboard = () => {
                                 </Typography>
                             </Stack>
                             <Box>
-                                <Link to="/smart-contracts/new">
+                                <Link to="/smart-contracts/v2/new">
                                     <Button
                                         startIcon={<AddIcon />}
                                         variant="contained"

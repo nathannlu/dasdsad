@@ -41,6 +41,7 @@ export class WalletController {
 			if (callback != null) callback();
 			return;
 		}
+
 		let target = targetNetwork;
 		if (targetNetwork.indexOf('x') === -1) {
 			if (targetNetwork === 'ethereum') target = '0x1';
@@ -48,6 +49,7 @@ export class WalletController {
 			else if (targetNetwork === 'polygon') target = '0x89';
 			else if (targetNetwork === 'mumbai') target = '0x13881';
 		}
+		
 		const curNetwork = getNetworkID();
 		if (curNetwork !== target) {
 			const status = await setNetwork(target);
@@ -156,7 +158,7 @@ export class WalletController {
 					throw new Error('Metamask is not installed');
 				}
 
-				window.web3 = new Web3(window.ethereum) ||new Web3(window.web3.currentProvider);
+				window.web3 = new Web3(window.ethereum) || new Web3(window.web3.currentProvider);
 				const accounts = await window.web3.eth.getAccounts();
 
 				// Return and set address

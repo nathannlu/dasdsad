@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Container } from 'ds/components';
-import { ContractController, getIpfsUrl, getResolvedImageUrl } from '@ambition-blockchain/controllers';
+import { ContractController, WalletController, getIpfsUrl, getResolvedImageUrl, getWalletType } from '@ambition-blockchain/controllers';
+import { useSetUnRevealedBaseUri } from 'services/blockchain/gql/hooks/contract.hook.js';
 
 import { useParams } from 'react-router-dom';
-// import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 
 import IPFSModal from '../Contract/IPFSModal';
@@ -13,12 +13,16 @@ import NotComplete from './NotComplete';
 import { CircularProgress } from '@mui/material';
 
 const ContractV2 = () => {
+	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({});
+
 	const [contract, setContract] = useState(null);
 	const [contractState, setContractState] = useState(null);
 	const [contractController, setContractController] = useState(null);
+	const [walletController, setWalletController] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true); // default
-	const [nftImage, setNftImage] = useState({ src: null, isLoading: true }); // default
+	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
+	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: false });
 	const [nftPrice, setNftPrice] = useState({ currency: null, price: null });
 
 	const { contracts } = useContract();
@@ -26,30 +30,48 @@ const ContractV2 = () => {
 
 	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address;
 
-	const fetchImageSrc = async (metadataUrl) => {
+	const setIsNftRevealEnabled = (isNftRevealEnabled) => {
+		if (!contract) {
+			return;
+		}
+
+		setContract(prevState => ({ ...prevState, isNftRevealEnabled }));
+	};
+
+	const fetchRevealedNftImage = async (metadataUrl) => {
 		try {
-			const imageSrc = getResolvedImageUrl(metadataUrl);
-			setNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+			setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
+			const imageSrc = await getResolvedImageUrl(metadataUrl);
+			setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
 		} catch (e) {
 			console.log('Error fetchImageSrc:', e);
-			setNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+			setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
 		}
 	}
 
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
+
 		if (contract) {
+			if (contract?.nftCollection?.unRevealedBaseUri) {
+				setUnRevealedtNftImage(prevState => ({ ...prevState, src: contract?.nftCollection?.unRevealedBaseUri, isLoading: false }));
+			}
 
 			if (contract?.nftCollection?.baseUri) {
 				const ipfsUrl = getIpfsUrl(undefined, true);
 				const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
 				const metadataUrl = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
 
-				fetchImageSrc(metadataUrl);
+				fetchRevealedNftImage(metadataUrl);
 				setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
 			} else {
 				setContract(contract);
 			}
+
+			const walletController = new WalletController();
+			walletController.loadWalletProvider(getWalletType(contract.blockchain));
+
+			setWalletController(walletController);
 
 			// Set single contract
 			setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
@@ -95,6 +117,7 @@ const ContractV2 = () => {
 							contractState={contractState}
 							contract={contract}
 							setIsModalOpen={setIsModalOpen}
+							setIsNftRevealEnabled={setIsNftRevealEnabled}
 						/>
 					) : (
 						<ContractDetailTabs
@@ -103,19 +126,23 @@ const ContractV2 = () => {
 							contractState={contractState}
 							setContractState={setContractState}
 							contractController={contractController}
-							nftImage={nftImage}
+							walletController={walletController}
+							unRevealedtNftImage={unRevealedtNftImage}
+							revealedNftImage={revealedNftImage}
 							nftPrice={nftPrice}
 							setIsModalOpen={setIsModalOpen}
+							setIsNftRevealEnabled={setIsNftRevealEnabled}
 						/>
 					)}
 				</Box>}
 
-				<IPFSModal
+				{contract?.id && <IPFSModal
 					id={id}
 					contract={contract}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
-				/>
+				/>}
+
 			</Container>
 
 		</Stack>

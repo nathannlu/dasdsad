@@ -6,7 +6,7 @@ import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
 
 const Traits = (props) => {
-    const { setUploadedUnRevealedImageFile } = useContract();
+    const { uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile } = useContract();
     const { pinUnrevealedImage, loading } = useIPFS();
 
     const handleImagesUpload = (file) => setUploadedUnRevealedImageFile(file);
@@ -26,8 +26,8 @@ const Traits = (props) => {
     };
 
     return (
-        <>
-            {uploadedFiles.length < 1 ? (
+        <React.Fragment>
+            {!uploadedUnRevealedImageFile ? (
                 <Box>
                     <Dropzone
                         accept={['image/png', 'image/webp', 'video/mp4']}
@@ -62,7 +62,7 @@ const Traits = (props) => {
                 <Stack>
                     <Box>
                         <Folder />
-                        {uploadedFiles.length} File added
+                        1 File added
                         <Button
                             onClick={() => setUploadedUnRevealedImageFile(null)}
                             type="small"
@@ -80,7 +80,7 @@ const Traits = (props) => {
                     </LoadingButton>
                 </Stack>
             )}
-        </>
+        </React.Fragment>
     );
 };
 

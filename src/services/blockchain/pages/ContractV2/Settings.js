@@ -34,7 +34,7 @@ const cards = [
 	{ title: 'Withdraw' },
 ];
 
-const Settings = ({ contract, contractController, contractState, setContractState, setIsModalOpen }) => {
+const Settings = ({ contract, contractController, walletController, contractState, setContractState, setIsModalOpen }) => {
 	const {
 		actionForm: { maxPerMint, maxPerWallet, price, metadataUrl },
 		updateSales,
@@ -61,15 +61,9 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 		airdropAddresses
 	} = useContractSettings();
 
-	// const contractAddress = '0xd4975541438a06e5b6dc7dd2d5bc646aed652616'
-
-	// @TODO wire wallet address
-	// const walletAddress = '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166';
-	const walletAddress = '0x1ADb0A678F41d4eD91169D4b8A5B3C149b92Fc46';
-
-	// const impl = '0x65Cf89C53cC2D1c21564080797b47087504a3815';
-
 	const { id } = useParams();
+
+	const walletAddress = walletController.state.address;
 	const methodProps = { contractController, setContractState, walletAddress, contractId: id };
 
 	useEffect(() => {
@@ -86,7 +80,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 		borderRadius: 4
 	};
 
-	const [state, setState] = React.useState({
+	const [state, setState] = useState({
 		isWhitelistAddressDialogOpen: false,
 		isAirdropDialogOpen: false
 	});
@@ -140,7 +134,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 						>
 							Deploy new token images &amp; metadata
 						</Button>
-						
+
 					</Grid>
 
 					<Stack gap={2} direction="horizontal">
@@ -227,6 +221,7 @@ const Settings = ({ contract, contractController, contractState, setContractStat
 							sx={{ ml: 'auto' }}
 							disabled={isSavingPublicSales}
 						>
+							{isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
 							UPDATE
 						</Button>
 					</Stack>

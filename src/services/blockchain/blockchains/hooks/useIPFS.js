@@ -28,7 +28,7 @@ export const useIPFS = () => {
     const [loading, setLoading] = useState(false);
 
     const pinUnrevealedImage = async (callback) => {
-        if (uploadedUnRevealedImageFile) {
+        if (!uploadedUnRevealedImageFile) {
             addToast({
                 severity: 'error',
                 message: `Error! File to be uploaded not selected.`,
@@ -45,13 +45,18 @@ export const useIPFS = () => {
             message: 'Deploying unrevealed image to IPFS...',
         });
 
+        const file = uploadedUnRevealedImageFile[0];
+        const mimeType = file.type;
+        const fileExtension = mimeType === 'image/webp' && 'webp'
+            || mimeType === 'video/mp4' && 'mp4'
+            || 'png';
+
         let data = new FormData();
-        data.append('file', uploadedUnRevealedImageFile, `/assets/${uploadedUnRevealedImageFile.name}`);
+        data.append('file', file, `/assets/unrevealed.${fileExtension}`);
 
         //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
         //metadata is optional
         const metadata = JSON.stringify({ name: user.id + '_assets' });
-
         data.append('pinataMetadata', metadata);
 
         const opt = {
@@ -67,10 +72,11 @@ export const useIPFS = () => {
 
         try {
             const res = await axios.post(url, data, opt);
-            setUnRevealedBaseUri(res.data.IpfsHash);
+            const finalUrl = `${ipfsUrl}${res.data.IpfsHash}/unrevealed.${fileExtension}`;
+            setUnRevealedBaseUri(finalUrl);
             addToast({
                 severity: 'success',
-                message: `Added unrevealed image to IPFS under URL: ${ipfsUrl}` + res.data.IpfsHash
+                message: `Added unrevealed image to IPFS under URL: ${finalUrl}`
             });
         } catch (e) {
             addToast({

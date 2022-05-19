@@ -4,8 +4,10 @@ import { getMainnetBlockchainType, isTestnetBlockchain, getIpfsUrl } from '@ambi
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 import CircleIcon from '@mui/icons-material/Circle';
 import BlockIcon from '@mui/icons-material/Block';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
-import { Chip, Link, Grid, Card, CardContent, Zoom } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Chip, Link, Grid, Card, CardContent, FormControlLabel, Switch, Zoom } from '@mui/material';
 import {
     Fade,
     Stack,
@@ -55,157 +57,13 @@ export const BlockchainTypeChip = ({ blockchain }) => {
     );
 }
 
-// export const BlankNFT = ({ setIsModalOpen, contract }) => {
-//     const [animate, setAnimation] = useState(false);
-
-//     useEffect(() => {
-//         const interval = setInterval(() => setAnimation(prevState => !prevState), 800);
-//         return () => clearInterval(interval);
-//     }, []);
-
-//     return (
-//         <Box
-//             sx={{
-//                 borderRadius: '10px',
-//                 border: 'solid 2px white',
-//                 background: 'rgba(0,0,0,.2)',
-//                 boxShadow: '0 4px 8px rgba(0,0,0,.1)',
-//                 backdropFilter: 'blur(3px)',
-//                 my: 2
-//             }}
-//             p={3}
-//         >
-//             <Stack sx={{ border: '1px solid black', height: '100%' }}>
-
-//                 <Box sx={{ height: '500px' }}>
-//                     <Button onClick={e => setIsModalOpen(true)}>
-//                         <Fade in={animate}>
-//                             <span>
-//                                 Connect your images &amp; metadata
-//                             </span>
-//                         </Fade>
-//                     </Button>
-//                 </Box>
-
-//                 <Stack p={2} sx={{ borderTop: '1px solid black' }}>
-//                     <Typography variant="body" sx={{ fontWeight: 'bold' }}>
-//                         Collection name:&nbsp;
-//                         <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-//                             {contract?.name}
-//                         </Typography>
-//                     </Typography>
-//                 </Stack>
-//                 <Stack direction="horizontal">
-//                     <Stack p={2} sx={{ flex: 1, borderRight: '1px solid black', borderTop: '1px solid black' }}>
-//                         <Typography variant="body" sx={{ fontWeight: 'bold' }}>
-//                             Symbol:&nbsp;
-//                             <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-//                                 {contract?.symbol}
-//                             </Typography>
-//                         </Typography>
-//                     </Stack>
-
-//                     <Stack p={2} sx={{ flex: 1, borderTop: '1px solid black' }}>
-//                         <Typography variant="body" sx={{ fontWeight: 'bold' }}>
-//                             Collection size:&nbsp;
-//                             <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-//                                 {contract?.nftCollection?.size}
-//                             </Typography>
-//                         </Typography>
-//                     </Stack>
-//                 </Stack>
-//             </Stack>
-//         </Box>
-//     );
-// };
-
-// export const NFT = ({ contract, nftImage, nftPrice }) => {
-//     return (
-//         <Box
-//             sx={{
-//                 borderRadius: '10px',
-//                 border: 'solid 2px white',
-//                 background: 'rgba(0,0,0,.5)',
-//                 boxShadow: '0 4px 8px rgba(0,0,0,.1)',
-//                 backdropFilter: 'blur(3px)',
-//                 color: 'white',
-//             }}
-//             p={3}>
-//             <Stack
-//                 sx={{
-//                     border: '1px solid white',
-//                     height: '100%',
-//                 }}>
-//                 <Box sx={{ height: '400px' }}>
-//                     {nftImage.isLoading && <CircularProgress style={{ height: '100%', alignItems: 'center' }} /> || null}
-//                     {!nftImage.isLoading && <img
-//                         style={{
-//                             height: '100%',
-//                             width: '100%',
-//                             objectFit: 'cover',
-//                         }}
-//                         src={nftImage.src || imageNotFound}
-//                     /> || null}
-//                 </Box>
-//                 <Stack p={2} sx={{ borderTop: '1px solid black' }}>
-//                     <Typography variant="body" sx={{ fontWeight: 'bold' }}>
-//                         Collection name:&nbsp;
-//                         <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-//                             {contract?.name}
-//                         </Typography>
-//                     </Typography>
-//                 </Stack>
-//                 <Stack direction="horizontal">
-//                     <Stack
-//                         p={2}
-//                         sx={{
-//                             flex: 1,
-//                             borderRight: '1px solid white',
-//                             borderTop: '1px solid white',
-//                         }}>
-//                         <Typography variant="body" sx={{ fontWeight: 'bold' }}>
-//                             Symbol:&nbsp;
-//                             <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-//                                 {contract?.symbol}
-//                             </Typography>
-//                         </Typography>
-//                     </Stack>
-//                     <Stack
-//                         p={2}
-//                         sx={{
-//                             flex: 1,
-//                             borderTop: '1px solid white',
-//                         }}>
-//                         <Typography variant="body" sx={{ fontWeight: 'bold' }}>
-//                             Price:&nbsp;
-//                             <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
-//                                 {nftPrice.price} {nftPrice.currency}
-//                             </Typography>
-//                         </Typography>
-//                     </Stack>
-//                 </Stack>
-//             </Stack>
-//         </Box>
-//     );
-// };
-
-// export const NFTStack = ({ contract, nftPrice, nftImage }) => {
-//     return (
-//         <Box sx={{ position: 'relative', width: '100%', maxWidth: 460, display: 'flex', justifyContent: 'flex-end', marginLeft: 'auto' }}>
-//             <Box sx={{ position: 'absolute', top: 0 }}>
-//                 <NFT contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
-//             </Box>
-//             <Box sx={{ position: 'absolute', top: 40, transform: 'scale(1.05)' }}>
-//                 <NFT contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
-//             </Box>
-//             <Box sx={{ position: 'absolute', top: 80, transform: 'scale(1.1)' }}>
-//                 <NFT contract={contract} nftImage={nftImage} nftPrice={nftPrice} />
-//             </Box>
-//         </Box>
-//     );
-// };
-
 export const ContractDetails = ({ contract }) => {
+    const contractName = contract.name.replace(/\s+/g, '-').toLowerCase();
+    const isContractDeployedOnTestnet = isTestnetBlockchain(contract?.blockchain);
+
+    const openSeaLink = isContractDeployedOnTestnet && `https://testnets.opensea.io/collection/${contractName}` || `https://opensea.io/collection/${contractName}`;
+    const openSeaLink2 = isContractDeployedOnTestnet && `https://testnets.opensea.io/get-listed/step-two` || `https://opensea.io/get-listed/step-two`;
+
     return (
         <Box>
             <Stack
@@ -227,6 +85,15 @@ export const ContractDetails = ({ contract }) => {
                 {contract?.address && <Link target="_blank" href={`https://etherscan.io/address/${contract?.address}`} sx={{ fontSize: 14, color: '#000' }}>
                     {contract?.address}
                 </Link> || null}
+            </Box>
+
+            <Box sx={{ my: 2 }}>
+                <Typography sx={{ textTransform: 'capitalize' }}>View on OpenSea:</Typography>
+                <Link target="_blank" href={openSeaLink} sx={{ fontSize: 14, color: '#000' }}>{openSeaLink}</Link>
+                <Typography sx={{ fontSize: 13, fontStyle: 'italic', mt: 1 }} color="GrayText">
+                    **Trouble opening above link**<br />
+                    <Link target="_blank" href={openSeaLink2} sx={{ color: '#000' }}>{openSeaLink2}</Link>
+                </Typography>
             </Box>
         </Box>
     );
@@ -272,9 +139,9 @@ export const AddressList = ({ addresses }) => {
     );
 }
 
-export const NFtDetails = ({ contract, nftPrice, disabled }) => {
+const NFTDetails = ({ contract, nftPrice, disabled }) => {
     return (
-        <Box sx={{ height: 114 }}>
+        <Box sx={{ height: 114, filter: 'drop-shadow(2px 2px 8px gray)' }}>
             <Stack p={2} sx={{ borderTop: '1px solid black' }}>
                 <Typography variant="body" sx={{ fontWeight: 'bold', color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>
                     Collection name:&nbsp;
@@ -317,7 +184,28 @@ export const NFtDetails = ({ contract, nftPrice, disabled }) => {
     );
 }
 
-export const NFT = ({ contract, nftImage, nftPrice }) => {
+const NFTIsRevealedChip = ({ disabled, isRevealed }) => {
+    return (
+        <Box sx={{
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#fff',
+            top: 0,
+            right: 0,
+            height: 36,
+            padding: '0 12px',
+            borderRadius: '0 16px',
+            boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
+        }}>
+            <CircleIcon sx={{ color: '#C4C4C4' }} /> &nbsp;
+            <Typography sx={{ fontWeight: 600, color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>{isRevealed && 'Revealed' || 'Unrevealed'}</Typography>
+        </Box>
+    );
+}
+
+const NFT = ({ contract, nftImage, nftPrice, isRevealed, disabled }) => {
     return (
         <Card sx={{ width: '100%', height: '100%', borderRadius: 16 }} raised={true}>
             <CardContent sx={{ padding: '0 !important', height: '100%' }}>
@@ -331,16 +219,24 @@ export const NFT = ({ contract, nftImage, nftPrice }) => {
                         flexDirection: 'column'
                     }}
                 >
-                    <UploadFileRoundedIcon sx={{ fontSize: 136, color: '#fff' }} />
-                    <Typography sx={{ color: '#fff', fontStyle: 'italic', fontWeight: 600 }}>Click to add your collection here</Typography>
+                    {nftImage.isLoading && <CircularProgress style={{ height: '100%', alignItems: 'center' }} /> || null}
+                    {!nftImage.isLoading && <img
+                        style={{
+                            height: '100%',
+                            width: '100%',
+                            objectFit: 'cover',
+                        }}
+                        src={nftImage.src || imageNotFound}
+                    /> || null}
                 </Box>
-                <NFtDetails contract={contract} nftPrice={nftPrice} />
+                <NFTDetails contract={contract} nftPrice={nftPrice} disabled={disabled} />
+                <NFTIsRevealedChip isRevealed={isRevealed} disabled={disabled} />
             </CardContent>
         </Card>
     );
 }
 
-export const BlankNFT = ({ setIsModalOpen, contract, nftPrice, isRevealed, disabled }) => {
+const BlankNFT = ({ setIsModalOpen, contract, nftPrice, isRevealed, disabled }) => {
     return (
         <Card sx={{ width: '100%', height: '100%', borderRadius: 16 }} raised={true} onClick={e => setIsModalOpen(true)}>
             <CardContent sx={{ padding: '0 !important', height: '100%' }}>
@@ -358,22 +254,8 @@ export const BlankNFT = ({ setIsModalOpen, contract, nftPrice, isRevealed, disab
                     {disabled && 'not-allowed' && <BlockIcon sx={{ fontSize: 136, color: 'rgba(255, 0, 0, 0.38)' }} /> || <UploadFileRoundedIcon sx={{ fontSize: 136, color: '#fff' }} />}
                     <Typography sx={{ color: disabled && 'rgba(0, 0, 0, 0.38)' || '#fff', fontStyle: 'italic', fontWeight: 600 }}>Click to add your collection here</Typography>
                 </Box>
-                <NFtDetails contract={contract} nftPrice={nftPrice} disabled={disabled} />
-                <Box sx={{
-                    position: 'absolute',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: '#fff',
-                    top: 0,
-                    right: 0,
-                    height: 36,
-                    padding: '0 12px',
-                    borderRadius: '0 16px',
-                }}>
-                    <CircleIcon sx={{ color: '#C4C4C4' }} /> &nbsp;
-                    <Typography sx={{ fontWeight: 600, color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>{isRevealed && 'Revealed' || 'Unrevealed'}</Typography>
-                </Box>
+                <NFTDetails contract={contract} nftPrice={nftPrice} disabled={disabled} />
+                <NFTIsRevealedChip isRevealed={isRevealed} disabled={disabled} />
             </CardContent>
         </Card>
     );
@@ -385,26 +267,58 @@ export const BlankNFT = ({ setIsModalOpen, contract, nftPrice, isRevealed, disab
 //     unRevealedtNftImage
 //     revealedNftImage
 //     setIsModalOpen
-//     activeNFTImageType: 'REVEALED' | 'UNREVEALED';
 //     disabled
 //     isLargeScreen
 // }
 export const NFTStack = (props) => {
+    const [activeNFTImageType, setActiveNFTImageType] = useState('REVEALED'); // "REVEALED" | "UNREVEALED"
+    const [isNftRevealEnabled, setIsNftRevealEnabled] = useState(true); // "REVEALED" | "UNREVEALED"
+
+    const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const style = { position: 'absolute', top: 0, width: '100%', height: '100%' };
-    const isRevealedActive = props.activeNFTImageType === 'REVEALED';
+    const isRevealedActive = activeNFTImageType === 'REVEALED';
 
     return (
-        <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', maxWidth: 600, height: 742, margin: !props.isLargeScreen && 'auto' || undefined }}>
+        <Grid item xs={12} sx={{ flex: 1 }}>
+            <Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0', maxWidth: 600, margin: !isLargeScreen && 'auto' || undefined }}>
+                <Stack sx={{ width: 'max-content' }}>
+                    <FormControlLabel
+                        onChange={e => {
+                            props.setIsNftRevealEnabled(e.target.checked);
+                            setIsNftRevealEnabled(e.target.checked);
+                        }}
+                        checked={isNftRevealEnabled}
+                        control={<Switch />}
+                        label="Enable NFT reveal"
+                    />
+                </Stack>
 
-            {/* REVEALED NFT */}
-            <Box sx={{ ...style, zIndex: isRevealedActive && 1 || 0, top: !isRevealedActive && 40 || 0, left: !isRevealedActive && 40 || 0 }}>
-                <BlankNFT {...props} isRevealed={true} />
-            </Box>
+                <Button
+                    disabled={props.disabled}
+                    size="small"
+                    onClick={e => {
+                        setActiveNFTImageType(prevState => prevState === 'REVEALED' ? 'UNREVEALED' : 'REVEALED');
+                    }}
+                >
+                    <AutorenewIcon />&nbsp;Toggle reveal state
+                </Button>
+            </Grid>
+            <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', maxWidth: 600, height: 742, margin: !props.isLargeScreen && 'auto' || undefined }}>
 
-            {/* UNREVEALED NFT */}
-            <Box sx={{ ...style, zIndex: !isRevealedActive && 1 || 0, top: isRevealedActive && 40 || 0, left: isRevealedActive && 40 || 0 }}>
-                <BlankNFT {...props} isRevealed={false} />
+                {/* REVEALED NFT */}
+                <Zoom in={true} timeout={900}>
+                    <Box sx={{ ...style, pointerEvents: isRevealedActive && 'auto' || 'none', zIndex: isRevealedActive && 1 || 0, top: !isRevealedActive && 40 || 0, left: !isRevealedActive && 40 || 0 }}>
+                        {(props.revealedNftImage?.isLoading || props.revealedNftImage?.src) && <NFT {...props} nftImage={props.revealedNftImage} isRevealed={true} /> || <BlankNFT {...props} isRevealed={true} />}
+                    </Box>
+                </Zoom>
+
+                {/* UNREVEALED NFT */}
+                <Zoom in={true} timeout={900}>
+                    <Box sx={{ ...style, pointerEvents: !isRevealedActive && 'auto' || 'none', zIndex: !isRevealedActive && 1 || 0, top: isRevealedActive && 40 || 0, left: isRevealedActive && 40 || 0 }}>
+                        {(props.unRevealedtNftImage.isLoading || props.unRevealedtNftImage.src) && <NFT {...props} nftImage={props.unRevealedtNftImage} isRevealed={false} /> || <BlankNFT {...props} isRevealed={false} />}
+                    </Box>
+                </Zoom>
             </Box>
-        </Box>
+        </Grid>
     );
 }
