@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
-import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
+import { useCreateContract, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
 
 import { ContractController, WalletController, getBlockchainType, getBlockchainCurrency } from '@ambition-blockchain/controllers';
@@ -12,7 +12,7 @@ import posthog from 'posthog-js';
 const CONTRACT_VERSION = 'erc721a';
 
 export const useDeployContractForm = () => {
-	const { setContract } = useContract();
+	const { setContract, contract } = useContract();
 	const [state, setState] = useState({
 		formValidationErrors: {
 			name: null,
@@ -22,8 +22,9 @@ export const useDeployContractForm = () => {
 		activeFocusKey: 'NAME', // default,
 		activeBlockchain: 'ethereum', // default,
 		isTestnetEnabled: true, // default
-		isNftRevealEnabled: true, // default
-		isLoading: false,
+		isDeploying: false,
+		isSaving: false,
+		redirectOnSuccess: false,
 		contractState: {
 			id: null,
 			name: null,
@@ -31,6 +32,7 @@ export const useDeployContractForm = () => {
 			address: null,
 			blockchain: null,
 			type: CONTRACT_VERSION,
+			isNftRevealEnabled: true, // default
 			nftCollection: {
 				baseUri: null,
 				unRevealedBaseUri: null,
@@ -52,8 +54,25 @@ export const useDeployContractForm = () => {
 				message: 'Smart contract successfully created',
 			});
 			setContract(data?.createContract);
+			setContractState(data?.createContract);
+
+			if (state.redirectOnSuccess) {
+				handleRedirect(data?.createContract?.id);
+			}
+
 			posthog.capture('User created contract');
-			handleRedirect(data?.createContract?.id);
+		}
+	});
+
+	const [updateContractDetails] = useUpdateContractDetails({
+		onCompleted: (data) => {
+			addToast({
+				severity: 'success',
+				message: 'Smart contract updated successfully!',
+			});
+			setContract({ ...contract, ...data?.updateContractDetails });
+			setContractState(data?.updateContractDetails);
+			posthog.capture('User updated contract details');
 		}
 	});
 
@@ -74,30 +93,20 @@ export const useDeployContractForm = () => {
 			label: 'Collection size',
 		},
 		price: {
-			default: '',
+			default: '1',
 			placeholder: '0.5',
 			label: 'Price per mint',
 		},
 	});
-
-	const onDeploy = () => {
-		addToast({
-			severity: 'info',
-			message:
-				'Deploying contract to Ethereum. This might take a couple of seconds...',
-		});
-	};
 
 	const handleRedirect = (id) => {
 		history.push(`/smart-contracts/v2/${id}/deploy/success`);
 	};
 
 	const onError = (err) => {
-		addToast({
-			severity: 'error',
-			message: err.message,
-		});
-		setLoading(false);
+		addToast({ severity: 'error', message: err?.message });
+		setIsDeploying(false);
+		setIsSaving(false);
 	};
 
 	const setFormValidationErrors = () => {
@@ -126,7 +135,6 @@ export const useDeployContractForm = () => {
 	/**
 	 * Deploy contract to blockchain
 	 */
-
 	const deployContract = async () => {
 		const { name, symbol, maxSupply } = deployContractForm;
 
@@ -136,8 +144,13 @@ export const useDeployContractForm = () => {
 			return;
 		}
 
-		onDeploy();
-		setLoading(true);
+		setState(prevState => ({ ...prevState, redirectOnSuccess: true }));
+		setIsDeploying(true);
+		addToast({
+			severity: 'info',
+			message: 'Deploying contract to Ethereum. This might take a couple of seconds...',
+		});
+
 		// get the blockchain type on the basis of isTestnetEnabled 
 		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
 
@@ -153,6 +166,7 @@ export const useDeployContractForm = () => {
 			// switch network to testnet
 			await walletController.compareNetwork(blockchain, async () => {
 				// deploy contract
+				// No need to update price user can update the price later when they open public sales, This will save GAS
 				const deployedContract = await contractController.deployContract(
 					from,
 					name.value,
@@ -161,14 +175,16 @@ export const useDeployContractForm = () => {
 					e => onError(e)
 				);
 
-				// Update backend
-				if (deployedContract) {
-					setState(prevState => ({ ...prevState, contractAddress: deployedContract.options.address }));
-					// onCreateContract(deployedContract.options.address);
+				if (!deployedContract) {
+					onError(new Error("Error! Something went wrong unable to deploy contract."));
+					return;
 				}
+
+				// Update backend
+				saveContract(deployedContract.options.address);
 			});
 		} catch (e) {
-			console.log(e, '3');
+			console.log(e, 'Error! deploying contract.');
 			onError(e);
 		}
 	}
@@ -177,52 +193,88 @@ export const useDeployContractForm = () => {
 	 * Creates contract in backend
 	 */
 	const saveContract = async (contractAddress) => {
+		setIsSaving(true);
+
 		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
-		const { name, symbol, maxSupply } = deployContractForm;
+		const { name, symbol, maxSupply, price } = deployContractForm;
+
+		// validate form
+		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0) {
+			setFormValidationErrors();
+			return;
+		}
 
 		try {
-			const ContractInput = {
+			const contractInput = {
 				name: name.value,
 				symbol: symbol.value,
-				address: contractAddress,
+				address: contractAddress || null,
 				blockchain,
 				type: CONTRACT_VERSION,
 				nftCollection: {
-					price: 1, // save in DB it is going to be always 1 SOL or 1 ETH
+					price: parseInt(price.value || 1),
 					size: parseInt(maxSupply.value),
 					currency: getBlockchainCurrency(blockchain),
-					// unRevealedBaseUri:
+					// unRevealedBaseUri:,
+					// baseUri
 				},
 			};
-			await createContract({ variables: { contract: ContractInput } });
-			setLoading(false);
+			await createContract({ variables: { contract: contractInput } });
+			setIsSaving(false);
 		} catch (err) {
 			onError(new Error("Transaction succeeded but failed to update backend. Please contact an administrator."));
 		}
 	};
 
 	/**
-	 * set the focus key: 'NAME' | 'SYMBOL' | 'MAX_SUPPLY'
-	 * on the basis of respective activeFocusKey we show description on the right-hand side of the form  
+	 * Update contract in backend
 	 */
-	const setActiveFocusKey = (activeFocusKey) => setState(prevState => ({ ...prevState, activeFocusKey }));
+	const updateContract = async () => {
+		if (!state.contractState.id) {
+			onError(new Error("Error! Contract id missing."));
+			return
+		}
+
+		setIsSaving(true);
+
+		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
+		const { name, symbol, maxSupply, price } = deployContractForm;
+		try {
+			const contractInput = {
+				name: name.value,
+				symbol: symbol.value,
+				blockchain,
+				nftCollection: {
+					price: parseInt(price.value || 1),
+					size: parseInt(maxSupply.value),
+					currency: getBlockchainCurrency(blockchain)
+				},
+			};
+			await updateContractDetails({ variables: { ...contractInput } });
+			setIsSaving(false);
+		} catch (err) {
+			onError(new Error("Transaction succeeded but failed to update backend. Please contact an administrator."));
+		}
+	};
 
 	const setActiveBlockchain = (activeBlockchain) => setState(prevState => ({ ...prevState, activeBlockchain }));
 
 	const setIsTestnetEnabled = (isTestnetEnabled) => setState(prevState => ({ ...prevState, isTestnetEnabled }));
 
-	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, isNftRevealEnabled }));
+	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, contractState: { ...prevState.contractState, isNftRevealEnabled } }));
 
-	const setLoading = (isLoading) => setState(prevState => ({ ...prevState, isLoading }));
+	const setIsDeploying = (isDeploying) => setState(prevState => ({ ...prevState, isDeploying }));
+	const setIsSaving = (isSaving) => setState(prevState => ({ ...prevState, isSaving }));
+
+	const setContractState = (contractState) => setState(prevState => ({ ...prevState, contractState: { ...prevState.contractState, ...contractState } }));
 
 	return {
 		...state,
 		deployContractForm,
 		deployContract,
 		saveContract,
-		onDeploy,
+		updateContract,
 		onError,
-		setActiveFocusKey,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
 		setIsNftRevealEnabled

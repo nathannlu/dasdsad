@@ -3,7 +3,9 @@ import {
     CREATE_CONTRACT,
     GET_CONTRACTS,
     SET_BASE_URI,
-    UPDATE_CONTRACT,
+    SET_UN_REVEALED_BASE_URI,
+    UPDATE_CONTRACT_ADDRESS,
+    UPDATE_CONTRACT_DETAILS,
     SET_WHITELIST,
     GET_CONTRACT,
     DELETE_CONTRACT,
@@ -106,6 +108,36 @@ export const useSetBaseUri = ({ onCompleted, onError }) => {
     return [setBaseUri, { ...mutationResult }];
 };
 
+export const useSetUnRevealedBaseUri = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+    const [setUnRevealedBaseUri, { ...mutationResult }] = useMutation(SET_UN_REVEALED_BASE_URI, {
+        onCompleted: async (data) => {
+            const updated = data.setUnRevealedBaseUri;
+
+            // Find obj in arr and updated
+            setContracts((prevState) => {
+                const newState = prevState.map((contract) => {
+                    if (contract.id == updated.id) {
+                        return {
+                            ...contract,
+                            nftCollection: updated.nftCollection,
+                        };
+                    }
+
+                    return contract;
+                });
+
+                return newState;
+            });
+
+            onCompleted && onCompleted(data);
+        },
+        onError,
+    });
+
+    return [setUnRevealedBaseUri, { ...mutationResult }];
+};
+
 export const useSetNftPrice = ({ onCompleted, onError }) => {
     const { setContracts } = useContract();
     const [setNftPrice, { ...mutationResult }] = useMutation(SET_NFT_PRICE, {
@@ -158,14 +190,14 @@ export const useSetWhitelist = ({ onCompleted, onError }) => {
     return [setWhitelist, { ...mutationResult }];
 };
 
-export const useUpdateContract = ({ onCompleted, onError }) => {
+export const useUpdateContractAddress = ({ onCompleted, onError }) => {
     const { setContracts } = useContract();
 
-    const [updateContract, { ...mutationResult }] = useMutation(
-        UPDATE_CONTRACT,
+    const [updateContractAddress, { ...mutationResult }] = useMutation(
+        UPDATE_CONTRACT_ADDRESS,
         {
             onCompleted: async (data) => {
-                const updated = data.updateContract;
+                const updated = data.updateContractAddress;
 
                 // Find obj in arr and updated
                 setContracts((prevState) => {
@@ -186,5 +218,33 @@ export const useUpdateContract = ({ onCompleted, onError }) => {
         }
     );
 
-    return [updateContract, { ...mutationResult }];
+    return [updateContractAddress, { ...mutationResult }];
+};
+
+export const useUpdateContractDetails = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+
+    const [updateContractDetails, { ...mutationResult }] = useMutation(
+        UPDATE_CONTRACT_DETAILS,
+        {
+            onCompleted: async (data) => {
+                const updated = data.updateContractDetails;
+
+                // Find obj in arr and updated
+                setContracts((prevState) => {
+                    const newState = prevState.map((contract) => {
+                        if (contract.id == updated.id) {
+                            return { ...contract, ...updated };
+                        }
+                        return contract;
+                    });
+                    return newState;
+                });
+                onCompleted && onCompleted(data);
+            },
+            onError
+        }
+    );
+
+    return [updateContractDetails, { ...mutationResult }];
 };

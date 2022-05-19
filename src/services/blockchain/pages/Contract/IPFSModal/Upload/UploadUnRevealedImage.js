@@ -6,12 +6,10 @@ import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
 
 const Traits = (props) => {
-    const { uploadedFiles, setUploadedFiles } = useContract();
-    const { pinImages, loading } = useIPFS();
+    const { setUploadedUnRevealedImageFile } = useContract();
+    const { pinUnrevealedImage, loading } = useIPFS();
 
-    const handleImagesUpload = (acceptedFiles) => {
-        setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
-    };
+    const handleImagesUpload = (file) => setUploadedUnRevealedImageFile(file);
 
     /**
      * status marks if images were successfully pinned on pinata.cloud
@@ -22,7 +20,7 @@ const Traits = (props) => {
      */
     const callback = (status) => {
         if (!status) {
-            setUploadedFiles([]);
+            setUploadedUnRevealedImageFile(null);
         }
         props.setActiveStep(status ? props.step + 1 : props.step);
     };
@@ -33,10 +31,9 @@ const Traits = (props) => {
                 <Box>
                     <Dropzone
                         accept={['image/png', 'image/webp', 'video/mp4']}
-                        multiple
-                        onDrop={(acceptedFiles) =>
-                            handleImagesUpload(acceptedFiles)
-                        }>
+                        multiple={false}
+                        onDrop={(acceptedFiles) => handleImagesUpload(acceptedFiles)}
+                    >
                         {({ getRootProps, getInputProps }) => (
                             <Box
                                 sx={{
@@ -53,13 +50,8 @@ const Traits = (props) => {
                                     style={{ padding: '64px' }}
                                     {...getRootProps()}>
                                     <input {...getInputProps()} />
-                                    <p
-                                        style={{
-                                            opacity: 0.5,
-                                            textAlign: 'center',
-                                        }}>
-                                        Drag &apos;n&apos; drop your collection
-                                        here.
+                                    <p style={{ opacity: 0.5, textAlign: 'center' }}>
+                                        Drag &apos;n&apos; drop your Un revealed image here.
                                     </p>
                                 </div>
                             </Box>
@@ -70,11 +62,12 @@ const Traits = (props) => {
                 <Stack>
                     <Box>
                         <Folder />
-                        {uploadedFiles.length} Files added
+                        {uploadedFiles.length} File added
                         <Button
-                            onClick={() => setUploadedFiles([])}
+                            onClick={() => setUploadedUnRevealedImageFile(null)}
                             type="small"
-                            color="error">
+                            color="error"
+                        >
                             Delete
                         </Button>
                     </Box>
@@ -82,7 +75,7 @@ const Traits = (props) => {
                     <LoadingButton
                         variant="contained"
                         loading={loading}
-                        onClick={() => pinImages(props.contract.blockchain, callback)}>
+                        onClick={() => pinUnrevealedImage(callback)}>
                         Upload
                     </LoadingButton>
                 </Stack>

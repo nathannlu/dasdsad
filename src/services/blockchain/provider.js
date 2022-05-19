@@ -22,6 +22,8 @@ export const ContractProvider = ({ children }) => {
 
     const [selectInput, setSelectInput] = useState('ethereum');
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile] = useState(null);
+    const [unRevealedBaseUri, setUnRevealedBaseUri] = useState(null);
     const [uploadedJson, setUploadedJson] = useState([]);
     const [imagesUrl, setImagesUrl] = useState(null);
     const [metadataUrl, setMetadataUrl] = useState(null); //unused
@@ -142,6 +144,10 @@ export const ContractProvider = ({ children }) => {
         setIpfsUrl,
         uploadedFiles,
         setUploadedFiles,
+        uploadedUnRevealedImageFile,
+        setUploadedUnRevealedImageFile,
+        unRevealedBaseUri,
+        setUnRevealedBaseUri,
         uploadedJson,
         setUploadedJson,
 

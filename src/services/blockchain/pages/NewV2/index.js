@@ -26,6 +26,7 @@ import etherLogo from 'assets/images/ether.png';
 import polygonLogo from 'assets/images/polygon.png';
 
 import { NFTStack } from '../../widgets';
+import IPFSModal from '../Contract/IPFSModal';
 
 const RadioLabel = ({ type, isTestnetEnabled }) => {
 	const content = { imgSrc: null, description: null };
@@ -77,15 +78,16 @@ const New = () => {
 		},
 		contractState,
 		formValidationErrors,
-		isLoading,
+		isDeploying,
+		isSaving,
 		activeBlockchain,
 		isTestnetEnabled,
-		isNftRevealEnabled,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
 		setIsNftRevealEnabled,
 		deployContract,
-		saveContract
+		saveContract,
+		updateContract
 	} = useDeployContractForm();
 
 	const nftPrice = { currency: contractState?.nftCollection?.currency, price: contractState?.nftCollection?.price };
@@ -268,15 +270,24 @@ const New = () => {
 							</Stack>
 
 							<Stack direction="row" py={2} gap={2} alignItems="center">
-								<Button onClick={deployContract} variant="contained" disabled={isLoading}>
-									{isLoading && <CircularProgress isButtonSpinner={true} /> || null}
+								<Button onClick={deployContract} variant="contained" disabled={isDeploying}>
+									{isDeploying && <CircularProgress isButtonSpinner={true} /> || null}
 									Deploy Contract
 								</Button>
-								<Button onClick={saveContract} disabled={isLoading}>
-									{isLoading && <CircularProgress isButtonSpinner={true} /> || null}
+								<Button
+									onClick={() => {
+										if (contractState?.id) {
+											updateContract();
+											return;
+										}
+										saveContract();
+									}}
+									disabled={isSaving}
+								>
+									{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
 									Save Contract
 								</Button>
-								{isLoading && <Typography sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }} color="GrayText">
+								{isDeploying && <Typography sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }} color="GrayText">
 									Creating Contract! Please be patient it will take couple of seconds...
 								</Typography>}
 							</Stack>
@@ -285,7 +296,7 @@ const New = () => {
 						<Grid item xs={12} lg={6} sx={{ flex: 1, px: 4 }}>
 							<Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0', maxWidth: 600, margin: !isLargeScreen && 'auto' || undefined }}>
 								<Stack sx={{ width: 'max-content' }}>
-									<FormControlLabel disabled={!contractState?.id} onChange={e => setIsNftRevealEnabled(e.target.checked)} checked={isNftRevealEnabled} control={<Switch />} label="Enable NFT reveal" />
+									<FormControlLabel onChange={e => setIsNftRevealEnabled(e.target.checked)} checked={contractState.isNftRevealEnabled} control={<Switch />} label="Enable NFT reveal" />
 								</Stack>
 
 								<Button disabled={!contractState?.id} size="small" onClick={e => setActiveNFTImageType(prevState => prevState === 'REVEALED' ? 'UNREVEALED' : 'REVEALED')}>

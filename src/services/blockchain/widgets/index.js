@@ -296,7 +296,7 @@ export const NFtDetails = ({ contract, nftPrice, disabled }) => {
 
                 <Stack p={2} sx={{ flex: 1, borderRight: '1px solid black', borderTop: '1px solid black' }}>
                     <Typography variant="body" sx={{ fontWeight: 'bold', color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>
-                        Collection size:&nbsp;
+                        Size:&nbsp;
                         <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
                             {contract?.nftCollection?.size}
                         </Typography>

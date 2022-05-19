@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
-import { useSetWhitelist, useSetBaseUri, useSetNftPrice } from 'services/blockchain/gql/hooks/contract.hook.js';
+import { useSetWhitelist, useSetBaseUri, useSetUnRevealedBaseUri, useSetNftPrice, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
 export const useContractSettings = () => {
@@ -22,6 +22,8 @@ export const useContractSettings = () => {
 	
 	const [setWhitelist] = useSetWhitelist({});
 	const [setBaseUri] = useSetBaseUri({});
+	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({});
+	const [updateContractDetails] = useUpdateContractDetails({});
 	const [setNftPrice] = useSetNftPrice({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
