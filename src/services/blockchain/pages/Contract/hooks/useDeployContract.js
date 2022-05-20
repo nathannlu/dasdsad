@@ -45,16 +45,14 @@ export const useDeployContract = (contract) => {
                     size: contract.nftCollection.size,
                     price: contract.nftCollection.price,
                     liveDate: 'now',
-                    creators: [
-                        { address: account, verified: true, share: 100 },
-                    ],
+
                     cacheHash: contract.nftCollection.cacheHash,
                     id: contract.id,
                     env,
                 });
             }
         } catch (err) {
-            console.error(err);
+            console.log(err.code);
             addToast({
                 severity: 'error',
                 message: err.message,

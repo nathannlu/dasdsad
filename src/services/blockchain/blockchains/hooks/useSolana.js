@@ -68,7 +68,9 @@ export const useSolana = () => {
                 size,
                 price,
                 liveDate,
-                creators,
+								creators: [
+										{ address, verified: true, share: 100 },
+								],
                 cacheHash,
                 env,
             });
@@ -77,10 +79,26 @@ export const useSolana = () => {
 
             handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
-            console.log(err);
+
+					let message = 'Something went wrong. Please open a ticket in Discord for help.';
+
+					if (err == 'Error: Non-base58 character') {
+						 message = 'You must be logged in with Phantom wallet in order to deploy on Solana'
+					}
+					if (err == 'Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x1') {
+						message = 'Not enough Sol in your wallet. E.g. 5.8sol is needed for 3,333 NFTs'
+						
+					}
+
+					if(err == 'Error: failed to send transaction: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.') {
+						message = 'Your wallet has no Sol. Is your sol on the correct network (mainnet/devnet)?'
+					}
+
+					console.log(err)
+//						if(err)
             addToast({
                 severity: 'error',
-                message: "You must be logged in with Phantom wallet in order to deploy on Solana"
+                message
             });
         }
     };
