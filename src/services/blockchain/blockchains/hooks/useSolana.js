@@ -77,10 +77,10 @@ export const useSolana = () => {
 
             handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
-            console.error(err);
+            console.log(err);
             addToast({
                 severity: 'error',
-                message: err.message,
+                message: "You must be logged in with Phantom wallet in order to deploy on Solana"
             });
         }
     };

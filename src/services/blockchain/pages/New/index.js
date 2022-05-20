@@ -77,7 +77,7 @@ const Upload = () => {
         try {
             if (
                 (wallet === 'metamask' || wallet === 'default') &&
-                selectInput === 'solanadevnet'
+                (selectInput === 'solanadevnet' || selectInput === 'solana')
             )
                 throw new Error(
                     'You must login with a phantom wallet to deploy a solana contract'
