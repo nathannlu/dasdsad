@@ -75,7 +75,6 @@ const Dashboard = () => {
                                     A list of your deployed contracts
                                 </Typography>
                             </Box>
-
                             <Stack gap={1} direction="row" sx={{ ml: 'auto' }}>
                                 <a href="/generator">
                                     <Button size="small">

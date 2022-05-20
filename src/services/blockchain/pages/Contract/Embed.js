@@ -32,23 +32,25 @@ const Embed = ({ contract, id }) => {
         else if (contract.blockchain === 'rinkeby') chainId = '4';
         else if (contract.blockchain === 'polygon') chainId = '89';
         else if (contract.blockchain === 'mumbai') chainId = '13881';
-        else if (contract.blockchain.indexOf('solana') != -1) chainId = 'solana';
+        else if (contract.blockchain === 'solana') chainId = 'solana';
+        else if (contract.blockchain === 'solanadevnet') chainId = 'solanadevnet';
+        else throw new Error('blockchain not supported!');
         setEmbedChainId(chainId);
 
         // setEmbedCode(`<iframe
-		// 	src="https://${
+        // 	src="https://${
         //         window.location.hostname.indexOf('localhost') === -1
         //             ? window.location.hostname
         //             : `${window.location.hostname}:3000`
         //     }/smart-contracts/embed/v1?contract=${
         //     contract.address
         // }&chainId=${chainId}"
-		// 	width="100%"
-		// 	height="115px"
-		// 	frameborder="0"
-		// 	scrolling="no"
+        // 	width="100%"
+        // 	height="115px"
+        // 	frameborder="0"
+        // 	scrolling="no"
         //     style="border-radius: 10px; width: 350px"
-		// />`);
+        // />`);
 
         setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}"></ambition-button>
         <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.v1.0.1.js"></script>`);
