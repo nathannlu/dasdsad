@@ -226,6 +226,10 @@ export const Web3Provider = ({ children }) => {
 
     // Load account and load smart contracts
     const loadBlockchainData = async (_contract) => {
+			await loadWalletProvider(wallet)
+
+			/*
+            if (wallet === 'default' || wallet === 'metamask') {
         if (window.ethereum) {
             //const Contract = _contract
             const web3 = window.web3;
@@ -234,8 +238,11 @@ export const Web3Provider = ({ children }) => {
             const accounts = await web3.eth.getAccounts();
             setAccount(accounts[0]);
         }
+            }
 
+*/
         console.log('loadBlockchainData deployed');
+			
     };
 
     // Mint NFT
