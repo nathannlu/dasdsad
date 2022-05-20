@@ -12,7 +12,12 @@ import posthog from 'posthog-js';
 const CONTRACT_VERSION = 'erc721a';
 
 export const useDeployContractForm = () => {
+	const walletController = new WalletController();
+	const history = useHistory();
+
+	const { addToast } = useToast();
 	const { setContract, contract } = useContract();
+
 	const [state, setState] = useState({
 		formValidationErrors: {
 			name: null,
@@ -43,9 +48,28 @@ export const useDeployContractForm = () => {
 		}
 	});
 
-	const walletController = new WalletController();
-	const { addToast } = useToast();
-	const history = useHistory();
+	const { form: deployContractForm, setFormState: setDeployContractFormState } = useForm({
+		name: {
+			default: '',
+			placeholder: 'Ambition',
+			label: 'Name of your collection'
+		},
+		symbol: {
+			default: '',
+			placeholder: 'AMB',
+			label: 'Symbol of your collection',
+		},
+		maxSupply: {
+			default: '',
+			placeholder: '1000',
+			label: 'Collection size',
+		},
+		price: {
+			default: '1',
+			placeholder: '0.5',
+			label: 'Price per mint',
+		},
+	});
 
 	const [createContract, { loading }] = useCreateContract({
 		onCompleted: (data) => {
@@ -76,29 +100,6 @@ export const useDeployContractForm = () => {
 		}
 	});
 
-	const { form: deployContractForm } = useForm({
-		name: {
-			default: '',
-			placeholder: 'Ambition',
-			label: 'Name of your collection'
-		},
-		symbol: {
-			default: '',
-			placeholder: 'AMB',
-			label: 'Symbol of your collection',
-		},
-		maxSupply: {
-			default: '',
-			placeholder: '1000',
-			label: 'Collection size',
-		},
-		price: {
-			default: '1',
-			placeholder: '0.5',
-			label: 'Price per mint',
-		},
-	});
-
 	const handleRedirect = (id) => {
 		history.push(`/smart-contracts/v2/${id}/deploy/success`);
 	};
@@ -116,7 +117,8 @@ export const useDeployContractForm = () => {
 			formValidationErrors: {
 				name: name.value ? null : true,
 				symbol: symbol.value ? null : true,
-				maxSupply: maxSupply.value && Number(maxSupply.value) > 0 ? null : true
+				maxSupply: maxSupply.value && Number(maxSupply.value) > 0 ? null : true,
+				price: price.value && Number(price.value) > 0 ? null : true,
 			}
 		}));
 
@@ -126,7 +128,8 @@ export const useDeployContractForm = () => {
 			formValidationErrors: {
 				name: null,
 				symbol: null,
-				maxSupply: null
+				maxSupply: null,
+				price: null
 			}
 		})), 3000);
 		return;
@@ -199,7 +202,7 @@ export const useDeployContractForm = () => {
 		const { name, symbol, maxSupply, price } = deployContractForm;
 
 		// validate form
-		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0) {
+		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0 || Number(price.value) <= 0) {
 			setFormValidationErrors();
 			return;
 		}
@@ -212,8 +215,8 @@ export const useDeployContractForm = () => {
 				blockchain,
 				type: CONTRACT_VERSION,
 				nftCollection: {
-					price: parseInt(price.value || 1),
-					size: parseInt(maxSupply.value),
+					price: `${price.value}`,
+					size: `${parseInt(maxSupply.value)}`,
 					currency: getBlockchainCurrency(blockchain),
 					// unRevealedBaseUri:,
 					// baseUri
@@ -222,38 +225,43 @@ export const useDeployContractForm = () => {
 			await createContract({ variables: { contract: contractInput } });
 			setIsSaving(false);
 		} catch (err) {
-			onError(new Error("Transaction succeeded but failed to update backend. Please contact an administrator."));
+			onError(new Error("Error Saving contract details. Please contact an administrator."));
 		}
 	};
 
 	/**
 	 * Update contract in backend
 	 */
-	const updateContract = async () => {
+	const updateContract = async (contractId) => {
 		if (!state.contractState.id) {
 			onError(new Error("Error! Contract id missing."));
 			return
 		}
 
-		setIsSaving(true);
-
 		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
 		const { name, symbol, maxSupply, price } = deployContractForm;
+
+		// validate form
+		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0 || Number(price.value) <= 0) {
+			setFormValidationErrors();
+			return;
+		}
+
+		setIsSaving(true);
+
 		try {
 			const contractInput = {
 				name: name.value,
 				symbol: symbol.value,
 				blockchain,
-				nftCollection: {
-					price: parseInt(price.value || 1),
-					size: parseInt(maxSupply.value),
-					currency: getBlockchainCurrency(blockchain)
-				},
+				price: `${price.value}`,
+				size: `${parseInt(maxSupply.value)}`,
+				currency: getBlockchainCurrency(blockchain)
 			};
-			await updateContractDetails({ variables: { ...contractInput } });
+			await updateContractDetails({ variables: { ...contractInput, id: contractId } });
 			setIsSaving(false);
 		} catch (err) {
-			onError(new Error("Transaction succeeded but failed to update backend. Please contact an administrator."));
+			onError(new Error("Error Saving contract details. Please contact an administrator."));
 		}
 	};
 
@@ -277,6 +285,8 @@ export const useDeployContractForm = () => {
 		onError,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
-		setIsNftRevealEnabled
+		setIsNftRevealEnabled,
+		setContractState,
+		setDeployContractFormState
 	};
 };

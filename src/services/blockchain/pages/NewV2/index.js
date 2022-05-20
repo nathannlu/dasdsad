@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getResolvedImageUrl } from '@ambition-blockchain/controllers';
+import { getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType } from '@ambition-blockchain/controllers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import {
@@ -61,7 +61,7 @@ const RadioLabel = ({ type, isTestnetEnabled }) => {
 	)
 }
 
-const New = () => {
+const New = ({ contract }) => {
 	const history = useHistory();
 	const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
@@ -88,7 +88,9 @@ const New = () => {
 		setIsNftRevealEnabled,
 		deployContract,
 		saveContract,
-		updateContract
+		updateContract,
+		setContractState,
+		setDeployContractFormState
 	} = useDeployContractForm();
 
 	const nftPrice = { currency: contractState?.nftCollection?.currency, price: contractState?.nftCollection?.price };
@@ -115,7 +117,7 @@ const New = () => {
 		if (!contractState.nftCollection.unRevealedBaseUri) {
 			return;
 		}
-		setRevealedNftImage(prevState => ({ ...prevState, src: contractState.nftCollection.unRevealedBaseUri, isLoading: false }));
+		setUnRevealedtNftImage(prevState => ({ ...prevState, src: contractState.nftCollection.unRevealedBaseUri, isLoading: false }));
 	}, [contractState.nftCollection.unRevealedBaseUri]);
 
 	useEffect(() => {
@@ -124,20 +126,43 @@ const New = () => {
 		}
 	}, [activeBlockchain]);
 
+	const setContractStateIneditMode = () => {
+		if (contract) {
+
+			setContractState(contract);
+
+			setDeployContractFormState(prevState => ({ ...prevState, name: { ...prevState.name, value: contract?.name || '' } }));
+			setDeployContractFormState(prevState => ({ ...prevState, symbol: { ...prevState.symbol, value: contract?.symbol || '' } }));
+			setDeployContractFormState(prevState => ({ ...prevState, maxSupply: { ...prevState.maxSupply, value: contract?.nftCollection?.size || '' } }));
+			setDeployContractFormState(prevState => ({ ...prevState, price: { ...prevState.price, value: contract?.nftCollection?.price || '' } }));
+
+			setActiveBlockchain(getMainnetBlockchainType(contract?.blockchain));
+			setIsTestnetEnabled(isTestnetBlockchain(contract?.blockchain));
+
+			if (contract?.nftCollection?.unRevealedBaseUri) {
+				setIsNftRevealEnabled(false);
+			}
+
+		}
+	}
+
+	useEffect(() => { setContractStateIneditMode(); }, []);
+
+	const isEditMode = !!contract.id;
+	const containerStyle = {
+		minHeight: '100vh',
+		overflow: 'hidden',
+		bgcolor: '#fff',
+		position: 'absolute',
+		zIndex: 1100,
+		top: 0,
+		paddingTop: '67px',
+	}
+
 	return (
 		<Fade in>
-			<Grid
-				container
-				sx={{
-					minHeight: '100vh',
-					overflow: 'hidden',
-					bgcolor: '#fff',
-					position: 'absolute',
-					zIndex: 1100,
-					top: 0,
-					paddingTop: '67px',
-				}}>
-				<AppBar
+			<Grid container sx={!isEditMode && containerStyle || undefined}>
+				{!isEditMode && <AppBar
 					position="fixed"
 					sx={{
 						bgcolor: 'grey.100',
@@ -161,16 +186,17 @@ const New = () => {
 							</Typography>
 						</Box>
 					</Stack>
-				</AppBar>
+				</AppBar> || null}
 
 				<Container>
 
 					<Grid container={true} flexDirection="column" sx={{ mb: 5 }} mt={4}>
 						<Stack>
 							<Typography color="primary" component="h1" sx={{ fontWeight: 600, fontSize: 45 }}>
-								Create your NFT collection
+								{isEditMode && 'Deploy' || 'Create'} your NFT collection
 							</Typography>
 						</Stack>
+
 						{isLargeScreen && <Stack>
 							<Typography variant="body" sx={{ fontSize: 24 }}>
 								ERC-721A smart contract
@@ -228,7 +254,7 @@ const New = () => {
 									variant="outlined"
 									{...price}
 									type="number"
-									error={Boolean(formValidationErrors.maxSupply)}
+									error={Boolean(formValidationErrors.price)}
 								/>
 							</Stack>
 							<Stack gap={2}>
@@ -300,7 +326,7 @@ const New = () => {
 											return;
 										}
 										if (contractState?.id) {
-											updateContract();
+											updateContract(contractState?.id);
 											return;
 										}
 										saveContract();

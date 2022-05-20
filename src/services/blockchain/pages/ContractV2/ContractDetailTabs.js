@@ -9,6 +9,7 @@ import Actions from './Actions';
 import Balance from './Balance';
 import Overview from './Overview';
 import Settings from './Settings';
+import Embed from '../Contract/Embed';
 
 const ContractDetailTabs = (props) => {
     const [value, setValue] = React.useState('overview');
@@ -21,6 +22,7 @@ const ContractDetailTabs = (props) => {
                     <Tab label="Overview" value="overview" />
                     <Tab label="Actions" value="actions" />
                     <Tab label="Settings" value="settings" />
+                    <Tab label="Embed" value="embed" />
                     <Tab label="Balance" value="balance" />
                 </Tabs>
             </Container>
@@ -30,6 +32,7 @@ const ContractDetailTabs = (props) => {
                     overview: <Overview {...props} />,
                     actions: <Actions {...props} />,
                     settings: <Settings {...props} />,
+                    embed: <Embed {...props} />,
                     balance: <Balance {...props} />
                 }[value]}
             </Box>

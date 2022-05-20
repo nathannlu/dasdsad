@@ -15,6 +15,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useToast } from 'ds/hooks/useToast';
 
 const Embed = ({ contract, id }) => {
+    console.log(contract, 'contract');
+
     const { addToast } = useToast();
     const [embedCode, setEmbedCode] = useState('');
     const [embedChainId, setEmbedChainId] = useState('');
@@ -52,8 +54,8 @@ const Embed = ({ contract, id }) => {
         //     style="border-radius: 10px; width: 350px"
         // />`);
 
-        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}"></ambition-button>
-        <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.v1.0.1.js"></script>`);
+        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}" type="${contract?.type === 'erc721a' ? 'erc721a' : ''}"></ambition-button>
+        <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js"></script>`);
     }, [contract]);
 
     return (

@@ -9,7 +9,7 @@ import { useContract } from 'services/blockchain/provider';
 import IPFSModal from '../Contract/IPFSModal';
 
 import ContractDetailTabs from './ContractDetailTabs';
-import NotComplete from './NotComplete';
+import Newv2 from '../NewV2';
 import { CircularProgress } from '@mui/material';
 
 const ContractV2 = () => {
@@ -53,6 +53,7 @@ const ContractV2 = () => {
 		const contract = contracts.find((c) => c.id === id);
 
 		if (contract) {
+
 			if (contract?.nftCollection?.unRevealedBaseUri) {
 				setUnRevealedtNftImage(prevState => ({ ...prevState, src: contract?.nftCollection?.unRevealedBaseUri, isLoading: false }));
 			}
@@ -73,21 +74,23 @@ const ContractV2 = () => {
 
 			setWalletController(walletController);
 
-			// Set single contract
 			setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
 			setIsLoading(false);
 
 			console.log(contract, 'contract');
 
-			const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
-			setContractController(contractController);
+			if (contract.address) {
+				const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
+				setContractController(contractController);
 
-			console.log(contractController, 'contractController');
+				console.log(contractController, 'contractController');
 
-			const contractState = await contractController.populateContractInfo();
-			console.log(contractState, 'contractState');
+				const contractState = await contractController.populateContractInfo();
+				console.log(contractState, 'contractState');
 
-			setContractState(contractState);
+				setContractState(contractState);
+			}
+
 		}
 	}
 
@@ -95,15 +98,24 @@ const ContractV2 = () => {
 		if (contracts.length) { init(); }
 	}, [contracts]);
 
+	if (isLoading) {
+		return (
+			<Stack>
+				<Container>
+
+					<Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
+						<CircularProgress />
+					</Stack>
+				</Container>
+			</Stack>
+		);
+	}
+
 	return (
 		<Stack>
 			<Container>
 
-				{isLoading && <Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
-					<CircularProgress />
-				</Stack>}
-
-				{!isLoading && <Box
+				<Box
 					sx={{
 						background: 'white',
 						zIndex: 10,
@@ -112,13 +124,7 @@ const ContractV2 = () => {
 					}}>
 
 					{!isSetupComplete ? (
-						<NotComplete
-							id={id}
-							contractState={contractState}
-							contract={contract}
-							setIsModalOpen={setIsModalOpen}
-							setIsNftRevealEnabled={setIsNftRevealEnabled}
-						/>
+						<Newv2 contract={contract} />
 					) : (
 						<ContractDetailTabs
 							id={id}
@@ -134,7 +140,7 @@ const ContractV2 = () => {
 							setIsNftRevealEnabled={setIsNftRevealEnabled}
 						/>
 					)}
-				</Box>}
+				</Box>
 
 				{contract?.id && <IPFSModal
 					id={id}
