@@ -7,7 +7,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Chip, Link, Grid, Card, CardContent, FormControlLabel, Switch, Zoom } from '@mui/material';
+import { Chip, Link, Grid, Card, CardContent, Zoom } from '@mui/material';
 import {
     Fade,
     Stack,
@@ -99,7 +99,7 @@ export const ContractDetails = ({ contract }) => {
     );
 };
 
-export const EmptyAddressList = ({ message }) => {
+export const ErrorMessage = ({ message }) => {
     return (<Typography color="error" sx={{ my: 4 }}>{message}</Typography>);
 }
 
@@ -152,7 +152,7 @@ const NFTDetails = ({ contract, nftPrice, disabled }) => {
             </Stack>
 
             <Stack direction="horizontal">
-                <Stack p={2} sx={{ flex: 1, borderRight: '1px solid black', borderTop: '1px solid black' }}>
+                <Stack sx={{ flex: 1, borderRight: '1px solid black', borderTop: '1px solid black', padding: '8px 8px 8px 16px', justifyContent: 'center' }}>
                     <Typography variant="body" sx={{ fontWeight: 'bold', color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>
                         Symbol:&nbsp;
                         <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
@@ -161,7 +161,7 @@ const NFTDetails = ({ contract, nftPrice, disabled }) => {
                     </Typography>
                 </Stack>
 
-                <Stack p={2} sx={{ flex: 1, borderRight: '1px solid black', borderTop: '1px solid black' }}>
+                <Stack sx={{ flex: 1, borderRight: '1px solid black', borderTop: '1px solid black', padding: '8px 8px 8px 16px', justifyContent: 'center' }}>
                     <Typography variant="body" sx={{ fontWeight: 'bold', color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>
                         Size:&nbsp;
                         <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
@@ -171,7 +171,7 @@ const NFTDetails = ({ contract, nftPrice, disabled }) => {
                 </Stack>
 
 
-                <Stack p={2} sx={{ flex: 1, borderTop: '1px solid black' }}>
+                <Stack sx={{ flex: 1, borderTop: '1px solid black', padding: '8px 8px 8px 16px', justifyContent: 'center' }}>
                     <Typography variant="body" sx={{ fontWeight: 'bold', color: disabled && 'rgba(0, 0, 0, 0.38)' || undefined }}>
                         Price:&nbsp;
                         <Typography variant="span" sx={{ textTransform: 'capitalize', fontWeight: '400' }}>
@@ -180,7 +180,7 @@ const NFTDetails = ({ contract, nftPrice, disabled }) => {
                     </Typography>
                 </Stack>
             </Stack>
-        </Box>
+        </Box >
     );
 }
 
@@ -272,7 +272,6 @@ const BlankNFT = ({ setIsModalOpen, contract, nftPrice, isRevealed, disabled }) 
 // }
 export const NFTStack = (props) => {
     const [activeNFTImageType, setActiveNFTImageType] = useState('REVEALED'); // "REVEALED" | "UNREVEALED"
-    const [isNftRevealEnabled, setIsNftRevealEnabled] = useState(true); // "REVEALED" | "UNREVEALED"
 
     const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const style = { position: 'absolute', top: 0, width: '100%', height: '100%' };
@@ -281,18 +280,6 @@ export const NFTStack = (props) => {
     return (
         <Grid item xs={12} sx={{ flex: 1 }}>
             <Grid container={true} justifyContent="space-between" sx={{ padding: '0 16px 8px 0', maxWidth: 600, margin: !isLargeScreen && 'auto' || undefined }}>
-                <Stack sx={{ width: 'max-content' }}>
-                    <FormControlLabel
-                        onChange={e => {
-                            props.setIsNftRevealEnabled(e.target.checked);
-                            setIsNftRevealEnabled(e.target.checked);
-                        }}
-                        checked={isNftRevealEnabled}
-                        control={<Switch />}
-                        label="Enable NFT reveal"
-                    />
-                </Stack>
-
                 <Button
                     disabled={props.disabled}
                     size="small"

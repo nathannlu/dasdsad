@@ -5,31 +5,32 @@ import { useHistory } from 'react-router-dom';
 import { useCreateContract, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
 
-import { ContractController, WalletController, getBlockchainType, getBlockchainCurrency } from '@ambition-blockchain/controllers';
+import { ContractController, getBlockchainType, getBlockchainCurrency } from '@ambition-blockchain/controllers';
 
 import posthog from 'posthog-js';
 
 const CONTRACT_VERSION = 'erc721a';
 
 export const useDeployContractForm = () => {
-	const walletController = new WalletController();
 	const history = useHistory();
 
 	const { addToast } = useToast();
-	const { setContract, contract } = useContract();
+	const { setContract, contract, setContracts, contracts } = useContract();
 
 	const [state, setState] = useState({
 		formValidationErrors: {
 			name: null,
 			symbol: null,
-			maxSupply: null
+			maxSupply: null,
+			price: null
 		},
 		activeFocusKey: 'NAME', // default,
 		activeBlockchain: 'ethereum', // default,
 		isTestnetEnabled: true, // default
 		isDeploying: false,
 		isSaving: false,
-		redirectOnSuccess: false,
+		redirectToDetailsPage: false,
+		redirectToSuccessPage: false,
 		contractState: {
 			id: null,
 			name: null,
@@ -37,7 +38,6 @@ export const useDeployContractForm = () => {
 			address: null,
 			blockchain: null,
 			type: CONTRACT_VERSION,
-			isNftRevealEnabled: true, // default
 			nftCollection: {
 				baseUri: null,
 				unRevealedBaseUri: null,
@@ -77,10 +77,13 @@ export const useDeployContractForm = () => {
 				severity: 'success',
 				message: 'Smart contract successfully created',
 			});
+
+			setContracts([...contracts, data?.createContract]);
+
 			setContract(data?.createContract);
 			setContractState(data?.createContract);
 
-			if (state.redirectOnSuccess) {
+			if (state.redirectToSuccessPage || state.redirectToDetailsPage) {
 				handleRedirect(data?.createContract?.id);
 			}
 
@@ -96,12 +99,20 @@ export const useDeployContractForm = () => {
 			});
 			setContract({ ...contract, ...data?.updateContractDetails });
 			setContractState(data?.updateContractDetails);
+
+			if (state.redirectToSuccessPage || state.redirectToDetailsPage) {
+				handleRedirect(data?.updateContractDetails?.id);
+			}
 			posthog.capture('User updated contract details');
 		}
 	});
 
 	const handleRedirect = (id) => {
-		history.push(`/smart-contracts/v2/${id}/deploy/success`);
+		if (state.redirectToSuccessPage) {
+			history.push(`/smart-contracts/v2/${id}/deploy/success`);
+			return;
+		}
+		history.push(`/smart-contracts/v2/${id}`);
 	};
 
 	const onError = (err) => {
@@ -111,7 +122,7 @@ export const useDeployContractForm = () => {
 	};
 
 	const setFormValidationErrors = () => {
-		const { name, symbol, maxSupply } = deployContractForm;
+		const { name, symbol, maxSupply, price } = deployContractForm;
 		setState(prevState => ({
 			...prevState,
 			formValidationErrors: {
@@ -138,7 +149,9 @@ export const useDeployContractForm = () => {
 	/**
 	 * Deploy contract to blockchain
 	 */
-	const deployContract = async () => {
+	const deployContract = async (walletController) => {
+		console.log('walletController', walletController);
+		
 		const { name, symbol, maxSupply } = deployContractForm;
 
 		// validate form
@@ -147,31 +160,38 @@ export const useDeployContractForm = () => {
 			return;
 		}
 
-		setState(prevState => ({ ...prevState, redirectOnSuccess: true }));
-		setIsDeploying(true);
-		addToast({
-			severity: 'info',
-			message: 'Deploying contract to Ethereum. This might take a couple of seconds...',
-		});
-
-		// get the blockchain type on the basis of isTestnetEnabled 
-		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
-
-		const contractController = new ContractController(null, blockchain, CONTRACT_VERSION);
-
-		console.log(contractController, 'contractController');
-
-		// @TODO get the from wallet address from the wallet controller
-		// const from = '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166';
-		const from = '0x1ADb0A678F41d4eD91169D4b8A5B3C149b92Fc46';
-
 		try {
+			const walletAddress = walletController.state.address;
+			if (!walletAddress) {
+				throw new Error('Wallet not connected!');
+			}
+
+			// set redirect page on Success
+			setState(prevState => ({ ...prevState, redirectToSuccessPage: true }));
+
+			setIsDeploying(true);
+			addToast({
+				severity: 'info',
+				message: 'Deploying contract to Ethereum. This might take a couple of seconds...',
+			});
+
+			// get the blockchain type on the basis of isTestnetEnabled 
+			const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
+
+			const contractController = new ContractController(null, blockchain, CONTRACT_VERSION);
+			console.log(contractController, 'contractController');
+
 			// switch network to testnet
-			await walletController.compareNetwork(blockchain, async () => {
+			await walletController.compareNetwork(blockchain, async (error) => {
+				if (error) {
+					onError(error);
+					return;
+				}
+
 				// deploy contract
 				// No need to update price user can update the price later when they open public sales, This will save GAS
 				const deployedContract = await contractController.deployContract(
-					from,
+					walletAddress,
 					name.value,
 					symbol.value,
 					maxSupply.value,
@@ -183,8 +203,15 @@ export const useDeployContractForm = () => {
 					return;
 				}
 
+				const contractAddress = deployedContract.options.address;
 				// Update backend
-				saveContract(deployedContract.options.address);
+				if (state.contractState?.id) {
+					updateContract(state.contractState?.id, contractAddress);
+					return;
+				}
+
+				// Save contract details in backend
+				saveContract(contractAddress);
 			});
 		} catch (e) {
 			console.log(e, 'Error! deploying contract.');
@@ -196,8 +223,6 @@ export const useDeployContractForm = () => {
 	 * Creates contract in backend
 	 */
 	const saveContract = async (contractAddress) => {
-		setIsSaving(true);
-
 		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
 		const { name, symbol, maxSupply, price } = deployContractForm;
 
@@ -207,24 +232,28 @@ export const useDeployContractForm = () => {
 			return;
 		}
 
+		setIsSaving(true);
+
+		// set redirect page on Success
+		setState(prevState => ({ ...prevState, redirectToDetailsPage: true }));
+
 		try {
 			const contractInput = {
 				name: name.value,
 				symbol: symbol.value,
-				address: contractAddress || null,
+				address: contractAddress || '',
 				blockchain,
 				type: CONTRACT_VERSION,
 				nftCollection: {
-					price: `${price.value}`,
-					size: `${parseInt(maxSupply.value)}`,
-					currency: getBlockchainCurrency(blockchain),
-					// unRevealedBaseUri:,
-					// baseUri
+					price: parseFloat(price.value),
+					size: parseInt(maxSupply.value),
+					currency: getBlockchainCurrency(blockchain)
 				},
 			};
 			await createContract({ variables: { contract: contractInput } });
 			setIsSaving(false);
 		} catch (err) {
+			console.log(err);
 			onError(new Error("Error Saving contract details. Please contact an administrator."));
 		}
 	};
@@ -232,7 +261,7 @@ export const useDeployContractForm = () => {
 	/**
 	 * Update contract in backend
 	 */
-	const updateContract = async (contractId) => {
+	const updateContract = async (contractId, contractAddress) => {
 		if (!state.contractState.id) {
 			onError(new Error("Error! Contract id missing."));
 			return
@@ -254,13 +283,15 @@ export const useDeployContractForm = () => {
 				name: name.value,
 				symbol: symbol.value,
 				blockchain,
-				price: `${price.value}`,
-				size: `${parseInt(maxSupply.value)}`,
-				currency: getBlockchainCurrency(blockchain)
+				price: parseFloat(price.value),
+				size: parseInt(maxSupply.value),
+				currency: getBlockchainCurrency(blockchain),
+				address: contractAddress || ''
 			};
 			await updateContractDetails({ variables: { ...contractInput, id: contractId } });
 			setIsSaving(false);
 		} catch (err) {
+			console.log(err);
 			onError(new Error("Error Saving contract details. Please contact an administrator."));
 		}
 	};
@@ -268,8 +299,6 @@ export const useDeployContractForm = () => {
 	const setActiveBlockchain = (activeBlockchain) => setState(prevState => ({ ...prevState, activeBlockchain }));
 
 	const setIsTestnetEnabled = (isTestnetEnabled) => setState(prevState => ({ ...prevState, isTestnetEnabled }));
-
-	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, contractState: { ...prevState.contractState, isNftRevealEnabled } }));
 
 	const setIsDeploying = (isDeploying) => setState(prevState => ({ ...prevState, isDeploying }));
 	const setIsSaving = (isSaving) => setState(prevState => ({ ...prevState, isSaving }));
@@ -285,7 +314,6 @@ export const useDeployContractForm = () => {
 		onError,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
-		setIsNftRevealEnabled,
 		setContractState,
 		setDeployContractFormState
 	};

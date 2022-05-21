@@ -17,11 +17,11 @@ import {
 	Payment as PaymentIcon
 } from '@mui/icons-material';
 
-import { Skeleton } from '@mui/material';
+import { Skeleton, FormControlLabel, Switch } from '@mui/material';
 
 import { useContractSettings } from './hooks/useContractSettings';
 
-import { ContractDetails, EmptyAddressList, AddressList } from '../../widgets';
+import { ContractDetails, ErrorMessage, AddressList } from '../../widgets';
 import AppDialog from '../../widgets/AppDialog';
 import CSVWidget from '../../widgets/CSVWidget';
 
@@ -45,11 +45,14 @@ const Settings = ({ contract, contractController, walletController, contractStat
 		setPrice,
 		setWhitelistAddresses,
 		setAirdropAddresses,
+		setIsNftRevealEnabled,
+		setMetadataUrl,
 
 		mint,
 		withdraw,
 		airdrop,
 
+		isNftRevealEnabled,
 		isSavingMetadatUrl,
 		isSavingAirdrop,
 		isSavingPublicSales,
@@ -69,9 +72,18 @@ const Settings = ({ contract, contractController, walletController, contractStat
 	useEffect(() => {
 		setMaxPerMint(contractState?.maxPerMint || '1');
 		setMaxPerWallet(contractState?.maxPerWallet || '1');
-		setPrice(contractState?.price || '1');
 		setWhitelistAddresses(contract?.nftCollection?.whitelist || []);
+		setIsNftRevealEnabled(contractState?.isRevealed || false);
 	}, [contractState]);
+
+	useEffect(() => {
+		setPrice(contract.nftCollection.price || '1');
+		setMetadataUrl(contract?.nftCollection?.baseUri || '');
+	}, []);
+
+	useEffect(() => {
+		setMetadataUrl(contract?.nftCollection?.baseUri || '');
+	}, [contract?.nftCollection?.baseUri]);
 
 	const cardStyle = {
 		maxWidth: 760,
@@ -134,15 +146,21 @@ const Settings = ({ contract, contractController, walletController, contractStat
 						>
 							Deploy new token images &amp; metadata
 						</Button>
-
 					</Grid>
 
 					<Stack gap={2} direction="horizontal">
-						<TextField
-							{...metadataUrl}
-							size="small"
-							value={contractState?.metadataUrl}
-						/>
+						<TextField {...metadataUrl} size="small" fullWidth={true} label='Metadata Url' />
+					</Stack>
+
+					<Stack gap={2} direction="horizontal">
+						<Stack sx={{ width: 'max-content' }}>
+							<FormControlLabel
+								onChange={e => setIsNftRevealEnabled(e.target.checked)}
+								checked={isNftRevealEnabled}
+								control={<Switch />}
+								label="Enable NFT reveal"
+							/>
+						</Stack>
 					</Stack>
 
 					<Stack>
@@ -245,7 +263,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 					</Grid>
 
 					<Stack gap={2} direction="horizontal">
-						{!whitelistAddresses.length && <EmptyAddressList message="Please add whitelist addresses to open pre-sales" /> || null}
+						{!whitelistAddresses.length && <ErrorMessage message="Please add whitelist addresses to open pre-sales" /> || null}
 						{whitelistAddresses.length && <AddressList addresses={whitelistAddresses} /> || null}
 					</Stack>
 
@@ -297,7 +315,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 					</Grid>
 
 					<Stack gap={2} direction="horizontal">
-						{!airdropAddresses.length && <EmptyAddressList message="Please add airdrop addresses to Send NFTs to a list of beneficiaries." /> || null}
+						{!airdropAddresses.length && <ErrorMessage message="Please add airdrop addresses to Send NFTs to a list of beneficiaries." /> || null}
 						{airdropAddresses.length && <AddressList addresses={airdropAddresses.map(({ address }) => address)} /> || null}
 					</Stack>
 
@@ -332,12 +350,12 @@ const Settings = ({ contract, contractController, walletController, contractStat
 							{isMinting && <CircularProgress isButtonSpinner={true} /> || null}
 							Mint to {contract.blockchain}
 						</Button>
-
-						{!contractState?.isPublicSaleOpen && <Stack gap={2} direction="horizontal">
-							<Typography color="error" sx={{ my: 4 }}>Enable public sale to start minting!</Typography>
-						</Stack>}
-
 					</Grid>
+
+					{!contractState?.isPublicSaleOpen && <Stack gap={2} direction="horizontal">
+						<ErrorMessage message="Enable public sale to start minting!" />
+					</Stack> || null}
+
 				</Stack>
 
 				<Stack gap={2} mt={8} sx={cardStyle}>
@@ -357,15 +375,6 @@ const Settings = ({ contract, contractController, walletController, contractStat
 							{isWithdrawing && <CircularProgress isButtonSpinner={true} /> || null}
 							Pay out to bank
 						</Button>
-
-						{/* <Button
-							startIcon={<SwapVertIcon />}
-							size="small"
-							variant="contained"
-							onClick={() => withdraw(wallet, env)}>
-							Close smart contract &amp; withdraw rent
-						</Button> */}
-
 					</Grid>
 				</Stack>
 			</Stack>

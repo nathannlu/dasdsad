@@ -25,8 +25,8 @@ export const CREATE_CONTRACT = gql`
 `;
 
 export const UPDATE_CONTRACT_DETAILS = gql`
-    mutation UpdateContractDetails($id: ID!, $name: String!, $symbol: String!, $blockchain: String!, $price: String!, $size: String!, $currency: String!) {
-        updateContractDetails(id: $id, name: $name, symbol: $symbol, blockchain: $blockchain, price: $price, size: $size, currency: $currency) {
+    mutation UpdateContractDetails($id: ID!, $name: String!, $symbol: String!, $blockchain: String!, $price: Float!, $size: Int!, $currency: String!, $address: String!) {
+        updateContractDetails(id: $id, name: $name, symbol: $symbol, blockchain: $blockchain, price: $price, size: $size, currency: $currency, address: $address) {
             id
             name
             symbol
@@ -162,7 +162,7 @@ export const SET_UN_REVEALED_BASE_URI = gql`
 `;
 
 export const SET_NFT_PRICE = gql`
-    mutation SetNftPrice($price: String!, $id: ID!) {
+    mutation SetNftPrice($price: Float!, $id: ID!) {
         setNftPrice(price: $price, id: $id) {
             id
             nftCollection {

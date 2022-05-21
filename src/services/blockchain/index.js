@@ -10,14 +10,14 @@ const BlockchainService = () => {
     const history = useHistory();
     useGetContracts({});
 	
-	const { loadWalletProvider } = useWeb3();
+	const { loadWalletProvider, wallet } = useWeb3();
 
 
 	useEffect(() => {
 		(async() => {
 			await loadWalletProvider(wallet)
 		})()
-	}, [])
+	}, []);
 
     return (
         <>

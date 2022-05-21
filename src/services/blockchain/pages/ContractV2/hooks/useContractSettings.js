@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
-import { useSetWhitelist, useSetBaseUri, useSetUnRevealedBaseUri, useSetNftPrice, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook.js';
+import { useSetWhitelist, useSetBaseUri, useSetNftPrice, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
 export const useContractSettings = () => {
@@ -14,6 +14,7 @@ export const useContractSettings = () => {
 		isSavingPreSales: false,
 		isMinting: false,
 		isWithdrawing: false,
+		isNftRevealEnabled: false, // default
 
 		whitelistAddresses: [],
 		airdropAddresses: []
@@ -21,8 +22,6 @@ export const useContractSettings = () => {
 
 	const [setWhitelist] = useSetWhitelist({});
 	const [setBaseUri] = useSetBaseUri({});
-	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({});
-	const [updateContractDetails] = useUpdateContractDetails({});
 	const [setNftPrice] = useSetNftPrice({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
@@ -75,16 +74,14 @@ export const useContractSettings = () => {
 	const updateReveal = async ({ contractController, setContractState, walletAddress, contractId }) => {
 		const { metadataUrl } = actionForm;
 
-		console.log(metadataUrl.value);
-
-		if (!metadataUrl.value) {
-			return;
-		}
-
-		setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
 		try {
+			if (!metadataUrl.value) {
+				throw new Error('Metadata url can not be empty!')
+			}
+
+			setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
 			// @TODO ask to set reveal as true or false
-			const contractState = await contractController.updateReveal(walletAddress, true, metadataUrl.value);
+			const contractState = await contractController.updateReveal(walletAddress, state.isNftRevealEnabled, metadataUrl.value);
 			setContractState(contractState);
 			setBaseUri({ variables: { id: contractId, baseUri: metadataUrl.value } });
 			onSuccess('Metadata Url updated successfully!');
@@ -94,9 +91,9 @@ export const useContractSettings = () => {
 	}
 
 	const updateSales = async ({ contractController, setContractState, walletAddress, contractId }, isOpen) => {
-		const maxPerMint = actionForm.maxPerMint.value;
-		const maxPerWallet = actionForm.maxPerWallet.value;
-		const price = actionForm.price.value;
+		const maxPerMint = parseFloat(actionForm.maxPerMint.value);
+		const maxPerWallet = parseFloat(actionForm.maxPerWallet.value);
+		const price = parseFloat(actionForm.price.value);
 
 		if (!maxPerMint || maxPerMint === 0) {
 			addToast({ severity: 'error', message: `max per mint can't be zero` });
@@ -114,7 +111,7 @@ export const useContractSettings = () => {
 		}
 
 		const web3 = window.web3;
-		const priceInWei = web3.utils.toWei(`${parseFloat(actionForm.price.value)}`);
+		const priceInWei = web3.utils.toWei(`${price}`);
 
 		setState(prevState => ({ ...prevState, isSavingPublicSales: true }));
 
@@ -194,9 +191,12 @@ export const useContractSettings = () => {
 
 	const setMaxPerMint = (maxPerMint) => setActionFormState(prevState => ({ ...prevState, maxPerMint: { ...prevState.maxPerMint, value: maxPerMint } }));
 	const setMaxPerWallet = (maxPerWallet) => setActionFormState(prevState => ({ ...prevState, maxPerWallet: { ...prevState.maxPerWallet, value: maxPerWallet } }));
+	const setMetadataUrl = (metadataUrl) => setActionFormState(prevState => ({ ...prevState, metadataUrl: { ...prevState.metadataUrl, value: metadataUrl } }));
 	const setPrice = (price) => setActionFormState(prevState => ({ ...prevState, price: { ...prevState.price, value: price } }));
+
 	const setWhitelistAddresses = (whitelistAddresses) => setState(prevState => ({ ...prevState, whitelistAddresses }));
 	const setAirdropAddresses = (airdropAddresses) => setState(prevState => ({ ...prevState, airdropAddresses }));
+	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, isNftRevealEnabled }));
 
 	return {
 		...state,
@@ -214,6 +214,8 @@ export const useContractSettings = () => {
 
 		setWhitelistAddresses,
 		setAirdropAddresses,
+		setIsNftRevealEnabled,
+		setMetadataUrl,
 		actionForm
 	};
 };

@@ -54,7 +54,7 @@ const Embed = ({ contract, id }) => {
         //     style="border-radius: 10px; width: 350px"
         // />`);
 
-        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}" type="${contract?.type === 'erc721a' ? 'erc721a' : ''}"></ambition-button>
+        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}" type="${contract?.type === 'erc721a' && 'erc721a' || 'erc721'}"></ambition-button>
         <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js"></script>`);
     }, [contract]);
 

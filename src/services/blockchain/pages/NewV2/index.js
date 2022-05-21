@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType } from '@ambition-blockchain/controllers';
+import { WalletController, getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType, getWalletType } from '@ambition-blockchain/controllers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import {
@@ -65,6 +65,7 @@ const New = ({ contract }) => {
 	const history = useHistory();
 	const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
+	const [walletController, setWalletController] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
 	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: false });
@@ -85,7 +86,6 @@ const New = ({ contract }) => {
 		isTestnetEnabled,
 		setActiveBlockchain,
 		setIsTestnetEnabled,
-		setIsNftRevealEnabled,
 		deployContract,
 		saveContract,
 		updateContract,
@@ -138,17 +138,22 @@ const New = ({ contract }) => {
 
 			setActiveBlockchain(getMainnetBlockchainType(contract?.blockchain));
 			setIsTestnetEnabled(isTestnetBlockchain(contract?.blockchain));
-
-			if (contract?.nftCollection?.unRevealedBaseUri) {
-				setIsNftRevealEnabled(false);
-			}
-
 		}
 	}
 
-	useEffect(() => { setContractStateIneditMode(); }, []);
+	useEffect(() => {
+		// initiate wallet controller connection
+		const walletController = new WalletController();
+		walletController.loadWalletProvider(getWalletType(activeBlockchain));
 
-	const isEditMode = !!contract.id;
+		console.log(walletController);
+
+		setWalletController(walletController);
+
+		setContractStateIneditMode();
+	}, []);
+
+	const isEditMode = !!contract?.id;
 	const containerStyle = {
 		minHeight: '100vh',
 		overflow: 'hidden',
@@ -311,10 +316,11 @@ const New = ({ contract }) => {
 											setIsDialogOpen(true);
 											return;
 										}
-										deployContract();
+										deployContract(walletController);
 									}}
 									variant="contained"
-									disabled={isDeploying}
+									size="small"
+									disabled={isDeploying || isSaving}
 								>
 									{isDeploying && <CircularProgress isButtonSpinner={true} /> || null}
 									Deploy Contract
@@ -331,15 +337,20 @@ const New = ({ contract }) => {
 										}
 										saveContract();
 									}}
-									disabled={isSaving}
+									size="small"
+									disabled={isDeploying || isSaving}
 								>
 									{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
 									Save Contract
 								</Button>
-								{isDeploying && <Typography sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }} color="GrayText">
+							</Stack>
+
+							<Stack direction="row" py={1} gap={2} alignItems="center">
+								{isDeploying && <Typography sx={{ fontStyle: 'italic', fontSize: 14 }} color="GrayText">
 									Creating Contract! Please be patient it will take couple of seconds...
 								</Typography>}
 							</Stack>
+
 						</Grid>
 
 						<Grid item xs={12} lg={6} sx={{ flex: 1, px: 4 }}>
@@ -350,7 +361,6 @@ const New = ({ contract }) => {
 								unRevealedtNftImage={unRevealedtNftImage}
 								revealedNftImage={revealedNftImage}
 								setIsModalOpen={setIsModalOpen}
-								setIsNftRevealEnabled={setIsNftRevealEnabled}
 							/>
 
 							<Typography sx={{ fontStyle: 'italic', fontSize: 14, mt: 8 }} color="GrayText">
@@ -366,6 +376,7 @@ const New = ({ contract }) => {
 					contract={contractState}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
+					renderUploadUnRevealedImage={true}
 				/>}
 
 				<AppDialog

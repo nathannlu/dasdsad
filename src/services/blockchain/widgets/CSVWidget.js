@@ -132,10 +132,16 @@ const CSVWidget = ({ addresses, count, onSave }) => {
         Papa.parse(file, {
             complete: function (results) {
                 setIsLoading(false);
-                const newRows = results.data.reduce((rows, row) => ([...rows, { address: row[0], count: count || row[1], isError: false }]), []);
+                const newRows = results.data.reduce((rows, row) => {
+                    if (!row[0]) {
+                        return rows;
+                    }
+                    return ([...rows, { address: row[0], count: count || row[1], isError: false }])
+                }, []);
+
                 console.log(newRows, results.data);
 
-                setRows(prevState => [...prevState, ...mergeAddresses(newRows)]);
+                setRows(prevState => mergeAddresses([...prevState, ...newRows]));
             }
         });
     };

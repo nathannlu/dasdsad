@@ -9,7 +9,7 @@ import { Stepper, Step, StepLabel } from '@mui/material';
 import { NFTStack, ContractDetails } from '../../widgets';
 import { useContractSettings } from './hooks/useContractSettings';
 
-const NotComplete = ({ setIsModalOpen, contract, unRevealedtNftImage, revealedNftImage, nftPrice, contractState, setIsNftRevealEnabled }) => {
+const NotComplete = ({ setIsModalOpen, contract, unRevealedtNftImage, revealedNftImage, nftPrice, contractState }) => {
 	const activeStep = contract?.nftCollection?.baseUri && 2 || 1;
 	const { mint, isMinting } = useContractSettings();
 
@@ -104,7 +104,6 @@ const NotComplete = ({ setIsModalOpen, contract, unRevealedtNftImage, revealedNf
 						unRevealedtNftImage={unRevealedtNftImage}
 						revealedNftImage={revealedNftImage}
 						setIsModalOpen={setIsModalOpen}
-						setIsNftRevealEnabled={setIsNftRevealEnabled}
 					/>
 
 				</Grid>

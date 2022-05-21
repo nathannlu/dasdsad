@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Container } from 'ds/components';
 import { ContractController, WalletController, getIpfsUrl, getResolvedImageUrl, getWalletType } from '@ambition-blockchain/controllers';
-import { useSetUnRevealedBaseUri } from 'services/blockchain/gql/hooks/contract.hook.js';
 
 import { useParams } from 'react-router-dom';
 import { useContract } from 'services/blockchain/provider';
@@ -13,8 +12,6 @@ import Newv2 from '../NewV2';
 import { CircularProgress } from '@mui/material';
 
 const ContractV2 = () => {
-	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({});
-
 	const [contract, setContract] = useState(null);
 	const [contractState, setContractState] = useState(null);
 	const [contractController, setContractController] = useState(null);
@@ -28,15 +25,7 @@ const ContractV2 = () => {
 	const { contracts } = useContract();
 	const { id } = useParams();
 
-	const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address;
-
-	const setIsNftRevealEnabled = (isNftRevealEnabled) => {
-		if (!contract) {
-			return;
-		}
-
-		setContract(prevState => ({ ...prevState, isNftRevealEnabled }));
-	};
+	const isSetupComplete = contract?.address;
 
 	const fetchRevealedNftImage = async (metadataUrl) => {
 		try {
@@ -137,7 +126,6 @@ const ContractV2 = () => {
 							revealedNftImage={revealedNftImage}
 							nftPrice={nftPrice}
 							setIsModalOpen={setIsModalOpen}
-							setIsNftRevealEnabled={setIsNftRevealEnabled}
 						/>
 					)}
 				</Box>
@@ -147,6 +135,7 @@ const ContractV2 = () => {
 					contract={contract}
 					isModalOpen={isModalOpen}
 					setIsModalOpen={setIsModalOpen}
+					renderUploadUnRevealedImage={true}
 				/>}
 
 			</Container>

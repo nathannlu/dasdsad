@@ -26,7 +26,7 @@ const Details = ({ primary, secondary, isLoading }) => {
 	);
 }
 
-const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftImage, nftPrice, setIsModalOpen, setIsNftRevealEnabled }) => {
+const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftImage, nftPrice, setIsModalOpen }) => {
 	console.log(contract);
 	const isLoading = !contractState;
 	const metadataUrl = contract?.nftCollection?.metadataUrl;
@@ -36,7 +36,7 @@ const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftIma
 			<Stack mt={8}>
 				<Container>
 					<Grid container>
-						<Grid item md={7} xs={12}>
+						<Grid item md={6} xs={12}>
 							<ContractDetails contract={contract} />
 
 							<Stack gap={2} mt={4}>
@@ -94,7 +94,7 @@ const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftIma
 							</Stack>
 						</Grid>
 
-						<Grid item md={5} xs={12}>
+						<Grid item md={6} xs={12}>
 							<NFTStack
 								contract={contract}
 								nftPrice={nftPrice}
@@ -102,7 +102,6 @@ const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftIma
 								unRevealedtNftImage={unRevealedtNftImage}
 								revealedNftImage={revealedNftImage}
 								setIsModalOpen={setIsModalOpen}
-								setIsNftRevealEnabled={setIsNftRevealEnabled}
 							/>
 						</Grid>
 					</Grid>

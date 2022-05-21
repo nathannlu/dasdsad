@@ -9,27 +9,26 @@ import UploadUnRevealedImage from './UploadUnRevealedImage';
 import Traits from './Traits';
 import Metadata from './Metadata';
 
-const getComponents = (renderUnrevealedStep, setActiveStep, contract, setIsModalOpen, id) => {
+const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id) => {
     const uploadUnRevealedImage = <UploadUnRevealedImage setActiveStep={setActiveStep} contract={contract} step={0} />;
-    const traits = <Traits setActiveStep={setActiveStep} contract={contract} step={renderUnrevealedStep && 1 || 0} />;
-    const metadata = <Metadata setActiveStep={setActiveStep} contract={contract} step={renderUnrevealedStep && 2 || 1} />;
-    const confirmation = <Confirmation id={id} setIsModalOpen={setIsModalOpen} setActiveStep={setActiveStep} hasUnrevealedImage={renderUnrevealedStep} />;
+    const traits = <Traits setActiveStep={setActiveStep} contract={contract} step={renderUploadUnRevealedImage && 1 || 0} />;
+    const metadata = <Metadata setActiveStep={setActiveStep} contract={contract} step={renderUploadUnRevealedImage && 2 || 1} />;
+    const confirmation = <Confirmation id={id} setIsModalOpen={setIsModalOpen} setActiveStep={setActiveStep} renderUploadUnRevealedImage={renderUploadUnRevealedImage} />;
 
-    if (renderUnrevealedStep) {
+    if (renderUploadUnRevealedImage) {
         return { 0: uploadUnRevealedImage, 1: traits, 2: metadata, 3: confirmation };
     }
 
     return { 0: traits, 1: metadata, 2: confirmation };
 }
 
-const Steps = ({ id, setIsModalOpen, contract }) => {
+const Steps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage }) => {
     const [activeStep, setActiveStep] = useState(0);
-    const renderUnrevealedStep = Boolean(contract.hasOwnProperty('isNftRevealEnabled') && contract.isNftRevealEnabled !== undefined && !contract.isNftRevealEnabled);
 
     return (
         <React.Fragment>
             <Stepper activeStep={activeStep}>
-                {renderUnrevealedStep && <Step>
+                {renderUploadUnRevealedImage && <Step>
                     <StepLabel>Upload Unrevealed image to IPFS</StepLabel>
                 </Step> || null}
 
@@ -44,7 +43,7 @@ const Steps = ({ id, setIsModalOpen, contract }) => {
                 </Step>
             </Stepper>
 
-            {getComponents(renderUnrevealedStep, setActiveStep, contract, setIsModalOpen, id)[activeStep]}
+            {getComponents(renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id)[activeStep]}
 
         </React.Fragment>
     );
@@ -83,7 +82,7 @@ const Confirmation = (props) => {
      * - ipfsUrl is null
      */
     useEffect(() => {
-        if (!imagesUrl || !metadataUrl || !ipfsUrl || (!unRevealedBaseUri && props.hasUnrevealedImage)) {
+        if (!imagesUrl || !metadataUrl || !ipfsUrl || (!unRevealedBaseUri && props.renderUploadUnRevealedImage)) {
             addToast({
                 severity: 'error',
                 message: 'Oops! something went wrong. Please try again!',
@@ -101,13 +100,13 @@ const Confirmation = (props) => {
         };
         xhr.open('GET', `https://gateway.pinata.cloud/ipfs/${metadataUrl}/1.json`, true);
         xhr.send();
-    }, [imagesUrl, metadataUrl, ipfsUrl, unRevealedBaseUri, props.hasUnrevealedImage]);
+    }, [imagesUrl, metadataUrl, ipfsUrl, unRevealedBaseUri, props.renderUploadUnRevealedImage]);
 
     return (
         <Stack gap={2}>
             <Box display='flex' sx={{ marginTop: '1em', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 
-                {props.hasUnrevealedImage && <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
+                {props.renderUploadUnRevealedImage && <Box display='flex' flexDirection='column' alignItems='center' justifyContent='space-between'>
                     <Typography>
                         Un-revealed NFT Preview
                     </Typography>
@@ -189,7 +188,7 @@ const Confirmation = (props) => {
             <Button
                 variant="contained"
                 onClick={() => {
-                    if (props.hasUnrevealedImage) {
+                    if (props.renderUploadUnRevealedImage) {
                         setUnRevealedBaseUri({ variables: { unRevealedBaseUri, id: props.id } });
                     }
                     setBaseUri({ variables: { baseUri: ipfsUrl, id: props.id } });
