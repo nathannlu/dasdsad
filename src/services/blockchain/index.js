@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useWeb3 } from 'libs/web3';
 import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ContractProvider } from './provider';
@@ -8,6 +9,15 @@ import Routes from './routes';
 const BlockchainService = () => {
     const history = useHistory();
     useGetContracts({});
+	
+	const { loadWalletProvider, wallet } = useWeb3();
+
+
+	useEffect(() => {
+		(async() => {
+			await loadWalletProvider(wallet)
+		})()
+	}, []);
 
     return (
         <>

@@ -7,6 +7,12 @@ import keccak256 from 'keccak256';
 import { useSetWhitelist } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { mintV2 } from 'solana/helpers/mint';
 import { withdrawV2 } from 'solana/helpers/withdraw';
+import { loadCandyProgramV2 } from 'solana/helpers/accounts';
+import { BN } from '@project-serum/anchor';
+import {
+    PublicKey,
+} from '@solana/web3.js';
+import { updateCandyMachine } from 'solana/helpers/updateContract';
 
 export const useContractActions = (contractAddress) => {
     const { addToast } = useToast();
@@ -37,6 +43,15 @@ export const useContractActions = (contractAddress) => {
         newPrice: {
             default: '',
             placeholder: '5',
+            rules: [],
+        },
+        whitelistToken: {
+            default: '',
+            placeholder: '6L2i8gKP...',
+            rules: [],
+        },
+        goLiveDate: {
+            value:'2017-06-01T08:30',
             rules: [],
         },
         newMetadataUrl: {
@@ -176,9 +191,7 @@ export const useContractActions = (contractAddress) => {
         addresses = actionForm.whitelistAddresses.value.split('\n')
     ) => {
         const leafNodes = addresses.map((addr) => keccak256(addr));
-        const merkleTree = new MerkleTree(leafNodes, keccak256, {
-            sortPairs: true,
-        });
+        const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
         const root = merkleTree.getRoot();
 
         contract.methods
@@ -275,42 +288,156 @@ export const useContractActions = (contractAddress) => {
             .once('confirmation', () => onTxnSuccess());
 
         /*
-		try {
-			// Support depreciated method
-			await methods.mintNFTs(count).estimateGas({
-				from: account,
-				value: price
-			}, (err, gasAmount) => {
-				if(!err && gasAmount !== undefined) {
-					methods.mintNFTs(count).send({ 
-						from: account,
-						value: price
-					}, err => err ? onTxnError(err) : onTxnInfo())
-					.once('error', err => onTxnError(err))
-					.once("confirmation", () => onTxnSuccess())
-				}
-			})
+        try {
+            // Support depreciated method
+            await methods.mintNFTs(count).estimateGas({
+                from: account,
+                value: price
+            }, (err, gasAmount) => {
+                if(!err && gasAmount !== undefined) {
+                    methods.mintNFTs(count).send({ 
+                        from: account,
+                        value: price
+                    }, err => err ? onTxnError(err) : onTxnInfo())
+                    .once('error', err => onTxnError(err))
+                    .once("confirmation", () => onTxnSuccess())
+                }
+            })
 
-			await methods.mint(count).estimateGas({
-				from: account,
-				value: price
-			}, (err, gasAmount) => {
-				if(!err && gasAmount !== undefined) {
-					methods.mint(count).send({ 
-						from: account,
-						value: price
-					}, err => err ? onTxnError(err) : onTxnInfo())
-					.once('error', err => onTxnError(err))
-					.once("confirmation", () => onTxnSuccess())
-				}
-			})
-		} catch (e) {
-			addToast({
-				severity: 'error',
-				message: e.message
-			});
-		}
-		*/
+            await methods.mint(count).estimateGas({
+                from: account,
+                value: price
+            }, (err, gasAmount) => {
+                if(!err && gasAmount !== undefined) {
+                    methods.mint(count).send({ 
+                        from: account,
+                        value: price
+                    }, err => err ? onTxnError(err) : onTxnInfo())
+                    .once('error', err => onTxnError(err))
+                    .once("confirmation", () => onTxnSuccess())
+                }
+            })
+        } catch (e) {
+            addToast({
+                severity: 'error',
+                message: e.message
+            });
+        }
+        */
+    };
+
+    const updateWhiteListToken = async ( wallet, env = 'mainnet', turnOnWhiteList = false,
+        newMint = actionForm.whitelistToken.value // nonly token for now
+      ) => {
+        if (wallet == 'phantom') {
+            console.log('updating white');
+           
+        } else{
+            onTxnError("Please connect with Phantom wallet");
+        }
+
+        // needs to be dynamic
+        const anchorProgram = await loadCandyProgramV2(null, 'devnet');
+        const candyMachineAddress = contractAddress;
+        const connection = anchorProgram.provider.connection;
+        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
+            candyMachineAddress,
+        );
+
+        console.log(candyMachineObj);
+
+        let newWhiteList;
+
+        if(turnOnWhiteList){
+            newWhiteList =  {
+                mode:  { burnEveryTime: true },
+                mint: new PublicKey(newMint),
+                presale: true ,
+                discountPrice : null
+            }
+        } else {
+            newWhiteList = null;
+        }
+
+
+        const newSettings = {
+            itemsAvailable:  candyMachineObj.data.itemsAvailable,
+            uuid: candyMachineObj.data.uuid,
+            symbol: candyMachineObj.data.symbol,
+            sellerFeeBasisPoints: candyMachineObj.data.sellerFeeBasisPoints,
+            isMutable: true,
+            maxSupply: candyMachineObj.data.maxSupply,
+            retainAuthority: false,
+            gatekeeper: candyMachineObj.data.gatekeeper,
+            goLiveDate: candyMachineObj.data.goLiveDate,
+            endSettings: candyMachineObj.data.endSettings,
+            price: candyMachineObj.data.price,
+            whitelistMintSettings: newWhiteList ,
+            hiddenSettings: candyMachineObj.data.hiddenSettings,
+            creators: candyMachineObj.data.creators.map(creator => {
+                return {
+                    address: new PublicKey(creator.address),
+                    verified: true,
+                    share: creator.share,
+                };
+            }),
+        };
+
+        console.log(newSettings);
+
+        updateCandyMachine(candyMachineAddress, env, newSettings);
+
+    };
+
+    const updateGoLiveDate = async ( wallet, env = 'mainnet', newGoLiveDate = actionForm.goLiveDate.value) => {
+        if (wallet == 'phantom') {
+            console.log('updating white');
+           
+        } else{
+            onTxnError("Please connect with Phantom wallet");
+        }
+
+        const epoch = new Date(newGoLiveDate).getTime()
+        console.log(newGoLiveDate);
+        console.log(epoch);
+        console.log(new BN(epoch).toString());
+
+        const anchorProgram = await loadCandyProgramV2(null, 'devnet');
+        const candyMachineAddress = contractAddress;
+        const connection = anchorProgram.provider.connection;
+        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
+            candyMachineAddress,
+        );
+
+        console.log(candyMachineObj);
+
+        const newSettings = {
+            itemsAvailable:  candyMachineObj.data.itemsAvailable,
+            uuid: candyMachineObj.data.uuid,
+            symbol: candyMachineObj.data.symbol,
+            sellerFeeBasisPoints: candyMachineObj.data.sellerFeeBasisPoints,
+            isMutable: true,
+            maxSupply: candyMachineObj.data.maxSupply,
+            retainAuthority: false,
+            gatekeeper: candyMachineObj.data.gatekeeper,
+            goLiveDate: new BN(epoch/1000),
+            endSettings: candyMachineObj.data.endSettings,
+            price: candyMachineObj.data.price,
+            whitelistMintSettings: candyMachineObj.data.whitelistMintSettings ,
+            hiddenSettings: candyMachineObj.data.hiddenSettings,
+            creators: candyMachineObj.data.creators.map(creator => {
+                return {
+                    address: new PublicKey(creator.address),
+                    verified: true,
+                    share: creator.share,
+                };
+            }),
+        };
+
+        console.log(newSettings);
+
+        updateCandyMachine(candyMachineAddress, env, newSettings);
+
     };
 
     useEffect(() => {
@@ -327,9 +454,13 @@ export const useContractActions = (contractAddress) => {
         openPresale,
         airdrop,
         setMerkleRoot,
+        updateWhiteListToken,
         presaleMint,
         withdraw,
         mint,
-        setMaxPerWallet
+        setMaxPerWallet,
+        updateGoLiveDate
     };
 };
+
+

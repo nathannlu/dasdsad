@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
 import { useWebsite } from 'services/website/provider';
 import { useGetContract } from 'services/blockchain/gql/hooks/contract.hook';
-//import { mintV2 } from 'solana/helpers/mint.js';
+import { mintV2 } from 'solana/helpers/mint.js';
 import { useToast } from 'ds/hooks/useToast';
 
 export const useMintButton = () => {
@@ -46,14 +46,30 @@ export const useMintButton = () => {
 
 	}, [website, contract])
 
-    // useEffect(() => {
-    //     if (!contract) return;
-
-    //     //console.log(contract)
-
-    // }, [contract])
+    const onConnect = async () => {
+        try {
+            const blockchain =  contract.blockchain;
+            if (blockchain.indexOf('solana') !== -1) { // Solana
+                await loadWalletProvider('phantom');
+            }
+            else { // Metamask
+                await loadWalletProvider('metamask');
+                await compareNetwork(blockchain, async () => {
+                    await getOpen(contract?.address);
+                    await getSize(contract?.address);
+                    await getPrice(contract?.address);  
+                })
+            }
+        }
+        catch (err) {
+            console.log(err);
+            addToast({
+                severity: "error",
+                message: err.message,
+            })
+        }
+    }
     
-
     const onMint = async () => {
         try {
             if (!contract) throw new Error('Cannot find contract');
@@ -96,5 +112,6 @@ export const useMintButton = () => {
         open,
         setMintCount,
         mintCount,
+        onConnect
     }
 }

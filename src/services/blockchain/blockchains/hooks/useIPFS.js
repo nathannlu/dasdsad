@@ -5,16 +5,19 @@ import { useState } from 'react';
 import { useContract } from 'services/blockchain/provider';
 import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
+import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
 export const useIPFS = () => {
     const {
         imagesUrl,
         setImagesUrl,
+        setUnRevealedBaseUri,
         metadataUrl,
         setMetadataUrl,
         ipfsUrl,
         setIpfsUrl,
         uploadedFiles,
+        uploadedUnRevealedImageFile,
         uploadedJson,
         setStart,
         setActiveStep,
@@ -24,7 +27,71 @@ export const useIPFS = () => {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
-    const pinImages = async (callback) => {
+    const pinUnrevealedImage = async (callback) => {
+        if (!uploadedUnRevealedImageFile) {
+            addToast({
+                severity: 'error',
+                message: `Error! File to be uploaded not selected.`,
+            });
+            return;
+        }
+
+        setStart(true);
+        setLoading(true);
+        const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+        addToast({
+            severity: 'info',
+            message: 'Deploying unrevealed image to IPFS...',
+        });
+
+        const file = uploadedUnRevealedImageFile[0];
+        const mimeType = file.type;
+        const fileExtension = mimeType === 'image/webp' && 'webp'
+            || mimeType === 'video/mp4' && 'mp4'
+            || 'png';
+
+        let data = new FormData();
+        data.append('file', file, `/assets/unrevealed.${fileExtension}`);
+
+        //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
+        //metadata is optional
+        const metadata = JSON.stringify({ name: user.id + '_assets' });
+        data.append('pinataMetadata', metadata);
+
+        const opt = {
+            maxBodyLength: 'Infinity',
+            headers: {
+                'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
+                pinata_api_key: config.pinata.key,
+                pinata_secret_api_key: config.pinata.secret
+            },
+        };
+
+        try {
+            const res = await axios.post(url, data, opt);
+            setUnRevealedBaseUri(res.data.IpfsHash);
+            addToast({
+                severity: 'success',
+                message: `Added unrevealed image to IPFS under URL: ipfs://${res.data.IpfsHash}/`
+            });
+        } catch (e) {
+            addToast({
+                severity: 'error',
+                message: `Error! uploading unrevealed image to IPFS. Please try again!`,
+            });
+            setError(true);
+            setLoading(false);
+            console.log('Error: unable to pin images to pinata.cloud ', e);
+            callback(false); // Error occured while pinning images to pinata.cloud
+            return;
+        }
+
+        setLoading(false);
+        callback(true); // image added successfully to pinata navigate to next step
+    };
+
+    const pinImages = async (blockchain, callback) => {
         const folder = uploadedFiles;
         setStart(true);
         setLoading(true);
@@ -60,13 +127,15 @@ export const useIPFS = () => {
             },
         };
 
+        const ipfsUrl = getIpfsUrl(blockchain);
+
         try {
             const res = await axios.post(url, data, opt);
             setImagesUrl(res.data.IpfsHash);
             addToast({
                 severity: 'success',
                 message:
-                    'Added images to IPFS under URL: ipfs//' +
+                    `Added images to IPFS under URL: ${ipfsUrl}` +
                     res.data.IpfsHash,
             });
         } catch (e) {
@@ -85,7 +154,7 @@ export const useIPFS = () => {
         callback(true); // images added successfully to pinata navigate to next step
     };
 
-    const updateAndSaveJson = async (file, data) => {
+    const updateAndSaveJson = async (file, data, blockchain) => {
         return new Promise((resolve, reject) => {
             if (file.name !== 'metadata.json') {
                 const fileReader = new FileReader();
@@ -93,25 +162,17 @@ export const useIPFS = () => {
                     // Parse JSON and modify
                     const jsonMetadata = JSON.parse(evt.target.result);
                     const tokenId = file.name.split('.')[0];
+                    const fileExtension = jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'image/webp' && 'webp'
+                        || jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'video/mp4' && 'mp4'
+                        || 'png';
 
-                    if (
-                        jsonMetadata.properties?.files &&
-                        jsonMetadata.properties?.files[0]?.type == 'image/webp'
-                    ) {
-                        jsonMetadata.image = `ipfs://${imagesUrl}/${tokenId}.webp`;
-                    } else {
-											jsonMetadata.image = `https://gateway.pinata.cloud/ipfs/${imagesUrl}/${tokenId}.png`;
-                    }
+                    const ipfsUrl = getIpfsUrl(blockchain);
+
+                    jsonMetadata.image = `${ipfsUrl}${imagesUrl}/${tokenId}.${fileExtension}`;
 
                     // Attach JSON to formdata
-                    const metadataFile = new Blob([
-                        JSON.stringify(jsonMetadata),
-                    ]);
-                    data.append(
-                        'file',
-                        metadataFile,
-                        `/metadata/${tokenId}.json`
-                    );
+                    const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
+                    data.append('file', metadataFile, `/metadata/${tokenId}.json`);
 
                     resolve(data);
                 };
@@ -123,7 +184,7 @@ export const useIPFS = () => {
         });
     };
 
-    const pinMetadata = async (callback) => {
+    const pinMetadata = async (blockchain, callback) => {
         const folder = uploadedJson;
         let data = new FormData();
         const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
@@ -137,7 +198,7 @@ export const useIPFS = () => {
 
         // Update metadata
         for (let i = 0; i < folder.length; i++) {
-            await updateAndSaveJson(folder[i], data);
+            await updateAndSaveJson(folder[i], data, blockchain);
         }
 
         const metadata = JSON.stringify({
@@ -155,15 +216,17 @@ export const useIPFS = () => {
             },
         };
 
+        const ipfsUrl = getIpfsUrl(blockchain);
+
         try {
             const res = await axios.post(url, data, opt);
             addToast({
                 severity: 'success',
                 message:
-                    'Added json metadata to IPFS under URL: ipfs://' +
+                    `Added json metadata to IPFS under URL: ${ipfsUrl}` +
                     res.data.IpfsHash,
             });
-            setIpfsUrl('ipfs://' + res.data.IpfsHash + '/');
+            setIpfsUrl(`${ipfsUrl}${res.data.IpfsHash}/`);
             setMetadataUrl(res.data.IpfsHash);
         } catch (e) {
             addToast({
@@ -181,8 +244,10 @@ export const useIPFS = () => {
     };
 
     return {
+        getIpfsUrl,
         pinMetadata,
         pinImages,
+        pinUnrevealedImage,
         loading,
     };
 };

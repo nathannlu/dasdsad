@@ -46,9 +46,11 @@ import WarningIcon from '@mui/icons-material/Warning';
 import ReplayIcon from '@mui/icons-material/Replay';
 import EditIcon from '@mui/icons-material/Edit';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
+import ImportModal from './ImportModal'
 
 const Settings = () => {
-    const { website } = useWebsite();
+    const { website, openImportModal } = useWebsite();
     const {
         tabValue,
         setTabValue,
@@ -91,6 +93,7 @@ const Settings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
+        onGenerateSSlCertificate
     } = useSettings();
     const {
         title,
@@ -361,14 +364,14 @@ const Settings = () => {
                                             }>
                                             <EditIcon fontSize="5pt" />
                                         </IconButton>
+                                        <ImportModal />
                                         <Menu
                                             anchorEl={contractAnchor}
                                             open={openContractAnchor}
                                             onClose={onCloseContractAnchor}>
-                                            <MenuItem disableRipple={true}>
+                                            {/* <MenuItem disableRipple={true}>
                                                 Choose Contract Address
-                                            </MenuItem>
-                                            <Divider />
+                                            </MenuItem> */}
                                             {contracts &&
                                                 contracts.map(
                                                     (contract, idx) => (
@@ -391,7 +394,17 @@ const Settings = () => {
                                                             </Stack>
                                                         </MenuItem>
                                                     )
-                                                )}
+                                                )
+                                            }
+                                            <Divider />
+                                            <MenuItem onClick={openImportModal}>
+                                                <Stack direction="row" spacing={1}>
+                                                    <Typography>
+                                                        Import Contract
+                                                    </Typography>
+                                                    <ImportExportIcon />
+                                                </Stack>
+                                            </MenuItem>
                                         </Menu>
                                     </Stack>
                                 </Box>
@@ -419,16 +432,16 @@ const Settings = () => {
                                         </Typography>
                                         {faviconImage !==
                                             'https://dummyimage.com/25x25' && (
-                                            <img
-                                                src={faviconImage}
-                                                alt="Favicon Image"
-                                                width={25}
-                                                height={25}
-                                            />
-                                        )}
+                                                <img
+                                                    src={faviconImage}
+                                                    alt="Favicon Image"
+                                                    width={25}
+                                                    height={25}
+                                                />
+                                            )}
                                     </Box>
                                     {faviconImage ===
-                                    'https://dummyimage.com/25x25' ? (
+                                        'https://dummyimage.com/25x25' ? (
                                         <Widget
                                             publicKey="dfeba611508a6f7760ca"
                                             onChange={(info) =>
@@ -621,7 +634,7 @@ const Settings = () => {
                                         Image Display:
                                     </Typography>
                                     {displayImage ===
-                                    'https://dummyimage.com/215x215' ? (
+                                        'https://dummyimage.com/215x215' ? (
                                         <Widget
                                             publicKey="dfeba611508a6f7760ca"
                                             onChange={(info) =>
@@ -813,7 +826,7 @@ const Settings = () => {
                                                                 </TableCell>
                                                                 <TableCell>
                                                                     {website.customDomain ===
-                                                                    domain.domain ? (
+                                                                        domain.domain ? (
                                                                         <Button
                                                                             variant="contained"
                                                                             startIcon={
@@ -828,10 +841,10 @@ const Settings = () => {
                                                                                     'rgb(67,75,84)',
                                                                                 color: 'white',
                                                                                 '&:hover':
-                                                                                    {
-                                                                                        backgroundColor:
-                                                                                            'rgb(67,75,84)',
-                                                                                    },
+                                                                                {
+                                                                                    backgroundColor:
+                                                                                        'rgb(67,75,84)',
+                                                                                },
                                                                             }}
                                                                             size="small">
                                                                             Default
@@ -847,10 +860,10 @@ const Settings = () => {
                                                                                     'rgb(234,234,234)',
                                                                                 color: 'rgb(163,163,163)',
                                                                                 '&:hover':
-                                                                                    {
-                                                                                        backgroundColor:
-                                                                                            'rgb(234,234,234)',
-                                                                                    },
+                                                                                {
+                                                                                    backgroundColor:
+                                                                                        'rgb(234,234,234)',
+                                                                                },
                                                                             }}
                                                                             size="small"
                                                                             onClick={() =>
@@ -863,6 +876,16 @@ const Settings = () => {
                                                                         </Button>
                                                                     )}
                                                                 </TableCell>
+                                                                {website.customDomain === domain.domain && domain.isActive && !domain.isCustomDomainSslGenerated && <TableCell>
+                                                                    <Button
+                                                                        variant="contained"
+                                                                        color="primary"
+                                                                        size="small"
+                                                                        onClick={() => onGenerateSSlCertificate(domain.domain)}>
+                                                                        GENERATE SSL
+                                                                    </Button>
+                                                                </TableCell>}
+
                                                                 <TableCell>
                                                                     <IconButton
                                                                         onClick={() =>
@@ -988,8 +1011,9 @@ const Settings = () => {
                         </Box>
                     </Box>
                 </Box>
-            )}
-        </Box>
+            )
+            }
+        </Box >
     );
 };
 

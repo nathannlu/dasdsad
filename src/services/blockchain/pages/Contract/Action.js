@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useContractDetails } from './hooks/useContractDetails';
-import { useContractActions } from './hooks/useContractActions';
+import { useContractActions, useSolanaContractActions } from './hooks/useContractActions';
 import { useWeb3 } from 'libs/web3';
-import { Chip } from '@mui/material';
+import { CardHeader, Chip } from '@mui/material';
 import {
     Fade,
     Container,
@@ -24,13 +24,19 @@ import {
     Upload as UploadIcon,
 } from '@mui/icons-material';
 
-const actions = [
+const ethActions = [
     { title: 'Update metadata', value: 'metadata' },
     { title: 'Update max per mint', value: 'max' },
     { title: 'Update max per wallet', value: 'maxWallet' },
     { title: 'Update price', value: 'price' },
     { title: 'Airdrop addresses', value: 'airdrop' },
     { title: 'Set whitelist', value: 'whitelist' },
+];
+
+const solActions = [
+    // { title: 'Update price', value: 'price' },
+    { title: 'Set whitelist token', value: 'whitelistToken' },
+    { title: 'Set live date', value: 'livedate' },
 ];
 
 const Actions = ({ id, contract }) => {
@@ -47,6 +53,8 @@ const Actions = ({ id, contract }) => {
             newPrice,
             newMetadataUrl,
             maxPerWalletCount,
+            whitelistToken,
+            goLiveDate,
         },
         updateBaseUri,
         setMaxPerMint,
@@ -55,10 +63,12 @@ const Actions = ({ id, contract }) => {
         openSales,
         openPresale,
         setMerkleRoot,
+        updateWhiteListToken,
         presaleMint,
         mint,
         withdraw,
         setMaxPerWallet,
+        updateGoLiveDate
     } = useContractActions(contract.address, getNetworkID());
     const [selectedUpdate, setSelectedUpdate] = useState('metadata');
 
@@ -85,6 +95,7 @@ const Actions = ({ id, contract }) => {
                                 onClick={() => withdraw()}>
                                 Pay out to bank
                             </Button>
+
                             {isPublicSaleOpen ? (
                                 <Button
                                     startIcon={<LockIcon />}
@@ -146,7 +157,7 @@ const Actions = ({ id, contract }) => {
                         <Grid container>
                             <Grid xs={3} item pr={2}>
                                 <Stack gap={1}>
-                                    {actions.map((action, i) => (
+                                    {ethActions.map((action, i) => (
                                         <Card
                                             key={i}
                                             sx={{
@@ -155,11 +166,11 @@ const Actions = ({ id, contract }) => {
                                                 cursor: 'pointer',
                                                 background:
                                                     selectedUpdate ==
-                                                        action.value &&
+                                                    action.value &&
                                                     '#42a5f520',
                                                 color:
                                                     selectedUpdate ==
-                                                        action.value &&
+                                                    action.value &&
                                                     'primary.main',
                                                 transition: '.2s all',
                                             }}
@@ -187,9 +198,7 @@ const Actions = ({ id, contract }) => {
                                                     <Button
                                                         size="small"
                                                         variant="contained"
-                                                        onClick={() =>
-                                                            updateBaseUri()
-                                                        }>
+                                                        onClick={() => updateBaseUri()}>
                                                         <UploadIcon />
                                                     </Button>
                                                 </Stack>
@@ -298,22 +307,143 @@ const Actions = ({ id, contract }) => {
                         </Grid>
                     </>
                 ) : (
-                    <Stack direction="row" gap={2}>
-                        <Button
-                            startIcon={<SwapVertIcon />}
-                            size="small"
-                            variant="contained"
-                            onClick={() => withdraw(wallet, env)}>
-                            Close smart contract & withdraw rent
-                        </Button>
-                        <Button
-                            startIcon={<PaymentIcon />}
-                            size="small"
-                            variant="contained"
-                            onClick={() => mint(1, wallet, env)}>
-                            Mint
-                        </Button>
-                    </Stack>
+                    <>
+                        <Stack direction="row" gap={2}>
+                            <Button
+                                startIcon={<SwapVertIcon />}
+                                size="small"
+                                variant="contained"
+                                onClick={() => withdraw(wallet, env)}>
+                                Close smart contract & withdraw rent
+                            </Button>
+                            <Button
+                                startIcon={<PaymentIcon />}
+                                size="small"
+                                variant="contained"
+                                onClick={() => mint(1, wallet, env, true, {})}>
+                                Mint
+                            </Button>
+                        </Stack>
+
+                        <Grid container>
+                            <Grid xs={3} item pr={2}>
+                                <Stack gap={1}>
+                                    {solActions.map((action, i) => (
+                                        <Card
+                                            key={i}
+                                            sx={{
+                                                p: 2,
+                                                borderRadius: 2,
+                                                cursor: 'pointer',
+                                                background:
+                                                    selectedUpdate ==
+                                                        action.value &&
+                                                    '#42a5f520',
+                                                color:
+                                                    selectedUpdate ==
+                                                        action.value &&
+                                                    'primary.main',
+                                                transition: '.2s all',
+                                            }}
+                                            onClick={() =>
+                                                setSelectedUpdate(action.value)
+                                            }
+                                            variant="contained">
+
+                                            <CardHeader       
+                                                action={
+                                                    <p style = {{color:'red'}}> Beta! </p>
+                                                }  
+                                            />
+                                            <Typography>
+                                                {action.title}
+                                            </Typography>
+                                               
+                                             
+                                        
+                                        </Card>
+                                    ))}
+                                </Stack>
+                            </Grid>
+                            <Grid xs={9} item>
+                                <Stack>
+                                    {
+                                        {
+                                        
+                                            whitelistToken: (
+                                                <Grid>
+                                                    <Stack direction="row">
+                                                        <TextField
+                                                            size="small"
+                                                            {...whitelistToken}
+                                                        />
+                                                        
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            onClick={() =>
+                                                                updateWhiteListToken( wallet, env, true )
+                                                            }>
+                                                            <UploadIcon />
+                                                        </Button>
+                                                    </Stack>
+                                                    <Typography>
+                                                        Please refer to <a href="https://spl.solana.com/token" target="_blank">SPL-Token documentation </a>
+ about how to use these for WL! 
+                                                    </Typography>
+                                                </Grid>
+                                            ),
+                                            price: (
+                                                <Stack direction="row">
+                                                    <TextField
+                                                        size="small"
+                                                        {...newPrice}
+                                                    />
+                                                    {
+                                                        contract.nftCollection
+                                                            .currency
+                                                    }
+
+                                                    <Button
+                                                        size="small"
+                                                        variant="contained"
+                                                        onClick={() =>
+                                                            setCost()
+                                                        }>
+                                                        <UploadIcon />
+                                                    </Button>
+                                                </Stack>
+                                            ),
+                                            livedate: (
+                                                <Grid>
+                                                    <Stack direction="row">
+                                                        <input type = "datetime-local"
+                                                            // value="2017-06-01T08:30"
+                                                                {...goLiveDate}
+                                                        />
+
+                                                        <Button
+                                                            size="small"
+                                                            variant="contained"
+                                                            onClick={() =>
+                                                                updateGoLiveDate( wallet, env)
+                                                            }>
+                                                            <UploadIcon />
+                                                        </Button>
+                                                    </Stack>
+                                                    <Typography>
+                                                            Set date for public sale! SPL token required for presale.
+                                                    </Typography>
+                                                </Grid>
+                                            )
+                                        }[selectedUpdate]
+                                    }
+                                </Stack>
+                            </Grid>
+                        </Grid>
+
+                    </>
+                    
                 )}
             </Stack>
         </>

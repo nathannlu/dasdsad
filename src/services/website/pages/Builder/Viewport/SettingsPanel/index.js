@@ -10,6 +10,7 @@ import {
     Typography,
     TextField,
 } from 'ds/components';
+import { Menu, MenuItem } from '@mui/material';
 import { useForm } from 'ds/hooks/useForm';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { DeleteOutlineOutlined as DeleteIcon } from '@mui/icons-material';
@@ -35,12 +36,9 @@ export const Settings = () => {
         };
         return { selected };
     });
-    const { deleteImage, onSaveChanges, imagePlaceHolders, addImageToLocal } =
-        useWebsite();
-
-    useEffect(() => {
-        console.log(props);
-    }, []);
+    const { deleteImage, onSaveChanges, imagePlaceHolders, addImageToLocal, ABIFunctions } = useWebsite();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
 
     const onChangeItem = (e, key, parentKey = '', componentIdx = -1) => {
         const { name, value } = e.target;
@@ -204,14 +202,30 @@ export const Settings = () => {
         await onSaveChanges(query);
     };
 
-    // I just did conditions instead of mapping because mapping will trigger all the keys for some reason
-    const generateField = (
-        component,
-        key,
-        type,
-        parentKey = '',
-        componentIdx = -1
-    ) => {
+    const onSetFunction = (funcName, parentKey = '', componentIdx = -1) => {
+        if (parentKey.length && componentIdx != -1) {
+            // If inside array (Ex: features)
+            setProp((props) => {
+                props[parentKey].value[componentIdx]['isMint'].func = funcName;
+            });
+        } else if (parentKey.length && componentIdx == -1) {
+            // If value is an object (Ex. button)
+            setProp((props) => {
+                props[parentKey].value['isMint'].func = funcName;
+            });
+        } else {
+            setProp((props) => {
+                props['isMint'].func = funcName;
+            });
+        }
+
+        addToast({
+            severity: 'success',
+            message: `The button is now a ${funcName}`,
+        });
+    }
+
+    const generateField = (component, key, type, parentKey = '', componentIdx = -1) => {
         return (
             <Box width="100%">
                 {type === 'textfield' && (
@@ -318,15 +332,49 @@ export const Settings = () => {
                     </Box>
                 )}
                 {type === 'boolean' && (
-                    <Button
-                        size="small"
-                        name={key}
-                        onClick={(e) =>
-                            onSwitchItem(e, key, parentKey, componentIdx)
-                        }
-                        variant="contained">
-                        {component[key].value ? 'Toggle Link' : 'Toggle Mint'}
-                    </Button>
+                    <>
+                        {component[key].value && (
+                            <>
+                                <Button
+                                    id="function-button"
+                                    aria-controls={open ? 'function-button' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={open ? 'true' : undefined}
+                                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                                >
+                                    Select Function
+                                </Button>
+                                <Menu
+                                    id="function-button"
+                                    aria-labelledby="function-button"
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClick={() => setAnchorEl(null)}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                >
+                                    {ABIFunctions?.filter(func1 => func1.name).map((func, idx) => (
+                                        <MenuItem key={idx} onClick={(e) => onSetFunction(func.name, parentKey, componentIdx)}>{func.name}</MenuItem>
+                                    ))}
+                                </Menu>
+                            </>
+                        )}
+                        <Button
+                            size="small"
+                            name={key}
+                            onClick={(e) =>
+                                onSwitchItem(e, key, parentKey, componentIdx)
+                            }
+                            variant="contained">
+                            {component[key].value ? 'Toggle Link' : 'Toggle Mint'}
+                        </Button>
+                    </>
                 )}
             </Box>
         );
@@ -357,8 +405,7 @@ export const Settings = () => {
                     alignItems="center"
                     marginBottom=".5em">
                     {key !== 'features' &&
-                        key !== 'button' &&
-                        key !== 'isMint' && (
+                        key !== 'button' && (
                             <InfoOutlinedIcon
                                 sx={{ color: 'rgba(0,0,0,.65)', fontSize: 18 }}
                             />
@@ -366,65 +413,40 @@ export const Settings = () => {
                     {
                         {
                             title: (
-                                <Typography
-                                    sx={{
-                                        color: 'rgba(0,0,0,.65)',
-                                        fontSize: '10pt',
-                                        my: '.5em',
-                                    }}>
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
                                     Enter a title:
                                 </Typography>
                             ),
                             content: (
-                                <Typography
-                                    sx={{
-                                        color: 'rgba(0,0,0,.65)',
-                                        fontSize: '10pt',
-                                        my: '.5em',
-                                    }}>
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
                                     Enter a content:
                                 </Typography>
                             ),
                             image: (
-                                <Typography
-                                    sx={{
-                                        color: 'rgba(0,0,0,.65)',
-                                        fontSize: '10pt',
-                                        my: '.5em',
-                                    }}>
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
                                     Upload your image:
                                 </Typography>
                             ),
                             background: (
-                                <Typography
-                                    sx={{
-                                        color: 'rgba(0,0,0,.65)',
-                                        fontSize: '10pt',
-                                        my: '.5em',
-                                    }}>
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
                                     Enter a background color:
                                 </Typography>
                             ),
                             text: (
-                                <Typography
-                                    sx={{
-                                        color: 'rgba(0,0,0,.65)',
-                                        fontSize: '10pt',
-                                        my: '.5em',
-                                    }}>
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
                                     Enter a label:
                                 </Typography>
                             ),
                             link: (
-                                <Typography
-                                    sx={{
-                                        color: 'rgba(0,0,0,.65)',
-                                        fontSize: '10pt',
-                                        my: '.5em',
-                                    }}>
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
                                     Enter a link:
                                 </Typography>
                             ),
+                            isMint: (
+                                <Typography sx={{ color: 'rgba(0,0,0,.65)', fontSize: '10pt', my: '.5em',}}>
+                                    Specify button functionality:
+                                </Typography>
+                            )
                         }[key]
                     }
                 </Stack>

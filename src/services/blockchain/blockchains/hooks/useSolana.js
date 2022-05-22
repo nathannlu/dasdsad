@@ -1,5 +1,5 @@
 import Web3 from 'web3/dist/web3.min';
-import { useUpdateContract } from 'services/blockchain/gql/hooks/contract.hook';
+import { useUpdateContractAddress } from 'services/blockchain/gql/hooks/contract.hook';
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
@@ -15,7 +15,7 @@ export const useSolana = () => {
     const { setLoading, setError, setStart, selectInput, ipfsUrl } =
         useContract();
     const { addToast } = useToast();
-    const [updateContract] = useUpdateContract({
+    const [updateContractAddress] = useUpdateContractAddress({
         onCompleted: () => {
             addToast({
                 severity: 'success',
@@ -40,7 +40,7 @@ export const useSolana = () => {
                 deployedContract: true,
             },
         });
-        await updateContract({
+        await updateContractAddress({
             variables: { id: id, address: candyMachineAddress },
         });
     };
@@ -77,10 +77,10 @@ export const useSolana = () => {
 
             handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
-            console.error(err);
+            console.log(err);
             addToast({
                 severity: 'error',
-                message: err.message,
+                message: "You must be logged in with Phantom wallet in order to deploy on Solana"
             });
         }
     };

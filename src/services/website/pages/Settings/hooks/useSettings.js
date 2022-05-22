@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from 'libs/auth';
 import { useWebsite } from 'services/website/provider';
 import {
     useDeleteWebsite,
@@ -12,11 +13,15 @@ import {
     useRemovePageFromPublish,
     useSetContractAddress,
     useUpdateWebsiteCustom,
+    useSetABI
 } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 
+import { GENERATE_SSL_CERTIFICATE } from 'services/website/gql/website.gql';
+
 const useSettings = () => {
+    const { isAuthenticated } = useAuth();
     const { addToast } = useToast();
     const {
         website,
@@ -25,6 +30,10 @@ const useSettings = () => {
         removeUnusedImages,
         websiteId,
         pageName,
+        importContractAddress,
+        setIsImportContractOpen,
+        importABI,
+        setWebsite
     } = useWebsite();
     const [tabValue, setTabValue] = useState('general');
     const [confirmationState, setConfirmationState] = useState(false);
@@ -114,6 +123,7 @@ const useSettings = () => {
                 message: err.message,
             }),
     });
+
     const [addPageToPublish] = useAddPageToPublish({
         onError: (err) =>
             addToast({
@@ -129,6 +139,13 @@ const useSettings = () => {
             }),
     });
     const [setContractAddress] = useSetContractAddress({
+        onError: (err) =>
+            addToast({
+                severity: 'error',
+                message: err.message,
+            }),
+    });
+    const [setABI] = useSetABI({
         onError: (err) =>
             addToast({
                 severity: 'error',
@@ -318,6 +335,53 @@ const useSettings = () => {
         });
     };
 
+    const onGenerateSSlCertificate = async (domain) => {
+        setDomainName(domain);
+        const TOKEN_KEY = 'token';
+        const getHeaders = () => {
+            const headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            const token = window.localStorage.getItem(TOKEN_KEY);
+            if (isAuthenticated && token) {
+                headers.append('authorization', `Bearer ${token}`);
+            }
+            return headers;
+        }
+
+        const url = process.env.CONFIG === 'dev' || process.env.NODE_ENV === 'development' && 'http://localhost:5000/graphql' || 'https://api.ambition.so/main/graphql';
+
+        try {
+            const response = await fetch(url, { method: 'POST', headers: getHeaders(), body: JSON.stringify({ query: GENERATE_SSL_CERTIFICATE, variables: { websiteId: website._id, domain } }) });
+            const responseBody = await response.json();
+            console.log(responseBody);
+            if (!responseBody.data) {
+                const errorMessage = responseBody.errors[0]?.message;
+                addToast({
+                    severity: 'error',
+                    message: errorMessage,
+                });
+                return;
+            }
+
+            setWebsite({
+                ...website,
+                domains: website.domains.map(d => {
+                    if (d.domain === domain) {
+                        return { ...d, isCustomDomainSslGenerated: true };
+                    }
+                    return d;
+                })
+            });
+
+            addToast({
+                severity: 'success',
+                message: responseBody.data.generateSSlCertificate
+            });
+        } catch (e) {
+            console.error(e, 'ERROR fetching results from apollo query!');
+        }
+    };
+
     const onPublishPage = async (pageIdx) => {
         const pageName = website.pages[pageIdx].name;
         const indexOfPublished = website.published.findIndex(
@@ -399,6 +463,37 @@ const useSettings = () => {
         setCustomSaveStatus(false);
     };
 
+    const onImportContract = async () => {
+        try {
+            if (!importContractAddress.length) throw new Error('Please enter the contract address you want to import');
+            if (importContractAddress.at(1) !== 'x' || importContractAddress.length < 5) throw new Error('Please enter a valid contract address');
+            if (!importABI.length) throw new Error('Please upload your ABI first');
+
+            // Set website's contract address
+            await setContractAddress({
+                variables: { websiteId: website._id, address: importContractAddress },
+            });
+
+            // Set website's ABI
+            await setABI({
+                variables: { websiteId: website._id, abi: importABI },
+            });
+
+            addToast({
+                severity: 'success',
+                message: "Imported Contract Successfully",
+            });
+
+            setIsImportContractOpen(false);
+        }
+        catch (err) {
+            addToast({
+                severity: 'error',
+                message: err.message,
+            });
+        }
+    }
+
     return {
         tabValue,
         setTabValue,
@@ -443,6 +538,8 @@ const useSettings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
+        onImportContract,
+        onGenerateSSlCertificate
     };
 };
 

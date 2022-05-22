@@ -1,149 +1,115 @@
 import React from 'react';
 import {
-    Fade,
-    Container,
-    Link,
-    TextField,
-    Stack,
-    Box,
-    Grid,
-    Typography,
-    Button,
-    Divider,
+	Box,
+	Grid,
+	Typography,
+	Button,
 } from 'ds/components';
-import { Chip, Stepper, Step, StepLabel, StepContent } from '@mui/material';
+import { Stepper, Step, StepLabel } from '@mui/material';
+import { NFTStack, ContractDetails } from '../../widgets';
+import { useContractSettings } from './hooks/useContractSettings';
 
+const NotComplete = ({ setIsModalOpen, contract, unRevealedtNftImage, revealedNftImage, nftPrice, contractState }) => {
+	const activeStep = contract?.nftCollection?.baseUri && 2 || 1;
+	const { mint, isMinting } = useContractSettings();
 
-const Overview = ({setIsModalOpen}) => {
 	return (
-		<Stack mt={8}>
-			<Container>
-				<Grid container>
-					<Grid item>
-						<Box>
-							<Stack gap={2} direction="horizontal" alignItems="center">
-								<Typography variant="h4">
-									Contract Name Here
-								</Typography>
-								<Chip label="Rinkeby" color="warning" />
-							</Stack>
-							<Typography>
-								ERC721
-							</Typography>
-						</Box>
+		<React.Fragment>
+			<Grid container>
+				<Grid item xs={12} md={7}>
+					<ContractDetails contract={contract} />
 
-
-						<Box mt={4}>
-							<Typography sx={{fontWeight:'500'}} variant="h5">
-								Next steps
-							</Typography>
-							<Stepper sx={{
-									width: '400px',
-								}} 
-								activeStep={1} 
-								orientation="vertical"
-							>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Deploy contract on Rinkeby
-										</Typography>
-										<Typography>
-											Configure your contract and deploy it on the Rinkeby Test Network
-										</Typography>
-									</StepLabel>
-								</Step>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Connect token image & metadata
-										</Typography>
-										<Typography>
-											Test out your contract by minting a test token
-										</Typography>
-										<Button onClick={setIsModalOpen}>
-											Next step
-										</Button>
-									</StepLabel>
-								</Step>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Mint a token on Rinkeby
-										</Typography>
-										<Typography>
-											Test out your contract by minting a test token
-										</Typography>
-									</StepLabel>
-								</Step>
-								<Step>
-									<StepLabel>
-										<Typography sx={{fontWeight: 'bold'}}>
-											Deploy contract on Mainnet
-										</Typography>
-										<Typography>
-											You're officially ready for showtime!
-										</Typography>
-									</StepLabel>
-								</Step>
-							</Stepper>
-						</Box>
-					</Grid>
-					<Grid 
-						item
-						ml="auto"
-						xs={6}
-					>
-
-						<Button variant="contained" size="small">
-							Mint a test token
-						</Button>
-						<Button size="small">
-							View minted NFT on etherscan
-						</Button>
-						<Box
-						sx={{
-							borderRadius: '10px',
-							border: 'solid 2px white',
-							background: 'rgba(0,0,0,.2)',
-							boxShadow: '0 4px 8px rgba(0,0,0,.1)',
-							backdropFilter: 'blur(3px)',
-						}}
-						p={3}
-						>
-						<Stack sx={{border: '1px solid black', height: '100%'}}>
-							<Box sx={{height: '500px'}}>
-										<Button onClick={setIsModalOpen}>
-											Connect your images & metadata
-										</Button>
-							</Box>
-							<Stack p={2} sx={{borderTop: '1px solid black'}}>
-								<Typography variant="body" sx={{fontWeight: 'bold'}}>
-									Collection name
-								</Typography>
-							</Stack>
-							<Stack direction="horizontal">
-								<Stack p={2} sx={{ flex: 1,borderRight: '1px solid black', borderTop: '1px solid black'}}>
-									<Typography variant="body" sx={{fontWeight: 'bold'}}>
-										Symbol
+					<Box mt={4}>
+						<Typography sx={{ fontWeight: '500' }} variant="h5">
+							Next steps
+						</Typography>
+						<Stepper sx={{ width: '400px' }} activeStep={activeStep} orientation="vertical">
+							<Step>
+								<StepLabel>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										Deploy contract on <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
 									</Typography>
-								</Stack>
-								<Stack p={2} sx={{ flex: 1, borderTop: '1px solid black' }}>
-									<Typography variant="body" sx={{fontWeight: 'bold'}}>
-										Collection size
+									<Typography>
+										Configure your contract and deploy it on the <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span> Test Network
 									</Typography>
-								</Stack>
+								</StepLabel>
+							</Step>
 
-							</Stack>
-						</Stack>
+							<Step>
+								<StepLabel
+									onClick={e => {
+										if (activeStep !== 1) {
+											e.preventDefault();
+											return;
+										}
+										setIsModalOpen(true);
+									}}
+									sx={{ cursor: activeStep === 1 && 'pointer' || undefined }}
+								>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										Connect token image &amp; metadata
+									</Typography>
+									<Typography>
+										Test out your contract by minting a test token
+									</Typography>
+								</StepLabel>
+							</Step>
 
+							<Step>
+								<StepLabel>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										Mint a token on <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
+									</Typography>
+									<Typography>
+										Test out your contract by minting a test token
+									</Typography>
+
+									{(activeStep !== 1) && <Button
+										variant="contained"
+										size="small"
+										onClick={() => mint(methodProps, 1)}
+										disabled={!contractState?.isPublicSaleOpen || isMinting}
+									>
+										{isMinting && <CircularProgress isButtonSpinner={true} /> || null}
+										Mint a {contract?.blockchain} token
+									</Button> || null}
+
+								</StepLabel>
+							</Step>
+
+							<Step>
+								<StepLabel>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										Deploy contract on Mainnet
+									</Typography>
+									<Typography>
+										You're officially ready for showtime!
+									</Typography>
+								</StepLabel>
+							</Step>
+						</Stepper>
 					</Box>
-					</Grid>
 				</Grid>
 
-			</Container>
-		</Stack>
+				<Grid
+					item
+					ml="auto"
+					xs={12}
+					md={5}
+				>
+					<NFTStack
+						contract={contract}
+						nftPrice={nftPrice}
+						disabled={!contract?.id}
+						unRevealedtNftImage={unRevealedtNftImage}
+						revealedNftImage={revealedNftImage}
+						setIsModalOpen={setIsModalOpen}
+					/>
+
+				</Grid>
+			</Grid>
+		</React.Fragment>
 	)
 };
 
-export default Overview;
+export default NotComplete;

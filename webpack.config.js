@@ -77,6 +77,10 @@ module.exports = env => {
 					test: /\.worker\.js$/,
 					use: { loader: "worker-loader" },
 				},
+				{
+					test: /\.(svg|gif|png|eot|woff|ttf)$/,
+					use: 'url-loader'
+				},
 			]
 		},
 		resolve: {

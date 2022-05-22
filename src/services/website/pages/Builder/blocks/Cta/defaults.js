@@ -17,6 +17,7 @@ export const CtaAProps = {
             isMint: {
                 _type: 'boolean',
                 value: false,
+                func: ''
             },
         },
     },

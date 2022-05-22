@@ -70,6 +70,7 @@ export const NavAProps = {
             isMint: {
                 _type: 'boolean',
                 value: false,
+                func: ''
             },
         },
     },
