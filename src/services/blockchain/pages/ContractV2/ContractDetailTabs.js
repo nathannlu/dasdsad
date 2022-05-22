@@ -6,7 +6,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
 // import Actions from './Actions';
-import Balance from './Balance';
+// import Balance from './Balance';
 import Overview from './Overview';
 import Settings from './Settings';
 import Embed from '../Contract/Embed';
@@ -23,7 +23,7 @@ const ContractDetailTabs = (props) => {
                     {/* <Tab label="Actions" value="actions" /> */}
                     <Tab label="Settings" value="settings" />
                     <Tab label="Embed" value="embed" />
-                    <Tab label="Balance" value="balance" />
+                    {/* <Tab label="Balance" value="balance" /> */}
                 </Tabs>
             </Container>
 
@@ -33,7 +33,7 @@ const ContractDetailTabs = (props) => {
                     // actions: <Actions {...props} />,
                     settings: <Settings {...props} />,
                     embed: <Embed {...props} />,
-                    balance: <Balance {...props} />
+                    // balance: <Balance {...props} />
                 }[value]}
             </Box>
         </React.Fragment>

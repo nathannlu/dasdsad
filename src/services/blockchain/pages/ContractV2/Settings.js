@@ -100,6 +100,8 @@ const Settings = ({ contract, contractController, walletController, contractStat
 	const toggleWhitelistAddressDialog = (isWhitelistAddressDialogOpen) => setState(prevState => ({ ...prevState, isWhitelistAddressDialogOpen }));
 	const toggleAirdropDialog = (isAirdropDialogOpen) => setState(prevState => ({ ...prevState, isAirdropDialogOpen }));
 
+	const isBalanceToWithdrawAvailable = contractState?.balanceInEth && Number(contractState?.balanceInEth) > 0;
+
 	if (!contractState || !contractController) {
 		return (
 			<Box>
@@ -370,12 +372,17 @@ const Settings = ({ contract, contractController, walletController, contractStat
 							size="small"
 							variant="contained"
 							onClick={() => withdraw(methodProps)}
-							disabled={isWithdrawing}
+							disabled={!isBalanceToWithdrawAvailable || isWithdrawing}
 						>
 							{isWithdrawing && <CircularProgress isButtonSpinner={true} /> || null}
 							Pay out to bank
 						</Button>
 					</Grid>
+
+					{!isBalanceToWithdrawAvailable && <Stack gap={2} direction="horizontal">
+						<ErrorMessage message="There is no balance on this contract to be withdrawn!" />
+					</Stack> || null}
+
 				</Stack>
 			</Stack>
 
