@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { WalletController, getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType, getWalletType } from '@ambition-blockchain/controllers';
+import { WalletController, getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType, getWalletType, getIpfsUrl } from '@ambition-blockchain/controllers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import {
@@ -90,7 +90,8 @@ const New = ({ contract }) => {
 		saveContract,
 		updateContract,
 		setContractState,
-		setDeployContractFormState
+		setDeployContractFormState,
+		deployingMessage
 	} = useDeployContractForm();
 
 	const nftPrice = { currency: contractState?.nftCollection?.currency, price: contractState?.nftCollection?.price };
@@ -106,6 +107,21 @@ const New = ({ contract }) => {
 		}
 	}
 
+	const fetchUnRevealedNftImage = (unRevealedBaseUri) => {
+		if (!unRevealedBaseUri) {
+			return;
+		}
+
+		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
+			return;
+		}
+		const baseIpfsUrl = getIpfsUrl(undefined, true);
+		const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
+		const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
+
+		setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+	}
+
 	useEffect(() => {
 		if (!contractState.nftCollection.baseUri) {
 			return;
@@ -113,18 +129,29 @@ const New = ({ contract }) => {
 		fetchRevealedNftImage(contractState.nftCollection.baseUri);
 	}, [contractState.nftCollection.baseUri]);
 
-	useEffect(() => {
-		if (!contractState.nftCollection.unRevealedBaseUri) {
-			return;
-		}
-		setUnRevealedtNftImage(prevState => ({ ...prevState, src: contractState.nftCollection.unRevealedBaseUri, isLoading: false }));
-	}, [contractState.nftCollection.unRevealedBaseUri]);
+	useEffect(() => { fetchUnRevealedNftImage(contractState?.nftCollection?.unRevealedBaseUri); }, [contractState.nftCollection.unRevealedBaseUri]);
 
 	useEffect(() => {
 		if (activeBlockchain === 'solana') {
 			setIsDialogOpen(true);
 		}
 	}, [activeBlockchain]);
+
+	useEffect(() => {
+		if (!contract?.nftCollection?.baseUri) {
+			return;
+		}
+		setContractState(contract);
+		fetchRevealedNftImage(contract?.nftCollection?.baseUri);
+	}, [contract?.nftCollection?.baseUri]);
+
+	useEffect(() => {
+		if (!contract?.nftCollection?.unRevealedBaseUri) {
+			return;
+		}
+		setContractState(contract);
+		fetchUnRevealedNftImage(contract?.nftCollection?.unRevealedBaseUri);
+	}, [contract?.nftCollection?.unRevealedBaseUri]);
 
 	const setContractStateIneditMode = () => {
 		if (contract) {
@@ -347,7 +374,7 @@ const New = ({ contract }) => {
 
 							<Stack direction="row" py={1} gap={2} alignItems="center">
 								{isDeploying && <Typography sx={{ fontStyle: 'italic', fontSize: 14 }} color="GrayText">
-									Creating Contract! Please be patient it will take couple of seconds...
+									{deployingMessage}
 								</Typography>}
 							</Stack>
 
@@ -364,7 +391,10 @@ const New = ({ contract }) => {
 							/>
 
 							<Typography sx={{ fontStyle: 'italic', fontSize: 14, mt: 8 }} color="GrayText">
-								**Deploy or save the contract to upload your collection.
+								**Save the contract to upload your collection.
+							</Typography>
+							<Typography sx={{ fontStyle: 'italic', fontSize: 14, mt: 2 }} color="GrayText">
+								**If collection is not uploaded before deploying the contract, Don't worry you can always update the collection metadata url later.
 							</Typography>
 						</Grid>
 					</Grid>

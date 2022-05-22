@@ -82,8 +82,12 @@ const Settings = ({ contract, contractController, walletController, contractStat
 	}, []);
 
 	useEffect(() => {
-		setMetadataUrl(contract?.nftCollection?.baseUri || '');
-	}, [contract?.nftCollection?.baseUri]);
+		if (isNftRevealEnabled) {
+			setMetadataUrl(contract?.nftCollection?.baseUri || '');
+		} else {
+			setMetadataUrl(contract?.nftCollection?.unRevealedBaseUri || '');
+		}
+	}, [contract?.nftCollection?.baseUri, contract?.nftCollection?.unRevealedBaseUri, isNftRevealEnabled]);
 
 	const cardStyle = {
 		maxWidth: 760,

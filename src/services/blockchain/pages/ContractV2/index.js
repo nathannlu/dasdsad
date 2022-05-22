@@ -40,17 +40,22 @@ const ContractV2 = () => {
 
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
+		const baseIpfsUrl = getIpfsUrl(undefined, true);
 
 		if (contract) {
 
 			if (contract?.nftCollection?.unRevealedBaseUri) {
-				setUnRevealedtNftImage(prevState => ({ ...prevState, src: contract?.nftCollection?.unRevealedBaseUri, isLoading: false }));
+				if (contract?.nftCollection?.unRevealedBaseUri?.indexOf('ipfs://') !== -1) {
+					const unRevealedBaseUri = contract?.nftCollection?.unRevealedBaseUri;
+					const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
+					const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
+					setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+				}
 			}
 
 			if (contract?.nftCollection?.baseUri) {
-				const ipfsUrl = getIpfsUrl(undefined, true);
 				const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-				const metadataUrl = baseUri && ipfsUrl && `${ipfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
+				const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
 
 				fetchRevealedNftImage(metadataUrl);
 				setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
@@ -87,6 +92,16 @@ const ContractV2 = () => {
 		if (contracts.length) { init(); }
 	}, [contracts]);
 
+	const ipfsModal = (
+		<IPFSModal
+			id={id}
+			contract={contract}
+			isModalOpen={isModalOpen}
+			setIsModalOpen={setIsModalOpen}
+			renderUploadUnRevealedImage={true}
+		/>
+	);
+
 	if (isLoading) {
 		return (
 			<Stack>
@@ -113,33 +128,29 @@ const ContractV2 = () => {
 					}}>
 
 					{!isSetupComplete ? (
-						<Newv2 contract={contract} />
+						<React.Fragment>
+							<Newv2 contract={contract} />
+							{contract?.id && ipfsModal}
+						</React.Fragment>
 					) : (
-						<ContractDetailTabs
-							id={id}
-							contract={contract}
-							contractState={contractState}
-							setContractState={setContractState}
-							contractController={contractController}
-							walletController={walletController}
-							unRevealedtNftImage={unRevealedtNftImage}
-							revealedNftImage={revealedNftImage}
-							nftPrice={nftPrice}
-							setIsModalOpen={setIsModalOpen}
-						/>
+						<React.Fragment>
+							<ContractDetailTabs
+								id={id}
+								contract={contract}
+								contractState={contractState}
+								setContractState={setContractState}
+								contractController={contractController}
+								walletController={walletController}
+								unRevealedtNftImage={unRevealedtNftImage}
+								revealedNftImage={revealedNftImage}
+								nftPrice={nftPrice}
+								setIsModalOpen={setIsModalOpen}
+							/>
+							{contract?.id && ipfsModal}
+						</React.Fragment>
 					)}
 				</Box>
-
-				{contract?.id && <IPFSModal
-					id={id}
-					contract={contract}
-					isModalOpen={isModalOpen}
-					setIsModalOpen={setIsModalOpen}
-					renderUploadUnRevealedImage={true}
-				/>}
-
 			</Container>
-
 		</Stack>
 	);
 };

@@ -29,8 +29,7 @@ export const useDeployContractForm = () => {
 		isTestnetEnabled: true, // default
 		isDeploying: false,
 		isSaving: false,
-		redirectToDetailsPage: false,
-		redirectToSuccessPage: false,
+		deployingMessage: 'Creating Contract! Please be patient it will take couple of seconds...',
 		contractState: {
 			id: null,
 			name: null,
@@ -71,7 +70,7 @@ export const useDeployContractForm = () => {
 		},
 	});
 
-	const [createContract, { loading }] = useCreateContract({
+	const [createContract] = useCreateContract({
 		onCompleted: (data) => {
 			addToast({
 				severity: 'success',
@@ -82,11 +81,6 @@ export const useDeployContractForm = () => {
 
 			setContract(data?.createContract);
 			setContractState(data?.createContract);
-
-			if (state.redirectToSuccessPage || state.redirectToDetailsPage) {
-				handleRedirect(data?.createContract?.id);
-			}
-
 			posthog.capture('User created contract');
 		}
 	});
@@ -99,21 +93,17 @@ export const useDeployContractForm = () => {
 			});
 			setContract({ ...contract, ...data?.updateContractDetails });
 			setContractState(data?.updateContractDetails);
-
-			if (state.redirectToSuccessPage || state.redirectToDetailsPage) {
-				handleRedirect(data?.updateContractDetails?.id);
-			}
 			posthog.capture('User updated contract details');
 		}
 	});
 
-	const handleRedirect = (id) => {
-		if (state.redirectToSuccessPage) {
-			history.push(`/smart-contracts/v2/${id}/deploy/success`);
-			return;
-		}
-		history.push(`/smart-contracts/v2/${id}`);
+	const handleRedirectToSuccessPage = (id) => {
+		history.push(`/smart-contracts/v2/${id}/deploy/success`);
 	};
+
+	const handleRedirectToDetailsPage = (id) => {
+		history.push(`/smart-contracts/v2/${id}`);
+	}
 
 	const onError = (err) => {
 		addToast({ severity: 'error', message: err?.message });
@@ -150,8 +140,6 @@ export const useDeployContractForm = () => {
 	 * Deploy contract to blockchain
 	 */
 	const deployContract = async (walletController) => {
-		console.log('walletController', walletController);
-		
 		const { name, symbol, maxSupply } = deployContractForm;
 
 		// validate form
@@ -166,9 +154,6 @@ export const useDeployContractForm = () => {
 				throw new Error('Wallet not connected!');
 			}
 
-			// set redirect page on Success
-			setState(prevState => ({ ...prevState, redirectToSuccessPage: true }));
-
 			setIsDeploying(true);
 			addToast({
 				severity: 'info',
@@ -177,9 +162,7 @@ export const useDeployContractForm = () => {
 
 			// get the blockchain type on the basis of isTestnetEnabled 
 			const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
-
 			const contractController = new ContractController(null, blockchain, CONTRACT_VERSION);
-			console.log(contractController, 'contractController');
 
 			// switch network to testnet
 			await walletController.compareNetwork(blockchain, async (error) => {
@@ -203,7 +186,20 @@ export const useDeployContractForm = () => {
 					return;
 				}
 
+				// wait for some time allow contract to be saved
+				await new Promise(resolve => setTimeout(resolve, 10 * 1000));
+
 				const contractAddress = deployedContract.options.address;
+
+				// nftCollection?.baseUri exists save this to contract
+				// by default we'll always save baseuri and set revealed to true 
+				if (state.contractState?.nftCollection?.baseUri) {
+					setState(prevState => ({ ...prevState, deployingMessage: 'Uploading NFT metadata url to Contract! Please be patient it will take couple of seconds...' }));
+
+					const contractController = new ContractController(contractAddress, blockchain, CONTRACT_VERSION);
+					await contractController.updateReveal(walletAddress, true, state.contractState?.nftCollection?.baseUri);
+				}
+
 				// Update backend
 				if (state.contractState?.id) {
 					updateContract(state.contractState?.id, contractAddress);
@@ -234,9 +230,6 @@ export const useDeployContractForm = () => {
 
 		setIsSaving(true);
 
-		// set redirect page on Success
-		setState(prevState => ({ ...prevState, redirectToDetailsPage: true }));
-
 		try {
 			const contractInput = {
 				name: name.value,
@@ -250,7 +243,14 @@ export const useDeployContractForm = () => {
 					currency: getBlockchainCurrency(blockchain)
 				},
 			};
-			await createContract({ variables: { contract: contractInput } });
+			const response = await createContract({ variables: { contract: contractInput } });
+
+			if (contractAddress) {
+				handleRedirectToSuccessPage(response?.data?.createContract?.id);
+			} else {
+				handleRedirectToDetailsPage(response?.data?.createContract?.id);
+			}
+
 			setIsSaving(false);
 		} catch (err) {
 			console.log(err);
@@ -288,7 +288,15 @@ export const useDeployContractForm = () => {
 				currency: getBlockchainCurrency(blockchain),
 				address: contractAddress || ''
 			};
-			await updateContractDetails({ variables: { ...contractInput, id: contractId } });
+
+			const response = await updateContractDetails({ variables: { ...contractInput, id: contractId } });
+
+			if (contractAddress) {
+				handleRedirectToSuccessPage(response?.data?.updateContractDetails?.id);
+			} else {
+				handleRedirectToDetailsPage(response?.data?.updateContractDetails?.id);
+			}
+
 			setIsSaving(false);
 		} catch (err) {
 			console.log(err);

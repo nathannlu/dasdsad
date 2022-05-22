@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
-import { useSetWhitelist, useSetBaseUri, useSetNftPrice } from 'services/blockchain/gql/hooks/contract.hook.js';
+import { useSetWhitelist, useSetBaseUri, useSetNftPrice, useSetUnRevealedBaseUri } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
 export const useContractSettings = () => {
@@ -22,6 +22,7 @@ export const useContractSettings = () => {
 
 	const [setWhitelist] = useSetWhitelist({});
 	const [setBaseUri] = useSetBaseUri({});
+	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({});
 	const [setNftPrice] = useSetNftPrice({});
 
 	const { form: actionForm, setFormState: setActionFormState } = useForm({
@@ -73,17 +74,26 @@ export const useContractSettings = () => {
 
 	const updateReveal = async ({ contractController, setContractState, walletAddress, contractId }) => {
 		const { metadataUrl } = actionForm;
-
+		const isRevealed = state.isNftRevealEnabled;
 		try {
+
 			if (!metadataUrl.value) {
-				throw new Error('Metadata url can not be empty!')
+				throw new Error('Metadata url can not be empty!');
+			}
+
+			if (metadataUrl.value.indexOf('ipfs://') === -1) {
+				throw new Error('Invalid Metadata url!');
 			}
 
 			setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
 			// @TODO ask to set reveal as true or false
-			const contractState = await contractController.updateReveal(walletAddress, state.isNftRevealEnabled, metadataUrl.value);
+			const contractState = await contractController.updateReveal(walletAddress, isRevealed, metadataUrl.value);
 			setContractState(contractState);
-			setBaseUri({ variables: { id: contractId, baseUri: metadataUrl.value } });
+			if (isRevealed) {
+				setBaseUri({ variables: { id: contractId, baseUri: metadataUrl.value } });
+			} else {
+				setUnRevealedBaseUri({ variables: { id: contractId, unRevealedBaseUri: metadataUrl.value } });
+			}
 			onSuccess('Metadata Url updated successfully!');
 		} catch (e) {
 			onError(e);
