@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
-import { useSetWhitelist, useSetBaseUri, useSetNftPrice, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook.js';
+import { useSetWhitelist, useSetBaseUri, useSetNftPrice } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
 export const useContractSettings = () => {

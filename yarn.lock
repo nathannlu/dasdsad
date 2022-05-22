@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@ambition-blockchain/controllers@^1.0.5", "@ambition-blockchain/controllers@^1.0.6":
-  "integrity" "sha512-QjaN/ipNJk0wq+2xCrsydokswGBOk6s+m+zT/i0CAs3KRIu8fSKVCAIoA1HVMs73n/nCvt5uFJdUUCrSALAf2g=="
-  "resolved" "https://registry.npmjs.org/@ambition-blockchain/controllers/-/controllers-1.0.6.tgz"
-  "version" "1.0.6"
+"@ambition-blockchain/controllers@^1.0.10", "@ambition-blockchain/controllers@^1.0.5":
+  "integrity" "sha512-woki6Fk0JOnp7Vxd2AtVOmO2a09St9ovA8ncTNo9L8tGpuQz8XGm9vZSEJppWFE3Xfm5/RznzG7KOTHwr/s/Gg=="
+  "resolved" "https://registry.npmjs.org/@ambition-blockchain/controllers/-/controllers-1.0.10.tgz"
+  "version" "1.0.10"
   dependencies:
     "@ambition-blockchain/controllers" "^1.0.5"
     "@babel/core" "^7.17.9"
