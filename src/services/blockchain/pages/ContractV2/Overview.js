@@ -52,7 +52,7 @@ const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftIma
 										/>
 										<Details
 											primary="Balance"
-											secondary={''} // @TODO wiring
+											secondary={`${contractState?.balanceInEth} ${nftPrice.currency}` } 
 											isLoading={isLoading}
 										/>
 										<Details
