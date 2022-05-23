@@ -31,7 +31,7 @@ import {
     Select,
     Slider,
     Tab,
-    Tabs,
+    Tabs
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 

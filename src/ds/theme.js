@@ -50,9 +50,10 @@ const theme = createTheme({
             },
         },
 
-        MuiOutlinedInput: {
+        MuiInput: {
             styleOverrides: {
                 root: {
+
                     /*
 					transition: 'all .2s ease',
 					'&:hover .MuiOutlinedInput-notchedOutline': {
@@ -60,6 +61,8 @@ const theme = createTheme({
 					}
 					*/
                 },
+
+
             },
         },
     },

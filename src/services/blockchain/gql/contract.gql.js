@@ -17,15 +17,16 @@ export const CREATE_CONTRACT = gql`
                 size
                 royalty
                 baseUri
+                unRevealedBaseUri
                 whitelist
             }
         }
     }
 `;
 
-export const UPDATE_CONTRACT = gql`
-    mutation UpdateContract($id: ID!, $address: String!) {
-        updateContract(id: $id, address: $address) {
+export const UPDATE_CONTRACT_DETAILS = gql`
+    mutation UpdateContractDetails($id: ID!, $name: String!, $symbol: String!, $blockchain: String!, $price: Float!, $size: Int!, $currency: String!, $address: String!) {
+        updateContractDetails(id: $id, name: $name, symbol: $symbol, blockchain: $blockchain, price: $price, size: $size, currency: $currency, address: $address) {
             id
             name
             symbol
@@ -40,6 +41,31 @@ export const UPDATE_CONTRACT = gql`
                 size
                 royalty
                 baseUri
+                unRevealedBaseUri
+                whitelist
+            }
+        }
+    }
+`;
+
+export const UPDATE_CONTRACT_ADDRESS = gql`
+    mutation UpdateContractAddress($id: ID!, $address: String!) {
+        updateContractAddress(id: $id, address: $address) {
+            id
+            name
+            symbol
+            type
+            author
+            blockchain
+            address
+            isSubscribed
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                unRevealedBaseUri
                 whitelist
             }
         }
@@ -71,6 +97,7 @@ export const GET_CONTRACTS = gql`
                 size
                 royalty
                 baseUri
+                unRevealedBaseUri
                 whitelist
             }
         }
@@ -93,6 +120,7 @@ export const GET_CONTRACT = gql`
                 size
                 royalty
                 baseUri
+                unRevealedBaseUri
                 whitelist
             }
         }
@@ -109,6 +137,41 @@ export const SET_BASE_URI = gql`
                 size
                 royalty
                 baseUri
+                unRevealedBaseUri
+                whitelist
+            }
+        }
+    }
+`;
+
+export const SET_UN_REVEALED_BASE_URI = gql`
+    mutation SetUnRevealedBaseUri($unRevealedBaseUri: String!, $id: ID!) {
+        setUnRevealedBaseUri(unRevealedBaseUri: $unRevealedBaseUri, id: $id) {
+            id
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                unRevealedBaseUri
+                whitelist
+            }
+        }
+    }
+`;
+
+export const SET_NFT_PRICE = gql`
+    mutation SetNftPrice($price: Float!, $id: ID!) {
+        setNftPrice(price: $price, id: $id) {
+            id
+            nftCollection {
+                price
+                currency
+                size
+                royalty
+                baseUri
+                unRevealedBaseUri
                 whitelist
             }
         }
@@ -125,6 +188,7 @@ export const SET_WHITELIST = gql`
                 size
                 royalty
                 baseUri
+                unRevealedBaseUri
                 whitelist
             }
         }

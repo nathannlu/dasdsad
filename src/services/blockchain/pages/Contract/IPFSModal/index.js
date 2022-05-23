@@ -9,12 +9,13 @@ import ImportLink from './ImportLink';
 import Payment from './Payment';
 import Upload from './Upload';
 
-const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
+// renderUploadUnRevealedImage={true} is currrntly only for erc-721a contracts
+const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRevealedImage }) => {
     const [initialStep, setInitialStep] = useState(1);
 
     useEffect(() => {
         // If contract is subscribed, skip to next step
-        if (contract.isSubscribed) {
+        if (contract?.isSubscribed) {
             setInitialStep(4);
         }
     }, [contract]);
@@ -50,7 +51,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id }) => {
 
                     {/* uploads to ipfs with us */}
                     <Payment contractId={id} contract={contract} />
-                    <Upload id={id} contract={contract} setIsModalOpen={setIsModalOpen} />
+                    <Upload id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} />
                 </StepWizard>
             </Box>
         </Modal>

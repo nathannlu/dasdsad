@@ -68,3 +68,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `yarn build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## Publish to npm
+- update the version in package.json
+```npm login```
+```npm init --scope=@my-username```
+```npm publish --access public```
+
+- refrence
+- https://docs.npmjs.com/creating-and-publishing-scoped-public-packages

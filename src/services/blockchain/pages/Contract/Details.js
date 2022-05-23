@@ -17,13 +17,15 @@ const Details = ({ contract }) => {
         loading,
     } = useContractDetails(contract.address, getNetworkID());
 
+	console.log('asd',contract.blockchain)
+
     return (
         <Stack>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Details
             </Typography>
 
-            {wallet != 'phantom' && (
+            {contract.blockchain != 'solana' || contract.blockchain != 'solanadevnet' ? (
                 <Grid container>
                     <Grid item xs={6}>
                         Balance:
@@ -101,7 +103,9 @@ const Details = ({ contract }) => {
                         {loading ? <Skeleton width={60} /> : max}
                     </Grid>
                 </Grid>
-            )}
+						) : (<Box>
+							Details not available yet for Solana contracts
+						</Box>)}
         </Stack>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
     Box,
@@ -18,50 +18,49 @@ import { AppBar, Toolbar } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useDeployContractForm } from './hooks/useDeployContractForm';
-import StepWizard from 'react-step-wizard';
 import CloseIcon from '@mui/icons-material/Close';
 import { useWeb3 } from 'libs/web3';
 import { useToast } from 'ds/hooks/useToast';
 
 const blockchains = [
-    {
-        title: 'Ethereum',
-        value: 'ethereum',
-        img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-    },
-    {
-        title: 'Polygon',
-        value: 'polygon',
-        img: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
-    },
+    // {
+    //     title: 'Ethereum',
+    //     value: 'ethereum',
+    //     img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+    // },
+    // {
+    //     title: 'Polygon',
+    //     value: 'polygon',
+    //     img: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+    // },
     {
         title: 'Solana',
         value: 'solana',
         img: 'https://cryptologos.cc/logos/solana-sol-logo.png',
     },
-    {
-        title: 'Ethereum Testnet',
-        value: 'rinkeby',
-        img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-    },
-    {
-        title: 'Polygon Testnet',
-        value: 'mumbai',
-        img: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
-    },
+    // {
+    //     title: 'Ethereum Testnet',
+    //     value: 'rinkeby',
+    //     img: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+    // },
+    // {
+    //     title: 'Polygon Testnet',
+    //     value: 'mumbai',
+    //     img: 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+    // },
     {
         title: 'Solana devnet',
         value: 'solanadevnet',
         img: 'https://cryptologos.cc/logos/solana-sol-logo.png',
     },
     /*
-	{ title: 'Solana', value: 'solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
-	*/
+    { title: 'Solana', value: 'solana', img: 'https://www.pngall.com/wp-content/uploads/10/Solana-Crypto-Logo-PNG-File.png'},
+    */
 ];
 
 const Upload = () => {
     const { addToast } = useToast();
-    const { wallet } = useWeb3();
+    const { wallet, loadWalletProvider } = useWeb3();
     const [activeStep, setActiveStep] = useState();
     const history = useHistory();
     const { selectInput, setSelectInput } = useContract();
@@ -69,19 +68,14 @@ const Upload = () => {
         deployContractForm: { name, symbol, priceInEth, maxSupply },
         onCompleted,
     } = useDeployContractForm();
-    const [createContract, { loading }] = useCreateContract({
-        onCompleted,
-    });
+
+    const [createContract, { loading }] = useCreateContract({ onCompleted });
 
     const onCreateContract = async () => {
         try {
-            if (
-                (wallet === 'metamask' || wallet === 'default') &&
-                (selectInput === 'solanadevnet' || selectInput === 'solana')
-            )
-                throw new Error(
-                    'You must login with a phantom wallet to deploy a solana contract'
-                );
+            if ((wallet === 'metamask' || wallet === 'default') && (selectInput === 'solanadevnet' || selectInput === 'solana')) {
+                throw new Error('You must login with a phantom wallet to deploy a solana contract');
+            }
 
             const currencyMap = {
                 ethereum: 'eth',
@@ -112,6 +106,10 @@ const Upload = () => {
         }
     };
 
+    useEffect(() => {
+        loadWalletProvider('phantom');
+    }, []);
+
     return (
         <Fade in>
             <Grid
@@ -135,7 +133,7 @@ const Upload = () => {
                         color: '#000',
                     }}>
                     <Stack direction="row" px={2} gap={2} alignItems="center">
-                        <IconButton onClick={() => history.goBack()}>
+                        <IconButton onClick={() => history.push('/smart-contracts')}>
                             <CloseIcon sx={{ fontSize: '18px' }} />
                         </IconButton>
                         <Divider

@@ -24,7 +24,7 @@ const Traits = (props) => {
         if (!status) {
             setUploadedFiles([]);
         }
-        props.setActiveStep((status && 1) || 0);
+        props.setActiveStep(status ? props.step + 1 : props.step);
     };
 
     return (

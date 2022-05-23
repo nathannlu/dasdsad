@@ -147,19 +147,19 @@ export const Web3Provider = ({ children }) => {
         try {
             const payerAccount = await loadWalletProvider(walletType);
 
-            const res = await getNonceByAddress({variables: {address: payerAccount}});
+            const res = await getNonceByAddress({ variables: { address: payerAccount } });
             const nonce = res.data.getNonceByAddress;
             const signature = await signNonce(walletType, nonce, payerAccount);
 
             if (walletType === 'metamask') {
                 if (!signature) throw new Error('User Rejected Login with Metamask');
-                
-                await verifySignature({variables: {address: payerAccount, signature}})
+
+                await verifySignature({ variables: { address: payerAccount, signature } })
             }
             else if (walletType === 'phantom') {
                 if (!signature) throw new Error('User Rejected Login with Phantom');
 
-                await verifySignaturePhantom({variables: {address: signature.publicKey, signature: signature.signature}});
+                await verifySignaturePhantom({ variables: { address: signature.publicKey, signature: signature.signature } });
             }
             else throw new Error('Wallet not supported');
 
@@ -366,9 +366,7 @@ export const Web3Provider = ({ children }) => {
 
                 const contract = await retrieveContract(contractAddress);
 
-                const balance = await window.web3.eth.getBalance(
-                    contractAddress
-                );
+                const balance = await window.web3.eth.getBalance(contractAddress);
                 console.log('balance', balance);
                 const balanceInEth = window.web3.utils.fromWei(balance);
                 console.log('balanceInEth', balanceInEth);
@@ -575,49 +573,49 @@ export const Web3Provider = ({ children }) => {
             });
     };
 
-	const payInEth = async (size, callback, accountFrom = '') => {
-        
+    const payInEth = async (size, callback, accountFrom = '') => {
+
         let payerAccount = account;
 
-        if(payerAccount == ''){
+        if (payerAccount == '') {
             payerAccount = accountFrom;
         }
-        
+
         await compareNetwork('0x1', () => {
             const web3 = window.web3
             const inEth = 0.000034;
             const amount = inEth * size;
-            
+
             web3.eth.sendTransaction({
                 from: payerAccount,
                 to: config.company.walletAddress,
                 value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
             })
-            .on('transactionHash', () => {
-                setLoading(true);
-                addToast({
-                    severity: 'info',
-                    message: 'Sending transaction. This could take up to a minute...'
+                .on('transactionHash', () => {
+                    setLoading(true);
+                    addToast({
+                        severity: 'info',
+                        message: 'Sending transaction. This could take up to a minute...'
+                    })
                 })
-            })
-            .once('confirmation', () => {
-                setLoading(false);
-                callback()
-            })
-            .on('error', () => {
-                setLoading(false);
-            })
+                .once('confirmation', () => {
+                    setLoading(false);
+                    callback()
+                })
+                .on('error', () => {
+                    setLoading(false);
+                })
         })
-		return [loading]
-	}
+        return [loading]
+    }
 
     const payGeneratorWithEth = async (size, callback) => {
         return await loginAndPay('metamask', size, callback);
-	}
+    }
 
-	return (
-		<Web3Context.Provider
-			value={{
+    return (
+        <Web3Context.Provider
+            value={{
                 account,
                 wallet,
                 setAccount,
@@ -636,8 +634,8 @@ export const Web3Provider = ({ children }) => {
                 compareNetwork,
                 presaleMint,
 
-				loading,
-				payInEth,
+                loading,
+                payInEth,
                 payGeneratorWithEth,
                 getPrice,
                 getMaximumSupply,

@@ -24,7 +24,7 @@ const Metadata = (props) => {
         if (!status) {
             setUploadedJson([]);
         }
-        props.setActiveStep((status && 2) || 1);
+        props.setActiveStep(status ? props.step + 1 : props.step);
     };
 
     return (

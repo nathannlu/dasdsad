@@ -1,10 +1,10 @@
 import Web3 from 'web3/dist/web3.min';
-import { useUpdateContract } from 'services/blockchain/gql/hooks/contract.hook';
+import { useUpdateContractAddress } from 'services/blockchain/gql/hooks/contract.hook';
 import { useWeb3 } from 'libs/web3';
 import { useContract } from 'services/blockchain/provider';
 import { useDeployContractForm } from 'services/blockchain/pages/New/hooks/useDeployContractForm';
 import { useToast } from 'ds/hooks/useToast';
-import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
+import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/Asd.json';
 import posthog from 'posthog-js';
 
 export const useEthereum = () => {
@@ -13,7 +13,7 @@ export const useEthereum = () => {
     const { setLoading, setError, setStart, selectInput, ipfsUrl } =
         useContract();
     const { addToast } = useToast();
-    const [updateContract] = useUpdateContract({
+    const [updateContractAddress] = useUpdateContractAddress({
         onCompleted: () => {
             addToast({
                 severity: 'success',
@@ -48,7 +48,7 @@ export const useEthereum = () => {
                 deployedContract: true,
             },
         });
-        await updateContract({
+        await updateContractAddress({
             variables: { id: id, address: newContractAddress },
         });
     };
@@ -68,10 +68,9 @@ export const useEthereum = () => {
             const contract = new web3.eth.Contract(NFTCollectible.abi);
             const priceInWei = web3.utils.toWei(cost.toString());
 
-            console.log(uri, name, symbol, totalSupply, priceInWei);
             const options = {
                 data: NFTCollectible.bytecode,
-                arguments: [uri, name, symbol, totalSupply, priceInWei, open],
+                arguments: [uri, name, totalSupply],
             };
             const senderInfo = {
                 from: account,

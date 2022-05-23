@@ -77,6 +77,10 @@ module.exports = env => {
 					test: /\.worker\.js$/,
 					use: { loader: "worker-loader" },
 				},
+				{
+					test: /\.(svg|gif|png|eot|woff|ttf)$/,
+					use: 'url-loader'
+				},
 			]
 		},
 		resolve: {
@@ -95,6 +99,7 @@ module.exports = env => {
 				'hooks': `${__dirname}/src/hooks`,
 				'services': `${__dirname}/src/services`,
 				'solana': `${__dirname}/src/solana`,
+				'controllers': `${__dirname}/src/controllers`,
 			},
 			/*
 			fallback: {

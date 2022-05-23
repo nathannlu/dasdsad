@@ -3,10 +3,13 @@ import {
     CREATE_CONTRACT,
     GET_CONTRACTS,
     SET_BASE_URI,
-    UPDATE_CONTRACT,
+    SET_UN_REVEALED_BASE_URI,
+    UPDATE_CONTRACT_ADDRESS,
+    UPDATE_CONTRACT_DETAILS,
     SET_WHITELIST,
     GET_CONTRACT,
     DELETE_CONTRACT,
+    SET_NFT_PRICE
 } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
@@ -51,8 +54,9 @@ export const useDeleteContract = ({ onCompleted, onError }) => {
 export const useGetContracts = async ({ onCompleted, onError }) => {
     const { setContracts } = useContract();
     const { ...queryResult } = useQuery(GET_CONTRACTS, {
+        fetchPolicy: 'network-only',
         onCompleted: async (data) => {
-            console.log(data.getContracts);
+            console.log(data.getContracts, 'onCompleted');
 
             if (setContracts !== undefined) {
                 setContracts(data.getContracts);
@@ -105,12 +109,11 @@ export const useSetBaseUri = ({ onCompleted, onError }) => {
     return [setBaseUri, { ...mutationResult }];
 };
 
-export const useSetWhitelist = ({ onCompleted, onError }) => {
+export const useSetUnRevealedBaseUri = ({ onCompleted, onError }) => {
     const { setContracts } = useContract();
-
-    const [setWhitelist, { ...mutationResult }] = useMutation(SET_WHITELIST, {
+    const [setUnRevealedBaseUri, { ...mutationResult }] = useMutation(SET_UN_REVEALED_BASE_URI, {
         onCompleted: async (data) => {
-            const updated = data.setWhitelist;
+            const updated = data.setUnRevealedBaseUri;
 
             // Find obj in arr and updated
             setContracts((prevState) => {
@@ -133,17 +136,69 @@ export const useSetWhitelist = ({ onCompleted, onError }) => {
         onError,
     });
 
+    return [setUnRevealedBaseUri, { ...mutationResult }];
+};
+
+export const useSetNftPrice = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+    const [setNftPrice, { ...mutationResult }] = useMutation(SET_NFT_PRICE, {
+        onCompleted: async (data) => {
+            const updated = data.setNftPrice;
+
+            // Find obj in arr and updated
+            setContracts((prevState) => {
+                const newState = prevState.map((contract) => {
+                    if (contract.id == updated.id) {
+                        return { ...contract, nftCollection: updated.nftCollection };
+                    }
+                    return contract;
+                });
+                return newState;
+            });
+            onCompleted && onCompleted(data);
+        },
+        onError
+    });
+
+    return [setNftPrice, { ...mutationResult }];
+};
+
+export const useSetWhitelist = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+
+    const [setWhitelist, { ...mutationResult }] = useMutation(SET_WHITELIST, {
+        onCompleted: async (data) => {
+            const updated = data.setWhitelist;
+
+            // Find obj in arr and updated
+            setContracts((prevState) => {
+                const newState = prevState.map((contract) => {
+                    if (contract.id == updated.id) {
+                        return {
+                            ...contract,
+                            nftCollection: updated.nftCollection,
+                        };
+                    }
+                    return contract;
+                });
+                return newState;
+            });
+            onCompleted && onCompleted(data);
+        },
+        onError
+    });
+
     return [setWhitelist, { ...mutationResult }];
 };
 
-export const useUpdateContract = ({ onCompleted, onError }) => {
+export const useUpdateContractAddress = ({ onCompleted, onError }) => {
     const { setContracts } = useContract();
 
-    const [updateContract, { ...mutationResult }] = useMutation(
-        UPDATE_CONTRACT,
+    const [updateContractAddress, { ...mutationResult }] = useMutation(
+        UPDATE_CONTRACT_ADDRESS,
         {
             onCompleted: async (data) => {
-                const updated = data.updateContract;
+                const updated = data.updateContractAddress;
 
                 // Find obj in arr and updated
                 setContracts((prevState) => {
@@ -164,5 +219,33 @@ export const useUpdateContract = ({ onCompleted, onError }) => {
         }
     );
 
-    return [updateContract, { ...mutationResult }];
+    return [updateContractAddress, { ...mutationResult }];
+};
+
+export const useUpdateContractDetails = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+
+    const [updateContractDetails, { ...mutationResult }] = useMutation(
+        UPDATE_CONTRACT_DETAILS,
+        {
+            onCompleted: async (data) => {
+                const updated = data.updateContractDetails;
+
+                // Find obj in arr and updated
+                setContracts((prevState) => {
+                    const newState = prevState.map((contract) => {
+                        if (contract.id == updated.id) {
+                            return { ...contract, ...updated };
+                        }
+                        return contract;
+                    });
+                    return newState;
+                });
+                onCompleted && onCompleted(data);
+            },
+            onError
+        }
+    );
+
+    return [updateContractDetails, { ...mutationResult }];
 };
