@@ -108,9 +108,11 @@ const CSVWidget = ({ addresses, count, onSave }) => {
         let isInvalid = false;
 
         setRows(prevState => {
-            const newRows = prevState.map(r => ({ ...r, isError: !!(!r.address || !r.address.length || isNaN(r.count) || r.isEdit) }));
+//            const newRows = prevState.map(r => ({ ...r, isError: !!(!r.address || !r.address.length || isNaN(r.count) || r.isEdit) }));
+            const newRows = prevState.map(r => ({ ...r, isError: false }));
+
             console.log(newRows);
-            isInvalid = !!newRows.find(r => r.isEdit || r.isError);
+            isInvalid = false; // !!newRows.find(r => r.isEdit || r.isError);
             return newRows;
         });
 
