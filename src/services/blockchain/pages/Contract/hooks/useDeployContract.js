@@ -45,7 +45,6 @@ export const useDeployContract = (contract) => {
                     size: contract.nftCollection.size,
                     price: contract.nftCollection.price,
                     liveDate: 'now',
-
                     cacheHash: contract.nftCollection.cacheHash,
                     id: contract.id,
                     env,
