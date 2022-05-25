@@ -54,6 +54,7 @@ const useSettings = () => {
     const [customSaveStatus, setCustomSaveStatus] = useState(false);
     const [customHead, setCustomHead] = useState('');
     const [customBody, setCustomBody] = useState('');
+    const [isAddingDomain, setIsAddingDomain] = useState(false);
     const openContractAnchor = Boolean(contractAnchor);
     const [deleteWebsite] = useDeleteWebsite({
         websiteId: website._id,
@@ -309,10 +310,17 @@ const useSettings = () => {
     };
 
     const onAddDomain = async (domain) => {
+        setIsAddingDomain(true);
         const domainList = website.domains.map((domain) => domain.name);
         if (domainList.indexOf(domain) == -1) {
             await addCustomDomain();
         }
+        setIsAddingDomain(false);
+        setShowDomainModal(false);
+        addToast({
+            severity: 'success',
+            message: `Successfuly added ${domain}`,
+        })
     };
 
     const onDeleteDomain = async (domain) => {
@@ -320,11 +328,21 @@ const useSettings = () => {
         await removeCustomDomain({
             variables: { websiteId: website._id, domain },
         });
+        addToast({
+            severity: 'success',
+            message: `Successfuly deleted ${domain}`,
+        })
     };
 
     const onVerifyDomain = async (domain) => {
         setDomainName(domain);
-        await verifyDns({ variables: { websiteId: website._id, domain } });
+        await verifyDns({ 
+            variables: { websiteId: website._id, domain } 
+        });
+        addToast({
+            severity: 'success',
+            message: `Successfuly verified ${domain}`,
+        })
     };
 
     const onMakeDefault = async (domain) => {
@@ -333,6 +351,10 @@ const useSettings = () => {
         await setCustomDomain({
             variables: { websiteId: website._id, domain, isActive: false },
         });
+        addToast({
+            severity: 'success',
+            message: `Successfuly set ${domain} as default`,
+        })
     };
 
     const onGenerateSSlCertificate = async (domain) => {
@@ -539,7 +561,8 @@ const useSettings = () => {
         onCustomBodyChange,
         onSaveCustom,
         onImportContract,
-        onGenerateSSlCertificate
+        onGenerateSSlCertificate,
+        isAddingDomain
     };
 };
 

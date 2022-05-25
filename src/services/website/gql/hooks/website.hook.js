@@ -267,15 +267,29 @@ export const useRemoveCustomDomain = ({ websiteId, domain, onError }) => {
 };
 
 export const useVerifyDns = ({ domain, onError }) => {
+    const { website, setWebsite } = useWebsite();
+
     const [verifyDns, { ...mutationResult }] = useMutation(VERIFY_DNS, {
         onCompleted: (data) => {
+            console.log(domain)
+
             let newWebsite = { ...website };
             let newDomains = [...newWebsite.domains];
+
             const indexOfVerified = newDomains.findIndex(
                 (x) => x.domain === domain
             );
-            newDomains[indexOfVerified].isActive = data.verifyDns;
+
+            const newDomain = {
+                domain,
+                isActive: data.verifyDns,
+                isCustomDomainSslGenerated: false
+            }
+
+            newDomains[indexOfVerified] = newDomain;
+
             newWebsite.domains = newDomains;
+
             setWebsite(newWebsite);
         },
         onError,
