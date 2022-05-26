@@ -113,7 +113,7 @@ export const useSolana = () => {
             handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
 
-            let message = 'Something went wrong. Please open a ticket in Discord for help.';
+					let message = 'Please open a ticket in Discord for help. Error: ' + err;
 
             if (err == 'Error: Non-base58 character') {
                 message = 'You must be logged in with Phantom wallet in order to deploy on Solana'
