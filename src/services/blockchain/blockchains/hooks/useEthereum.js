@@ -49,7 +49,8 @@ export const useEthereum = () => {
             },
         });
         posthog.capture('User successfully deployed contract to blockchain', {
-            blockchain: 'ethereum'
+            blockchain: 'ethereum',
+            version: '1'
         });
         await updateContractAddress({
             variables: { id: id, address: newContractAddress },
