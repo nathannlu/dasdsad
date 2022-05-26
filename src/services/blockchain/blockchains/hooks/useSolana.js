@@ -122,10 +122,13 @@ export const useSolana = () => {
                 message = 'Not enough Sol in your wallet. E.g. 5.8sol is needed for 3,333 NFTs'
 
             }
-
             if (err == 'Error: failed to send transaction: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.') {
                 message = 'Your wallet has no Sol. Is your sol on the correct network (mainnet/devnet)?'
             }
+
+						if (err == 'TypeError: Blob.encode requires (length 32) Buffer as src') {
+                message = `Address ${address} is not a valid Solana address` 
+						}
 
             console.log(err)
             //						if(err)
