@@ -41,7 +41,8 @@ export const useSolana = () => {
             },
         });
         posthog.capture('User successfully deployed contract to blockchain', {
-            blockchain: 'solana'
+            blockchain: 'solana',
+            version: '1'
         });
         await updateContractAddress({
             variables: { id: id, address: candyMachineAddress },
