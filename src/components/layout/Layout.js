@@ -32,7 +32,6 @@ const Layout = ({ children }) => {
         <main className="ambition-main" style={{ paddingTop: '107px' }}>
             <header className="ambition-header">
                 <Navbar />
-							{/*
                 <Box
                     sx={{
                         borderBottom: 1,
@@ -44,6 +43,7 @@ const Layout = ({ children }) => {
                         width: '100%',
                     }}>
                     <Container>
+
                         <Stack gap={1} p={1} direction="row">
                             {links.map((link, i) => (
                                 <Button
@@ -69,15 +69,17 @@ const Layout = ({ children }) => {
                                 </Button>
                             ))}
                         </Stack>
-                        {/*
+
+							{/*
 						<Tabs value={selectedPage} onChange={onChange}>
 							<Tab label="Collections" value="collections" />
 							<Tab label="Blockchain" value="smart-contracts" />
 							<Tab label="Website" value="websites" />
 						</Tabs>
+						
+							*/}
                     </Container>
                 </Box>
-							*/}
             </header>
             {children}
         </main>

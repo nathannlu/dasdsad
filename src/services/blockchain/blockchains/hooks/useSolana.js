@@ -40,10 +40,44 @@ export const useSolana = () => {
                 deployedContract: true,
             },
         });
+        posthog.capture('User successfully deployed contract to blockchain', {
+            blockchain: 'solana'
+        });
         await updateContractAddress({
             variables: { id: id, address: candyMachineAddress },
         });
     };
+
+    const getContractCreators = async (baseUri, address) => {
+        const hasAppendingSlash = baseUri.charAt(baseUri.length - 1) === '/';
+
+        try {
+            const ipfsUrl = `https://gateway.pinata.cloud/ipfs/`;
+            let baseUriHash = null;
+
+            if (baseUri?.indexOf('ipfs://') !== -1) {
+                baseUriHash = `${ipfsUrl}${baseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}1.json`;
+            } else {
+                baseUriHash = `${baseUri}${hasAppendingSlash && '' || '/'}1.json`;
+            }
+
+            if (!baseUriHash) {
+                throw new Error('Invalid baseUri');
+            }
+
+            const fetchResponse = await fetch(baseUriHash);
+            const json = await fetchResponse.json();
+
+            if (!json?.properties?.creators || !json?.properties?.creators.length) {
+                throw new Error('creators field missing!');
+            }
+
+            return json?.properties?.creators.map(c => ({ ...c, verified: true }));
+        } catch (e) {
+            console.log('Error getContractCreators:', e);
+            return [{ address, verified: true, share: 100 }];
+        }
+    }
 
     const deploySolanaContract = async ({
         uri,
@@ -53,13 +87,13 @@ export const useSolana = () => {
         size,
         price,
         liveDate,
-        creators,
         cacheHash,
         id,
         env,
     }) => {
         try {
             //mintV2();
+            const creators = await getContractCreators(uri, address);
             const res = await createSolanaContract({
                 uri,
                 name,
@@ -77,10 +111,26 @@ export const useSolana = () => {
 
             handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
-            console.log(err);
+
+            let message = 'Something went wrong. Please open a ticket in Discord for help.';
+
+            if (err == 'Error: Non-base58 character') {
+                message = 'You must be logged in with Phantom wallet in order to deploy on Solana'
+            }
+            if (err == 'Error: failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x1') {
+                message = 'Not enough Sol in your wallet. E.g. 5.8sol is needed for 3,333 NFTs'
+
+            }
+
+            if (err == 'Error: failed to send transaction: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.') {
+                message = 'Your wallet has no Sol. Is your sol on the correct network (mainnet/devnet)?'
+            }
+
+            console.log(err)
+            //						if(err)
             addToast({
                 severity: 'error',
-                message: "You must be logged in with Phantom wallet in order to deploy on Solana"
+                message
             });
         }
     };

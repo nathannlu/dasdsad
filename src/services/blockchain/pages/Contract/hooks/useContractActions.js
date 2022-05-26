@@ -337,7 +337,7 @@ export const useContractActions = (contractAddress) => {
         }
 
         // needs to be dynamic
-        const anchorProgram = await loadCandyProgramV2(null, 'devnet');
+        const anchorProgram = await loadCandyProgramV2(null, env);
         const candyMachineAddress = contractAddress;
         const connection = anchorProgram.provider.connection;
         const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
@@ -402,7 +402,7 @@ export const useContractActions = (contractAddress) => {
         console.log(epoch);
         console.log(new BN(epoch).toString());
 
-        const anchorProgram = await loadCandyProgramV2(null, 'devnet');
+        const anchorProgram = await loadCandyProgramV2(null, env);
         const candyMachineAddress = contractAddress;
         const connection = anchorProgram.provider.connection;
         const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
