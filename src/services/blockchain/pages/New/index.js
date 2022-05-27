@@ -185,7 +185,7 @@ const Upload = () => {
                                     Price per NFT minted
                                 </FormLabel>
                                 <Typography gutterBottom variant="body2">
-                                    Set the price in ether for minting one NFT.
+                                    Set the price in SOL for minting one NFT.
                                 </Typography>
                                 <TextField {...priceInEth} fullWidth />
                             </Stack>

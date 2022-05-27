@@ -15,8 +15,8 @@ export const useDeployContractForm = () => {
             placeholder: 'BAYC',
         },
         priceInEth: {
-            default: '0.05',
-            placeholder: '0.05',
+            default: '0.5',
+            placeholder: '0.5',
         },
         royaltyPercentage: {
             default: '',
