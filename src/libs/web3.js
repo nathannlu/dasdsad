@@ -13,6 +13,7 @@ import {
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 import posthog from 'posthog-js';
 import { useAuth } from 'libs/auth';
+import { loadCandyProgramV2 } from 'solana/helpers/accounts';
 
 export const Web3Context = createContext({});
 
@@ -344,20 +345,32 @@ export const Web3Provider = ({ children }) => {
         return owner;
     };
 
-    const getPublicContractVariables = async (contractAddress, chainid) => {
+    const getPublicContractVariables = async (contractAddress, chainid, env) => {
         if (!contractAddress || !chainid) return;
 
 			console.log(contractAddress)
 
         console.log('getting contract variables', chainid);
 
-            if (chainid.indexOf('solana') != -1) {
+            if (chainid.indexOf('solana') != -1) { 
                 // If Solana Contract
                 setContractVarsState(false);
 
                 await loadWalletProvider('phantom');
+                const contract = await retrieveSolanaContract(contractAddress, chainid, env);
 
+                console.log(contract);
                 setContractVarsState(true);
+
+                const itemsLeft = contract.itemsAvailable;
+
+
+
+                return {
+                    itemsLeft
+                    // contract.itemsAvailable,
+                    // contract.
+                };
             } else {
                 // If Metamask Contract
                 setContractVarsState(false);
@@ -424,6 +437,43 @@ export const Web3Provider = ({ children }) => {
             }
         
     };
+
+    const retrieveSolanaContract = async (candyMachineAddress, chain, env) => {
+
+        if (env == 'solanadevnet') {
+            env = 'devnet';
+        } else if (env == 'solana') {
+            env = 'mainnet';
+        }
+
+        console.log(candyMachineAddress, chain, env);
+
+        
+        // const priceInSol = price / anchor.web3.LAMPORTS_PER_SOL;
+
+        const anchorProgram = await loadCandyProgramV2(null, env);
+        // const candyMachineAddress = contractAddress;
+        // const connection = anchorProgram.provider.connection;
+        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
+            candyMachineAddress,
+        );
+
+        const itemsAvailable = candyMachineObj.data.itemsAvailable.toNumber();
+        const itemsRedeemed = candyMachineObj.itemsRedeemed.toNumber();
+        const itemsRemaining = itemsAvailable - itemsRedeemed;
+        const price = candyMachineObj.data.price.toNumber();
+
+        console.log(candyMachineObj);
+
+        return {
+            itemsRedeemed, 
+            price,
+            itemsAvailable,
+            itemsRemaining
+            
+        };
+        
+    }
 
     const retrieveContract = (contractAddress) => {
         const web3 = window.web3;
