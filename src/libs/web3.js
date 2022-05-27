@@ -14,7 +14,7 @@ import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 import posthog from 'posthog-js';
 import { useAuth } from 'libs/auth';
 import { loadCandyProgramV2 } from 'solana/helpers/accounts';
-
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 export const Web3Context = createContext({});
 
 export const useWeb3 = () => useContext(Web3Context);
@@ -362,12 +362,15 @@ export const Web3Provider = ({ children }) => {
                 console.log(contract);
                 setContractVarsState(true);
 
-                const itemsLeft = contract.itemsAvailable;
-
+                const totalSupply = contract.itemsAvailable;
+                const supply = contract.itemsRedeemed;
 
 
                 return {
-                    itemsLeft
+                    totalSupply,
+                    supply,
+                    costInEth:contract.price,
+                  
                     // contract.itemsAvailable,
                     // contract.
                 };
@@ -449,7 +452,6 @@ export const Web3Provider = ({ children }) => {
         console.log(candyMachineAddress, chain, env);
 
         
-        // const priceInSol = price / anchor.web3.LAMPORTS_PER_SOL;
 
         const anchorProgram = await loadCandyProgramV2(null, env);
         // const candyMachineAddress = contractAddress;
@@ -461,7 +463,7 @@ export const Web3Provider = ({ children }) => {
         const itemsAvailable = candyMachineObj.data.itemsAvailable.toNumber();
         const itemsRedeemed = candyMachineObj.itemsRedeemed.toNumber();
         const itemsRemaining = itemsAvailable - itemsRedeemed;
-        const price = candyMachineObj.data.price.toNumber();
+        const price = candyMachineObj.data.price.toNumber() / LAMPORTS_PER_SOL;
 
         console.log(candyMachineObj);
 
