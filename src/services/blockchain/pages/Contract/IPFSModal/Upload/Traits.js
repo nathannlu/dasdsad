@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, LoadingButton, Stack } from 'ds/components';
+import { LinearProgress } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
-import Dropzone from 'react-dropzone';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
+import Dropzone from 'react-dropzone';
 
 const Traits = (props) => {
     const { uploadedFiles, setUploadedFiles } = useContract();
     const { pinImages, loading } = useIPFS();
+    const [percent, setPercent] = useState(0);
 
     const handleImagesUpload = (acceptedFiles) => {
-        setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
+        const formData = new FormData();
+        for (const file of acceptedFiles) formData.append('file', file);
+
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = event => {
+            const percentage = parseInt((event.loaded / event.total) * 100);
+            setPercent(percentage);
+        };
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState !== 4) return;
+            if (xhr.status !== 200) return;
+             setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
+        };
+        xhr.open('POST', 'https://httpbin.org/post', true);
+        xhr.send(formData);
     };
 
     /**
@@ -65,6 +81,7 @@ const Traits = (props) => {
                             </Box>
                         )}
                     </Dropzone>
+                    <LinearProgress variant="determinate" value={percent} />
                 </Box>
             ) : (
                 <Stack>
