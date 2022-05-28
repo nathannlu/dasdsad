@@ -26,6 +26,7 @@ export const useIPFS = () => {
     const { addToast } = useToast();
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [pinataPercentage, setPinataPercentage] = useState(0);
 
     const pinUnrevealedImage = async (callback) => {
         if (!uploadedUnRevealedImageFile) {
@@ -66,6 +67,10 @@ export const useIPFS = () => {
                 pinata_api_key: config.pinata.key,
                 pinata_secret_api_key: config.pinata.secret
             },
+            onUploadProgress: (progressEvent) => {
+                const percentage = (progressEvent.loaded / progressEvent.total) * 100;
+                setPinataPercentage(percentage);
+            }
         };
 
         try {
@@ -125,6 +130,10 @@ export const useIPFS = () => {
                 pinata_api_key: config.pinata.key,
                 pinata_secret_api_key: config.pinata.secret,
             },
+            onUploadProgress: (progressEvent) => {
+                const percentage = (progressEvent.loaded / progressEvent.total) * 100;
+                setPinataPercentage(percentage);
+            }
         };
 
         const ipfsUrl = getIpfsUrl(blockchain);
@@ -214,6 +223,10 @@ export const useIPFS = () => {
                 pinata_api_key: config.pinata.key,
                 pinata_secret_api_key: config.pinata.secret,
             },
+            onUploadProgress: (progressEvent) => {
+                const percentage = (progressEvent.loaded / progressEvent.total) * 100;
+                setPinataPercentage(percentage);
+            }
         };
 
         const ipfsUrl = getIpfsUrl(blockchain);
@@ -249,5 +262,6 @@ export const useIPFS = () => {
         pinImages,
         pinUnrevealedImage,
         loading,
+        pinataPercentage
     };
 };

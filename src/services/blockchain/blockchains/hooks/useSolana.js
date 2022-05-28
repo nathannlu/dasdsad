@@ -40,6 +40,10 @@ export const useSolana = () => {
                 deployedContract: true,
             },
         });
+        posthog.capture('User successfully deployed contract to blockchain', {
+            blockchain: 'solana',
+            version: '1'
+        });
         await updateContractAddress({
             variables: { id: id, address: candyMachineAddress },
         });
@@ -109,7 +113,7 @@ export const useSolana = () => {
             handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
 
-            let message = 'Something went wrong. Please open a ticket in Discord for help.';
+					let message = 'Please open a ticket in Discord for help. Error: ' + err;
 
             if (err == 'Error: Non-base58 character') {
                 message = 'You must be logged in with Phantom wallet in order to deploy on Solana'
@@ -118,10 +122,13 @@ export const useSolana = () => {
                 message = 'Not enough Sol in your wallet. E.g. 5.8sol is needed for 3,333 NFTs'
 
             }
-
             if (err == 'Error: failed to send transaction: Transaction simulation failed: Attempt to debit an account but found no record of a prior credit.') {
                 message = 'Your wallet has no Sol. Is your sol on the correct network (mainnet/devnet)?'
             }
+
+						if (err == 'TypeError: Blob.encode requires (length 32) Buffer as src') {
+                message = `Address ${address} is not a valid Solana address` 
+						}
 
             console.log(err)
             //						if(err)

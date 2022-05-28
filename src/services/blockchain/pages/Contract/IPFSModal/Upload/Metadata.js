@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, LoadingButton, Stack } from 'ds/components';
+import { LinearProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
-import Dropzone from 'react-dropzone';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
+import Dropzone from 'react-dropzone';
 
 const Metadata = (props) => {
     const { uploadedJson, setUploadedJson, ipfsUrl } = useContract();
-    const { pinMetadata, loading } = useIPFS();
+    const { pinMetadata, loading, pinataPercentage } = useIPFS();
+    const [percent, setPercent] = useState(0);
 
     const handleJsonUpload = (acceptedFiles) => {
-        setUploadedJson([...uploadedJson, ...acceptedFiles]);
+        const formData = new FormData();
+        for (const file of acceptedFiles) formData.append('file', file);
+
+        const xhr = new XMLHttpRequest();
+        xhr.upload.onprogress = event => {
+            const percentage = parseInt((event.loaded / event.total) * 100);
+            setPercent(percentage);
+        };
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState !== 4) return;
+            if (xhr.status !== 200) return;
+            setUploadedJson([...uploadedJson, ...acceptedFiles]);
+        };
+        xhr.open('POST', 'https://httpbin.org/post', true);
+        xhr.send(formData);
     };
 
     /**
@@ -65,6 +81,7 @@ const Metadata = (props) => {
                             </Box>
                         )}
                     </Dropzone>
+                    <LinearProgress variant="determinate" value={percent} />
                 </Box>
             ) : (
                 <Stack>
@@ -72,7 +89,10 @@ const Metadata = (props) => {
                         <Folder />
                         {uploadedJson.length} Files added
                         <Button
-                            onClick={() => setUploadedJson([])}
+                            onClick={() => {
+                                setPercent(0);
+                                setUploadedJson([]);
+                            }}
                             type="small"
                             color="error">
                             Delete
@@ -84,6 +104,16 @@ const Metadata = (props) => {
                         onClick={() => pinMetadata(props.contract.blockchain, callback)}>
                         Upload
                     </LoadingButton>
+                    <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '.5em' }}>
+                        <Box sx={{ width: '100%', mr: 1 }}>
+                            <LinearProgress variant="determinate" value={pinataPercentage} />
+                        </Box>
+                        <Box sx={{ minWidth: 35 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                {pinataPercentage.toFixed(2)}%
+                            </Typography>
+                        </Box>
+                    </Box>
                 </Stack>
             )}
         </>

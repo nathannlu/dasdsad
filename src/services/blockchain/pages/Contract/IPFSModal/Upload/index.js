@@ -27,7 +27,7 @@ const Steps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage }) =>
 
     return (
         <React.Fragment>
-            <Stepper activeStep={activeStep}>
+            <Stepper activeStep={activeStep} sx={{ marginBottom: '1em' }}>
                 {renderUploadUnRevealedImage && <Step>
                     <StepLabel>Upload Unrevealed image to IPFS</StepLabel>
                 </Step> || null}

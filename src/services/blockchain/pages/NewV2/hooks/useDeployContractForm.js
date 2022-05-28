@@ -157,7 +157,7 @@ export const useDeployContractForm = () => {
 			setIsDeploying(true);
 			addToast({
 				severity: 'info',
-				message: 'Deploying contract to Ethereum. This might take a couple of seconds...',
+				message: 'Deploying contract to blockchain. This might take a couple of seconds...',
 			});
 
 			// get the blockchain type on the basis of isTestnetEnabled 
@@ -197,7 +197,7 @@ export const useDeployContractForm = () => {
 					setState(prevState => ({ ...prevState, deployingMessage: 'Uploading NFT metadata url to Contract! Please be patient it will take couple of seconds...' }));
 
 					const contractController = new ContractController(contractAddress, blockchain, CONTRACT_VERSION);
-					await contractController.updateReveal(walletAddress, true, state.contractState?.nftCollection?.baseUri);
+					await contractController.updateReveal(walletAddress, false, state.contractState?.nftCollection?.baseUri);
 				}
 
 				// Update backend
@@ -207,7 +207,12 @@ export const useDeployContractForm = () => {
 				}
 
 				// Save contract details in backend
-				saveContract(contractAddress);
+				await saveContract(contractAddress);
+
+                posthog.capture('User successfully deployed contract to blockchain', {
+                    blockchain,
+                    version: '2'
+                });
 			});
 		} catch (e) {
 			console.log(e, 'Error! deploying contract.');

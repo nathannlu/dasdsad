@@ -28,7 +28,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
                 overflow: 'auto',
                 alignItems: 'center',
                 display: 'flex',
-                zIndex: 5000,
+                zIndex: 5000
             }}>
             <Box
                 p={3}
@@ -37,6 +37,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
                     width: '1200px',
                     margin: '0 auto',
                     background: '#fff',
+                    borderRadius: '10px'
                 }}>
                 <Stack>
                     <IconButton sx={{ ml: 'auto' }}>
