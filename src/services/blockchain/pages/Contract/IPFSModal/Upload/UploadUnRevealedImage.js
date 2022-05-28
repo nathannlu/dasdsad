@@ -83,7 +83,10 @@ const Traits = (props) => {
                         <Folder />
                         1 File added
                         <Button
-                            onClick={() => setUploadedUnRevealedImageFile(null)}
+                            onClick={() => {
+                                setPercent(0);
+                                setUploadedUnRevealedImageFile(null);
+                            }}
                             type="small"
                             color="error"
                         >

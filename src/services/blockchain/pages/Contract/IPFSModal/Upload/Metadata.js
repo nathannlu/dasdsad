@@ -89,7 +89,10 @@ const Metadata = (props) => {
                         <Folder />
                         {uploadedJson.length} Files added
                         <Button
-                            onClick={() => setUploadedJson([])}
+                            onClick={() => {
+                                setPercent(0);
+                                setUploadedJson([]);
+                            }}
                             type="small"
                             color="error">
                             Delete

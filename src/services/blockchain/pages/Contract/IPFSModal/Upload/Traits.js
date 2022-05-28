@@ -89,7 +89,10 @@ const Traits = (props) => {
                         <Folder />
                         {uploadedFiles.length} Files added
                         <Button
-                            onClick={() => setUploadedFiles([])}
+                            onClick={() => {
+                                setPercent(0);
+                                setUploadedFiles([]);
+                            }}
                             type="small"
                             color="error">
                             Delete
