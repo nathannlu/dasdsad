@@ -20,6 +20,7 @@ const AddDomainModal = ({
     onChange,
     domainName,
     onDomainNameChange,
+    isAddingDomain
 }) => {
     const { website } = useWebsite();
     const { addToast } = useToast();
@@ -37,7 +38,6 @@ const AddDomainModal = ({
                 message: 'Invalid domain name',
             });
         }
-        setShowDomainModal(false);
     };
 
     const handleCopy = (type) => {
@@ -141,7 +141,7 @@ const AddDomainModal = ({
                 <Button variant="contained" size="small" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="contained" size="small" onClick={handleAdd}>
+                <Button variant="contained" size="small" onClick={handleAdd} disabled={isAddingDomain}>
                     Add
                 </Button>
             </DialogActions>

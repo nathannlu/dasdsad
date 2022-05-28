@@ -93,7 +93,8 @@ const Settings = () => {
         onCustomHeadChange,
         onCustomBodyChange,
         onSaveCustom,
-        onGenerateSSlCertificate
+        onGenerateSSlCertificate,
+        isAddingDomain
     } = useSettings();
     const {
         title,
@@ -136,6 +137,7 @@ const Settings = () => {
                 onChange={onAddDomain}
                 domainName={domainName}
                 onDomainNameChange={onDomainNameChange}
+                isAddingDomain={isAddingDomain}
             />
             {website && website.seo && (
                 <Box paddingTop="8em" paddingBottom="8em" bgcolor="grey.200">
