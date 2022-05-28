@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, LoadingButton, Stack } from 'ds/components';
-import { LinearProgress } from '@mui/material';
+import { LinearProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
@@ -8,7 +8,7 @@ import Dropzone from 'react-dropzone';
 
 const Metadata = (props) => {
     const { uploadedJson, setUploadedJson, ipfsUrl } = useContract();
-    const { pinMetadata, loading } = useIPFS();
+    const { pinMetadata, loading, pinataPercentage } = useIPFS();
     const [percent, setPercent] = useState(0);
 
     const handleJsonUpload = (acceptedFiles) => {
@@ -104,6 +104,16 @@ const Metadata = (props) => {
                         onClick={() => pinMetadata(props.contract.blockchain, callback)}>
                         Upload
                     </LoadingButton>
+                    <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '.5em' }}>
+                        <Box sx={{ width: '100%', mr: 1 }}>
+                            <LinearProgress variant="determinate" value={pinataPercentage} />
+                        </Box>
+                        <Box sx={{ minWidth: 35 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                {pinataPercentage.toFixed(2)}%
+                            </Typography>
+                        </Box>
+                    </Box>
                 </Stack>
             )}
         </>
