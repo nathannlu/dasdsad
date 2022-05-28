@@ -13,8 +13,8 @@ import {
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 import posthog from 'posthog-js';
 import { useAuth } from 'libs/auth';
-import { loadCandyProgramV2 } from 'solana/helpers/accounts';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { loadCandyProgramV2, getBalance } from 'solana/helpers/accounts';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 export const Web3Context = createContext({});
 
 export const useWeb3 = () => useContext(Web3Context);
@@ -358,21 +358,17 @@ export const Web3Provider = ({ children }) => {
 
                 await loadWalletProvider('phantom');
                 const contract = await retrieveSolanaContract(contractAddress, chainid, env);
-
-                console.log(contract);
-                setContractVarsState(true);
-
-                const totalSupply = contract.itemsAvailable;
-                const supply = contract.itemsRedeemed;
-
+                const balance = (await getBalance(new PublicKey(contractAddress), env) / LAMPORTS_PER_SOL)
+                setContractVarsState(true);                
 
                 return {
-                    totalSupply,
-                    supply,
+                    balanceInEth: balance,
+                    totalSupply: contract.itemsAvailable,
+                    supply: contract.itemsRedeemed,
                     costInEth:contract.price,
-                  
-                    // contract.itemsAvailable,
-                    // contract.
+                    baseTokenUri: contract.metadataUrl,
+                    open: contract.publicSale,
+                    presaleOpen: contract.presale
                 };
             } else {
                 // If Metamask Contract
@@ -449,13 +445,8 @@ export const Web3Provider = ({ children }) => {
             env = 'mainnet';
         }
 
-        console.log(candyMachineAddress, chain, env);
-
-        
-
         const anchorProgram = await loadCandyProgramV2(null, env);
-        // const candyMachineAddress = contractAddress;
-        // const connection = anchorProgram.provider.connection;
+
         const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
             candyMachineAddress,
         );
@@ -464,15 +455,24 @@ export const Web3Provider = ({ children }) => {
         const itemsRedeemed = candyMachineObj.itemsRedeemed.toNumber();
         const itemsRemaining = itemsAvailable - itemsRedeemed;
         const price = candyMachineObj.data.price.toNumber() / LAMPORTS_PER_SOL;
-
-        console.log(candyMachineObj);
-
+        const metadataUrl = candyMachineObj.data.hiddenSettings.uri;
+        const goLiveDateEpoch = candyMachineObj.data.goLiveDate.toNumber();
+        const whiteListSettings = candyMachineObj.data.whitelistMintSettings;
+        const currDate = Date.now();
+        let goLiveDate = new Date(0);
+        goLiveDate.setUTCSeconds(goLiveDateEpoch);
+        
+        const presale = (whiteListSettings == null ) ? 0 : 1;
+        const publicSale = (goLiveDate >= currDate) ? 0 : 1;
+        console.log(whiteListSettings)
         return {
             itemsRedeemed, 
             price,
             itemsAvailable,
-            itemsRemaining
-            
+            itemsRemaining,
+            metadataUrl,
+            publicSale,
+            presale
         };
         
     }
