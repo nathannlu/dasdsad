@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
 
-export const useContractDetails = (contractAddress, chainid) => {
+export const useContractDetails = (contractAddress, chainid, blockchain) => {
     const [balance, setBalance] = useState(null);
     const [soldCount, setSoldCount] = useState(null);
     const [size, setSize] = useState(null);
@@ -33,7 +33,7 @@ export const useContractDetails = (contractAddress, chainid) => {
             open,
             maxPerMint,
             baseTokenUri,
-        } = await getPublicContractVariables(contractAddress, chainid);
+        } = await getPublicContractVariables(contractAddress, chainid, blockchain );
 
         setBalance(balanceInEth);
         setPrice(costInEth);

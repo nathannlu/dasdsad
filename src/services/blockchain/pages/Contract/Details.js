@@ -15,7 +15,7 @@ const Details = ({ contract }) => {
         max,
         metadataUrl,
         loading,
-    } = useContractDetails(contract.address, getNetworkID());
+    } = useContractDetails(contract.address, getNetworkID(), contract.blockchain);
 
 	console.log('asd',contract.blockchain)
 
