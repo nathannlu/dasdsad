@@ -1,25 +1,18 @@
-import React from 'react';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
 import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
 import { useSolana } from 'services/blockchain/blockchains/hooks/useSolana';
-import { useContract } from 'services/blockchain/provider';
 
 export const useDeployContract = (contract) => {
     const { deployEthereumContract } = useEthereum();
     const { deploySolanaContract } = useSolana();
-    //	const { contract } = useContract();
-    const { account } = useWeb3();
     const { addToast } = useToast();
 
+    const { walletController } = useWeb3();
+
     const deployContract = async () => {
-        console.log(contract.blockchain);
-        let env;
-        if (contract.blockchain == 'solanadevnet') {
-            env = 'devnet';
-        } else if (contract.blockchain == 'solana') {
-            env = 'mainnet';
-        }
+        const walletAddress = walletController?.state.address;
+        const env = contract?.blockchain == 'solanadevnet' && 'devnet' || 'mainnet';
 
         try {
             if (!contract || !Object.keys(contract).length)
@@ -36,11 +29,10 @@ export const useDeployContract = (contract) => {
                     id: contract.id,
                 });
             } else {
-                console.log('account', account);
                 await deploySolanaContract({
                     uri: contract.nftCollection.baseUri,
                     name: contract.name,
-                    address: account,
+                    address: walletAddress,
                     symbol: contract.symbol,
                     size: contract.nftCollection.size,
                     price: contract.nftCollection.price,

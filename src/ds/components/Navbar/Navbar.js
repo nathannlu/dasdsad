@@ -17,13 +17,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 const Navbar = ({ pageName }) => {
     const { logout } = useAuth();
-    const { wallet, account } = useWeb3();
+    const { walletController } = useWeb3();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
-	useEffect(() => {
-		console.log(account, wallet)
-	}, [])
+    console.log(walletController, 'walletController');
+
+    const walletType = walletController?.state.wallet;
+    const walletAddress = walletController?.state.address;
 
     return (
         <AppBar
@@ -33,8 +34,8 @@ const Navbar = ({ pageName }) => {
                 py: 2,
                 boxShadow: 'none',
                 borderBottom: '1px solid rgba(0,0,0,.2)',
-								paddingTop: '10px',
-								paddingBottom: '10px',
+                paddingTop: '10px',
+                paddingBottom: '10px',
             }}>
             <Container>
                 <Stack
@@ -55,22 +56,22 @@ const Navbar = ({ pageName }) => {
                             aria-expanded={open ? 'true' : undefined}
                             onClick={(e) => setAnchorEl(e.currentTarget)}
                             className="ml-auto"
-													style={{ color: 'black', cursor: 'pointer', border: '1px solid rgba(0,0,0,.5)', padding: '4px 8px', borderRadius: '9999px' }}>
-													{account ? (
-														<Stack gap={1} direction="horizontal">
-															<div>
-															{account.substring(0,4)}...{account.slice(-3)}
-															</div>
+                            style={{ color: 'black', cursor: 'pointer', border: '1px solid rgba(0,0,0,.5)', padding: '4px 8px', borderRadius: '9999px' }}>
+                            {walletAddress ? (
+                                <Stack gap={1} direction="horizontal">
+                                    <div>
+                                        {walletAddress.substring(0, 4)}...{walletAddress.slice(-3)}
+                                    </div>
 
-															<div>
-															{wallet === 'metamask' ? (
-																<img style={{height: '25px', width: '25px', objectFit: 'cover'}} src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" />
-															) : (
-																<img style={{height: '25px', width: '25px', objectFit: 'cover'}} src="https://ph-files.imgix.net/f05a61be-d906-4ad8-a68d-88f7c257574d.png?auto=format" />
-															)}
-															</div>
-														</Stack>
-													) : "Wallet not connected"}
+                                    <div>
+                                        {walletType === 'metamask' ? (
+                                            <img style={{ height: '25px', width: '25px', objectFit: 'cover' }} src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" />
+                                        ) : (
+                                            <img style={{ height: '25px', width: '25px', objectFit: 'cover' }} src="https://ph-files.imgix.net/f05a61be-d906-4ad8-a68d-88f7c257574d.png?auto=format" />
+                                        )}
+                                    </div>
+                                </Stack>
+                            ) : "Wallet not connected"}
                         </div>
                         <Menu
                             id="account-menu"

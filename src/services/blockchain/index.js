@@ -9,18 +9,18 @@ import Routes from './routes';
 const BlockchainService = () => {
     const history = useHistory();
     useGetContracts({});
-	
-	const { loadWalletProvider, wallet } = useWeb3();
 
+    // TODO-MAY-29 check if logs in
+    // const { loadWalletProvider, wallet } = useWeb3();
 
-	useEffect(() => {
-		(async() => {
-			await loadWalletProvider(wallet)
-		})()
-	}, []);
+    // useEffect(() => {
+    // 	(async() => {
+    // 		await loadWalletProvider(wallet)
+    // 	})()
+    // }, []);
 
     return (
-        <>
+        <React.Fragment>
             <Helmet>
                 <title>Blockchain - Ambition</title>
                 <link rel="canonical" href="https://app.ambition.so" />
@@ -33,7 +33,7 @@ const BlockchainService = () => {
             <Router history={history}>
                 <Routes />
             </Router>
-        </>
+        </React.Fragment>
     );
 };
 

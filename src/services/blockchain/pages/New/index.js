@@ -60,7 +60,7 @@ const blockchains = [
 
 const Upload = () => {
     const { addToast } = useToast();
-    const { wallet, loadWalletProvider } = useWeb3();
+    const { walletController, initializeWalletController } = useWeb3();
     const [activeStep, setActiveStep] = useState();
     const history = useHistory();
     const { selectInput, setSelectInput } = useContract();
@@ -72,8 +72,10 @@ const Upload = () => {
     const [createContract, { loading }] = useCreateContract({ onCompleted });
 
     const onCreateContract = async () => {
+        const walletType = walletController?.state.wallet;
+
         try {
-            if ((wallet === 'metamask' || wallet === 'default') && (selectInput === 'solanadevnet' || selectInput === 'solana')) {
+            if ((walletType === 'metamask') && (selectInput === 'solanadevnet' || selectInput === 'solana')) {
                 throw new Error('You must login with a phantom wallet to deploy a solana contract');
             }
 
@@ -107,7 +109,8 @@ const Upload = () => {
     };
 
     useEffect(() => {
-        loadWalletProvider('phantom');
+        const wc = walletController || initializeWalletController();
+        wc.loadWalletProvider('phantom');
     }, []);
 
     return (

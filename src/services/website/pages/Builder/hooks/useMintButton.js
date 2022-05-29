@@ -6,101 +6,105 @@ import { mintV2 } from 'solana/helpers/mint.js';
 import { useToast } from 'ds/hooks/useToast';
 
 export const useMintButton = () => {
-	const { loadWalletProvider, mint, getOpen, presaleMint, getSize, getPrice } = useWeb3();
-	const { website } = useWebsite();
-	const [price, setPrice] = useState('');
+    const { mint, getOpen, presaleMint, getSize, getPrice, walletController, initializeWalletController } = useWeb3();
+    const { website } = useWebsite();
+    const [price, setPrice] = useState('');
     const [open, setOpen] = useState(false);
     const [size, setSize] = useState(-1);
-	const [contract, setContract] = useState();
+    const [contract, setContract] = useState();
     const [mintCount, setMintCount] = useState(1);
     const { addToast } = useToast();
 
     useGetContract({
-		address: website?.settings?.connectedContractAddress,
-		onCompleted: data => {
+        address: website?.settings?.connectedContractAddress,
+        onCompleted: data => {
             setContract(data.getContract);
             if (data.getContract.blockchain.indexOf('solana') !== -1) {
                 setPrice(data.getContract.nftCollection.price);
             }
-		}
-	})
+        }
+    })
 
     useEffect(() => {
         if (!website || !contract) return;
+        const wc = walletController || initializeWalletController();
 
-		(async () => {
-            const blockchain =  contract.blockchain;
-            if (blockchain.indexOf('solana') !== -1) { // Solana
-                const userAddress = await loadWalletProvider('phantom');
-            }
-            else { // Metamask
-                const userAddress = await loadWalletProvider('metamask');
+        (async () => {
+            const blockchain = contract.blockchain;
+            if (blockchain.indexOf('solana') !== -1) {
+                // Solana
+                await wc.loadWalletProvider('phantom');
+            } else {
+                // Metamask
+                await wc.loadWalletProvider('metamask');
                 const isOpen = await getOpen(website.settings.connectedContractAddress);
                 setOpen(isOpen);
                 const size = await getSize(website.settings.connectedContractAddress);
                 setSize(size);
                 const cost = await getPrice(website.settings.connectedContractAddress);
-                setPrice(cost);        
+                setPrice(cost);
             }
-		})()
+        })()
 
-	}, [website, contract])
+    }, [website, contract])
 
     const onConnect = async () => {
         try {
-            const blockchain =  contract.blockchain;
-            if (blockchain.indexOf('solana') !== -1) { // Solana
-                await loadWalletProvider('phantom');
-            }
-            else { // Metamask
-                await loadWalletProvider('metamask');
-                await compareNetwork(blockchain, async () => {
+            const wc = walletController || initializeWalletController();
+
+            const blockchain = contract.blockchain;
+            if (blockchain.indexOf('solana') !== -1) {
+                // Solana
+                await wc.loadWalletProvider('phantom');
+            } else {
+                // Metamask
+                await wc.loadWalletProvider('metamask');
+                await wc.compareNetwork(blockchain, async (e) => {
+                    if (e) {
+                        addToast({ severity: "error", message: e.message });
+                        return;
+                    }
                     await getOpen(contract?.address);
                     await getSize(contract?.address);
-                    await getPrice(contract?.address);  
-                })
+                    await getPrice(contract?.address);
+                });
             }
         }
         catch (err) {
             console.log(err);
-            addToast({
-                severity: "error",
-                message: err.message,
-            })
+            addToast({ severity: "error", message: err.message });
         }
     }
-    
+
     const onMint = async () => {
         try {
             if (!contract) throw new Error('Cannot find contract');
             if (!website) throw new Error('Cannot find website');
 
-            const blockchain =  contract.blockchain;
+            const blockchain = contract.blockchain;
+            const wc = walletController || initializeWalletController();
 
-            if (blockchain.indexOf('solana') !== -1) { // Solana
-                const userAddress = await loadWalletProvider('phantom');
-                await mintV2(contract.blockchain === 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, userAddress);
+            if (blockchain.indexOf('solana') !== -1) {
+                // Solana
+                const walletAddress = await wc.loadWalletProvider('phantom');
+                await mintV2(contract.blockchain === 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, walletAddress);
             }
-            else { // Eth or Polygon
-                const userAddress = await loadWalletProvider('metamask');
+            else {
+                // Eth or Polygon
+                const walletAddress = await wc.loadWalletProvider('metamask');
                 //const isOpen = await getOpen(website.settings.connectedContractAddress);
 
                 if (open) {
                     console.log('open')
-                    await mint(price, website.settings.connectedContractAddress, userAddress, mintCount);
-                }
-                else {
+                    await mint(price, website.settings.connectedContractAddress, walletAddress, mintCount);
+                } else {
                     console.log('not open')
-                    await presaleMint(price, contract.address, contract.nftCollection.whitelist, userAddress, mintCount);
+                    await presaleMint(price, contract.address, contract.nftCollection.whitelist, walletAddress, mintCount);
                 }
             }
-        }
-        catch (err) {
+        } catch (err) {
             console.log(err);
-            addToast({
-                severity: "error",
-                message: err.message,
-            })
+            addToast({ severity: "error", message: err.message });
         }
     }
 

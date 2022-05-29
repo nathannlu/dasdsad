@@ -1,44 +1,47 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
-import { useToast } from 'ds/hooks/useToast';
 import config from 'config';
+import posthog from 'posthog-js';
 import { MerkleTree } from 'merkletreejs';
 import keccak256 from 'keccak256';
+import { WalletController } from '@ambition-blockchain/controllers';
+
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
+
+import { useToast } from 'ds/hooks/useToast';
+
 import {
     useGetNonceByAddress,
     useVerifySignature,
     useVerifySignaturePhantom,
 } from 'gql/hooks/users.hook';
+
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
-import posthog from 'posthog-js';
-import { useAuth } from 'libs/auth';
 
 export const Web3Context = createContext({});
 
 export const useWeb3 = () => useContext(Web3Context);
 
 export const Web3Provider = ({ children }) => {
-    const [wallet, setWallet] = useState('default'); //default, metamask, phantom
-    const [account, setAccount] = useState('');
+    const [walletController, setWalletController] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const [contractVarsState, setContractVarsState] = useState(false);
+
     const { addToast } = useToast();
     const { handleLoginSuccess } = useLoginForm();
+
     const [getNonceByAddress] = useGetNonceByAddress({});
-    const { logout } = useAuth();
+
     const [verifySignature] = useVerifySignature({
         onCompleted: async (data) => {
-            posthog.capture('User logged in with metamask', {
-                $set: {
-                    publicAddress: account,
-                },
-            });
+            posthog.capture('User logged in with metamask', { $set: { publicAddress: account } });
             window.localStorage.setItem('ambition-wallet', 'metamask');
             setWallet('metamask');
             await handleLoginSuccess();
         },
     });
+
     const [verifySignaturePhantom] = useVerifySignaturePhantom({
         onCompleted: async (data) => {
             posthog.capture('User logged in with phantom', {
@@ -52,149 +55,42 @@ export const Web3Provider = ({ children }) => {
         },
     });
 
-    useEffect(() => {
-        if (!wallet || !wallet.length) return;
-        (async () => {
-            if (wallet === 'default' || wallet === 'metamask') {
-                if (window.ethereum) {
-                    window.ethereum.on('accountsChanged', (_account) => {
-                        setAccount(_account[0]);
-                    });
-                }
-            }
-        })();
-    }, [wallet]);
+    const initializeWalletController = () => {
+        const wc = new WalletController();
+        setWalletController(wc);
+        return wc;
+    }
 
+    // on load
     useEffect(() => {
-        const curWallet = localStorage.getItem('ambition-wallet');
-        // TODO check why logout() function is called?
-        // if (!curWallet || !curWallet.length) logout();
-        setWallet(curWallet || 'default');
-    }, []);
+        const curentWalletType = localStorage.getItem('ambition-wallet');
+        const wc = initializeWalletController();
 
-    const loadWalletProvider = async (walletType) => {
-        try {
-            if (walletType === 'metamask') {
-                if (
-                    typeof window.ethereum === 'undefined' ||
-                    typeof window.web3 === 'undefined'
-                )
-                    throw new Error('Metamask is not installed');
-                window.web3 =
-                    new Web3(window.ethereum) ||
-                    new Web3(window.web3.currentProvider);
-                const accounts = await window.web3.eth.getAccounts();
-                setAccount(accounts[0]);
-                return accounts[0];
-            } else if (walletType === 'phantom') {
-                const provider = window.solana;
-                if (!provider?.isPhantom)
-                    throw new Error('Phantom is not installed');
-                const sol = await window.solana.connect();
-                setAccount(sol.publicKey.toString());
-                return sol.publicKey.toString();
-            } else throw new Error('Wallet not supported');
-        } catch (err) {
-            console.error(err);
-            addToast({
-                severity: 'error',
-                message: err.message,
-            });
+        if (curentWalletType) {
+            wc.loadWalletProvider(curentWalletType);
         }
-    };
+
+    }, []);
 
     const loginToWallet = async (walletType) => {
         try {
-            const payerAccount = await loadWalletProvider(walletType);
-            await setAccount(payerAccount);
+            const wc = walletController || initializeWalletController();
+            await wc.loadWalletProvider(walletType);
+            const walletAddress = wc.state.address;
 
-            console.log(account);
-
-            const res = await getNonceByAddress({
-                variables: { address: account },
-            });
+            const res = await getNonceByAddress({ variables: { address: walletAddress } });
             const nonce = res.data.getNonceByAddress;
-            const signature = await signNonce(walletType, nonce, account);
+            const signature = await wc.signNonce(walletType, nonce, walletAddress);
 
             if (walletType === 'metamask') {
                 if (!signature)
                     throw new Error('User Rejected Login with Metamask');
-
-                await verifySignature({
-                    variables: { address: account, signature },
-                });
+                await verifySignature({ variables: { address: walletAddress, signature } });
             } else if (walletType === 'phantom') {
                 if (!signature)
                     throw new Error('User Rejected Login with Phantom');
-
-                await verifySignaturePhantom({
-                    variables: {
-                        address: signature.publicKey,
-                        signature: signature.signature,
-                    },
-                });
-            } else throw new Error('Wallet not supported');
-        } catch (err) {
-            console.error(err);
-            addToast({
-                severity: 'error',
-                message: err.message,
-            });
-        }
-    };
-
-    const loginAndPay = async (walletType, size, callback) => {
-        try {
-            const payerAccount = await loadWalletProvider(walletType);
-
-            const res = await getNonceByAddress({ variables: { address: payerAccount } });
-            const nonce = res.data.getNonceByAddress;
-            const signature = await signNonce(walletType, nonce, payerAccount);
-
-            if (walletType === 'metamask') {
-                if (!signature) throw new Error('User Rejected Login with Metamask');
-
-                await verifySignature({ variables: { address: payerAccount, signature } })
-            }
-            else if (walletType === 'phantom') {
-                if (!signature) throw new Error('User Rejected Login with Phantom');
-
                 await verifySignaturePhantom({ variables: { address: signature.publicKey, signature: signature.signature } });
-            }
-            else throw new Error('Wallet not supported');
-
-            setAccount(payerAccount, payInEth(size, callback, payerAccount));
-        }
-        catch (err) {
-            console.error(err);
-            addToast({
-                severity: 'error',
-                message: err.message
-            })
-        }
-    }
-
-    const signNonce = async (walletType, nonce, address = '') => {
-        try {
-            let signature;
-            const message = `I am signing my one-time nonce: ${nonce}`;
-
-            if (walletType === 'metamask') {
-                signature = await window.web3.eth.personal.sign(
-                    window.web3.utils.fromUtf8(message),
-                    address
-                );
-            } else if (walletType === 'phantom') {
-                const encodedMessage = new TextEncoder().encode(message);
-                signature = await window.solana.request({
-                    method: 'signMessage',
-                    params: {
-                        message: encodedMessage,
-                    },
-                });
             } else throw new Error('Wallet not supported');
-
-            return signature;
         } catch (err) {
             console.error(err);
             addToast({
@@ -202,47 +98,6 @@ export const Web3Provider = ({ children }) => {
                 message: err.message,
             });
         }
-    };
-
-    const loadWeb3 = async () => {
-        if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum);
-            window.ethereum.on('accountsChanged', (accounts) =>
-                setAccount(accounts[0])
-            );
-            await window.ethereum.enable();
-        } else if (window.web3) {
-            window.web3 = new Web3(window.web3.currentProvider);
-        } else {
-            addToast({
-                severity: 'warning',
-                message:
-                    'Non-Ethereum browser detected. You should consider trying MetaMask!',
-            });
-        }
-
-        console.log('loadweb3 deployed');
-    };
-
-    // Load account and load smart contracts
-    const loadBlockchainData = async (_contract) => {
-			await loadWalletProvider(wallet)
-
-			/*
-            if (wallet === 'default' || wallet === 'metamask') {
-        if (window.ethereum) {
-            //const Contract = _contract
-            const web3 = window.web3;
-
-            // Load account
-            const accounts = await web3.eth.getAccounts();
-            setAccount(accounts[0]);
-        }
-            }
-
-*/
-        console.log('loadBlockchainData deployed');
-			
     };
 
     // Mint NFT
@@ -346,83 +201,69 @@ export const Web3Provider = ({ children }) => {
 
     const getPublicContractVariables = async (contractAddress, chainid) => {
         if (!contractAddress || !chainid) return;
+        const wc = walletController || initializeWalletController();
 
-			console.log(contractAddress)
+        if (chainid.indexOf('solana') != -1) {
+            // If Solana Contract
+            setContractVarsState(false);
 
-        console.log('getting contract variables', chainid);
+            await wc.loadWalletProvider('phantom');
 
-            if (chainid.indexOf('solana') != -1) {
-                // If Solana Contract
-                setContractVarsState(false);
+            setContractVarsState(true);
+        } else {
+            // If Metamask Contract
+            setContractVarsState(false);
 
-                await loadWalletProvider('phantom');
+            await wc.loadWalletProvider('metamask');
 
-                setContractVarsState(true);
-            } else {
-                // If Metamask Contract
-                setContractVarsState(false);
+            const contract = await retrieveContract(contractAddress);
 
-                await loadWalletProvider('metamask');
+            const balance = await window.web3.eth.getBalance(contractAddress);
+            const balanceInEth = window.web3.utils.fromWei(balance);
+            const open = await contract.methods.open().call();
 
-                const contract = await retrieveContract(contractAddress);
-
-                const balance = await window.web3.eth.getBalance(contractAddress);
-                console.log('balance', balance);
-                const balanceInEth = window.web3.utils.fromWei(balance);
-                console.log('balanceInEth', balanceInEth);
-
-								                const open = await contract.methods.open().call();
-                console.log('open', open);
-
-
-                let presaleOpen = false; // Temporary, presaleOpen is not working
-                try {
-                    presaleOpen = await contract.methods.presaleOpen().call();
-                } catch (err) {
-                    //console.log(err);
-                }
-                console.log('presaleOpen', presaleOpen);
-
-                const maxPerMint = await contract.methods.maxPerMint().call();
-                console.log('maxPerMint', maxPerMint);
-                const cost = await contract.methods.cost().call();
-                console.log('cost', cost);
-                const costInEth = window.web3.utils.fromWei(cost);
-                console.log('costInEth', costInEth);
-                const supply = await contract.methods.supply().call();
-                console.log('supply', supply);
-                const totalSupply = await contract.methods.totalSupply().call();
-                console.log('totalSupply', totalSupply);
-                const owner = await contract.methods.owner().call();
-                console.log('owner', owner);
-
-							let baseTokenUri
-							try {
-							baseTokenUri = await contract.methods
-											.baseTokenURI()
-											.call();
-							}catch (e) { baseTokenUri = 'Error fetching URI'
-									
-								}
-									console.log('baseTokenUri', baseTokenUri);
-
-                setContractVarsState(true);
-
-                return {
-                    balance,
-                    balanceInEth,
-                    baseTokenUri,
-                    open,
-                    presaleOpen,
-                    maxPerMint,
-                    cost,
-                    costInEth,
-                    supply,
-                    totalSupply,
-                    owner,
-                };
+            let presaleOpen = false; // Temporary, presaleOpen is not working
+            try {
+                presaleOpen = await contract.methods.presaleOpen().call();
+            } catch (err) {
+                //console.log(err);
             }
-        
+
+            const maxPerMint = await contract.methods.maxPerMint().call();
+            const cost = await contract.methods.cost().call();
+            const costInEth = window.web3.utils.fromWei(cost);
+            const supply = await contract.methods.supply().call();
+            const totalSupply = await contract.methods.totalSupply().call();
+            const owner = await contract.methods.owner().call();
+
+            let baseTokenUri = '';
+            try {
+                baseTokenUri = await contract.methods.baseTokenURI().call();
+            } catch (e) {
+                baseTokenUri = 'Error fetching URI';
+            }
+
+            setContractVarsState(true);
+
+            const state = {
+                balance,
+                balanceInEth,
+                baseTokenUri,
+                open,
+                presaleOpen,
+                maxPerMint,
+                cost,
+                costInEth,
+                supply,
+                totalSupply,
+                owner,
+            };
+
+            console.log({ state });
+
+            return state;
+        }
+
     };
 
     const retrieveContract = (contractAddress) => {
@@ -474,175 +315,77 @@ export const Web3Provider = ({ children }) => {
         }
     };
 
-    // Compare current network with target network and switches if it doesn't match
-    const compareNetwork = async (targetNetwork, callback = null) => {
-        if (targetNetwork.indexOf('solana') != -1) {
-            if (callback != null) callback();
-            return;
-        }
-        let target = targetNetwork;
-        if (targetNetwork.indexOf('x') === -1) {
-            if (targetNetwork === 'ethereum') target = '0x1';
-            else if (targetNetwork === 'rinkeby') target = '0x4';
-            else if (targetNetwork === 'polygon') target = '0x89';
-            else if (targetNetwork === 'mumbai') target = '0x13881';
-        }
-        const curNetwork = getNetworkID();
-        if (curNetwork !== target) {
-            const status = await setNetwork(target);
-            if (status === 'prompt_successful' && callback != null) callback();
-            else if (status === 'prompt_cancled') {
-                addToast({
-                    severity: 'error',
-                    message: 'User canceled switching networks',
-                });
-            }
-        } else {
-            if (callback != null) callback();
-        }
-    };
+    const payGeneratorWithEth = async (size, callback) => {
+        try {
+            const wc = walletController || initializeWalletController();
+            await wc.loadWalletProvider('metamask'); // as we need to deduct ethereum
+            const walletAddress = wc.state.address;
 
-    // Get current network
-    const getNetworkID = () => {
-        if (wallet == 'phantom') return 'solana';
-        return `0x${parseInt(window.ethereum.networkVersion).toString(16)}`;
-    };
+            const res = await getNonceByAddress({ variables: { address: walletAddress } });
+            const nonce = res.data.getNonceByAddress;
+            const signature = await wc.signNonce(walletType, nonce, walletAddress);
 
-    // Set current network
-    const setNetwork = async (networkID) => {
-        return window.ethereum
-            .request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: networkID }],
-            })
-            .then(() => {
-                return 'prompt_successful';
-            })
-            .catch(async (err) => {
-                if (err.code === 4001) {
-                    // User cancled prompt
-                    return 'prompt_cancled';
-                } else if (err.code === 4902) {
-                    // Unrecognized chain ID
-                    let networkData = {
-                        chainId: '',
-                        chainName: '',
-                        nativeCurrency: {
-                            name: '',
-                            symbol: '',
-                            decimals: -1,
-                        },
-                        rpcUrls: [],
-                        blockExplorerUrls: [],
-                    };
+            if (!signature) throw new Error('User Rejected Login with Metamask');
+            await verifySignature({ variables: { address: walletAddress, signature } });
 
-                    networkData.chainId = networkID;
+            await compareNetwork('0x1', () => {
+                const web3 = window.web3
+                const inEth = 0.000034;
+                const amount = inEth * size;
 
-                    if (networkID === '0x89') {
-                        // Polygon
-                        networkData.rpcUrls.push('https://polygon-rpc.com');
-                        networkData.chainName = 'Polygon Mainnet (Matic)';
-                        networkData.nativeCurrency.name = 'Polygon';
-                        networkData.nativeCurrency.symbol = 'MATIC';
-                        networkData.nativeCurrency.decimals = 18;
-                        networkData.blockExplorerUrls.push(
-                            'https://polygonscan.com'
-                        );
-                    } else if (networkID === '0x13881') {
-                        // Polygon Mumbai Testnet
-                        networkData.rpcUrls.push(
-                            'https://rpc-mumbai.maticvigil.com'
-                        );
-                        networkData.chainName = 'Polygon Mumbai Testnet';
-                        networkData.nativeCurrency.name = 'Mumbai';
-                        networkData.nativeCurrency.symbol = 'MATIC';
-                        networkData.nativeCurrency.decimals = 18;
-                        networkData.blockExplorerUrls.push(
-                            'https://mumbai.polygonscan.com'
-                        );
-                    }
-
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [networkData],
-                    });
-
-                    return 'prompt_successful';
-                }
-                return 'prompt_cancled';
-            });
-    };
-
-    const payInEth = async (size, callback, accountFrom = '') => {
-
-        let payerAccount = account;
-
-        if (payerAccount == '') {
-            payerAccount = accountFrom;
-        }
-
-        await compareNetwork('0x1', () => {
-            const web3 = window.web3
-            const inEth = 0.000034;
-            const amount = inEth * size;
-
-            web3.eth.sendTransaction({
-                from: payerAccount,
-                to: config.company.walletAddress,
-                value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
-            })
-                .on('transactionHash', () => {
+                web3.eth.sendTransaction({
+                    from: walletAddress,
+                    to: config.company.walletAddress,
+                    value: web3.utils.toWei(amount.toFixed(7).toString(), "ether")
+                }).on('transactionHash', () => {
                     setLoading(true);
                     addToast({
                         severity: 'info',
                         message: 'Sending transaction. This could take up to a minute...'
                     })
-                })
-                .once('confirmation', () => {
+                }).once('confirmation', () => {
                     setLoading(false);
-                    callback()
-                })
-                .on('error', () => {
+                    callback();
+                }).on('error', () => {
+                    addToast({ severity: 'error', message: 'Something went wrong! Please contact ambition support.' });
                     setLoading(false);
-                })
-        })
-        return [loading]
+                });
+            });
+        }
+        catch (err) {
+            console.error(err);
+            addToast({ severity: 'error', message: err.message });
+            setLoading(false);
+        }
     }
 
-    const payGeneratorWithEth = async (size, callback) => {
-        return await loginAndPay('metamask', size, callback);
+    const loadMetamaskWallet = () => {
+        const wc = walletController || initializeWalletController();
+        if (wc.state.wallet !== 'metamask') {
+            wc.loadWalletProvider('metamask');
+        }
     }
 
     return (
         <Web3Context.Provider
             value={{
-                account,
-                wallet,
-                setAccount,
-                setWallet,
-                loadWalletProvider,
                 loginToWallet,
-
-                loadWeb3,
-                loadBlockchainData,
+                payGeneratorWithEth,
+                loadMetamaskWallet,
+                initializeWalletController,
                 mint,
                 retrieveContract,
-                signNonce,
                 checkOwner,
-                getNetworkID,
-                setNetwork,
-                compareNetwork,
                 presaleMint,
-
-                loading,
-                payInEth,
-                payGeneratorWithEth,
                 getPrice,
                 getMaximumSupply,
                 getTotalMinted,
 
                 getPublicContractVariables,
                 contractVarsState,
+
+                walletController,
+                loading,
             }}>
             {children}
         </Web3Context.Provider>

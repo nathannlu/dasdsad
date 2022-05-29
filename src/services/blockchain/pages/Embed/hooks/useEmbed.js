@@ -13,7 +13,6 @@ export const useEmbed = () => {
     const {
         account,
         loadWalletProvider,
-        loginToWallet,
         getNetworkID,
         compareNetwork,
         mint,
@@ -111,12 +110,10 @@ export const useEmbed = () => {
         try {
             if (type === 0) {
                 // Metamask
-                //await loginToWallet('metamask'); // dont need this
                 console.log('loaded metamask account');
                 setButtonState(1);
             } else if (type === 1) {
                 // Phantom
-                // await loginToWallet('phantom'); // dont need this
                 console.log('loaded phantom account');
                 setButtonState(1);
             }
@@ -135,9 +132,7 @@ export const useEmbed = () => {
             if (!chainId || !chainId.length)
                 throw new Error('Switch Button, cannot find chain Id');
 
-            await compareNetwork(chainId, () => {
-                setButtonState(1);
-            });
+            await compareNetwork(chainId, () => { setButtonState(1); });
         } catch (e) {
             console.log(e);
             addToast({

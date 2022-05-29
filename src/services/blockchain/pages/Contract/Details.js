@@ -5,7 +5,9 @@ import { useWeb3 } from 'libs/web3';
 import { useContractDetails } from './hooks/useContractDetails';
 
 const Details = ({ contract }) => {
-    const { getNetworkID, wallet } = useWeb3();
+    const { walletController } = useWeb3();
+    const networkId = walletController?.getNetworkID();
+
     const {
         balance,
         soldCount,
@@ -15,9 +17,7 @@ const Details = ({ contract }) => {
         max,
         metadataUrl,
         loading,
-    } = useContractDetails(contract.address, getNetworkID());
-
-	console.log('asd',contract.blockchain)
+    } = useContractDetails(contract.address, networkId);
 
     return (
         <Stack>
@@ -103,9 +103,9 @@ const Details = ({ contract }) => {
                         {loading ? <Skeleton width={60} /> : max}
                     </Grid>
                 </Grid>
-						) : (<Box>
-							Details not available yet for Solana contracts
-						</Box>)}
+            ) : (<Box>
+                Details not available yet for Solana contracts
+            </Box>)}
         </Stack>
     );
 };

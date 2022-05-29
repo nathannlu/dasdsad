@@ -8,10 +8,10 @@ import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/Asd.js
 import posthog from 'posthog-js';
 
 export const useEthereum = () => {
-    const { deployContractForm } = useDeployContractForm();
-    const { account } = useWeb3();
-    const { setLoading, setError, setStart, selectInput, ipfsUrl } =
-        useContract();
+    const { walletController } = useWeb3();
+    const walletAddress = walletController?.state.address;
+
+    const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
     const { addToast } = useToast();
     const [updateContractAddress] = useUpdateContractAddress({
         onCompleted: () => {
@@ -76,9 +76,7 @@ export const useEthereum = () => {
                 data: NFTCollectible.bytecode,
                 arguments: [uri, name, totalSupply],
             };
-            const senderInfo = {
-                from: account,
-            };
+            const senderInfo = { from: walletAddress };
 
             contract
                 .deploy(options)

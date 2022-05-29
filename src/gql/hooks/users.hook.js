@@ -63,17 +63,11 @@ export const useGetNonceByAddress = ({ address, onCompleted, onError }) => {
 
 export const useVerifySignature = ({ onCompleted, onError }) => {
     const { onLoginSuccess } = useAuth();
-    //	let history = useHistory();
-
     const [verifySignature, { ...mutationResult }] = useMutation(
         VERIFY_SIGNATURE,
         {
             onCompleted: (data) => {
-                //			console.log(data)
-
                 onLoginSuccess(data.verifySignature);
-                //			history.push('/dashboard');
-
                 if (onCompleted) {
                     onCompleted(data);
                 }
@@ -124,39 +118,39 @@ export const useGetCurrentUser = () => {
             onReauthenticationSuccess(user);
 
             /*
-			// Update layer maanger, traits manager
-			if (hasCollection) {
-				let layers = [...collections[0].layers]
-				let clonedLayers = JSON.parse(JSON.stringify(layers))
+            // Update layer maanger, traits manager
+            if (hasCollection) {
+                let layers = [...collections[0].layers]
+                let clonedLayers = JSON.parse(JSON.stringify(layers))
 
 
-				for (let i = 0; i < clonedLayers.length; i++) {
-					const layer = clonedLayers[i];
-					
-					for (let j = 0; j < layer.images.length; j++) {
-						let image = clonedLayers[i].images[j];
+                for (let i = 0; i < clonedLayers.length; i++) {
+                    const layer = clonedLayers[i];
+                	
+                    for (let j = 0; j < layer.images.length; j++) {
+                        let image = clonedLayers[i].images[j];
 
-						image.preview = image.url	
-						image.base64 = await toDataURL(image.url)
-						image.type = "image/png"
-					};
-				};
+                        image.preview = image.url	
+                        image.base64 = await toDataURL(image.url)
+                        image.type = "image/png"
+                    };
+                };
 
 
-				// Save collection to metadata too
-				updateSettingsForm(prevState => {
-					let newState = {...prevState}
-					newState.collectionSize.value = collections[0].collectionSize;
-					newState.description.value = collections[0].description;
-					newState.name.value = collections[0].name;
+                // Save collection to metadata too
+                updateSettingsForm(prevState => {
+                    let newState = {...prevState}
+                    newState.collectionSize.value = collections[0].collectionSize;
+                    newState.description.value = collections[0].description;
+                    newState.name.value = collections[0].name;
 
-					return {...newState}
-				});
+                    return {...newState}
+                });
 
-				console.log(clonedLayers)
-				setLayers(clonedLayers)
-			}
-			*/
+                console.log(clonedLayers)
+                setLayers(clonedLayers)
+            }
+            */
         },
         onError: onReauthenticationError,
     });

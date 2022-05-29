@@ -10,7 +10,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Embed = () => {
-    const { loadWeb3, loadBlockchainData } = useWeb3();
+    const { loadMetamaskWallet } = useWeb3();
     const {
         contract,
         prefix,
@@ -27,12 +27,7 @@ const Embed = () => {
         setCount,
     } = useEmbed();
 
-    useEffect(() => {
-        (async () => {
-            await loadWeb3();
-            await loadBlockchainData();
-        })();
-    }, []);
+    useEffect(() => { loadMetamaskWallet(); }, []);
 
     return (
         <Box
@@ -92,9 +87,9 @@ const Embed = () => {
                                             color: `${textColor}`,
                                         },
                                         '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline':
-                                            {
-                                                borderColor: `${textColor}`,
-                                            },
+                                        {
+                                            borderColor: `${textColor}`,
+                                        },
                                     }}
                                 />
                                 <ButtonGroup
