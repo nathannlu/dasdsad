@@ -20,7 +20,7 @@ const Upload = (props) => {
     const { id } = useParams();
     const { contracts } = useContract();
 
-    const { walletController } = useWeb3();
+    const { walletController, initializeWalletController } = useWeb3();
     const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false;
 
     const handleError = (e) => {
@@ -37,11 +37,16 @@ const Upload = (props) => {
             }
 
             setContract(c);
+
+            const wc = walletController || initializeWalletController();
             const walletType = getWalletType(c?.blockchain);
-            await walletController.loadWalletProvider(walletType);
+
+            console.log(walletType, 'walletType', c?.blockchain);
+
+            await wc?.loadWalletProvider(walletType);
 
             if (walletType === 'metamask') {
-                await walletController.compareNetwork(c?.blockchain, async (error) => {
+                await wc?.compareNetwork(c?.blockchain, async (error) => {
                     if (error) {
                         handleError(error);
                         return;

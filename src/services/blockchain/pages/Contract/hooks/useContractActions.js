@@ -14,7 +14,7 @@ import {
 } from '@solana/web3.js';
 import { updateCandyMachine } from 'solana/helpers/updateContract';
 
-export const useContractActions = (contractAddress) => {
+export const useContractActions = (contractAddress, blockchain) => {
     const { addToast } = useToast();
     const { retrieveContract, walletController } = useWeb3();
     const [contract, setContract] = useState({});
@@ -87,49 +87,67 @@ export const useContractActions = (contractAddress) => {
     const updateBaseUri = async (baseUri = actionForm.newMetadataUrl.value) => {
         const walletAddress = walletController?.state.address;
 
-        contract.methods
-            .setBaseURI(baseUri)
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setBaseURI(baseUri)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     const setMaxPerMint = async (count = actionForm.maxPerMintCount.value) => {
         const walletAddress = walletController?.state.address;
+        console.log(contract, 'contract');
 
-        contract.methods
-            .setMaxPerMint(parseInt(count))
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setMaxPerMint(parseInt(count))
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     const setMaxPerWallet = async (count = actionForm.maxPerWalletCount.value) => {
         const walletAddress = walletController?.state.address;
-
-        contract.methods
-            .setMaxPerWallet(parseInt(count))
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setMaxPerWallet(parseInt(count))
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     const setCost = async (price = actionForm.newPrice.value) => {
@@ -137,92 +155,116 @@ export const useContractActions = (contractAddress) => {
 
         const web3 = window.web3;
         const priceInWei = web3.utils.toWei(price);
-
-        contract.methods
-            .setCost(priceInWei)
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setCost(priceInWei)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     const openSales = async (status = true) => {
         const walletAddress = walletController?.state.address;
-
-        contract.methods
-            .setOpen(status)
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setOpen(status)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     const openPresale = async (status = true) => {
         const walletAddress = walletController?.state.address;
-
-        contract.methods
-            .setPresaleOpen(status)
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setPresaleOpen(status)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     const airdrop = async (list = actionForm.airdropList.value.split('\n')) => {
         const walletAddress = walletController?.state.address;
 
         console.log(list);
-        contract.methods
-            .airdrop(list)
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .airdrop(list)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
-    const setMerkleRoot = (
-        id,
-        addresses = actionForm.whitelistAddresses.value.split('\n')
-    ) => {
+    const setMerkleRoot = async (id, addresses = actionForm.whitelistAddresses.value.split('\n')) => {
         const walletAddress = walletController?.state.address;
 
         const leafNodes = addresses.map((addr) => keccak256(addr));
         const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
         const root = merkleTree.getRoot();
 
-        contract.methods
-            .setPreSaleAddresses(root)
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .setPreSaleAddresses(root)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
 
-        setWhitelist({ variables: { id, whitelist: addresses } });
+            setWhitelist({ variables: { id, whitelist: addresses } });
+        });
     };
 
     const presaleMint = async (whitelist, count = 1) => {
@@ -240,18 +282,23 @@ export const useContractActions = (contractAddress) => {
         });
 
         const hexProof = merkleTree.getHexProof(claimingAddress);
-
-        contract.methods
-            .presaleMint(count, hexProof)
-            .send(
-                {
-                    from: walletAddress,
-                    value: cost,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .presaleMint(count, hexProof)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: cost,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     // compare array buffers
@@ -262,32 +309,40 @@ export const useContractActions = (contractAddress) => {
         return true;
     }
 
-    const withdraw = async (wallet = 'metamask', env = 'mainnet') => {
-        if (wallet == 'phantom') {
+    const withdraw = async (env = 'mainnet') => {
+        const walletType = walletController?.state.wallet;
+        const walletAddress = walletController?.state.address;
+
+        if (walletType == 'phantom') {
             console.log('withdrawing phantom');
             await withdrawV2(env, contractAddress);
             return;
         }
-        const walletAddress = walletController?.state.address;
-
-        contract.methods
-            .withdraw()
-            .send(
-                {
-                    from: walletAddress,
-                    value: 0,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            contract.methods
+                .withdraw()
+                .send(
+                    {
+                        from: walletAddress,
+                        value: 0,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
+        });
     };
 
     // Mint NFT
-    const mint = async (count = 1, wallet = 'metamask', env = 'mainnet') => {
+    const mint = async (count = 1, env = 'mainnet') => {
         const walletAddress = walletController?.state.address;
+        const walletType = walletController?.state.wallet;
 
-        if (wallet == 'phantom') {
+        if (walletType == 'phantom') {
             console.log('minting phantom');
             await mintV2(env, contractAddress, walletAddress);
             return;
@@ -295,19 +350,24 @@ export const useContractActions = (contractAddress) => {
 
         const { methods } = contract;
         const price = await methods.cost().call();
+        await walletController?.compareNetwork(blockchain, async (error) => {
+            if (error) {
+                onTxnError(error);
+                return;
+            }
+            methods
+                .mint(count)
+                .send(
+                    {
+                        from: walletAddress,
+                        value: price,
+                    },
+                    (err) => (err ? onTxnError(err) : onTxnInfo())
+                )
+                .once('error', (err) => onTxnError(err))
+                .once('confirmation', () => onTxnSuccess());
 
-        methods
-            .mint(count)
-            .send(
-                {
-                    from: walletAddress,
-                    value: price,
-                },
-                (err) => (err ? onTxnError(err) : onTxnInfo())
-            )
-            .once('error', (err) => onTxnError(err))
-            .once('confirmation', () => onTxnSuccess());
-
+        });
         /*
         try {
             // Support depreciated method
@@ -347,12 +407,12 @@ export const useContractActions = (contractAddress) => {
         */
     };
 
-    const updateWhiteListToken = async (wallet, env = 'mainnet', turnOnWhiteList = false,
-        newMint = actionForm.whitelistToken.value // nonly token for now
-    ) => {
-        if (wallet == 'phantom') {
-            console.log('updating white');
+    // nonly token for now
+    const updateWhiteListToken = async (env = 'mainnet', turnOnWhiteList = false, newMint = actionForm.whitelistToken.value) => {
+        const walletType = walletController?.state.wallet;
 
+        if (walletType == 'phantom') {
+            console.log('updating white');
         } else {
             onTxnError("Please connect with Phantom wallet");
         }
@@ -410,10 +470,11 @@ export const useContractActions = (contractAddress) => {
 
     };
 
-    const updateGoLiveDate = async (wallet, env = 'mainnet', newGoLiveDate = actionForm.goLiveDate.value) => {
-        if (wallet == 'phantom') {
-            console.log('updating white');
+    const updateGoLiveDate = async (env = 'mainnet', newGoLiveDate = actionForm.goLiveDate.value) => {
+        const walletType = walletController?.state.wallet;
 
+        if (walletType == 'phantom') {
+            console.log('updating white');
         } else {
             onTxnError("Please connect with Phantom wallet");
         }

@@ -11,7 +11,7 @@ import {
 } from 'ds/components';
 import { useAuth } from 'libs/auth';
 import { useWeb3 } from 'libs/web3';
-import { AppBar, Toolbar } from '@mui/material';
+import { AppBar } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -19,12 +19,15 @@ const Navbar = ({ pageName }) => {
     const { logout } = useAuth();
     const { walletController } = useWeb3();
     const [anchorEl, setAnchorEl] = useState(null);
+    const [state, setState] = useState({ walletType: null, walletAddress: null });
     const open = Boolean(anchorEl);
 
-    console.log(walletController, 'walletController');
+    useEffect(() => {
+        console.log(walletController, 'walletController NAVBAR', walletController?.getState());
+        const { wallet, address } = walletController?.getState();
 
-    const walletType = walletController?.state.wallet;
-    const walletAddress = walletController?.state.address;
+        setState(prevState => ({ ...prevState, walletType: wallet || null, walletAddress: address || null }));
+    }, [walletController?.state?.address]);
 
     return (
         <AppBar
@@ -57,14 +60,14 @@ const Navbar = ({ pageName }) => {
                             onClick={(e) => setAnchorEl(e.currentTarget)}
                             className="ml-auto"
                             style={{ color: 'black', cursor: 'pointer', border: '1px solid rgba(0,0,0,.5)', padding: '4px 8px', borderRadius: '9999px' }}>
-                            {walletAddress ? (
+                            {state.walletAddress ? (
                                 <Stack gap={1} direction="horizontal">
                                     <div>
-                                        {walletAddress.substring(0, 4)}...{walletAddress.slice(-3)}
+                                        {state.walletAddress.substring(0, 4)}...{state.walletAddress.slice(-3)}
                                     </div>
 
                                     <div>
-                                        {walletType === 'metamask' ? (
+                                        {state.walletType === 'metamask' ? (
                                             <img style={{ height: '25px', width: '25px', objectFit: 'cover' }} src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" />
                                         ) : (
                                             <img style={{ height: '25px', width: '25px', objectFit: 'cover' }} src="https://ph-files.imgix.net/f05a61be-d906-4ad8-a68d-88f7c257574d.png?auto=format" />

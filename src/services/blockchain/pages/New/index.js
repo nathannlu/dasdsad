@@ -109,8 +109,10 @@ const Upload = () => {
     };
 
     useEffect(() => {
-        const wc = walletController || initializeWalletController();
-        wc.loadWalletProvider('phantom');
+        (async () => {
+            const wc = walletController || initializeWalletController();
+            await wc?.loadWalletProvider('phantom');
+        })();
     }, []);
 
     return (

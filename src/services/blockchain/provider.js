@@ -26,7 +26,6 @@ export const ContractProvider = ({ children }) => {
     const [imagesUrl, setImagesUrl] = useState(null);
     const [metadataUrl, setMetadataUrl] = useState(null); //unused
     const [ipfsUrl, setIpfsUrl] = useState(null); //metadata url
-    const { loadMetamaskWallet } = useWeb3();
 
     // monkey patch
     Object.prototype.toBuffer = function (fn) {
@@ -40,8 +39,6 @@ export const ContractProvider = ({ children }) => {
             return decoded;
         }
     };
-
-    useEffect(() => { loadMetamaskWallet(); }, []);
 
     const onDeleteContract = async (curContract, deleteContract, handleClose) => {
         try {

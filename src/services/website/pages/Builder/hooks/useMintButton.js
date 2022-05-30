@@ -33,16 +33,24 @@ export const useMintButton = () => {
             const blockchain = contract.blockchain;
             if (blockchain.indexOf('solana') !== -1) {
                 // Solana
-                await wc.loadWalletProvider('phantom');
+                await wc?.loadWalletProvider('phantom');
             } else {
                 // Metamask
-                await wc.loadWalletProvider('metamask');
-                const isOpen = await getOpen(website.settings.connectedContractAddress);
-                setOpen(isOpen);
-                const size = await getSize(website.settings.connectedContractAddress);
-                setSize(size);
-                const cost = await getPrice(website.settings.connectedContractAddress);
-                setPrice(cost);
+                await wc?.loadWalletProvider('metamask');
+                await wc?.compareNetwork(blockchain, async (e) => {
+                    if (e) {
+                        addToast({ severity: "error", message: e.message });
+                        return;
+                    }
+
+                    const isOpen = await getOpen(website.settings.connectedContractAddress);
+                    setOpen(isOpen);
+                    const size = await getSize(website.settings.connectedContractAddress);
+                    setSize(size);
+                    const cost = await getPrice(website.settings.connectedContractAddress);
+                    setPrice(cost);
+
+                });
             }
         })()
 
@@ -55,11 +63,11 @@ export const useMintButton = () => {
             const blockchain = contract.blockchain;
             if (blockchain.indexOf('solana') !== -1) {
                 // Solana
-                await wc.loadWalletProvider('phantom');
+                await wc?.loadWalletProvider('phantom');
             } else {
                 // Metamask
-                await wc.loadWalletProvider('metamask');
-                await wc.compareNetwork(blockchain, async (e) => {
+                await wc?.loadWalletProvider('metamask');
+                await wc?.compareNetwork(blockchain, async (e) => {
                     if (e) {
                         addToast({ severity: "error", message: e.message });
                         return;
@@ -86,21 +94,29 @@ export const useMintButton = () => {
 
             if (blockchain.indexOf('solana') !== -1) {
                 // Solana
-                const walletAddress = await wc.loadWalletProvider('phantom');
+                const walletAddress = await wc?.loadWalletProvider('phantom');
                 await mintV2(contract.blockchain === 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, walletAddress);
             }
             else {
                 // Eth or Polygon
-                const walletAddress = await wc.loadWalletProvider('metamask');
+                const walletAddress = await wc?.loadWalletProvider('metamask');
                 //const isOpen = await getOpen(website.settings.connectedContractAddress);
 
-                if (open) {
-                    console.log('open')
-                    await mint(price, website.settings.connectedContractAddress, walletAddress, mintCount);
-                } else {
-                    console.log('not open')
-                    await presaleMint(price, contract.address, contract.nftCollection.whitelist, walletAddress, mintCount);
-                }
+                await wc?.compareNetwork(blockchain, async (e) => {
+                    if (e) {
+                        addToast({ severity: "error", message: e.message });
+                        return;
+                    }
+
+                    if (open) {
+                        console.log('open')
+                        await mint(price, website.settings.connectedContractAddress, walletAddress, mintCount);
+                    } else {
+                        console.log('not open')
+                        await presaleMint(price, contract.address, contract.nftCollection.whitelist, walletAddress, mintCount);
+                    }
+
+                });
             }
         } catch (err) {
             console.log(err);

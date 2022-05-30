@@ -10,7 +10,6 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Embed = () => {
-    const { loadMetamaskWallet } = useWeb3();
     const {
         contract,
         prefix,
@@ -26,8 +25,6 @@ const Embed = () => {
         onSwitch,
         setCount,
     } = useEmbed();
-
-    useEffect(() => { loadMetamaskWallet(); }, []);
 
     return (
         <Box

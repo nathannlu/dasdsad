@@ -1,12 +1,25 @@
+import React, { useState } from 'react';
+import { useWeb3 } from 'libs/web3';
+import { getBlockchainChainId } from '@ambition-blockchain/controllers';
+import { useToast } from 'ds/hooks/useToast';
+
 import {
-    Lock as LockIcon, LockOpen as LockOpenIcon, Payment as PaymentIcon, SwapVert as SwapVertIcon, Upload as UploadIcon
+    Lock as LockIcon,
+    LockOpen as LockOpenIcon,
+    Payment as PaymentIcon,
+    SwapVert as SwapVertIcon,
+    Upload as UploadIcon
 } from '@mui/icons-material';
 import { CardHeader } from '@mui/material';
 import {
-    Box, Button, Card, Grid, Stack, TextField, Typography
+    Box,
+    Button,
+    Card,
+    Grid,
+    Stack,
+    TextField,
+    Typography
 } from 'ds/components';
-import { useWeb3 } from 'libs/web3';
-import React, { useState } from 'react';
 import { useContractActions } from './hooks/useContractActions';
 import { useContractDetails } from './hooks/useContractDetails';
 
@@ -26,9 +39,7 @@ const solActions = [
 ];
 
 const Actions = ({ id, contract }) => {
-    const { walletController } = useWeb3();
-    const walletType = walletController?.state.wallet;
-    const networkId = walletController?.getNetworkID();
+    const networkId = getBlockchainChainId(contract?.blockchain);
 
     const { isPresaleOpen, isPublicSaleOpen } = useContractDetails(contract.address, networkId);
     const {
@@ -55,7 +66,7 @@ const Actions = ({ id, contract }) => {
         withdraw,
         setMaxPerWallet,
         updateGoLiveDate
-    } = useContractActions(contract.address, networkId);
+    } = useContractActions(contract.address, contract?.blockchain);
 
     const [selectedUpdate, setSelectedUpdate] = useState('metadata');
     const env = contract?.blockchain == 'solanadevnet' && 'devnet' || 'mainnet';
@@ -293,14 +304,14 @@ const Actions = ({ id, contract }) => {
                             startIcon={<SwapVertIcon />}
                             size="small"
                             variant="contained"
-                            onClick={() => withdraw(walletType, env)}>
+                            onClick={() => withdraw(env)}>
                             Close smart contract &amp; withdraw rent
                         </Button>
                         <Button
                             startIcon={<PaymentIcon />}
                             size="small"
                             variant="contained"
-                            onClick={() => mint(1, walletType, env, true, {})}>
+                            onClick={() => mint(1, env, true, {})}>
                             Mint
                         </Button>
                     </Stack>
@@ -357,7 +368,7 @@ const Actions = ({ id, contract }) => {
                                                     size="small"
                                                     variant="contained"
                                                     onClick={() =>
-                                                        updateWhiteListToken(walletType, env, true)
+                                                        updateWhiteListToken(env, true)
                                                     }>
                                                     <UploadIcon />
                                                 </Button>
@@ -401,7 +412,7 @@ const Actions = ({ id, contract }) => {
                                                     size="small"
                                                     variant="contained"
                                                     onClick={() =>
-                                                        updateGoLiveDate(walletType, env)
+                                                        updateGoLiveDate(env)
                                                     }>
                                                     <UploadIcon />
                                                 </Button>

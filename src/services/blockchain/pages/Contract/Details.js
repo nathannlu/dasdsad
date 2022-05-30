@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
+import React from 'react';
+import { getBlockchainChainId } from '@ambition-blockchain/controllers';
+
 import { Chip, Skeleton } from '@mui/material';
-import { useWeb3 } from 'libs/web3';
+import { Box, Grid, Stack, Typography } from 'ds/components';
 import { useContractDetails } from './hooks/useContractDetails';
 
 const Details = ({ contract }) => {
-    const { walletController } = useWeb3();
-    const networkId = walletController?.getNetworkID();
+    const networkId = getBlockchainChainId(contract?.blockchain);
 
     const {
         balance,

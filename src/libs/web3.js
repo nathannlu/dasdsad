@@ -35,42 +35,43 @@ export const Web3Provider = ({ children }) => {
 
     const [verifySignature] = useVerifySignature({
         onCompleted: async (data) => {
-            posthog.capture('User logged in with metamask', { $set: { publicAddress: account } });
+            const walletAddress = walletController?.state.address;
+            posthog.capture('User logged in with metamask', { $set: { publicAddress: walletAddress } });
             window.localStorage.setItem('ambition-wallet', 'metamask');
-            setWallet('metamask');
             await handleLoginSuccess();
         },
     });
 
     const [verifySignaturePhantom] = useVerifySignaturePhantom({
         onCompleted: async (data) => {
-            posthog.capture('User logged in with phantom', {
-                $set: {
-                    publicAddress: account,
-                },
-            });
+            const walletAddress = walletController?.state.address;
+            posthog.capture('User logged in with phantom', { $set: { publicAddress: walletAddress } });
             window.localStorage.setItem('ambition-wallet', 'phantom');
-            setWallet('phantom');
             await handleLoginSuccess();
         },
     });
 
     const initializeWalletController = () => {
+        if (walletController) {
+            return;
+        }
+
         const wc = new WalletController();
         setWalletController(wc);
         return wc;
     }
 
-    // on load
-    useEffect(() => {
+    const init = async () => {
         const curentWalletType = localStorage.getItem('ambition-wallet');
         const wc = initializeWalletController();
 
         if (curentWalletType) {
-            wc.loadWalletProvider(curentWalletType);
+            await wc.loadWalletProvider(curentWalletType);
         }
+    }
 
-    }, []);
+    // on load
+    useEffect(() => { init(); }, []);
 
     const loginToWallet = async (walletType) => {
         try {
@@ -102,12 +103,14 @@ export const Web3Provider = ({ children }) => {
 
     // Mint NFT
     const mint = async (contractAddress, count = 1) => {
+        const walletAddress = walletController.state.address;
+
         const contract = await retrieveContract(contractAddress);
         const price = await contract.methods.cost().call();
 
         contract.methods
             .mint(count)
-            .send({ from: account, value: price * count }, (err) => {
+            .send({ from: walletAddress, value: price * count }, (err) => {
                 if (err) {
                     addToast({
                         severity: 'error',
@@ -149,23 +152,22 @@ export const Web3Provider = ({ children }) => {
         whitelist,
         count = 1
     ) => {
+        const walletAddress = walletController.state.address;
+
         const contract = await retrieveContract(contractAddress);
         const priceInWei = Web3.utils.toWei(price * count);
 
         const leafNodes = whitelist.map((addr) => keccak256(addr));
         const claimingAddress = await leafNodes.find((node) =>
-            compare(keccak256(account), node)
+            compare(keccak256(walletAddress), node)
         );
 
-        const merkleTree = new MerkleTree(leafNodes, keccak256, {
-            sortPairs: true,
-        });
-
+        const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
         const hexProof = merkleTree.getHexProof(claimingAddress);
 
         contract.methods
             .presaleMint(count, hexProof)
-            .send({ from: account, value: priceInWei }, (err) => {
+            .send({ from: walletAddress, value: priceInWei }, (err) => {
                 if (err) {
                     addToast({
                         severity: 'error',
@@ -318,17 +320,22 @@ export const Web3Provider = ({ children }) => {
     const payGeneratorWithEth = async (size, callback) => {
         try {
             const wc = walletController || initializeWalletController();
-            await wc.loadWalletProvider('metamask'); // as we need to deduct ethereum
-            const walletAddress = wc.state.address;
+            await wc?.loadWalletProvider('metamask'); // as we need to deduct ethereum
+            const walletAddress = wc?.state.address;
+            const walletType = wc?.state.wallet;
 
             const res = await getNonceByAddress({ variables: { address: walletAddress } });
             const nonce = res.data.getNonceByAddress;
-            const signature = await wc.signNonce(walletType, nonce, walletAddress);
+            const signature = await wc?.signNonce(walletType, nonce, walletAddress);
 
             if (!signature) throw new Error('User Rejected Login with Metamask');
             await verifySignature({ variables: { address: walletAddress, signature } });
 
-            await compareNetwork('0x1', () => {
+            await wc?.compareNetwork('ethereum', async (e) => {
+                if (e) {
+                    addToast({ severity: "error", message: e.message });
+                    return;
+                }
                 const web3 = window.web3
                 const inEth = 0.000034;
                 const amount = inEth * size;
@@ -346,8 +353,8 @@ export const Web3Provider = ({ children }) => {
                 }).once('confirmation', () => {
                     setLoading(false);
                     callback();
-                }).on('error', () => {
-                    addToast({ severity: 'error', message: 'Something went wrong! Please contact ambition support.' });
+                }).on('error', (e) => {
+                    addToast({ severity: 'error', message: e.message });
                     setLoading(false);
                 });
             });
@@ -359,19 +366,11 @@ export const Web3Provider = ({ children }) => {
         }
     }
 
-    const loadMetamaskWallet = () => {
-        const wc = walletController || initializeWalletController();
-        if (wc.state.wallet !== 'metamask') {
-            wc.loadWalletProvider('metamask');
-        }
-    }
-
     return (
         <Web3Context.Provider
             value={{
                 loginToWallet,
                 payGeneratorWithEth,
-                loadMetamaskWallet,
                 initializeWalletController,
                 mint,
                 retrieveContract,
