@@ -27,7 +27,7 @@ const Navbar = ({ pageName }) => {
         const { wallet, address } = walletController?.getState();
 
         setState(prevState => ({ ...prevState, walletType: wallet || null, walletAddress: address || null }));
-    }, [walletController?.state?.address]);
+    }, [walletController?.state?.address, walletController?.state?.wallet]);
 
     return (
         <AppBar

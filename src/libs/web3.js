@@ -23,7 +23,7 @@ export const Web3Context = createContext({});
 export const useWeb3 = () => useContext(Web3Context);
 
 export const Web3Provider = ({ children }) => {
-    const [walletController, setWalletController] = useState(null);
+    const [walletController, setWalletController] = useState(new WalletController());
     const [loading, setLoading] = useState(false);
 
     const [contractVarsState, setContractVarsState] = useState(false);
@@ -51,22 +51,10 @@ export const Web3Provider = ({ children }) => {
         },
     });
 
-    const initializeWalletController = () => {
-        if (walletController) {
-            return;
-        }
-
-        const wc = new WalletController();
-        setWalletController(wc);
-        return wc;
-    }
-
     const init = async () => {
         const curentWalletType = localStorage.getItem('ambition-wallet');
-        const wc = initializeWalletController();
-
         if (curentWalletType) {
-            await wc.loadWalletProvider(curentWalletType);
+            await walletController.loadWalletProvider(curentWalletType);
         }
     }
 
@@ -75,13 +63,12 @@ export const Web3Provider = ({ children }) => {
 
     const loginToWallet = async (walletType) => {
         try {
-            const wc = walletController || initializeWalletController();
-            await wc.loadWalletProvider(walletType);
-            const walletAddress = wc.state.address;
+            await walletController.loadWalletProvider(walletType);
+            const walletAddress = walletController.state.address;
 
             const res = await getNonceByAddress({ variables: { address: walletAddress } });
             const nonce = res.data.getNonceByAddress;
-            const signature = await wc.signNonce(walletType, nonce, walletAddress);
+            const signature = await walletController.signNonce(walletType, nonce, walletAddress);
 
             if (walletType === 'metamask') {
                 if (!signature)
@@ -203,20 +190,19 @@ export const Web3Provider = ({ children }) => {
 
     const getPublicContractVariables = async (contractAddress, chainid) => {
         if (!contractAddress || !chainid) return;
-        const wc = walletController || initializeWalletController();
 
         if (chainid.indexOf('solana') != -1) {
             // If Solana Contract
             setContractVarsState(false);
 
-            await wc.loadWalletProvider('phantom');
+            await walletController.loadWalletProvider('phantom');
 
             setContractVarsState(true);
         } else {
             // If Metamask Contract
             setContractVarsState(false);
 
-            await wc.loadWalletProvider('metamask');
+            await walletController.loadWalletProvider('metamask');
 
             const contract = await retrieveContract(contractAddress);
 
@@ -319,19 +305,18 @@ export const Web3Provider = ({ children }) => {
 
     const payGeneratorWithEth = async (size, callback) => {
         try {
-            const wc = walletController || initializeWalletController();
-            await wc?.loadWalletProvider('metamask'); // as we need to deduct ethereum
-            const walletAddress = wc?.state.address;
-            const walletType = wc?.state.wallet;
+            await walletController?.loadWalletProvider('metamask'); // as we need to deduct ethereum
+            const walletAddress = walletController?.state.address;
+            const walletType = walletController?.state.wallet;
 
             const res = await getNonceByAddress({ variables: { address: walletAddress } });
             const nonce = res.data.getNonceByAddress;
-            const signature = await wc?.signNonce(walletType, nonce, walletAddress);
+            const signature = await walletController?.signNonce(walletType, nonce, walletAddress);
 
             if (!signature) throw new Error('User Rejected Login with Metamask');
             await verifySignature({ variables: { address: walletAddress, signature } });
 
-            await wc?.compareNetwork('ethereum', async (e) => {
+            await walletController?.compareNetwork('ethereum', async (e) => {
                 if (e) {
                     addToast({ severity: "error", message: e.message });
                     return;
@@ -371,7 +356,6 @@ export const Web3Provider = ({ children }) => {
             value={{
                 loginToWallet,
                 payGeneratorWithEth,
-                initializeWalletController,
                 mint,
                 retrieveContract,
                 checkOwner,

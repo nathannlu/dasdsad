@@ -65,7 +65,7 @@ const RadioLabel = ({ type, isTestnetEnabled }) => {
 }
 
 const New = ({ contract }) => {
-	const { walletController, initializeWalletController } = useWeb3();
+	const { walletController } = useWeb3();
 	const history = useHistory();
 	const { addToast } = useToast();
 
@@ -164,10 +164,8 @@ const New = ({ contract }) => {
 		const blockchain = contract?.blockchain || getBlockchainType(activeBlockchain, isTestnetBlockchain);
 
 		// initiate wallet controller connection
-		const wc = walletController || initializeWalletController();
-		await wc?.loadWalletProvider(getWalletType(blockchain));
-
-		await wc?.compareNetwork(blockchain, async (error) => {
+		await walletController?.loadWalletProvider(getWalletType(blockchain));
+		await walletController?.compareNetwork(blockchain, async (error) => {
 			if (error) {
 				addToast({ severity: 'error', message: error.message });
 				return;

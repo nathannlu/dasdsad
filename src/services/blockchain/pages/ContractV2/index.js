@@ -15,7 +15,7 @@ import Newv2 from '../NewV2';
 import { CircularProgress } from '@mui/material';
 
 const ContractV2 = () => {
-	const { walletController, initializeWalletController } = useWeb3();
+	const { walletController } = useWeb3();
 	const { addToast } = useToast();
 
 	const [contract, setContract] = useState(null);
@@ -70,10 +70,8 @@ const ContractV2 = () => {
 			setContract(contract);
 		}
 
-		const wc = walletController || initializeWalletController();
-		await wc?.loadWalletProvider(getWalletType(contract.blockchain));
-
-		await wc?.compareNetwork(contract?.blockchain, async (error) => {
+		await walletController?.loadWalletProvider(getWalletType(contract.blockchain));
+		await walletController?.compareNetwork(contract?.blockchain, async (error) => {
 			if (error) {
 				addToast({ severity: 'error', message: error.message });
 				return;

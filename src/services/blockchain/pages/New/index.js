@@ -60,7 +60,7 @@ const blockchains = [
 
 const Upload = () => {
     const { addToast } = useToast();
-    const { walletController, initializeWalletController } = useWeb3();
+    const { walletController } = useWeb3();
     const [activeStep, setActiveStep] = useState();
     const history = useHistory();
     const { selectInput, setSelectInput } = useContract();
@@ -110,8 +110,7 @@ const Upload = () => {
 
     useEffect(() => {
         (async () => {
-            const wc = walletController || initializeWalletController();
-            await wc?.loadWalletProvider('phantom');
+            await walletController?.loadWalletProvider('phantom');
         })();
     }, []);
 

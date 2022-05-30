@@ -6,7 +6,7 @@ import { mintV2 } from 'solana/helpers/mint.js';
 import { useToast } from 'ds/hooks/useToast';
 
 export const useMintButton = () => {
-    const { mint, getOpen, presaleMint, getSize, getPrice, walletController, initializeWalletController } = useWeb3();
+    const { mint, getOpen, presaleMint, getSize, getPrice, walletController } = useWeb3();
     const { website } = useWebsite();
     const [price, setPrice] = useState('');
     const [open, setOpen] = useState(false);
@@ -27,17 +27,16 @@ export const useMintButton = () => {
 
     useEffect(() => {
         if (!website || !contract) return;
-        const wc = walletController || initializeWalletController();
 
         (async () => {
             const blockchain = contract.blockchain;
             if (blockchain.indexOf('solana') !== -1) {
                 // Solana
-                await wc?.loadWalletProvider('phantom');
+                await walletController?.loadWalletProvider('phantom');
             } else {
                 // Metamask
-                await wc?.loadWalletProvider('metamask');
-                await wc?.compareNetwork(blockchain, async (e) => {
+                await walletController?.loadWalletProvider('metamask');
+                await walletController?.compareNetwork(blockchain, async (e) => {
                     if (e) {
                         addToast({ severity: "error", message: e.message });
                         return;
@@ -58,16 +57,14 @@ export const useMintButton = () => {
 
     const onConnect = async () => {
         try {
-            const wc = walletController || initializeWalletController();
-
             const blockchain = contract.blockchain;
             if (blockchain.indexOf('solana') !== -1) {
                 // Solana
-                await wc?.loadWalletProvider('phantom');
+                await walletController?.loadWalletProvider('phantom');
             } else {
                 // Metamask
-                await wc?.loadWalletProvider('metamask');
-                await wc?.compareNetwork(blockchain, async (e) => {
+                await walletController?.loadWalletProvider('metamask');
+                await walletController?.compareNetwork(blockchain, async (e) => {
                     if (e) {
                         addToast({ severity: "error", message: e.message });
                         return;
@@ -90,19 +87,18 @@ export const useMintButton = () => {
             if (!website) throw new Error('Cannot find website');
 
             const blockchain = contract.blockchain;
-            const wc = walletController || initializeWalletController();
 
             if (blockchain.indexOf('solana') !== -1) {
                 // Solana
-                const walletAddress = await wc?.loadWalletProvider('phantom');
+                const walletAddress = await walletController?.loadWalletProvider('phantom');
                 await mintV2(contract.blockchain === 'solanadevnet' ? 'devnet' : 'mainnet', contract.address, walletAddress);
             }
             else {
                 // Eth or Polygon
-                const walletAddress = await wc?.loadWalletProvider('metamask');
+                const walletAddress = await walletController?.loadWalletProvider('metamask');
                 //const isOpen = await getOpen(website.settings.connectedContractAddress);
 
-                await wc?.compareNetwork(blockchain, async (e) => {
+                await walletController?.compareNetwork(blockchain, async (e) => {
                     if (e) {
                         addToast({ severity: "error", message: e.message });
                         return;

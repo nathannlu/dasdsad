@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { useWeb3 } from 'libs/web3';
 import { getBlockchainChainId } from '@ambition-blockchain/controllers';
-import { useToast } from 'ds/hooks/useToast';
 
 import {
     Lock as LockIcon,
