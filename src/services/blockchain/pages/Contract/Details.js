@@ -17,7 +17,7 @@ const Details = ({ contract }) => {
         max,
         metadataUrl,
         loading,
-    } = useContractDetails(contract.address, networkId);
+    } = useContractDetails(contract.address, networkId, contract.blockchain);
 
     return (
         <Stack>

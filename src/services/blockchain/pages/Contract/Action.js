@@ -39,7 +39,7 @@ const solActions = [
 const Actions = ({ id, contract }) => {
     const networkId = getBlockchainChainId(contract?.blockchain);
 
-    const { isPresaleOpen, isPublicSaleOpen } = useContractDetails(contract.address, networkId);
+    const { isPresaleOpen, isPublicSaleOpen } = useContractDetails(contract.address, networkId, contract?.blockchain);
     const {
         actionForm: {
             airdropList,

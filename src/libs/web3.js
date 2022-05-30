@@ -18,6 +18,10 @@ import {
 
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 
+import posthog from 'posthog-js';
+import { useAuth } from 'libs/auth';
+import { loadCandyProgramV2, getBalance } from 'solana/helpers/accounts';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 export const Web3Context = createContext({});
 
 export const useWeb3 = () => useContext(Web3Context);
@@ -188,7 +192,7 @@ export const Web3Provider = ({ children }) => {
         return owner;
     };
 
-    const getPublicContractVariables = async (contractAddress, chainid) => {
+    const getPublicContractVariables = async (contractAddress, chainid, env) => {
         if (!contractAddress || !chainid) return;
 
         if (chainid.indexOf('solana') != -1) {
@@ -197,14 +201,25 @@ export const Web3Provider = ({ children }) => {
 
             await walletController.loadWalletProvider('phantom');
 
+            const contract = await retrieveSolanaContract(contractAddress, chainid, env);
+            const balance = (await getBalance(new PublicKey(contractAddress), env) / LAMPORTS_PER_SOL)
             setContractVarsState(true);
+
+            return {
+                balanceInEth: balance,
+                totalSupply: contract.itemsAvailable,
+                supply: contract.itemsRedeemed,
+                costInEth: contract.price,
+                baseTokenUri: contract.metadataUrl,
+                open: contract.publicSale,
+                presaleOpen: contract.presale
+            };
+
         } else {
             // If Metamask Contract
             setContractVarsState(false);
-
+            
             await walletController.loadWalletProvider('metamask');
-
-            const contract = await retrieveContract(contractAddress);
 
             const balance = await window.web3.eth.getBalance(contractAddress);
             const balanceInEth = window.web3.utils.fromWei(balance);
@@ -253,6 +268,46 @@ export const Web3Provider = ({ children }) => {
         }
 
     };
+
+    const retrieveSolanaContract = async (candyMachineAddress, chain, env) => {
+
+        if (env == 'solanadevnet') {
+            env = 'devnet';
+        } else if (env == 'solana') {
+            env = 'mainnet';
+        }
+
+        const anchorProgram = await loadCandyProgramV2(null, env);
+
+        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
+            candyMachineAddress,
+        );
+
+        const itemsAvailable = candyMachineObj.data.itemsAvailable.toNumber();
+        const itemsRedeemed = candyMachineObj.itemsRedeemed.toNumber();
+        const itemsRemaining = itemsAvailable - itemsRedeemed;
+        const price = candyMachineObj.data.price.toNumber() / LAMPORTS_PER_SOL;
+        const metadataUrl = candyMachineObj.data.hiddenSettings.uri;
+        const goLiveDateEpoch = candyMachineObj.data.goLiveDate.toNumber();
+        const whiteListSettings = candyMachineObj.data.whitelistMintSettings;
+        const currDate = Date.now();
+        let goLiveDate = new Date(0);
+        goLiveDate.setUTCSeconds(goLiveDateEpoch);
+
+        const presale = (whiteListSettings == null) ? 0 : 1;
+        const publicSale = (goLiveDate >= currDate) ? 0 : 1;
+        console.log(whiteListSettings)
+        return {
+            itemsRedeemed,
+            price,
+            itemsAvailable,
+            itemsRemaining,
+            metadataUrl,
+            publicSale,
+            presale
+        };
+
+    }
 
     const retrieveContract = (contractAddress) => {
         const web3 = window.web3;
