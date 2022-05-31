@@ -122,6 +122,8 @@ const New = ({ contract }) => {
 		setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
 	}
 
+//	useEffect(() => setContract(contract), [contract])
+
 	useEffect(() => {
 		if (!contractState.nftCollection.baseUri) {
 			return;

@@ -7,7 +7,7 @@ import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
 import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
-export const useIPFS = () => {
+export const useIPFS = (contract) => {
     const {
         imagesUrl,
         setImagesUrl,
@@ -52,18 +52,23 @@ export const useIPFS = () => {
             || mimeType === 'video/mp4' && 'mp4'
             || 'png';
 
-        let data = new FormData();
-        data.append('file', file, `/assets/unrevealed.${fileExtension}`);
+			// pinata
+        let imageData = new FormData();
+        imageData.append('file', file, `/assets/unrevealed.${fileExtension}`);
 
         //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
         //metadata is optional
         const metadata = JSON.stringify({ name: user.id + '_assets' });
-        data.append('pinataMetadata', metadata);
+        imageData.append('pinataMetadata', metadata);
+
+
+
+
 
         const opt = {
             maxBodyLength: 'Infinity',
             headers: {
-                'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
+                'Content-Type': `multipart/form-data; boundary= ${imageData._boundary}`,
                 pinata_api_key: config.pinata.key,
                 pinata_secret_api_key: config.pinata.secret
             },
@@ -74,8 +79,36 @@ export const useIPFS = () => {
         };
 
         try {
-            const res = await axios.post(url, data, opt);
-            setUnRevealedBaseUri(res.data.IpfsHash + '/unrevealed.png');
+					// unreveal image
+            const res = await axios.post(url, imageData, opt);
+					console.log(contract)
+
+					// unreveal image metadata
+        let metadataData = new FormData();
+				for(let i=1; i<contract.nftCollection.size + 1; i++) {
+					const jsonMetadata = {
+						name: contract.name,
+						description: `Unrevealed ${contract.name} NFT`,
+						image: `ipfs://${res.data.IpfsHash}/unrevealed.png`
+					};
+
+                    // Attach JSON to formdata
+                    const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
+                    metadataData.append('file', metadataFile, `/metadata/${i}.json`);
+
+				}
+
+        //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
+        //metadata is optional
+        const metadata = JSON.stringify({ name: user.id + '_metadata' });
+        metadataData.append('pinataMetadata', metadata);
+
+            const res2 = await axios.post(url, metadataData, opt);
+
+            setUnRevealedBaseUri(res2.data.IpfsHash);
+
+
+
             addToast({
                 severity: 'success',
                 message: `Added unrevealed image to IPFS under URL: ipfs://${res.data.IpfsHash}/`
@@ -95,6 +128,10 @@ export const useIPFS = () => {
         setLoading(false);
         callback(true); // image added successfully to pinata navigate to next step
     };
+
+		const pinUnrevealedMetadata = async () => {
+			
+		}
 
     const pinImages = async (blockchain, callback) => {
         const folder = uploadedFiles;
