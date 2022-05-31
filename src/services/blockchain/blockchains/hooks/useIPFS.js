@@ -75,7 +75,7 @@ export const useIPFS = () => {
 
         try {
             const res = await axios.post(url, data, opt);
-            setUnRevealedBaseUri(res.data.IpfsHash);
+            setUnRevealedBaseUri(res.data.IpfsHash + '/unrevealed.png');
             addToast({
                 severity: 'success',
                 message: `Added unrevealed image to IPFS under URL: ipfs://${res.data.IpfsHash}/`
