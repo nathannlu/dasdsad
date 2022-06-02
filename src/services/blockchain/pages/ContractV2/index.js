@@ -27,6 +27,7 @@ const ContractV2 = () => {
 
 	const isSetupComplete = contract?.address;
 
+	// Move to separate utils 
 	const fetchRevealedNftImage = async (metadataUrl) => {
 		try {
 			setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
@@ -37,6 +38,25 @@ const ContractV2 = () => {
 			setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
 		}
 	}
+
+	const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
+		if (!unRevealedBaseUri) {
+			return;
+		}
+
+		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
+			return;
+		}
+		try {
+			setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
+			const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
+			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+		} catch (e) {
+			console.log('Error fetchUnrevealedImageSrc:', e);
+			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+		}
+	}
+
 
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
@@ -49,7 +69,9 @@ const ContractV2 = () => {
 					const unRevealedBaseUri = contract?.nftCollection?.unRevealedBaseUri;
 					const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
 					const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
-					setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+//					setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+
+				fetchUnRevealedNftImage(unRevealedBaseUri);
 				}
 			}
 
@@ -84,7 +106,6 @@ const ContractV2 = () => {
 
 				setContractState(contractState);
 			}
-
 		}
 	}
 
@@ -106,7 +127,6 @@ const ContractV2 = () => {
 		return (
 			<Stack>
 				<Container>
-
 					<Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
 						<CircularProgress />
 					</Stack>
@@ -118,7 +138,6 @@ const ContractV2 = () => {
 	return (
 		<Stack>
 			<Container>
-
 				<Box
 					sx={{
 						background: 'white',

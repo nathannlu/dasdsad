@@ -107,7 +107,7 @@ const New = ({ contract }) => {
 		}
 	}
 
-	const fetchUnRevealedNftImage = (unRevealedBaseUri) => {
+	const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
 		if (!unRevealedBaseUri) {
 			return;
 		}
@@ -115,11 +115,22 @@ const New = ({ contract }) => {
 		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
 			return;
 		}
+		/*
 		const baseIpfsUrl = getIpfsUrl(undefined, true);
 		const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
 		const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
+		*/
 
-		setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+
+
+		try {
+			setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
+			const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
+			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+		} catch (e) {
+			console.log('Error fetchUnrevealedImageSrc:', e);
+			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+		}
 	}
 
 //	useEffect(() => setContract(contract), [contract])
