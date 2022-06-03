@@ -52,17 +52,19 @@ export const useDeleteContract = ({ onCompleted, onError }) => {
 };
 
 export const useGetContracts = async ({ onCompleted, onError }) => {
-    const { setContracts } = useContract();
+    const { setContracts, setFetchContractLoading } = useContract();
+
     const { ...queryResult } = useQuery(GET_CONTRACTS, {
         fetchPolicy: 'network-only',
         onCompleted: async (data) => {
-            console.log(data.getContracts, 'onCompleted');
-
             if (setContracts !== undefined) {
                 setContracts(data.getContracts);
             }
 
+						setFetchContractLoading(false);
+
             onCompleted && onCompleted(data);
+
         },
     });
 

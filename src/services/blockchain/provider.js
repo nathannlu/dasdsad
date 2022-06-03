@@ -11,6 +11,7 @@ export const ContractProvider = ({ children }) => {
     const { addToast } = useToast();
 
     const [loading, setLoading] = useState(true);
+    const [fetchContractLoading, setFetchContractLoading] = useState(true);
     const [activeStep, setActiveStep] = useState(0);
     const [start, setStart] = useState(false);
     const [error, setError] = useState(false);
@@ -82,6 +83,8 @@ export const ContractProvider = ({ children }) => {
 
         loading,
         setLoading,
+			fetchContractLoading,
+			setFetchContractLoading,
         activeStep,
         setActiveStep,
         start,
