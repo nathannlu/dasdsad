@@ -63,6 +63,17 @@ const Upload = (props) => {
         <Fade in>
             <Stack>
                 <Box>
+									{contract.blockchain == 'solana' || contract.blockchain =='solanadevnet' ? (
+                    <img
+                        style={{
+                            height: '250px',
+                            width: '100%',
+                            objectFit: 'contain',
+													backgroundColor: 'black'
+                        }}
+                        src="https://solana.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Findex_scale_adoption.c7a36416.png&w=3840&q=90"
+                    />
+									) : (
                     <img
                         style={{
                             height: '250px',
@@ -71,6 +82,9 @@ const Upload = (props) => {
                         }}
                         src="https://ethereum.org/static/28214bb68eb5445dcb063a72535bc90c/9019e/hero.webp"
                     />
+
+									)}
+
                 </Box>
 
                 <Container>

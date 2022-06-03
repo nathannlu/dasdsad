@@ -62,10 +62,6 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, []);
 
-	useEffect(() => {
-		console.log(fetchContractLoading)
-	}, [fetchContractLoading])
-
 	return fetchContractLoading ? (
 		<CircularProgress />
 		) : (

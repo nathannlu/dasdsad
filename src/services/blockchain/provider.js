@@ -19,7 +19,7 @@ export const ContractProvider = ({ children }) => {
     const [contracts, setContracts] = useState([]);
     const [contract, setContract] = useState({});
 
-    const [selectInput, setSelectInput] = useState('ethereum');
+    const [selectInput, setSelectInput] = useState('solana');
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile] = useState(null);
     const [unRevealedBaseUri, setUnRevealedBaseUri] = useState(null);
