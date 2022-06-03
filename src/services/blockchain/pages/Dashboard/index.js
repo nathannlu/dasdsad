@@ -69,10 +69,10 @@ const Dashboard = () => {
                         <Stack direction="row" alignItems="center">
                             <Box>
                                 <Typography variant="h4">
-                                    Your contracts
+																	NFT collection
                                 </Typography>
                                 <Typography gutterBottom variant="body">
-                                    A list of your deployed contracts
+                                    A list of your deployed NFT smart-contracts
                                 </Typography>
                             </Box>
                             <Stack gap={1} direction="row" sx={{ ml: 'auto' }}>
@@ -86,7 +86,7 @@ const Dashboard = () => {
                                         size="small"
                                         startIcon={<AddIcon />}
                                         variant="contained">
-                                        Create contract
+                                        Create NFT collection
                                     </Button>
                                 </Link>
                             </Stack>

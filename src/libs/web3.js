@@ -18,7 +18,6 @@ import {
 
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 
-import posthog from 'posthog-js';
 import { useAuth } from 'libs/auth';
 import { loadCandyProgramV2, getBalance } from 'solana/helpers/accounts';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -90,100 +89,6 @@ export const Web3Provider = ({ children }) => {
                 message: err.message,
             });
         }
-    };
-
-    // Mint NFT
-    const mint = async (contractAddress, count = 1) => {
-        const walletAddress = walletController.state.address;
-
-        const contract = await retrieveContract(contractAddress);
-        const price = await contract.methods.cost().call();
-
-        contract.methods
-            .mint(count)
-            .send({ from: walletAddress, value: price * count }, (err) => {
-                if (err) {
-                    addToast({
-                        severity: 'error',
-                        message: err.message,
-                    });
-                } else {
-                    addToast({
-                        severity: 'info',
-                        message:
-                            'Sending transaction to Blockchain. This might take a couple of seconds...',
-                    });
-                }
-            })
-            .on('error', (err) => {
-                addToast({
-                    severity: 'error',
-                    message: err.message,
-                });
-            })
-            .once('confirmation', () => {
-                addToast({
-                    severity: 'success',
-                    message: 'NFT successfully minted.',
-                });
-            });
-    };
-
-    // compare array buffers
-    function compare(a, b) {
-        for (let i = a.length; -1 < i; i -= 1) {
-            if (a[i] !== b[i]) return false;
-        }
-        return true;
-    }
-
-    const presaleMint = async (
-        price,
-        contractAddress,
-        whitelist,
-        count = 1
-    ) => {
-        const walletAddress = walletController.state.address;
-
-        const contract = await retrieveContract(contractAddress);
-        const priceInWei = Web3.utils.toWei(price * count);
-
-        const leafNodes = whitelist.map((addr) => keccak256(addr));
-        const claimingAddress = await leafNodes.find((node) =>
-            compare(keccak256(walletAddress), node)
-        );
-
-        const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
-        const hexProof = merkleTree.getHexProof(claimingAddress);
-
-        contract.methods
-            .presaleMint(count, hexProof)
-            .send({ from: walletAddress, value: priceInWei }, (err) => {
-                if (err) {
-                    addToast({
-                        severity: 'error',
-                        message: err.message,
-                    });
-                } else {
-                    addToast({
-                        severity: 'info',
-                        message:
-                            'Sending transaction to Blockchain. This might take a couple of seconds...',
-                    });
-                }
-            })
-            .on('error', (err) => {
-                addToast({
-                    severity: 'error',
-                    message: err.message,
-                });
-            })
-            .once('confirmation', () => {
-                addToast({
-                    severity: 'success',
-                    message: 'NFT successfully minted.',
-                });
-            });
     };
 
     const checkOwner = async (id, contractAddress) => {
@@ -270,7 +175,6 @@ export const Web3Provider = ({ children }) => {
     };
 
     const retrieveSolanaContract = async (candyMachineAddress, chain, env) => {
-
         if (env == 'solanadevnet') {
             env = 'devnet';
         } else if (env == 'solana') {
@@ -332,6 +236,7 @@ export const Web3Provider = ({ children }) => {
         return web3.utils.fromWei(price);
     };
 
+	/*
     const getTotalMinted = async (contractAddress) => {
         const web3 = window.web3;
         const contract = await retrieveContract(contractAddress);
@@ -357,6 +262,7 @@ export const Web3Provider = ({ children }) => {
             return max2;
         }
     };
+*/
 
     const payGeneratorWithEth = async (size, callback) => {
         try {
@@ -411,17 +317,13 @@ export const Web3Provider = ({ children }) => {
             value={{
                 loginToWallet,
                 payGeneratorWithEth,
-                mint,
                 retrieveContract,
-                checkOwner,
-                presaleMint,
+//                checkOwner,
                 getPrice,
-                getMaximumSupply,
-                getTotalMinted,
-
+//                getMaximumSupply,
+  //              getTotalMinted,
+//                contractVarsState,
                 getPublicContractVariables,
-                contractVarsState,
-
                 walletController,
                 loading,
             }}>
