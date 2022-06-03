@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Web3 from 'web3/dist/web3.min';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
 import bs58 from 'bs58';
@@ -10,9 +9,9 @@ export const useContract = () => useContext(ContractContext);
 
 export const ContractProvider = ({ children }) => {
     const { addToast } = useToast();
-    const { getNetworkID, setNetwork } = useWeb3();
 
     const [loading, setLoading] = useState(true);
+    const [fetchContractLoading, setFetchContractLoading] = useState(true);
     const [activeStep, setActiveStep] = useState(0);
     const [start, setStart] = useState(false);
     const [error, setError] = useState(false);
@@ -28,8 +27,6 @@ export const ContractProvider = ({ children }) => {
     const [imagesUrl, setImagesUrl] = useState(null);
     const [metadataUrl, setMetadataUrl] = useState(null); //unused
     const [ipfsUrl, setIpfsUrl] = useState(null); //metadata url
-    const [cacheHash, setCacheHash] = useState('');
-    const { account, loadBlockchainData, loadWeb3 } = useWeb3();
 
     // monkey patch
     Object.prototype.toBuffer = function (fn) {
@@ -43,78 +40,6 @@ export const ContractProvider = ({ children }) => {
             return decoded;
         }
     };
-
-    /*
-
-    const handleSelectNetwork = async (value) => {
-            console.log(value)
-        try {
-            if (!window.ethereum) throw new Error("Please install Metamask Wallet");
-            const id = getNetworkID();
-            let res = true;
-            if (value === "ethereum") {
-                if (id !== "0x1") res = await setNetwork("0x1");
-            }
-            else if (value === "polygon") {
-                if (id !== "0x89") res = await setNetwork("0x89");
-            }
-            else if (value === "rinkeby") {
-                if (id !== "0x4") res = await setNetwork("0x4");
-            }
-            else if (value === "mumbai") {
-                if (id !== "0x13881") res = await setNetwork("0x13881");
-            }
-            if (res === "prompt_cancled") throw new Error("Please switch to the desired network")
-            setSelectInput(value);
-        }
-        catch (e) {
-            addToast({
-                severity: 'error',
-                message: e.message
-            });
-            setError(true);
-        }
-    }
-
-<<<<<<< HEAD
-    // Check before network pinning image
-    const validateNetwork = async () => {
-        try {
-            if (!window.ethereum) throw new Error("Please install Metamask Wallet");
-            const id = await getNetworkID(); // Check current network
-            let res = true;
-            if (selectInput === "ethereum") {
-                if (id !== "0x1") res = await setNetwork("0x1");
-            }
-            else if (selectInput === "polygon") {
-                if (id !== "0x89") res = await setNetwork("0x89");
-            }
-            else if (selectInput === "rinkeby") {
-                if (id !== "0x4") res = await setNetwork("0x4");
-            }
-            else if (selectInput === "mumbai") {
-                if (id !== "0x13881") res = await setNetwork("0x13881");
-            }
-            if (!res) return false;
-            return true;
-        }
-        catch (e) {
-            addToast({
-                severity: 'error',
-                message: e.message
-            });
-            setError(true);
-            return false;
-        }
-    }
-*/
-
-    useEffect(() => {
-        (async () => {
-            await loadWeb3();
-            await loadBlockchainData();
-        })();
-    }, []);
 
     const onDeleteContract = async (curContract, deleteContract, handleClose) => {
         try {
@@ -158,6 +83,8 @@ export const ContractProvider = ({ children }) => {
 
         loading,
         setLoading,
+			fetchContractLoading,
+			setFetchContractLoading,
         activeStep,
         setActiveStep,
         start,

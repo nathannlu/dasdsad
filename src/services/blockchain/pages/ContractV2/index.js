@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Box, Container } from 'ds/components';
-import { ContractController, WalletController, getIpfsUrl, getResolvedImageUrl, getWalletType } from '@ambition-blockchain/controllers';
+import { useWeb3 } from 'libs/web3';
+import { useToast } from 'ds/hooks/useToast';
+
+import { ContractController, getIpfsUrl, getResolvedImageUrl, getWalletType } from '@ambition-blockchain/controllers';
 
 import { useParams } from 'react-router-dom';
 import { useContract } from 'services/blockchain/provider';
@@ -12,10 +15,12 @@ import Newv2 from '../NewV2';
 import { CircularProgress } from '@mui/material';
 
 const ContractV2 = () => {
+	const { walletController } = useWeb3();
+	const { addToast } = useToast();
+
 	const [contract, setContract] = useState(null);
 	const [contractState, setContractState] = useState(null);
 	const [contractController, setContractController] = useState(null);
-	const [walletController, setWalletController] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true); // default
 	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
@@ -60,9 +65,12 @@ const ContractV2 = () => {
 
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
-		const baseIpfsUrl = getIpfsUrl(undefined, true);
+		if (!contract) {
+			return;
+		}
 
-		if (contract) {
+
+		const baseIpfsUrl = getIpfsUrl(undefined, true);
 
 			if (contract?.nftCollection?.unRevealedBaseUri) {
 				if (contract?.nftCollection?.unRevealedBaseUri?.indexOf('ipfs://') !== -1) {
@@ -75,38 +83,43 @@ const ContractV2 = () => {
 				}
 			}
 
-			if (contract?.nftCollection?.baseUri) {
-				const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-				const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
+		if (contract?.nftCollection?.baseUri) {
+			const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
+			const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
 
-				fetchRevealedNftImage(metadataUrl);
-				setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
-			} else {
-				setContract(contract);
-			}
-
-			const walletController = new WalletController();
-			walletController.loadWalletProvider(getWalletType(contract.blockchain));
-
-			setWalletController(walletController);
-
-			setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
-			setIsLoading(false);
-
-			console.log(contract, 'contract');
-
-			if (contract.address) {
-				const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
-				setContractController(contractController);
-
-				console.log(contractController, 'contractController');
-
-				const contractState = await contractController.populateContractInfo();
-				console.log(contractState, 'contractState');
-
-				setContractState(contractState);
-			}
+			fetchRevealedNftImage(metadataUrl);
+			setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
+		} else {
+			setContract(contract);
 		}
+
+		await walletController?.loadWalletProvider(getWalletType(contract.blockchain));
+		await walletController?.compareNetwork(contract?.blockchain, async (error) => {
+			if (error) {
+				addToast({ severity: 'error', message: error.message });
+				return;
+			}
+		});
+
+		setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
+		setIsLoading(false);
+
+		console.log(contract, 'contract');
+
+		if (contract.address) {
+			const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
+			setContractController(contractController);
+
+			console.log(contractController, 'contractController');
+
+
+			const contractState = await contractController.populateContractInfo();
+			console.log(contractState, 'contractState');
+
+			setContractState(contractState);
+
+		}
+
 	}
 
 	useEffect(() => {

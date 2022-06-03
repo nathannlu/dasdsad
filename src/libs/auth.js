@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setAuthTokenInLocalStorage(null);
         setUser(null);
+        window.localStorage.removeItem('ambition-wallet');
         //setWebsite({});
     };
 

@@ -15,6 +15,7 @@ import {
 } from 'ds/components';
 import { Chip } from '@mui/material';
 import { useToast } from 'ds/hooks/useToast';
+import { CircularProgress } from 'ds/components';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useContract } from 'services/blockchain/provider';
 import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
@@ -25,7 +26,7 @@ import { isTestnetBlockchain } from '@ambition-blockchain/controllers';
 import { BlockchainLogo } from '../../widgets';
 
 const Dashboard = () => {
-    const { contracts, onDeleteContract } = useContract();
+    const { contracts, onDeleteContract, fetchContractLoading } = useContract();
     const { addToast } = useToast();
     const [anchorEl, setAnchorEl] = useState(null);
     const [open, setOpen] = useState('');
@@ -61,7 +62,13 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, []);
 
-    return (
+	useEffect(() => {
+		console.log(fetchContractLoading)
+	}, [fetchContractLoading])
+
+	return fetchContractLoading ? (
+		<CircularProgress />
+		) : (
         <Fade in>
             <Container sx={{ pt: 4 }}>
                 {contracts.length > 0 ? (
@@ -69,10 +76,10 @@ const Dashboard = () => {
                         <Stack direction="row" alignItems="center">
                             <Box>
                                 <Typography variant="h4">
-                                    Your contracts
+																	NFT collection
                                 </Typography>
                                 <Typography gutterBottom variant="body">
-                                    A list of your deployed contracts
+                                    A list of your deployed NFT smart-contracts
                                 </Typography>
                             </Box>
                             <Stack gap={1} direction="row" sx={{ ml: 'auto' }}>
@@ -86,7 +93,7 @@ const Dashboard = () => {
                                         size="small"
                                         startIcon={<AddIcon />}
                                         variant="contained">
-                                        Create contract
+                                        Create NFT collection
                                     </Button>
                                 </Link>
                             </Stack>

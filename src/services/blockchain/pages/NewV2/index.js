@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { WalletController, getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType, getWalletType, getIpfsUrl } from '@ambition-blockchain/controllers';
+import { useWeb3 } from 'libs/web3';
+import { useToast } from 'ds/hooks/useToast';
+
+import { getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType, getWalletType, getIpfsUrl, getBlockchainType } from '@ambition-blockchain/controllers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import {
@@ -62,10 +65,12 @@ const RadioLabel = ({ type, isTestnetEnabled }) => {
 }
 
 const New = ({ contract }) => {
+	const { walletController } = useWeb3();
 	const history = useHistory();
+	const { addToast } = useToast();
+
 	const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
-	const [walletController, setWalletController] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
 	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: false });
@@ -115,11 +120,7 @@ const New = ({ contract }) => {
 		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
 			return;
 		}
-		/*
-		const baseIpfsUrl = getIpfsUrl(undefined, true);
-		const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
-		const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
-		*/
+
 
 
 
@@ -166,9 +167,20 @@ const New = ({ contract }) => {
 		fetchUnRevealedNftImage(contract?.nftCollection?.unRevealedBaseUri);
 	}, [contract?.nftCollection?.unRevealedBaseUri]);
 
-	const setContractStateIneditMode = () => {
-		if (contract) {
+	const setContractStateIneditMode = async () => {
 
+		const blockchain = contract?.blockchain || getBlockchainType(activeBlockchain, isTestnetBlockchain);
+
+		// initiate wallet controller connection
+		await walletController?.loadWalletProvider(getWalletType(blockchain));
+		await walletController?.compareNetwork(blockchain, async (error) => {
+			if (error) {
+				addToast({ severity: 'error', message: error.message });
+				return;
+			}
+		});
+
+		if (contract) {
 			setContractState(contract);
 
 			setDeployContractFormState(prevState => ({ ...prevState, name: { ...prevState.name, value: contract?.name || '' } }));
@@ -181,17 +193,7 @@ const New = ({ contract }) => {
 		}
 	}
 
-	useEffect(() => {
-		// initiate wallet controller connection
-		const walletController = new WalletController();
-		walletController.loadWalletProvider(getWalletType(activeBlockchain));
-
-		console.log(walletController);
-
-		setWalletController(walletController);
-
-		setContractStateIneditMode();
-	}, []);
+	useEffect(() => { setContractStateIneditMode(); }, []);
 
 	const isEditMode = !!contract?.id;
 	const containerStyle = {

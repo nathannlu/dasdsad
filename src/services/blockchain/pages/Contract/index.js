@@ -1,61 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
+import { getWalletType } from '@ambition-blockchain/controllers';
+import { Box, Container, Fade, Stack } from 'ds/components';
+import { useToast } from 'ds/hooks/useToast';
+
 import { useWeb3 } from 'libs/web3';
+import { useParams } from 'react-router-dom';
 import { useContract } from 'services/blockchain/provider';
-import {
-    Fade,
-    Container,
-    Link,
-    TextField,
-    Stack,
-    Box,
-    Grid,
-    Typography,
-    Button,
-    Divider,
-} from 'ds/components';
-import { useContractDetails } from './hooks/useContractDetails';
+import Header from './Header';
 import IPFSModal from './IPFSModal';
 import NotComplete from './NotComplete';
-import Header from './Header';
 import Tabs from './Tabs';
 
 const Upload = (props) => {
+    const { addToast } = useToast();
+
     const [contract, setContract] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { id } = useParams();
     const { contracts } = useContract();
-    const { compareNetwork, wallet, loadWalletProvider } = useWeb3();
-    const isSetupComplete =
-        contract?.nftCollection?.baseUri && contract?.address ? true : false;
+
+    const { walletController } = useWeb3();
+    const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false;
+
+    const handleError = (e) => {
+        console.error(e);
+        addToast({ severity: 'error', message: e.message });
+        location.href = '/smart-contracts';
+    }
+
+    const getContract = async () => {
+        try {
+            const c = contracts.find((c) => c.id == id);
+            if (!c) {
+                throw new Error('Contract details not found!');
+            }
+
+            setContract(c);
+
+            const walletType = getWalletType(c?.blockchain);
+
+            console.log(walletType, 'walletType', c?.blockchain);
+
+            await walletController?.loadWalletProvider(walletType);
+            await walletController?.compareNetwork(c?.blockchain, async (error) => {
+                if (error) {
+                    handleError(error);
+                    return;
+                }
+            });
+        } catch (err) {
+            handleError(err);
+        }
+    };
 
     useEffect(() => {
         if (!contracts || !contracts.length) return;
-        const getContract = async () => {
-            try {
-                const c = contracts.find((c) => c.id == id);
-                setContract(c);
-
-                await loadWalletProvider(wallet);
-
-                let chainId;
-                if (c.blockchain === 'ethereum') chainId = '0x1';
-                else if (c.blockchain === 'rinkeby') chainId = '0x4';
-                else if (c.blockchain === 'polygon') chainId = '0x89';
-                else if (c.blockchain === 'mumbai') chainId = '0x13881';
-
-                if (wallet === 'metamask') {
-                    await compareNetwork(chainId);
-                }
-            } catch (err) {
-                console.error(err);
-                addToast({
-                    severity: 'error',
-                    message: err.message,
-                });
-                location.href = '/smart-contracts';
-            }
-        };
         getContract();
     }, [contracts]);
 
@@ -72,7 +72,7 @@ const Upload = (props) => {
                         src="https://ethereum.org/static/28214bb68eb5445dcb063a72535bc90c/9019e/hero.webp"
                     />
                 </Box>
-                
+
                 <Container>
                     <Stack sx={{ minHeight: '100vh' }} py={2} gap={5}>
                         <Header contract={contract} />

@@ -1,26 +1,16 @@
-import React, { useEffect } from 'react';
-import { useWeb3 } from 'libs/web3';
-import { BrowserRouter as Router, useHistory } from 'react-router-dom';
+import React from 'react';
 import { Helmet } from 'react-helmet';
-import { ContractProvider } from './provider';
+import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
+import { ContractProvider } from './provider';
 import Routes from './routes';
 
 const BlockchainService = () => {
     const history = useHistory();
     useGetContracts({});
-	
-	const { loadWalletProvider, wallet } = useWeb3();
-
-
-	useEffect(() => {
-		(async() => {
-			await loadWalletProvider(wallet)
-		})()
-	}, []);
-
+    
     return (
-        <>
+        <React.Fragment>
             <Helmet>
                 <title>Blockchain - Ambition</title>
                 <link rel="canonical" href="https://app.ambition.so" />
@@ -33,7 +23,7 @@ const BlockchainService = () => {
             <Router history={history}>
                 <Routes />
             </Router>
-        </>
+        </React.Fragment>
     );
 };
 

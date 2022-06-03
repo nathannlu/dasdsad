@@ -13,11 +13,6 @@ const Published = (props) => {
     const [json, setJson] = useState('');
     const [enabled, setEnabled] = useState(false);
     const { title, pageName } = props.match.params;
-    //	const title = 'test';
-    //	const pageName = 'home';
-
-    const { loadWeb3 } = useWeb3();
-    //	const { website } = useWebsite();
 
     useGetPublished({
         title,

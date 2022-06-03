@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Stack, Box, Grid, Typography, Button, Divider } from 'ds/components';
+import React from 'react';
+import { getBlockchainChainId } from '@ambition-blockchain/controllers';
+
 import { Chip, Skeleton } from '@mui/material';
-import { useWeb3 } from 'libs/web3';
+import { Box, Grid, Stack, Typography } from 'ds/components';
 import { useContractDetails } from './hooks/useContractDetails';
 
 const Details = ({ contract }) => {
-    const { getNetworkID, wallet } = useWeb3();
+    const networkId = getBlockchainChainId(contract?.blockchain);
+
     const {
         balance,
         soldCount,
@@ -15,9 +17,7 @@ const Details = ({ contract }) => {
         max,
         metadataUrl,
         loading,
-    } = useContractDetails(contract.address, getNetworkID(), contract.blockchain);
-
-	console.log('asd',contract.blockchain)
+    } = useContractDetails(contract.address, networkId, contract.blockchain);
 
     return (
         <Stack>
@@ -103,9 +103,9 @@ const Details = ({ contract }) => {
                         {loading ? <Skeleton width={60} /> : max}
                     </Grid>
                 </Grid>
-						) : (<Box>
-							Details not available yet for Solana contracts
-						</Box>)}
+            ) : (<Box>
+                Details not available yet for Solana contracts
+            </Box>)}
         </Stack>
     );
 };

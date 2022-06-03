@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { useContract } from 'services/blockchain/provider';
+import React from 'react';
+import { useWeb3 } from 'libs/web3';
+
 import { useDeployContract } from './hooks/useDeployContract';
 import { Stack, Typography, Box, Button } from 'ds/components';
-import { useWeb3 } from 'libs/web3';
+import { useToast } from 'ds/hooks/useToast';
 
 import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
 
 const NotComplete = ({ id, contract, setIsModalOpen }) => {
-    //    const { contract } = useContract();
+    const { addToast } = useToast();
+
     const { deployContract } = useDeployContract(contract);
-    const { compareNetwork } = useWeb3();
+    const { walletController } = useWeb3();
 
     const activeStep = contract?.nftCollection?.baseUri ? 1 : 0;
 
@@ -53,10 +55,17 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
                         <Box>
                             <Button
                                 onClick={async () => {
-                                    await compareNetwork(contract?.blockchain);
-                                    await deployContract();
+                                    await walletController.compareNetwork(contract?.blockchain, async (error) => {
+                                        if (error) {
+                                            console.error(error);
+                                            addToast({ severity: 'error', message: e.message });
+                                            return;
+                                        }
+                                        await deployContract();
+                                    });
                                 }}
-                                variant="contained">
+                                variant="contained"
+                            >
                                 Deploy to blockchain
                             </Button>
                         </Box>

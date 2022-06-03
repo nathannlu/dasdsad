@@ -29,9 +29,9 @@ import { useWeb3 } from 'libs/web3';
 const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
     const stripe = useStripe();
     const elements = useElements();
-	const { settingsForm  } = useMetadata();
-	const { generateImages, referral } = useGenerator();
-	const { payInEth, payGeneratorWithEth, loading: ethPayLoading, loadWeb3, loadBlockchainData } = useWeb3();
+    const { settingsForm } = useMetadata();
+    const { generateImages, referral } = useGenerator();
+    const { payGeneratorWithEth, loading: ethPayLoading } = useWeb3();
 
     const {
         paymentForm: { nameOnCard, email },
@@ -109,20 +109,20 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
                 <Grid container sx={{ bgcolor: 'grey.100', p: 4 }} gap={4}>
                     <Grid item md={6}>
                         <Stack gap={2}>
-                            <LoadingButton 
-                                startIcon={<LockIcon />} 
-                                onClick={() => payGeneratorWithEth(settingsForm.size.value, completedTransaction)} 
+                            <LoadingButton
+                                startIcon={<LockIcon />}
+                                onClick={() => payGeneratorWithEth(settingsForm.size.value, completedTransaction)}
                                 loading={ethPayLoading}
-                                variant="contained" 
+                                variant="contained"
                                 color="black"
-                                sx={{color: 'white'}}
+                                sx={{ color: 'white' }}
                             >
                                 Pay {0.000034 * settingsForm.size.value} Eth now
                             </LoadingButton>
                             <Typography variant="h5">
                                 Payment info <LockIcon />
                             </Typography>
-                            <Card sx={{p: 2}}>
+                            <Card sx={{ p: 2 }}>
                                 <Stack gap={2}>
                                     <Box>
                                         <FormLabel>
@@ -201,7 +201,7 @@ const CheckoutModal = ({ isModalOpen, setIsModalOpen }) => {
                             </Card>
                         </Stack>
                     </Grid>
-				</Grid>
+                </Grid>
             </form>
         </Modal>
     );
