@@ -8,7 +8,7 @@ import Dropzone from 'react-dropzone';
 
 const Traits = (props) => {
     const { uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile } = useContract();
-    const { pinUnrevealedImage, loading, pinataPercentage } = useIPFS();
+    const { pinUnrevealedImage, loading, pinataPercentage } = useIPFS(props.contract);
     const [percent, setPercent] = useState(0);
 
     const handleImagesUpload = (acceptedFile) => {
