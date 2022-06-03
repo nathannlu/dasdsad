@@ -23,7 +23,7 @@ const Navbar = ({ pageName }) => {
     const open = Boolean(anchorEl);
 
     useEffect(() => {
-        console.log(walletController, 'walletController NAVBAR', walletController?.getState());
+//        console.log(walletController, 'walletController NAVBAR', walletController?.getState());
         const { wallet, address } = walletController?.getState();
 
         setState(prevState => ({ ...prevState, walletType: wallet || null, walletAddress: address || null }));
@@ -61,7 +61,7 @@ const Navbar = ({ pageName }) => {
                             className="ml-auto"
                             style={{ color: 'black', cursor: 'pointer', border: '1px solid rgba(0,0,0,.5)', padding: '4px 8px', borderRadius: '9999px' }}>
                             {state.walletAddress ? (
-                                <Stack gap={1} direction="horizontal">
+                                <Stack gap={1} direction="row">
                                     <div>
                                         {state.walletAddress.substring(0, 4)}...{state.walletAddress.slice(-3)}
                                     </div>
