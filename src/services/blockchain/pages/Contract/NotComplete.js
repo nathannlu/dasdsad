@@ -5,7 +5,7 @@ import { useDeployContract } from './hooks/useDeployContract';
 import { Stack, Typography, Box, Button } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 
-import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
+import { Stepper, Step, StepLabel, StepContent, Alert } from '@mui/material';
 
 const NotComplete = ({ id, contract, setIsModalOpen }) => {
     const { addToast } = useToast();
@@ -69,6 +69,33 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
                                 Deploy to blockchain
                             </Button>
                         </Box>
+											{contract.blockchain === 'solana' || contract.blockchain === 'solanadevnet' && (
+												<Alert severity="info" sx={{mt:2, maxWidth: '740px'}}>
+													<Stack gap={1}>
+														<Box>
+															Setting up a candy machine project means that you have to pay a one-time fee (porportional to your collection size) to Solana in order to store the candy machine config on their blockchain.
+														</Box>
+
+														<Stack direction="row">
+																Your collection size: 
+															<Box sx={{fontWeight: 'bold'}}>
+																{contract.nftCollection.size}
+															</Box>
+														</Stack>
+
+														<Stack direction="row">
+																Your estimated fees for Solana rent: 
+															<Box sx={{fontWeight: 'bold'}}>
+																{(contract.nftCollection.size * 0.001672).toFixed(2)} sol
+															</Box>
+														</Stack>
+
+														<Box>
+															This is a rough estimate. You may need more or less than the estimated amount.
+														</Box>
+													</Stack>
+												</Alert>
+											)}
                     </Stack>
                 </StepContent>
             </Step>

@@ -40,7 +40,9 @@ const Layout = ({ children }) => {
                         position: 'fixed',
                         background: 'white',
                         zIndex: 10,
-                        top: '58px',
+                        top: '55px',
+												paddingTop: '2px',
+												paddingBottom: '2px',
                         width: '100%',
                     }}>
                     <Container>
