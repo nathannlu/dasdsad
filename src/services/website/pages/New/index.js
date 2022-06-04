@@ -50,9 +50,11 @@ const Website = (props) => {
 
     useGetContracts({
         onCompleted: (data) => {
+					console.log(data)
             const availableContracts = data.getContracts.filter((contract) => {
                 return contract.address;
             });
+					console.log(availableContracts)
             if (!availableContracts.length) return;
             setContracts(availableContracts);
             setSelectInput(availableContracts[0].address);

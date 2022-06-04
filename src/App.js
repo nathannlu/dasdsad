@@ -11,8 +11,9 @@ import { useAnalytics } from 'libs/analytics';
 import { useGetCurrentUser } from 'gql/hooks/users.hook';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { LinearProgress } from '@mui/material';
+import { LinearProgress, Chip } from '@mui/material';
 import {
+		Help as HelpIcon,
     Comment as CommentIcon,
     Twitter as TwitterIcon,
 } from '@mui/icons-material';
@@ -141,10 +142,11 @@ function App() {
                     style={{
                         display: 'inline-block',
                         position: 'fixed',
-                        right: 20,
+                        right: 35,
                         bottom: 50,
                     }}
                     rel="noreferrer">
+									{/*
                     <Avatar
                         sx={{
                             background: '#738ADB',
@@ -155,6 +157,23 @@ function App() {
                         }}>
                         <CommentIcon />
                     </Avatar>
+										*/}
+									<Chip 
+										icon={<HelpIcon />}
+										label="Need help?"
+										variant="outlined"
+										size="large"
+										color="primary"
+										onClick={()=>{
+											// track current url in posthog
+
+											// open link
+										}}
+										sx={{
+//											boxShadow: '0 0 8px rgba(0,0,0,.1)',
+											cursor: 'pointer',
+										}}
+									/>
                 </a>
             )}
         </Box>
