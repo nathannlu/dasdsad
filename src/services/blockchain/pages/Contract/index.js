@@ -68,10 +68,9 @@ const Upload = (props) => {
                         style={{
                             height: '250px',
                             width: '100%',
-                            objectFit: 'contain',
-													backgroundColor: 'black'
+                            objectFit: 'cover',
                         }}
-                        src="https://solana.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Findex_scale_adoption.c7a36416.png&w=3840&q=90"
+											src="https://static.opensea.io/solana/home-banner.png"
                     />
 									) : (
                     <img

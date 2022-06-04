@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
     useEffect(() => setSelectedPage(pathname.split('/')[1]), []);
 
     return (
-        <main className="ambition-main" style={{ paddingTop: '107px' }}>
+        <main className="ambition-main" style={{ paddingTop: '120px' }}>
             <header className="ambition-header">
                 <Navbar />
 
@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
                         position: 'fixed',
                         background: 'white',
                         zIndex: 10,
-                        top: '55px',
+                        top: '70px',
 												paddingTop: '2px',
 												paddingBottom: '2px',
                         width: '100%',

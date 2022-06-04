@@ -55,7 +55,7 @@ export const Web3Provider = ({ children }) => {
     });
 
     const init = async () => {
-        const curentWalletType = localStorage.getItem('ambition-wallet');
+        const curentWalletType = window.localStorage.getItem('ambition-wallet');
         if (curentWalletType) {
             await walletController.loadWalletProvider(curentWalletType);
         }

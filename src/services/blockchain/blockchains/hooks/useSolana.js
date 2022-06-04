@@ -67,7 +67,7 @@ export const useSolana = () => {
 
             return json?.properties?.creators.map(c => ({ ...c, verified: true }));
         } catch (e) {
-            console.log('Error getContractCreators:', e);
+//            console.log('Error getContractCreators:', e);
             return [{ address, verified: true, share: 100 }];
         }
     }
@@ -100,9 +100,7 @@ export const useSolana = () => {
                 env,
             });
 
-            console.log('res', res);
-
-            handleDeploymentSuccess(id, res.candyMachineAddress);
+            await handleDeploymentSuccess(id, res.candyMachineAddress);
         } catch (err) {
 
             let message = 'Please open a ticket in Discord for help. Error: ' + err;
@@ -122,7 +120,6 @@ export const useSolana = () => {
                 message = `Address ${address} is not a valid Solana address`
             }
 
-            console.log(err)
             //						if(err)
             addToast({
                 severity: 'error',

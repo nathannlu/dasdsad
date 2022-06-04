@@ -73,7 +73,7 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 												<Alert severity="info" sx={{mt:2, maxWidth: '740px'}}>
 													<Stack gap={1}>
 														<Box>
-															Setting up a candy machine project means that you have to pay a one-time fee (porportional to your collection size) to Solana in order to store the candy machine config on their blockchain.
+															Setting up a candy machine project means that you have to pay a one-time fee (porportional to your collection size) to Solana in order to store the candy machine config on their blockchain. After you are finished with your minting, you can withdraw these funds to shut down the contract. Though after closing the contract, buyers will no longer be able to mint.
 														</Box>
 
 														<Stack direction="row">
