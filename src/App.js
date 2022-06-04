@@ -145,7 +145,19 @@ function App() {
                         right: 35,
                         bottom: 50,
                     }}
-                    rel="noreferrer">
+                    rel="noreferrer"
+										onClick={()=>{
+											let url = window.location.href;
+
+											// hash slash, remove slash
+											if(url.substr(-1) == '/') url = url.slice(0, -1)
+
+											// track current url in posthog
+											posthog.capture('User requested help', {
+												page: url.toLowerCase(),
+//												version: '1'
+											});
+										}}>
 									{/*
                     <Avatar
                         sx={{
@@ -164,11 +176,7 @@ function App() {
 										variant="outlined"
 										size="large"
 										color="primary"
-										onClick={()=>{
-											// track current url in posthog
 
-											// open link
-										}}
 										sx={{
 //											boxShadow: '0 0 8px rgba(0,0,0,.1)',
 											cursor: 'pointer',
