@@ -173,10 +173,8 @@ function App() {
 									<Chip 
 										icon={<HelpIcon />}
 										label="Need help?"
-										variant="outlined"
 										size="large"
-										color="primary"
-
+										color="info"
 										sx={{
 //											boxShadow: '0 0 8px rgba(0,0,0,.1)',
 											cursor: 'pointer',
