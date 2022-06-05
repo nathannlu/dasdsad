@@ -74,15 +74,18 @@ const Navbar = ({ pageName }) => {
 				<Stack
 					direction="row"
 					justifyContent="space-between"
-					alignItems="center">
+					alignItems="center"
+				>
 					<Link to="/dashboard">
 						<img
 							style={{ height: '25px' }}
 							src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png"
 						/>
 					</Link>
-					<Box className="ml-auto">
-
+				<Stack direction="row" alignItems="center" gap={2} className="ml-auto">
+					<a target="_blank" style={{display: 'inline-block', color: 'black', fontSize: '16px'}} href="https://ambition.so/help-center">
+						Docs
+					</a>
 					{state.walletAddress ? (
 						<Box
 							id="account-button"
@@ -116,7 +119,7 @@ const Navbar = ({ pageName }) => {
 									</Box>
 
 
-									<Stack sx={{width: '55%'}}>
+									<Stack sx={{width: '60%'}}>
 										<Typography sx={{fontSize: '13px', lineHeight: 1.2,fontWeight: 'bold'}} size="small">
 											{balance} {{
 												'solana': 'SOL',
@@ -223,7 +226,7 @@ const Navbar = ({ pageName }) => {
 								</MenuItem>
 							</Box>
 						</Menu>
-					</Box>
+					</Stack>
 				</Stack>
 			</Container>
 		</AppBar>
