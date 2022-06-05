@@ -43,6 +43,9 @@ export const useEthereum = () => {
 
     // @TODO update baseUri & blockchain
     const handleDeploymentSuccess = async (newContractAddress, id) => {
+        await updateContractAddress({
+            variables: { id: id, address: newContractAddress },
+        });
         posthog.capture('User deployed contract to blockchain', {
             $set: {
                 deployedContract: true,
@@ -51,9 +54,6 @@ export const useEthereum = () => {
         posthog.capture('User successfully deployed contract to blockchain', {
             blockchain: 'ethereum',
             version: '1'
-        });
-        await updateContractAddress({
-            variables: { id: id, address: newContractAddress },
         });
     };
 
