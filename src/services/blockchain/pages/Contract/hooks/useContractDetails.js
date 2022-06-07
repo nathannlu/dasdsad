@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
+import { useToast } from 'ds/hooks/useToast';
 
-export const useContractDetails = (contractAddress, chainid, blockchain) => {
+export const useContractDetails = (contractAddress, chainid, blockchain, renderError) => {
+    const { addToast } = useToast();
+
     const [balance, setBalance] = useState(null);
     const [soldCount, setSoldCount] = useState(null);
     const [size, setSize] = useState(null);
@@ -11,7 +14,6 @@ export const useContractDetails = (contractAddress, chainid, blockchain) => {
     const [max, setMax] = useState('');
     const [metadataUrl, setMetadataUrl] = useState('');
     const [loading, setLoading] = useState(true);
-
     const { getPublicContractVariables } = useWeb3();
 
     useEffect(() => {
@@ -23,6 +25,18 @@ export const useContractDetails = (contractAddress, chainid, blockchain) => {
 
         setLoading(true);
 
+        const contractState = await getPublicContractVariables(contractAddress, chainid, blockchain);
+        const isSolana = chainid.indexOf('solana') !== -1;
+        if (!contractState) {
+
+            if (isSolana) {
+                renderError('This contract has been closed and withdrawn!');
+            }
+
+            addToast({ severity: 'error', message: 'Oops! unable to fetch contract details!' });
+            return;
+        }
+
         const {
             supply,
             maxSupply,
@@ -33,7 +47,7 @@ export const useContractDetails = (contractAddress, chainid, blockchain) => {
             open,
             maxPerMint,
             baseTokenUri,
-        } = await getPublicContractVariables(contractAddress, chainid, blockchain );
+        } = contractState;
 
         setBalance(balanceInEth);
         setPrice(costInEth);

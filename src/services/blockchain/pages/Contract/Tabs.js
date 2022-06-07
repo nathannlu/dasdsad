@@ -9,7 +9,7 @@ import Action from './Action';
 import Details from './Details';
 import Embed from './Embed';
 
-const View = ({ id, contract }) => {
+const View = ({ id, contract, renderError }) => {
     const [value, setValue] = React.useState('details');
 
     const handleChange = (event, newValue) => {
@@ -31,7 +31,7 @@ const View = ({ id, contract }) => {
             <Box py={2}>
                 {
                     {
-                        details: <Details id={id} contract={contract} />,
+                        details: <Details id={id} contract={contract} renderError={renderError} />,
                         action: <Action id={id} contract={contract} />,
                         embed: <Embed id={id} contract={contract} />,
                     }[value]
