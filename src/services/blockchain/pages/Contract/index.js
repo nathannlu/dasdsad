@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { getWalletType } from '@ambition-blockchain/controllers';
 import { Box, Container, Fade, Stack } from 'ds/components';
+import { Alert } from '@mui/material';
+
 import { useToast } from 'ds/hooks/useToast';
 
 import { useWeb3 } from 'libs/web3';
@@ -14,14 +16,14 @@ import Tabs from './Tabs';
 
 const Upload = (props) => {
     const { addToast } = useToast();
-
-    const [contract, setContract] = useState({});
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const { id } = useParams();
     const { contracts } = useContract();
-
     const { walletController } = useWeb3();
-    const isSetupComplete = contract?.nftCollection?.baseUri && contract?.address ? true : false;
+    const [contract, setContract] = useState({});
+    const isSetupComplete = !!(contract?.nftCollection?.baseUri && contract?.address);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [state, setState] = useState({ errorMessage: null });
 
     const handleError = (e) => {
         console.error(e);
@@ -59,46 +61,25 @@ const Upload = (props) => {
         getContract();
     }, [contracts]);
 
+    const bannerImage = contract.blockchain === 'solana' || contract.blockchain === 'solanadevnet'
+        && "https://static.opensea.io/solana/home-banner.png"
+        || "https://ethereum.org/static/28214bb68eb5445dcb063a72535bc90c/9019e/hero.webp";
+
     return (
         <Fade in>
             <Stack>
                 <Box>
-									{contract.blockchain == 'solana' || contract.blockchain =='solanadevnet' ? (
-                    <img
-                        style={{
-                            height: '250px',
-                            width: '100%',
-                            objectFit: 'cover',
-                        }}
-											src="https://static.opensea.io/solana/home-banner.png"
-                    />
-									) : (
-                    <img
-                        style={{
-                            height: '250px',
-                            width: '100%',
-                            objectFit: 'cover',
-                        }}
-                        src="https://ethereum.org/static/28214bb68eb5445dcb063a72535bc90c/9019e/hero.webp"
-                    />
-
-									)}
-
+                    <img style={{ height: '250px', width: '100%', objectFit: 'cover' }} src={bannerImage} />
                 </Box>
 
                 <Container>
                     <Stack sx={{ minHeight: '100vh' }} py={2} gap={5}>
                         <Header contract={contract} />
 
-                        {!isSetupComplete ? (
-                            <NotComplete
-                                id={id}
-                                contract={contract}
-                                setIsModalOpen={setIsModalOpen}
-                            />
-                        ) : (
-                            <Tabs id={id} contract={contract} />
-                        )}
+                        {state.errorMessage && <Alert severity="error" sx={{ mt: 2, maxWidth: '720px' }}>{state.errorMessage}</Alert>
+                            || isSetupComplete && <Tabs id={id} contract={contract} renderError={errorMessage => setState(prevState => ({ ...prevState, errorMessage }))} />
+                            || <NotComplete id={id} contract={contract} setIsModalOpen={setIsModalOpen} />}
+
                     </Stack>
 
                     <IPFSModal

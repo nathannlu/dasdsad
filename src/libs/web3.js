@@ -107,7 +107,11 @@ export const Web3Provider = ({ children }) => {
             await walletController.loadWalletProvider('phantom');
 
             const contract = await retrieveSolanaContract(contractAddress, chainid, env);
-            const balance = (await getBalance(new PublicKey(contractAddress), env) / LAMPORTS_PER_SOL)
+            if (!contract) {
+                return null;
+            }
+
+            const balance = (await getBalance(new PublicKey(contractAddress), env) / LAMPORTS_PER_SOL);
             setContractVarsState(true);
 
             return {
@@ -123,8 +127,9 @@ export const Web3Provider = ({ children }) => {
         } else {
             // If Metamask Contract
             setContractVarsState(false);
-            
+
             await walletController.loadWalletProvider('metamask');
+            const contract = await retrieveContract(contractAddress);
 
             const balance = await window.web3.eth.getBalance(contractAddress);
             const balanceInEth = window.web3.utils.fromWei(balance);
@@ -171,7 +176,6 @@ export const Web3Provider = ({ children }) => {
 
             return state;
         }
-
     };
 
     const retrieveSolanaContract = async (candyMachineAddress, chain, env) => {
@@ -183,34 +187,37 @@ export const Web3Provider = ({ children }) => {
 
         const anchorProgram = await loadCandyProgramV2(null, env);
 
-        const candyMachineObj = await anchorProgram.account.candyMachine.fetch(
-            candyMachineAddress,
-        );
+        try {
+            const candyMachineObj = await anchorProgram.account.candyMachine.fetch(candyMachineAddress);
 
-        const itemsAvailable = candyMachineObj.data.itemsAvailable.toNumber();
-        const itemsRedeemed = candyMachineObj.itemsRedeemed.toNumber();
-        const itemsRemaining = itemsAvailable - itemsRedeemed;
-        const price = candyMachineObj.data.price.toNumber() / LAMPORTS_PER_SOL;
-        const metadataUrl = candyMachineObj.data.hiddenSettings.uri;
-        const goLiveDateEpoch = candyMachineObj.data.goLiveDate.toNumber();
-        const whiteListSettings = candyMachineObj.data.whitelistMintSettings;
-        const currDate = Date.now();
-        let goLiveDate = new Date(0);
-        goLiveDate.setUTCSeconds(goLiveDateEpoch);
+            const itemsAvailable = candyMachineObj.data.itemsAvailable.toNumber();
+            const itemsRedeemed = candyMachineObj.itemsRedeemed.toNumber();
+            const itemsRemaining = itemsAvailable - itemsRedeemed;
+            const price = candyMachineObj.data.price.toNumber() / LAMPORTS_PER_SOL;
+            const metadataUrl = candyMachineObj.data.hiddenSettings.uri;
+            const goLiveDateEpoch = candyMachineObj.data.goLiveDate.toNumber();
+            const whiteListSettings = candyMachineObj.data.whitelistMintSettings;
+            const currDate = Date.now();
+            let goLiveDate = new Date(0);
+            goLiveDate.setUTCSeconds(goLiveDateEpoch);
 
-        const presale = (whiteListSettings == null) ? 0 : 1;
-        const publicSale = (goLiveDate >= currDate) ? 0 : 1;
-        console.log(whiteListSettings)
-        return {
-            itemsRedeemed,
-            price,
-            itemsAvailable,
-            itemsRemaining,
-            metadataUrl,
-            publicSale,
-            presale
-        };
+            const presale = (whiteListSettings == null) ? 0 : 1;
+            const publicSale = (goLiveDate >= currDate) ? 0 : 1;
+            console.log(whiteListSettings)
 
+            return {
+                itemsRedeemed,
+                price,
+                itemsAvailable,
+                itemsRemaining,
+                metadataUrl,
+                publicSale,
+                presale
+            };
+        } catch (e) {
+            console.log(e, 'Error! retrieveSolanaContract');
+            return null;
+        }
     }
 
     const retrieveContract = (contractAddress) => {
@@ -236,7 +243,7 @@ export const Web3Provider = ({ children }) => {
         return web3.utils.fromWei(price);
     };
 
-	/*
+    /*
     const getTotalMinted = async (contractAddress) => {
         const web3 = window.web3;
         const contract = await retrieveContract(contractAddress);
@@ -318,11 +325,11 @@ export const Web3Provider = ({ children }) => {
                 loginToWallet,
                 payGeneratorWithEth,
                 retrieveContract,
-//                checkOwner,
+                //                checkOwner,
                 getPrice,
-//                getMaximumSupply,
-  //              getTotalMinted,
-//                contractVarsState,
+                //                getMaximumSupply,
+                //              getTotalMinted,
+                //                contractVarsState,
                 getPublicContractVariables,
                 walletController,
                 loading,
