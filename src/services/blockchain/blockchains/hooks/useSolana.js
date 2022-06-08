@@ -83,10 +83,12 @@ export const useSolana = () => {
         cacheHash,
         id,
         env,
+			creators,
     }) => {
         try {
+					console.log(creators)
             //mintV2();
-            const creators = await getContractCreators(uri, address);
+//            const creators = await getContractCreators(uri, address);
             const res = await createSolanaContract({
                 uri,
                 name,
@@ -116,8 +118,12 @@ export const useSolana = () => {
                 message = 'Your wallet has no Sol. Is your sol on the correct network (mainnet/devnet)?'
             }
 
+						if (err == 'Error: Invalid config, creators shares must add up to 100') {
+                message = 'Invalid config, creators shares must add up to 100'
+						}
+
             if (err == 'TypeError: Blob.encode requires (length 32) Buffer as src') {
-                message = `Address ${address} is not a valid Solana address`
+                message = `Non-valid Solana address found in creators`
             }
 
             //						if(err)
