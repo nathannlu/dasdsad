@@ -15,6 +15,8 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 
     const activeStep = contract?.nftCollection?.baseUri ? 1 : 0;
 
+	console.log(contract?.blockchain == 'solana' || contract?.blockchain == 'solanadevnet')
+
     return (
         <Stepper activeStep={activeStep} orientation="vertical">
             <Step>
@@ -69,7 +71,7 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
                                 Deploy to blockchain
                             </Button>
                         </Box>
-                        {contract.blockchain === 'solana' || contract.blockchain === 'solanadevnet' && (
+                        {contract.blockchain == 'solana' || contract.blockchain == 'solanadevnet' ? (
                             <Alert severity="info" sx={{ mt: 2, maxWidth: '740px' }}>
                                 <Stack gap={1}>
                                     <Box>
@@ -79,14 +81,14 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
                                     <Stack direction="row">
                                         Your collection size:
                                         <Box sx={{ fontWeight: 'bold' }}>
-                                            {contract.nftCollection.size}
+                                            {contract?.nftCollection?.size}
                                         </Box>
                                     </Stack>
 
                                     <Stack direction="row">
                                         Your estimated fees for Solana rent:
                                         <Box sx={{ fontWeight: 'bold' }}>
-                                            {(contract.nftCollection.size * 0.001672).toFixed(2)} sol
+                                            {(contract?.nftCollection?.size * 0.001672).toFixed(2)} sol
                                         </Box>
                                     </Stack>
 
@@ -95,7 +97,7 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
                                     </Box>
                                 </Stack>
                             </Alert>
-                        )}
+												) : null}
                     </Stack>
                 </StepContent>
             </Step>

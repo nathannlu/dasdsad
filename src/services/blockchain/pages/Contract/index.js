@@ -62,8 +62,9 @@ const Upload = (props) => {
     }, [contracts]);
 
     const bannerImage = contract.blockchain === 'solana' || contract.blockchain === 'solanadevnet'
-        && "https://static.opensea.io/solana/home-banner.png"
-        || "https://ethereum.org/static/28214bb68eb5445dcb063a72535bc90c/9019e/hero.webp";
+		? "https://static.opensea.io/solana/home-banner.png"
+    : "https://ethereum.org/static/28214bb68eb5445dcb063a72535bc90c/9019e/hero.webp";
+
 
     return (
         <Fade in>
