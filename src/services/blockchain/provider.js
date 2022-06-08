@@ -22,11 +22,15 @@ export const ContractProvider = ({ children }) => {
     const [selectInput, setSelectInput] = useState('solana');
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile] = useState(null);
-    const [unRevealedBaseUri, setUnRevealedBaseUri] = useState(null);
     const [uploadedJson, setUploadedJson] = useState([]);
-    const [imagesUrl, setImagesUrl] = useState(null);
     const [metadataUrl, setMetadataUrl] = useState(null); //unused
-    const [ipfsUrl, setIpfsUrl] = useState(null); //metadata url
+    const [ipfsUrl, setIpfsUrl] = useState(null); // deprecated metadata url
+
+    const [unRevealedBaseUri, setUnRevealedBaseUri] = useState(null);
+    const [imagesUrl, setImagesUrl] = useState(null); // url of nft images folder
+	const [baseUri, setBaseUri] = useState(null); // new metadata url (use this one)
+
+
 
     // monkey patch
     Object.prototype.toBuffer = function (fn) {
@@ -73,6 +77,8 @@ export const ContractProvider = ({ children }) => {
         setUploadedUnRevealedImageFile,
         unRevealedBaseUri,
         setUnRevealedBaseUri,
+			baseUri,
+			setBaseUri,
         uploadedJson,
         setUploadedJson,
 

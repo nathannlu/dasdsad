@@ -2,303 +2,244 @@ import config from 'config';
 import basePathConverter from 'base-path-converter';
 import axios from 'axios';
 import { useState } from 'react';
-import { useContract } from 'services/blockchain/provider';
 import { useToast } from 'ds/hooks/useToast';
-import { useAuth } from 'libs/auth';
 import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
-export const useIPFS = (contract) => {
-    const {
-        imagesUrl,
-        setImagesUrl,
-        setUnRevealedBaseUri,
-        metadataUrl,
-        setMetadataUrl,
-        ipfsUrl,
-        setIpfsUrl,
-        uploadedFiles,
-        uploadedUnRevealedImageFile,
-        uploadedJson,
-        setStart,
-        setActiveStep,
-        setError,
-    } = useContract();
-    const { addToast } = useToast();
-    const { user } = useAuth();
-    const [loading, setLoading] = useState(false);
-    const [pinataPercentage, setPinataPercentage] = useState(0);
+const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`; // Pinata API url
+export const MAX_UPLOAD_LIMIT = 2684354560; // Pinata max upload limit (25gb)
+export const IMAGE_MIME_TYPES = ['image/png', 'image/webp', 'video/mp4']	// Mime types for NFT artwork + placeholder img
+export const METADATA_MIME_TYPES = ['application/json'] // Mime types for NFT metadata
 
-    const pinUnrevealedImage = async (callback) => {
-        if (!uploadedUnRevealedImageFile) {
-            addToast({
-                severity: 'error',
-                message: `Error! File to be uploaded not selected.`,
-            });
-            return;
-        }
+export const useIPFS = () => {
+	const [pinataPercentage, setPinataPercentage] = useState(0);
+	const { addToast } = useToast();
 
-        setStart(true);
-        setLoading(true);
-        const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+	/**
+	 * Pins an image via Pinata API. Returns object containing 
+	 * IPFS urls (url, hash, gateway)
+	 *
+	 * @param image - Array len 1 with a File object
+	 */
+	const pinUnrevealedImage = async (image) => {
+		// Checks
+		if (!image)
+			throw new Error('Error! File to be uploaded not selected.');
 
-        addToast({
-            severity: 'info',
-            message: 'Deploying unrevealed image to IPFS...',
-        });
+		if (image[0].size > MAX_UPLOAD_LIMIT)
+			throw new Error(
+				'Error! Max upload limit reached. Your files are larger than 25GB'
+			);
 
-        const file = uploadedUnRevealedImageFile[0];
-        const mimeType = file.type;
-        const fileExtension = mimeType === 'image/webp' && 'webp'
-            || mimeType === 'video/mp4' && 'mp4'
-            || 'png';
+		// Formatting image support
+		const file = image[0];
+		const fileExtension = resolveFileExtension(file.type)
 
-			// pinata
-        let imageData = new FormData();
-        imageData.append('file', file, `/assets/unrevealed.${fileExtension}`);
+		// Pin the placeholder image to Pinata
+		let imageData = new FormData();
+		imageData.append(
+			'file',
+			file,
+		);
+		const metadata = JSON.stringify({ name: 'assets' });
+		imageData.append('pinataMetadata', metadata);
 
-        //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
-        //metadata is optional
-        const metadata = JSON.stringify({ name: user.id + '_assets' });
-        imageData.append('pinataMetadata', metadata);
+		// Send API request to Pinata
+		const res = await axios.post(url, imageData, opt(imageData));
+		return withIpfsUrls(res.data.IpfsHash);
+	};
 
-
-
-
-
-        const opt = {
-            maxBodyLength: 'Infinity',
-            headers: {
-                'Content-Type': `multipart/form-data; boundary= ${imageData._boundary}`,
-                pinata_api_key: config.pinata.key,
-                pinata_secret_api_key: config.pinata.secret
-            },
-            onUploadProgress: (progressEvent) => {
-                const percentage = (progressEvent.loaded / progressEvent.total) * 100;
-                setPinataPercentage(percentage);
-            }
-        };
-
-        try {
-					// unreveal image
-            const res = await axios.post(url, imageData, opt);
-					console.log(contract)
-
-					// unreveal image metadata
-        let metadataData = new FormData();
-				for(let i=1; i<contract.nftCollection.size + 1; i++) {
-					const jsonMetadata = {
-						name: contract.name,
-						description: `Unrevealed ${contract.name} NFT`,
-						image: `ipfs://${res.data.IpfsHash}/unrevealed.png`
-					};
-
-                    // Attach JSON to formdata
-                    const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
-                    metadataData.append('file', metadataFile, `/metadata/${i}.json`);
-
-				}
-
-        //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
-        //metadata is optional
-        const metadata = JSON.stringify({ name: user.id + '_metadata' });
-        metadataData.append('pinataMetadata', metadata);
-
-            const res2 = await axios.post(url, metadataData, opt);
-
-            setUnRevealedBaseUri(res2.data.IpfsHash);
-
-
-
-            addToast({
-                severity: 'success',
-                message: `Added unrevealed image to IPFS under URL: ipfs://${res.data.IpfsHash}/`
-            });
-        } catch (e) {
-            addToast({
-                severity: 'error',
-                message: `Error! uploading unrevealed image to IPFS. Please try again!`,
-            });
-            setError(true);
-            setLoading(false);
-            console.log('Error: unable to pin images to pinata.cloud ', e);
-            callback(false); // Error occured while pinning images to pinata.cloud
-            return;
-        }
-
-        setLoading(false);
-        callback(true); // image added successfully to pinata navigate to next step
-    };
-
-		const pinUnrevealedMetadata = async () => {
-			
+	/**
+	 * Generate and pin metadata for unrevealed NFTs. This function
+	 * is responsible for creating individual token metadata that
+	 * points to a placeholder image. Returns object containing 
+	 * IPFS urls (url, hash, gateway)
+	 *
+	 * @param contract - Used to reflect name, description, and collection size
+	 * @param unrevealedImageUrl - Ipfs or gateway url to unrevealed image
+	 */
+	const generateUnrevealedImageMetadata = async (
+		contract,
+		unrevealedImageUrl
+	) => {
+		if(!contract) {
+			throw new Error('Cannot generate metadata. Please open at ticket in Discord for help')
 		}
 
-    const pinImages = async (blockchain, callback) => {
-        const folder = uploadedFiles;
-        setStart(true);
-        setLoading(true);
-        setActiveStep(0);
-        const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-        const src = `./images`;
+		// Generate metadata files for unrevealed image with data
+		// from contract obj (saved in db)
+		let metadataData = new FormData();
+		for (let i = 1; i < contract.nftCollection.size + 1; i++) {
+			const jsonMetadata = {
+				name: contract.name,
+				description: `Unrevealed ${contract.name} NFT`,
+				image: unrevealedImageUrl
+			};
 
-        addToast({
-            severity: 'info',
-            message:
-                'Deploying images to IPFS... this may take a long time depending on your collection size',
-        });
+			// Attach JSON to formdata for Pinata upload
+			const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
+			metadataData.append(
+				'file',
+				metadataFile,
+				`/metadata/${i}.json`
+			);
+		}
+		// Pinata folder name
+		const metadata = JSON.stringify({ name: 'metadata' });
+		metadataData.append('pinataMetadata', metadata);
 
-        let data = new FormData();
-        for (let i = 0; i < folder.length; i++) {
-            data.append('file', folder[i], `/assets/${folder[i].name}`);
-        }
+		// @TODO Check formdata is under 25GB to upload
+		/*
+		if (metadataData.length > MAX_UPLOAD_LIMIT)
+			throw new Error('Error! File too large, exceeding 25GB upload limit.');
+			*/
 
-        //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
-        //metadata is optional
-        const metadata = JSON.stringify({
-            name: user.id + '_assets',
-        });
+		// Send API request to Pinata
+		const res = await axios.post(url, metadataData, opt(metadataData));
+		return withIpfsUrls(res.data.IpfsHash);
+	};
 
-        data.append('pinataMetadata', metadata);
+	/**
+	 * Creates location for NFT images. This function pins a folder
+	 * to IPFS via Pinata API, then returns an object containing
+	 * IPFS urls (url, hash, gateway)
+	 *
+	 * @param folder - An array of File objects
+	 */
+	const pinImages = async (folder) => {
+		// Construct formdata for uploading to Pinata API
+		let data = new FormData();
+		for (let i = 0; i < folder.length; i++) {
+			data.append('file', folder[i], `/assets/${folder[i].name}`);
+		}
 
-        const opt = {
-            maxBodyLength: 'Infinity',
-            headers: {
-                'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
-                pinata_api_key: config.pinata.key,
-                pinata_secret_api_key: config.pinata.secret,
-            },
-            onUploadProgress: (progressEvent) => {
-                const percentage = (progressEvent.loaded / progressEvent.total) * 100;
-                setPinataPercentage(percentage);
-            }
-        };
+		// @TODO -- check formdata is not larger than 25gb
 
-        const ipfsUrl = getIpfsUrl(blockchain);
 
-        try {
-            const res = await axios.post(url, data, opt);
-            setImagesUrl(res.data.IpfsHash);
-            addToast({
-                severity: 'success',
-                message:
-                    `Added images to IPFS under URL: ${ipfsUrl}` +
-                    res.data.IpfsHash,
-            });
-        } catch (e) {
-            addToast({
-                severity: 'error',
-                message: `Oops! something went wrong. Please try again!`,
-            });
-            setError(true);
-            setLoading(false);
-            console.log('Error: unable to pin images to pinata.cloud ', e);
-            callback(false); // Error occured while pinning images to pinata.cloud
-            return;
-        }
+		// Name Pinata folder
+		const metadata = JSON.stringify({
+			name: 'assets',
+		});
+		data.append('pinataMetadata', metadata);
 
-        setLoading(false);
-        callback(true); // images added successfully to pinata navigate to next step
-    };
+		// Send API req
+		const res = await axios.post(url, data, opt(data));
 
-    const updateAndSaveJson = async (file, data, blockchain) => {
-        return new Promise((resolve, reject) => {
-            if (file.name !== 'metadata.json') {
-                const fileReader = new FileReader();
-                fileReader.onload = function (evt) {
-                    // Parse JSON and modify
-                    const jsonMetadata = JSON.parse(evt.target.result);
-                    const tokenId = file.name.split('.')[0];
-                    const fileExtension = jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'image/webp' && 'webp'
-                        || jsonMetadata.properties?.files && jsonMetadata.properties?.files[0]?.type === 'video/mp4' && 'mp4'
-                        || 'png';
+		// On success
+		if(res) {
+			return withIpfsUrls(res.data.IpfsHash);
+		}
 
-                    const ipfsUrl = getIpfsUrl(blockchain);
+		throw new Error('Oops! something went wrong. Please try again!')
+	};
 
-                    jsonMetadata.image = `${ipfsUrl}${imagesUrl}/${tokenId}.${fileExtension}`;
+	/**
+	 * Pins NFT metadata folder to IPFS via Pinata API. Smart contracts will
+	 * look inside this folder and append the token ID (e.g. 1.json, 2.json)
+	 * to get the description, traits, and resolve the token image.
+	 * Returns object containing IPFS urls (url, hash, gateway)
+	 *
+	 * @param folder - An array of File objects
+	 * @param imageUrl - Resolved URI of images folder. Can either be ipfs url or gateway
+	 */
+	const pinMetadata = async (folder, imageUrl) => {
+		// Update metadata and append to formdata
+		let data = new FormData();
+		for (let i = 0; i < folder.length; i++) {
+			await appendUpdatedJson(folder[i], data, imageUrl);
+		}
+		const metadata = JSON.stringify({
+			name: 'metadata',
+		});
+		data.append('pinataMetadata', metadata);
 
-                    // Attach JSON to formdata
-                    const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
-                    data.append('file', metadataFile, `/metadata/${tokenId}.json`);
+		// Send API request
+		const res = await axios.post(url, data, opt(data));
 
-                    resolve(data);
-                };
-                fileReader.readAsText(file);
-            } else {
-                data.append('file', file, '/metadata/metadata.json');
-                resolve(data);
-            }
-        });
-    };
 
-    const pinMetadata = async (blockchain, callback) => {
-        const folder = uploadedJson;
-        let data = new FormData();
-        const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-        setLoading(true);
+		if(res) {
+			return withIpfsUrls(res.data.IpfsHash)
+		}
 
-        addToast({
-            severity: 'info',
-            message:
-                'Deploying metadata to IPFS... this may take a long time depending on your collection size',
-        });
+		throw new Error('Oops! something went wrong. Please try again!')
+	};
 
-        // Update metadata
-        for (let i = 0; i < folder.length; i++) {
-            await updateAndSaveJson(folder[i], data, blockchain);
-        }
+	/**
+	 * Default options for uploading to Pinata
+	 * with Axios
+	 */
+	let opt = (formData) => ({
+		maxBodyLength: 'Infinity',
+		headers: {
+			'Content-Type': `multipart/form-data; boundary= ${formData._boundary}`,
+			pinata_api_key: config.pinata.key,
+			pinata_secret_api_key: config.pinata.secret,
+		},
+		onUploadProgress: (progressEvent) => {
+			const percentage =
+				(progressEvent.loaded / progressEvent.total) * 100;
+			setPinataPercentage(percentage);
+		},
+	});
 
-        const metadata = JSON.stringify({
-            name: user.id + '_metadata',
-        });
+	/**
+	 * Generates different URLs for accessing ipfs location.
+	 */
+	const withIpfsUrls = (hash) => ({
+		url: `ipfs://${hash}/`,
+		gateway: `https://gateway.pinata.cloud/ipfs/${hash}/`,
+		hash,
+	});
 
-        data.append('pinataMetadata', metadata);
+	/**
+	 * Update a metadata file, pointing "image" property
+	 * to the correct IPFS url where the NFT image is hosted.
+	 */
+	const appendUpdatedJson = async (file, data, ipfsUrl) => {
+		return new Promise((resolve, reject) => {
+			if (file.name !== 'metadata.json') {
+				const fileReader = new FileReader();
+				fileReader.onload = function (evt) {
+					// Parse JSON and modify
+					const jsonMetadata = JSON.parse(evt.target.result);
+					const tokenId = file.name.split('.')[0];
+					const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type)
 
-        const opt = {
-            maxBodyLength: 'Infinity',
-            headers: {
-                'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
-                pinata_api_key: config.pinata.key,
-                pinata_secret_api_key: config.pinata.secret,
-            },
-            onUploadProgress: (progressEvent) => {
-                const percentage = (progressEvent.loaded / progressEvent.total) * 100;
-                setPinataPercentage(percentage);
-            }
-        };
+					jsonMetadata.image = ipfsUrl + `${tokenId}.${fileExtension}`;
 
-        const ipfsUrl = getIpfsUrl(blockchain);
+					// Attach JSON to formdata
+					const metadataFile = new Blob([
+						JSON.stringify(jsonMetadata),
+					]);
+					data.append(
+						'file',
+						metadataFile,
+						`/metadata/${tokenId}.json`
+					);
 
-        try {
-            const res = await axios.post(url, data, opt);
-            addToast({
-                severity: 'success',
-                message:
-                    `Added json metadata to IPFS under URL: ${ipfsUrl}` +
-                    res.data.IpfsHash,
-            });
-            setIpfsUrl(`${ipfsUrl}${res.data.IpfsHash}/`);
-            setMetadataUrl(res.data.IpfsHash);
-        } catch (e) {
-            addToast({
-                severity: 'error',
-                message: `Oops! something went wrong. Please try again!`,
-            });
-            setLoading(false);
-            console.log('Error: unable to pin images to pinata.cloud ', e);
-            callback(false); // Error occured while pinning metadata to pinata.cloud
-            return;
-        }
+					resolve(data);
+				};
+				fileReader.readAsText(file);
+			} else {
+				data.append('file', file, '/metadata/metadata.json');
+				resolve(data);
+			}
+		});
+	};
 
-        setLoading(false);
-        callback(true); // metadata added successfully to pinata navigate to next step
-    };
+	/**
+	 * Mime type to file extension
+	 */
+	const resolveFileExtension = (mimeType) => 
+		(mimeType === 'image/webp' && 'webp') ||
+		(mimeType === 'video/mp4' && 'mp4') ||
+		'png';
+	
 
-    return {
-        getIpfsUrl,
-        pinMetadata,
-        pinImages,
-        pinUnrevealedImage,
-        loading,
-        pinataPercentage
-    };
+	return {
+		pinUnrevealedImage,
+		generateUnrevealedImageMetadata,
+		pinImages,
+		pinMetadata,
+		pinataPercentage
+	};
 };
