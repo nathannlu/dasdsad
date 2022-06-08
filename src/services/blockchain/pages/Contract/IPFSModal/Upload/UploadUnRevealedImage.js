@@ -16,7 +16,7 @@ import {
 	FileUpload as FileUploadIcon,
 } from '@mui/icons-material';
 import { useContract } from 'services/blockchain/provider';
-import { MAX_UPLOAD_LIMIT } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'services/blockchain/blockchains/hooks/useIPFS';
 import { useIPFSModal,  bytesToMegaBytes } from '../hooks/useIPFSModal';
 import { useToast } from 'ds/hooks/useToast';
 
@@ -30,10 +30,6 @@ const UploadUnRevealedImage = (props) => {
 	const { addToast } = useToast();
 	const [percent, setPercent] = useState(0);
 
-	useEffect(() => {
-		console.log(uploadedUnRevealedImageFile)
-	}, [uploadedUnRevealedImageFile])
-
 	const handleImagesUpload = (acceptedFile) => {
 		try {
 			if (acceptedFile.length > 1) {
@@ -44,10 +40,12 @@ const UploadUnRevealedImage = (props) => {
 				throw new Error('Error! File upload limit.');
 			}
 
+			if (!IMAGE_MIME_TYPES.includes(acceptedFile[0]?.type)) {
+				throw new Error(`Error! File type not supported. We support ${IMAGE_MIME_TYPES.toString()}`);
+			}
+
 			const formData = new FormData();
 			formData.append('file', acceptedFile[0]);
-
-			console.log(acceptedFile[0])
 
 			const xhr = new XMLHttpRequest();
 			xhr.upload.onprogress = (event) => {
@@ -83,7 +81,7 @@ const UploadUnRevealedImage = (props) => {
 			{uploadedUnRevealedImageFile < 1 ? (
 				<Box>
 					<Dropzone
-						accept={['image/png', 'image/webp', 'video/mp4']}
+						accept={IMAGE_MIME_TYPES}
 						onDrop={(acceptedFiles) =>
 							handleImagesUpload(acceptedFiles)
 						}>
@@ -126,7 +124,7 @@ const UploadUnRevealedImage = (props) => {
 						<Button
 							onClick={() => {
 								setPercent(0);
-								setUploadedJson([]);
+								setUploadedUnRevealedImageFile([]);
 							}}
 							type="small"
 							color="error">

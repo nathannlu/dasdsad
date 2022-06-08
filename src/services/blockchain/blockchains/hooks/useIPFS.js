@@ -7,6 +7,8 @@ import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
 const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`; // Pinata API url
 export const MAX_UPLOAD_LIMIT = 2684354560; // Pinata max upload limit (25gb)
+export const IMAGE_MIME_TYPES = ['image/png', 'image/webp', 'video/mp4']	// Mime types for NFT artwork + placeholder img
+export const METADATA_MIME_TYPES = ['application/json'] // Mime types for NFT metadata
 
 export const useIPFS = () => {
 	const [pinataPercentage, setPinataPercentage] = useState(0);
@@ -37,7 +39,6 @@ export const useIPFS = () => {
 		imageData.append(
 			'file',
 			file,
-			`/assets/unrevealed.${fileExtension}`
 		);
 		const metadata = JSON.stringify({ name: 'assets' });
 		imageData.append('pinataMetadata', metadata);
@@ -203,7 +204,7 @@ export const useIPFS = () => {
 					const tokenId = file.name.split('.')[0];
 					const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type)
 
-					jsonMetadata.image = `${ipfsUrl}/${tokenId}.${fileExtension}`;
+					jsonMetadata.image = ipfsUrl + `${tokenId}.${fileExtension}`;
 
 					// Attach JSON to formdata
 					const metadataFile = new Blob([
@@ -228,11 +229,11 @@ export const useIPFS = () => {
 	/**
 	 * Mime type to file extension
 	 */
-	const resolveFileExtension = (mimeType) => {
+	const resolveFileExtension = (mimeType) => 
 		(mimeType === 'image/webp' && 'webp') ||
 		(mimeType === 'video/mp4' && 'mp4') ||
 		'png';
-	}
+	
 
 	return {
 		pinUnrevealedImage,

@@ -52,7 +52,7 @@ const Confirmation = (props) => {
 		if (
 			!imagesUrl ||
 			!baseUri ||
-			!unRevealedBaseUri /* && props.renderUploadUnRevealedImage)*/
+			!unRevealedBaseUri && props.renderUploadUnRevealedImage
 		) {
 			addToast({
 				severity: 'error',

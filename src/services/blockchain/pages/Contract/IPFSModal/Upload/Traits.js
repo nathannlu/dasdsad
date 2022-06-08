@@ -4,8 +4,11 @@ import { LinearProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFSModal } from '../hooks/useIPFSModal';
+import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'services/blockchain/blockchains/hooks/useIPFS';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { useToast } from 'ds/hooks/useToast';
+
 
 const Traits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useContract();
@@ -15,23 +18,53 @@ const Traits = (props) => {
 		props.setActiveStep
 	);
 	const [percent, setPercent] = useState(0);
+	const { addToast } = useToast();
+
 
 	const handleImagesUpload = (acceptedFiles) => {
-		const formData = new FormData();
-		for (const file of acceptedFiles) formData.append('file', file);
+		try {
+			let folderSize = 0;
 
-		const xhr = new XMLHttpRequest();
-		xhr.upload.onprogress = (event) => {
-			const percentage = parseInt((event.loaded / event.total) * 100);
-			setPercent(percentage);
-		};
-		xhr.onreadystatechange = () => {
-			if (xhr.readyState !== 4) return;
-			if (xhr.status !== 200) return;
-			setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
-		};
-		xhr.open('POST', 'https://httpbin.org/post', true);
-		xhr.send(formData);
+			// Means they are adding in no files... can only happen
+			// when they drag & drop files whose type is not supported
+			if (acceptedFiles.length < 1) {
+				throw new Error(`Error! File type not supported. We support ${IMAGE_MIME_TYPES.toString()}`);
+			}
+
+			for (let i = 0; i < acceptedFiles.length; i++) {
+				if (!IMAGE_MIME_TYPES.includes(acceptedFiles[i]?.type)) {
+					throw new Error(`Error! File type not supported. We support ${IMAGE_MIME_TYPES.toString()}`);
+				}
+
+				folderSize = folderSize + acceptedFiles[i].size
+			}
+
+			// Check folder size
+			if (folderSize > MAX_UPLOAD_LIMIT) {
+				throw new Error('Error! File upload limit is 25GB.');
+			}
+
+			const formData = new FormData();
+			for (const file of acceptedFiles) formData.append('file', file);
+
+			const xhr = new XMLHttpRequest();
+			xhr.upload.onprogress = (event) => {
+				const percentage = parseInt((event.loaded / event.total) * 100);
+				setPercent(percentage);
+			};
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState !== 4) return;
+				if (xhr.status !== 200) return;
+				setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
+			};
+			xhr.open('POST', 'https://httpbin.org/post', true);
+			xhr.send(formData);
+		} catch (e) {
+			addToast({
+				severity: 'error',
+				message: e.message,
+			});
+		}
 	};
 
 	/**
@@ -61,7 +94,7 @@ const Traits = (props) => {
 			{uploadedFiles.length < 1 ? (
 				<Box>
 					<Dropzone
-						accept={['image/png', 'image/webp', 'video/mp4']}
+						accept={IMAGE_MIME_TYPES}
 						multiple
 						onDrop={(acceptedFiles) =>
 							handleImagesUpload(acceptedFiles)
