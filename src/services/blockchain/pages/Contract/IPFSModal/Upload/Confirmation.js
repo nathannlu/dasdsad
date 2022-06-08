@@ -204,7 +204,7 @@ const Confirmation = (props) => {
 					if (props.renderUploadUnRevealedImage) {
 						setUnRevealedBaseUri({
 							variables: {
-								unRevealedBaseUri: `ipfs://${unRevealedBaseUri}/`,
+								unRevealedBaseUri: `${unRevealedBaseUri}`,
 								id: props.id,
 							},
 						});
