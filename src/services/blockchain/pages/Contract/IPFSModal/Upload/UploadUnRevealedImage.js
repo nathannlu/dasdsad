@@ -1,119 +1,167 @@
-import React, { useState } from 'react';
-import { Box, Button, LoadingButton, Stack } from 'ds/components';
-import { LinearProgress, Typography } from '@mui/material';
-import { useContract } from 'services/blockchain/provider';
-import Folder from '@mui/icons-material/FolderOpenTwoTone';
-import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
+import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
+import {
+	Box,
+	Button,
+	Divider,
+	LoadingButton,
+	Stack,
+	Grid,
+	Typography,
+} from 'ds/components';
+import { LinearProgress } from '@mui/material';
+import {
+	CheckCircleOutline as CheckCircleOutlineIcon,
+	FolderOpenTwoTone as Folder,
+	FileUpload as FileUploadIcon,
+} from '@mui/icons-material';
+import { useContract } from 'services/blockchain/provider';
+import { MAX_UPLOAD_LIMIT } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { useIPFSModal,  bytesToMegaBytes } from '../hooks/useIPFSModal';
+import { useToast } from 'ds/hooks/useToast';
 
-const Traits = (props) => {
-    const { uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile } = useContract();
-    const { pinUnrevealedImage, loading, pinataPercentage } = useIPFS(props.contract);
-    const [percent, setPercent] = useState(0);
+const UploadUnRevealedImage = (props) => {
+	const {
+		uploadUnrevealedImage,
+		loading,
+		pinataPercentage,
+	} = useIPFSModal(props.contract, props.step, props.setActiveStep);
+	const { uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile } = useContract();
+	const { addToast } = useToast();
+	const [percent, setPercent] = useState(0);
 
-    const handleImagesUpload = (acceptedFile) => {
-        const formData = new FormData();
-        formData.append('file', acceptedFile[0]);
+	useEffect(() => {
+		console.log(uploadedUnRevealedImageFile)
+	}, [uploadedUnRevealedImageFile])
 
-        const xhr = new XMLHttpRequest();
-        xhr.upload.onprogress = event => {
-            const percentage = parseInt((event.loaded / event.total) * 100);
-            setPercent(percentage);
-        };
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState !== 4) return;
-            if (xhr.status !== 200) return;
-            setUploadedUnRevealedImageFile(acceptedFile);
-        };
-        xhr.open('POST', 'https://httpbin.org/post', true);
-        xhr.send(formData);
-    };
+	const handleImagesUpload = (acceptedFile) => {
+		try {
+			if (acceptedFile.length > 1) {
+				throw new Error('Cannot have more than 1 unrevealed image');
+			}
 
-    /**
-     * status marks if images were successfully pinned on pinata.cloud
-     *
-     * if status === true, move to next step
-     * else
-     * user can try uploading the images again
-     */
-    const callback = (status) => {
-        if (!status) {
-            setUploadedUnRevealedImageFile(null);
-        }
-        props.setActiveStep(status ? props.step + 1 : props.step);
-    };
+			if (acceptedFile[0]?.size > MAX_UPLOAD_LIMIT) {
+				throw new Error('Error! File upload limit.');
+			}
 
-    return (
-        <React.Fragment>
-            {!uploadedUnRevealedImageFile ? (
-                <Box>
-                    <Dropzone
-                        accept={['image/png', 'image/webp', 'video/mp4']}
-                        multiple={false}
-                        onDrop={(acceptedFiles) => handleImagesUpload(acceptedFiles)}
-                    >
-                        {({ getRootProps, getInputProps }) => (
-                            <Box
-                                sx={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: '4px',
-                                    background: '#F8F8F8',
-                                    border: '1px solid #C4C4C4',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 0 10px rgba(0,0,0,.15)',
-                                    position: 'relative',
-                                }}>
-                                <div
-                                    style={{ padding: '64px' }}
-                                    {...getRootProps()}>
-                                    <input {...getInputProps()} />
-                                    <p style={{ opacity: 0.5, textAlign: 'center' }}>
-                                        Drag &apos;n&apos; drop your Un revealed image here.
-                                    </p>
-                                </div>
-                            </Box>
-                        )}
-                    </Dropzone>
-                    <LinearProgress variant="determinate" value={percent} />
-                </Box>
-            ) : (
-                <Stack>
-                    <Box>
-                        <Folder />
-                        1 File added
-                        <Button
-                            onClick={() => {
-                                setPercent(0);
-                                setUploadedUnRevealedImageFile(null);
-                            }}
-                            type="small"
-                            color="error"
-                        >
-                            Delete
-                        </Button>
-                    </Box>
+			const formData = new FormData();
+			formData.append('file', acceptedFile[0]);
 
-                    <LoadingButton
-                        variant="contained"
-                        loading={loading}
-                        onClick={() => pinUnrevealedImage(callback)}>
-                        Upload
-                    </LoadingButton>
-                    <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '.5em' }}>
-                        <Box sx={{ width: '100%', mr: 1 }}>
-                            <LinearProgress variant="determinate" value={pinataPercentage} />
-                        </Box>
-                        <Box sx={{ minWidth: 35 }}>
-                            <Typography variant="body2" color="text.secondary">
-                                {pinataPercentage.toFixed(2)}%
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Stack>
-            )}
-        </React.Fragment>
-    );
+			console.log(acceptedFile[0])
+
+			const xhr = new XMLHttpRequest();
+			xhr.upload.onprogress = (event) => {
+				const percentage = parseInt((event.loaded / event.total) * 100);
+				setPercent(percentage);
+			};
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState !== 4) return;
+				if (xhr.status !== 200) return;
+				setUploadedUnRevealedImageFile(acceptedFile);
+			};
+			xhr.open('POST', 'https://httpbin.org/post', true);
+			xhr.send(formData);
+		} catch (e) {
+			addToast({
+				severity: 'error',
+				message: e.message,
+			});
+		}
+	};
+
+
+	return (
+		<Stack gap={2}>
+			<Box>
+				<Typography variant="h6">Upload your NFT pre-reveal image</Typography>
+				<Typography variant="body">
+					Add your single image file for your unrevealed NFT placeholder. We
+					support upload limits of up to 25GB
+				</Typography>
+			</Box>
+			<Divider />
+			{uploadedUnRevealedImageFile < 1 ? (
+				<Box>
+					<Dropzone
+						accept={['image/png', 'image/webp', 'video/mp4']}
+						onDrop={(acceptedFiles) =>
+							handleImagesUpload(acceptedFiles)
+						}>
+						{({ getRootProps, getInputProps }) => (
+							<Box
+								sx={{
+									alignItems: 'center',
+									justifyContent: 'center',
+									borderRadius: '4px',
+									background: '#F8F8F8',
+									border: '1px solid #C4C4C4',
+									cursor: 'pointer',
+									boxShadow: '0 0 10px rgba(0,0,0,.15)',
+									position: 'relative',
+								}}>
+								<div
+									style={{ padding: '64px', textAlign: 'center' }}
+									{...getRootProps()}>
+									<input {...getInputProps()} />
+									<FileUploadIcon sx={{opacity: .3, fontSize: '64px'}} />
+									<p
+										style={{
+											opacity: 0.5,
+											textAlign: 'center',
+										}}>
+										Drag &apos;n&apos; drop your pre-reveal thumbnail 
+										here to upload to IPFS
+									</p>
+								</div>
+							</Box>
+						)}
+					</Dropzone>
+					<LinearProgress variant="determinate" value={percent} />
+				</Box>
+			) : (
+				<Stack>
+					<Box>
+						<Folder />
+						{uploadedUnRevealedImageFile.length} Files added
+						<Button
+							onClick={() => {
+								setPercent(0);
+								setUploadedJson([]);
+							}}
+							type="small"
+							color="error">
+							Delete
+						</Button>
+					</Box>
+
+					<LoadingButton
+						loading={loading}
+						variant="outlined"
+						onClick={async () => await uploadUnrevealedImage()}>
+						Upload unrevealed image
+					</LoadingButton>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							marginTop: '.5em',
+						}}>
+						<Box sx={{ width: '100%', mr: 1 }}>
+							<LinearProgress
+								variant="determinate"
+								value={pinataPercentage}
+							/>
+						</Box>
+						<Box sx={{ minWidth: 35 }}>
+							<Typography variant="body2" color="text.secondary">
+								{pinataPercentage.toFixed(2)}%
+							</Typography>
+						</Box>
+					</Box>
+				</Stack>
+			)}
+		</Stack>
+	);
 };
 
-export default Traits;
+export default UploadUnRevealedImage;
