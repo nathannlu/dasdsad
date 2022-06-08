@@ -119,6 +119,7 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 				severity: 'error',
 				message: e.message,
 			});
+			callback(false);
 		} finally {
 			setLoading(false)
 		}
