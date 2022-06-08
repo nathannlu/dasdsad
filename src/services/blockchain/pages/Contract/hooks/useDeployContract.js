@@ -10,9 +10,12 @@ export const useDeployContract = (contract) => {
 
     const { walletController } = useWeb3();
 
-    const deployContract = async () => {
+    const deployContract = async (creators) => {
         const walletAddress = walletController?.state.address;
         const env = contract?.blockchain == 'solanadevnet' && 'devnet' || 'mainnet';
+
+
+			console.log(creators)
 
         try {
             if (!contract || !Object.keys(contract).length)
@@ -40,6 +43,7 @@ export const useDeployContract = (contract) => {
                     cacheHash: contract.nftCollection.cacheHash,
                     id: contract.id,
                     env,
+									creators
                 });
             }
         } catch (err) {
