@@ -6,7 +6,7 @@ import { useToast } from 'ds/hooks/useToast';
 import { getIpfsUrl } from '@ambition-blockchain/controllers';
 
 const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`; // Pinata API url
-export const MAX_UPLOAD_LIMIT = 2684354560; // Pinata max upload limit (25gb)
+export const MAX_UPLOAD_LIMIT = 26843545600 // Pinata max upload limit (25gb)
 export const IMAGE_MIME_TYPES = ['image/png', 'image/webp', 'video/mp4']	// Mime types for NFT artwork + placeholder img
 export const METADATA_MIME_TYPES = ['application/json'] // Mime types for NFT metadata
 
