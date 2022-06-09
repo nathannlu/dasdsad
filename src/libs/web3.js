@@ -222,7 +222,7 @@ export const Web3Provider = ({ children }) => {
 
     const retrieveContract = (contractAddress) => {
         const web3 = window.web3;
-        if (web3.eth) {
+        if (web3?.eth) {
             try {
                 const contract = new web3.eth.Contract(
                     NFTCollectible.abi,
