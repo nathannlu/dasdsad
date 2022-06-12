@@ -67,7 +67,7 @@ export const ContractDetails = ({ contract, contractState, isLoading }) => {
     const openSeaLink2 = isContractDeployedOnTestnet && `https://testnets.opensea.io/get-listed/step-two` || `https://opensea.io/get-listed/step-two`;
 
 	useEffect(() => {
-		if(contractState?.amountSold > 1) {
+		if(contractState?.amountSold >= 1) {
 			setHasMintedOne(true)
 		}
 	}, [contractState])
@@ -100,11 +100,9 @@ export const ContractDetails = ({ contract, contractState, isLoading }) => {
                 <Link target="_blank" href={openSeaLink} sx={{ fontSize: 14, color: '#000' }}>{openSeaLink}</Link>
 							*/}
 							<Box>
-								<Link target="_blank" href={openSeaLink2} sx={{ color: '#000', textDecoration: 'none' }}>
-									<LoadingButton variant="contained" size="small" loading={isLoading} disabled={!hasMintedOne}>
-										Connect with Opensea
-									</LoadingButton>
-								</Link>
+								<LoadingButton onClick={() => window.open(openSeaLink2,"_blank").focus()} variant="contained" size="small" loading={isLoading} disabled={!hasMintedOne}>
+									Connect with Opensea
+								</LoadingButton>
 							</Box>
 							{!isLoading && !hasMintedOne && (
 								<Typography sx={{fontSize: '14px'}} variant="small">
