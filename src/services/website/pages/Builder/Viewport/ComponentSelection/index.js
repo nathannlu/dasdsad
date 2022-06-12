@@ -113,11 +113,11 @@ const ComponentSelection = (props) => {
                                             onClick={() =>
                                                 addComponent(t.template)
                                             }>
-                                            {
+                                            {/*
                                                 iconList[group.groupKey][
                                                     t.variant
                                                 ]
-                                            }
+																								*/}
                                         </Grid>
                                     ))}
                                 </Stack>

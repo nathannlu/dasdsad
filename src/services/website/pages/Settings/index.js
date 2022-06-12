@@ -49,8 +49,9 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import ImportModal from './ImportModal'
 
-const Settings = () => {
-    const { website, openImportModal } = useWebsite();
+const Settings = (props) => {
+		const { website, setWebsite, websites, openImportModal } = useWebsite();
+
     const {
         tabValue,
         setTabValue,
@@ -113,6 +114,10 @@ const Settings = () => {
         onUrlChange,
     } = useSEOForm(setSeoSaveStatus);
 
+	useEffect(() => {
+		console.log(website)
+	}, [website])
+
     return (
         <Box
             sx={{
@@ -139,7 +144,7 @@ const Settings = () => {
                 onDomainNameChange={onDomainNameChange}
                 isAddingDomain={isAddingDomain}
             />
-            {website && website.seo && (
+					{Object.keys(website) > 0 && website.seo && (
                 <Box paddingTop="8em" paddingBottom="8em" bgcolor="grey.200">
                     <Box
                         maxWidth="1100px"

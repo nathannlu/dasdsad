@@ -9,6 +9,7 @@ import {
     Checkbox,
     Typography,
     Divider,
+	Alert,
 } from '@mui/material';
 import { useWebsite } from 'services/website/provider';
 import {
@@ -81,9 +82,15 @@ const Navbar = () => {
 
     return (
         <Fade in>
+					<div className="fixed w-full z-10 shadow-lg items-center">
+						<Alert className="">
+							asd
+						</Alert>
             <Box
-                className="w-full flex z-10 fixed shadow-lg items-center"
+                className="flex"
                 sx={{ bgcolor: 'rgba(255, 255, 255, 0.9)', height: '64px' }}>
+
+
                 <div className="container mx-auto flex flex-wrap items-center">
                     <Box>
                         <a href="/websites">
@@ -219,6 +226,7 @@ const Navbar = () => {
                     </Stack>
                 </div>
             </Box>
+					</div>
         </Fade>
     );
 };

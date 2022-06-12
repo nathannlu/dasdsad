@@ -18,6 +18,7 @@ import {
 import { AppBar, Toolbar } from '@mui/material';
 import { useCreateWebsite } from 'services/website/gql/hooks/website.hook';
 import { useContract } from 'services/blockchain/provider';
+import { useWebsite } from 'services/website/provider';
 import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
@@ -26,6 +27,7 @@ import CloseIcon from '@mui/icons-material/Close';
 const Website = (props) => {
     const [contracts, setContracts] = useState([]);
     const [websiteTitle, setWebsiteTitle] = useState('');
+	const { websites, setWebsites } = useWebsite();
     const [selectInput, setSelectInput] = useState('Select your contract');
     const { addToast } = useToast();
     const history = useHistory();
@@ -38,6 +40,8 @@ const Website = (props) => {
                 severity: 'success',
                 message: 'Website created',
             });
+
+						setWebsites([...websites, data?.createWebsite])
             history.push('/websites');
         },
         onError: (e) => {
@@ -48,6 +52,7 @@ const Website = (props) => {
         }
     });
 
+	/*
     useGetContracts({
         onCompleted: (data) => {
 					console.log(data)
@@ -60,13 +65,17 @@ const Website = (props) => {
             setSelectInput(availableContracts[0].address);
         },
     });
+		*/
 
     const onSubmit = () => {
         try {
             if (!websiteTitle.length)
                 throw new Error('Website subdomain must be filled');
+
+					/*
             if (!selectInput.length || selectInput === 'Select your contract')
                 throw new Error('You must choose a contract');
+					*/
 
             createWebsite();
         } catch (e) {
@@ -147,7 +156,8 @@ const Website = (props) => {
                             </Stack>
                         </Stack>
 
-                        <Stack>
+												{contracts.length > 0 && (
+									        <Stack>
                             <FormLabel sx={{ fontWeight: 'bold' }}>
                                 Select your smart contract
                             </FormLabel>
@@ -161,6 +171,26 @@ const Website = (props) => {
                                     </MenuItem>
                                 ))}
                             </TextField>
+													</Stack>
+												)}
+
+
+												<Stack>
+                            <FormLabel sx={{ fontWeight: 'bold' }}>
+															Choose a starting template
+                            </FormLabel>
+													<Grid container>
+														<Grid p={1} item xs={3}>
+															<Card sx={{height: '250px'}}>
+																Blank
+															</Card>
+														</Grid>
+														<Grid p={1} item xs={3}>
+															<Card sx={{height: '250px'}}>
+																BAYC
+															</Card>
+														</Grid>
+													</Grid>
                         </Stack>
 
                         <Stack justifyContent="space-between" direction="row">

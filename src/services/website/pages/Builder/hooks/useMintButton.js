@@ -15,15 +15,17 @@ export const useMintButton = () => {
     const [mintCount, setMintCount] = useState(1);
     const { addToast } = useToast();
 
-    useGetContract({
-        address: website?.settings?.connectedContractAddress,
-        onCompleted: data => {
-            setContract(data.getContract);
-            if (data.getContract.blockchain.indexOf('solana') !== -1) {
-                setPrice(data.getContract.nftCollection.price);
-            }
-        }
-    })
+		if (website?.settings?.connectedContractAddress) {
+			useGetContract({
+					address: website?.settings?.connectedContractAddress,
+					onCompleted: data => {
+							setContract(data.getContract);
+							if (data.getContract.blockchain.indexOf('solana') !== -1) {
+									setPrice(data.getContract.nftCollection.price);
+							}
+					}
+			})
+		}
 
     useEffect(() => {
         if (!website || !contract) return;
