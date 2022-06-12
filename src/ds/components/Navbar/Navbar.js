@@ -172,10 +172,14 @@ const Navbar = ({ pageName }) => {
 								<Button
 									variant="contained"
 									size="small"
+									startIcon={<AccountBalanceWalletIcon/>}
 									sx={{
 										width: '260px',
-										height: '49px'
+										height: '49px',
+										color: 'white',
+										borderRadius: '5px',
 									}}
+									color="black"
 									onClick={async () => {
 										const curentWalletType = window.localStorage.getItem('ambition-wallet');
 										await walletController.loadWalletProvider(curentWalletType)

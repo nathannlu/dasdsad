@@ -5,7 +5,7 @@ import { createBrowserHistory } from 'history';
 import { Helmet } from 'react-helmet';
 
 import Routes from 'components/routes';
-import { Avatar, Box } from 'ds/components';
+import { Avatar, Box, Typography, Stack } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 import { useAnalytics } from 'libs/analytics';
 import { useGetCurrentUser } from 'gql/hooks/users.hook';
@@ -170,16 +170,19 @@ function App() {
                         <CommentIcon />
                     </Avatar>
 										*/}
-									<Chip 
-										icon={<HelpIcon />}
-										label="Need help?"
-										size="large"
-										color="info"
-										sx={{
-//											boxShadow: '0 0 8px rgba(0,0,0,.1)',
+									<Stack direction="row" p={1} gap={.5} alignItems="center" sx={{
+											boxShadow: '0 0 8px rgba(0,0,0,.1)',
 											cursor: 'pointer',
-										}}
-									/>
+											background: 'white',
+											borderRadius: '4px',
+											border: '1px solid rgba(0,0,0,.25)',
+										}}>
+										<HelpIcon sx={{fontSize:'18px'}} />
+										<Typography sx={{fontSize: '14px'}}>
+											Need help?
+										</Typography>
+									</Stack>
+
                 </a>
             )}
         </Box>
