@@ -158,29 +158,35 @@ const Navbar = ({ pageName }) => {
 										<KeyboardArrowDownIcon sx={{ fontSize: '16px' }} />
 									</Box>
 								</Stack>
-							</Box>
-						) : (
-							<Button
-								variant="contained"
-								size="small"
-								sx={{
-									width: '260px',
-									height: '49px'
-								}}
-								onClick={async () => {
-									const curentWalletType = window.localStorage.getItem('ambition-wallet');
-									await walletController.loadWalletProvider(curentWalletType || 'metamask');
-									const { wallet, address } = walletController?.getState();
 
-									setState((prevState) => ({
-										...prevState,
-										walletType: wallet || null,
-										walletAddress: address || null,
-									}));
-								}}>
-								Connect wallet
-							</Button>
-						)}
+						</Box>
+							) : (
+								<Button
+									variant="contained"
+									size="small"
+									startIcon={<AccountBalanceWalletIcon/>}
+									sx={{
+										width: '260px',
+										height: '49px',
+										color: 'white',
+										borderRadius: '5px',
+									}}
+									color="black"
+									onClick={async () => {
+										const curentWalletType = window.localStorage.getItem('ambition-wallet');
+										await walletController.loadWalletProvider(curentWalletType)
+										const { wallet, address } = walletController?.getState();
+
+										setState((prevState) => ({
+											...prevState,
+											walletType: wallet || null,
+											walletAddress: address || null,
+										}));
+									}}>
+									Connect wallet
+								</Button>
+							)}
+
 						<Menu
 							id="account-menu"
 							anchorEl={anchorEl}

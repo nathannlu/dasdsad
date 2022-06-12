@@ -301,7 +301,7 @@ const New = ({ contract }) => {
 									variant="outlined"
 									{...price}
 									type="number"
-									error={Boolean(formValidationErrors.price)}
+//									error={Boolean(formValidationErrors.price)}
 								/>
 							</Stack>
 							<Stack gap={2}>
