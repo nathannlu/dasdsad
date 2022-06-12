@@ -1,25 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import {
-    Fade,
-    Container,
-    Link,
-    TextField,
-    Stack,
-    Box,
-    Grid,
-    Typography,
-    Button,
-    Divider,
-} from 'ds/components';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { Box, Button, Stack, TextField, Typography } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
+import React, { useEffect, useState } from 'react';
 
 const Embed = ({ contract, id }) => {
-    console.log(contract, 'contract');
-
     const { addToast } = useToast();
     const [embedCode, setEmbedCode] = useState('');
-    const [embedChainId, setEmbedChainId] = useState('');
+    const [customEmbedCode, setCustomEmbedCode] = useState('');
+
     const copyEmbedCode = () => {
         navigator.clipboard.writeText(embedCode);
         addToast({
@@ -37,25 +25,69 @@ const Embed = ({ contract, id }) => {
         else if (contract.blockchain === 'solana') chainId = 'solana';
         else if (contract.blockchain === 'solanadevnet') chainId = 'solanadevnet';
         else throw new Error('blockchain not supported!');
-        setEmbedChainId(chainId);
 
-        // setEmbedCode(`<iframe
-        // 	src="https://${
-        //         window.location.hostname.indexOf('localhost') === -1
-        //             ? window.location.hostname
-        //             : `${window.location.hostname}:3000`
-        //     }/smart-contracts/embed/v1?contract=${
-        //     contract.address
-        // }&chainId=${chainId}"
-        // 	width="100%"
-        // 	height="115px"
-        // 	frameborder="0"
-        // 	scrolling="no"
-        //     style="border-radius: 10px; width: 350px"
-        // />`);
+        const bundleUrl = 'https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js';
+        const contractAddress = contract?.address;
+        const contractType = contract?.type === 'erc721a' && 'erc721a' || 'erc721';
+        const classes = {
+            "connect-button": "connect-button",
+            "mint-button": "mint-button",
+            "details-container": "details-container",
+            "details": "details"
+        };
 
-        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contract?.address}" type="${contract?.type === 'erc721a' && 'erc721a' || 'erc721'}"></ambition-button>
-        <script defer="defer" src="https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js"></script>`);
+        const css = `
+            .connect-button {
+                /* background-color: red !important; */
+            }
+            .mint-button {}
+            .details-container {}
+            .details {}
+        `;
+
+        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contractAddress}" type="${contractType}" classes='${JSON.stringify(classes)}'></ambition-button>
+        <script defer="defer" src="${bundleUrl}"></script>
+        <style>${css}</style>`);
+
+        setCustomEmbedCode(`
+            const onload = () => {
+                const iframe = document.getElementById('#iframe').contentWindow.document;
+                const ambitionButton = document.createElement("ambition-button");
+
+                const chainid = document.createAttribute("chainid");
+                const contractaddress = document.createAttribute("contractaddress");
+                const type = document.createAttribute("type");
+                const classes = document.createAttribute("classes");
+
+                chainid.value = "${chainId}";
+                contractaddress.value = "${contractAddress}";
+                type.value = "${contractType}";
+                classes.value = JSON.stringify(${JSON.stringify(classes)});
+
+                ambitionButton.setAttributeNode(chainid);
+                ambitionButton.setAttributeNode(contractaddress);
+                ambitionButton.setAttributeNode(type);
+                ambitionButton.setAttributeNode(classes);
+
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.src = "https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js";
+
+                const style = document.createElement('style');
+                const css = "${css}";
+
+                if (style.styleSheet) {
+                    style.styleSheet.cssText = css;
+                } else {
+                    style.appendChild(document.createTextNode(css));
+                }
+
+                iframe.body.append(ambitionButton);
+                iframe.head.append(style);
+                iframe.head.append(script);
+            }
+        `);
+
     }, [contract]);
 
     return (
@@ -63,19 +95,20 @@ const Embed = ({ contract, id }) => {
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Embed
             </Typography>
-            <Box display="flex">
+
+            <Typography variant="p" sx={{ fontStyle: 'italic' }} color="gray">
+                ** Now you can customize the embed button, by providing the styling to classes
+            </Typography>
+
+            <Box display="flex" sx={{ width: '100%', mb: 4 }}>
                 <Box flex="1" display="flex" flexDirection="column">
-                    <Typography>Code:</Typography>
+                    <Typography>Direct Embed:</Typography>
                     <TextField
-                        sx={{
-                            width: '600px',
-                            mb: '1em',
-                        }}
-                        rows={8}
-                        multiline
-                        InputProps={{
-                            readOnly: true,
-                        }}
+                        fullWidth={true}
+                        sx={{ mb: '1em' }}
+                        rows={12}
+                        multiline={true}
+                        InputProps={{ readOnly: true }}
                         value={embedCode}
                     />
                     <Button
@@ -85,26 +118,37 @@ const Embed = ({ contract, id }) => {
                         Copy to clipboard
                     </Button>
                 </Box>
-                {/* <Box sx={{ ml: '1em' }} display="flex" flexDirection="column">
-                    <Typography>Preview:</Typography>
-                    <Box>
-                        <iframe
-                            src={`https://${
-                                window.location.hostname.indexOf(
-                                    'localhost'
-                                ) === -1
-                                    ? window.location.hostname
-                                    : `${window.location.hostname}:3000`
-                            }/smart-contracts/embed?contract=${
-                                contract.address
-                            }&chainId=${embedChainId}`}
-                            width="350px"
-                            height="100px"
-                            frameBorder="0"
-                            scrolling="no"
-                        />
-                    </Box>
-                </Box> */}
+            </Box>
+
+            <Box display="flex" sx={{ width: '100%' }}>
+                <Box flex="1" display="flex" flexDirection="column">
+                    <Typography>Custom Embed:</Typography>
+                    <TextField
+                        fullWidth={true}
+                        sx={{ mb: '1em' }}
+                        rows={12}
+                        multiline={true}
+                        InputProps={{ readOnly: true }}
+                        value={customEmbedCode}
+                    />
+
+                    <Typography variant="p" sx={{ fontStyle: 'italic', my: 2 }} color="gray">
+                        **Copy the above code and add to script tag on the page<br />
+                        **Replace " with ` around the css variable
+                    </Typography>
+
+                    <TextField
+                        fullWidth={true}
+                        sx={{ mb: '1em' }}
+                        rows={1}
+                        multiline={true}
+                        InputProps={{ readOnly: true }}
+                        value={`<iframe width="320" id="iframe" scrolling="no" frameBorder="0" onLoad={onload}></iframe>`}
+                    />
+                    <Typography variant="p" sx={{ fontStyle: 'italic' }} color="gray">
+                        **Copy aove the iframe code in html where you want to load the embed button
+                    </Typography>
+                </Box>
             </Box>
         </Stack>
     );
