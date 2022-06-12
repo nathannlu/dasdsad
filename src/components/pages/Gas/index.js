@@ -1,13 +1,17 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { Fade, Box, Link, Button, Typography } from 'ds/components';
+import { Fade, Box, Typography } from 'ds/components';
 import { Chip, Stack, Switch, FormGroup, FormControlLabel } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { GrCircleInformation } from 'react-icons/gr'
 import { useGas } from './hooks/useGas'
 
 const Gas = () => {
-    const { fees } = useGas();
+    const { 
+        isEthUsd,
+        setIsEthUsd,
+        isSolUsd,
+        setIsSolUsd 
+    } = useGas();
 
     return (
         <Fade in>
@@ -27,13 +31,13 @@ const Gas = () => {
                     <Typography fontSize='10pt'>
                         Estimates calculated at 34 gwei and the ETH price of $1455.27.
                     </Typography>
-                    <Stack spacing='2em' mt='.5em'>
-                        <Stack spacing='1em' direction='row' alignItems='center'>
+                    <Box display='flex' flexDirection='column' mt='.5em'>
+                        <Stack spacing='1em' direction='row' alignItems='center' mt='1em'>
                             <Stack spacing='1em'>
                                 <Stack direction='row' spacing='1em' alignItems='center'>
                                     <Chip label="Ethereum (ERC721A)" />
                                     <FormGroup>
-                                        <FormControlLabel control={<Switch />} label="to USD" />
+                                        <FormControlLabel control={<Switch value={isEthUsd} onChange={(e) => setIsEthUsd(e.target.value)} />} label="to USD" />
                                     </FormGroup>
                                 </Stack>
                                 <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px'>
@@ -56,12 +60,12 @@ const Gas = () => {
                             </Stack>
                         </Stack>
 
-                        <Stack spacing='1em' direction='row' alignItems='center'>
+                        <Stack spacing='1em' direction='row' alignItems='center' mt='1.5em'>
                             <Stack spacing='1em'>
                                 <Stack direction='row' spacing='1em' alignItems='center'>
                                     <Chip label="Solana" />
                                     <FormGroup>
-                                        <FormControlLabel control={<Switch />} label="to USD" />
+                                        <FormControlLabel control={<Switch value={isSolUsd} onChange={(e) => setIsSolUsd(e.target.value)} />} label="to USD" />
                                     </FormGroup>
                                 </Stack>
                                 <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px'>
@@ -77,7 +81,7 @@ const Gas = () => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                    </Stack>
+                    </Box>
                 </Box>
             </Box>
         </Fade>

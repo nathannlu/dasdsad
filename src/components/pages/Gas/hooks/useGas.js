@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 
 export const useGas = () => {
     const [fees, setFees] = useState();
-    const [eth, setEth] = useState();
-    const [sol, setSol] = useState();
+    const [isEthUsd, setIsEthUsd] = useState();
+    const [isSolUsd, setIsSolUsd] = useState();
 
     useEffect(() => {
         getETHPrice();
@@ -15,6 +15,10 @@ export const useGas = () => {
 
     return {
         fees,
-        setFees
+        setFees,
+        isEthUsd,
+        setIsEthUsd,
+        isSolUsd,
+        setIsSolUsd
     }
 }
