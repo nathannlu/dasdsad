@@ -319,6 +319,16 @@ export const Web3Provider = ({ children }) => {
         }
     }
 
+	const encodeConstructor = async (contract) => {
+    const web3 = window.web3
+		const structs = ["string", "string", "uint256"]
+		const args = [contract.name, contract.symbol, contract.nftCollection.size]
+			
+		const encodedConstructor = await web3.eth.abi.encodeParameters(structs,args)
+		
+		return encodedConstructor.slice(2);
+	}
+
     return (
         <Web3Context.Provider
             value={{
@@ -333,6 +343,7 @@ export const Web3Provider = ({ children }) => {
                 getPublicContractVariables,
                 walletController,
                 loading,
+								encodeConstructor
             }}>
             {children}
         </Web3Context.Provider>
