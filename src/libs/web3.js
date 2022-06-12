@@ -107,8 +107,8 @@ export const Web3Provider = ({ children }) => {
             await walletController.loadWalletProvider('phantom');
 
             const contract = await retrieveSolanaContract(contractAddress, chainid, env);
-            if (!contract) {
-                return null;
+            if (contract.error) {
+                return contract;
             }
 
             const balance = (await getBalance(new PublicKey(contractAddress), env) / LAMPORTS_PER_SOL);
@@ -216,7 +216,10 @@ export const Web3Provider = ({ children }) => {
             };
         } catch (e) {
             console.log(e, 'Error! retrieveSolanaContract');
-            return null;
+
+            return {
+                error: e.message === `Account does not exist ${candyMachineAddress}` && `This contract has been closed and withdrawn!` || e.message
+            }
         }
     }
 
