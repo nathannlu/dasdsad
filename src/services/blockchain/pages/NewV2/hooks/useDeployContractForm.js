@@ -119,7 +119,7 @@ export const useDeployContractForm = () => {
 				name: name.value ? null : true,
 				symbol: symbol.value ? null : true,
 				maxSupply: maxSupply.value && Number(maxSupply.value) > 0 ? null : true,
-				price: price.value && Number(price.value) > 0 ? null : true,
+				price: price.value ? null : true,
 			}
 		}));
 
@@ -228,7 +228,7 @@ export const useDeployContractForm = () => {
 		const { name, symbol, maxSupply, price } = deployContractForm;
 
 		// validate form
-		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0 || Number(price.value) <= 0) {
+		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0) {
 			setFormValidationErrors();
 			return;
 		}
@@ -276,7 +276,7 @@ export const useDeployContractForm = () => {
 		const { name, symbol, maxSupply, price } = deployContractForm;
 
 		// validate form
-		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0 || Number(price.value) <= 0) {
+		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0) {
 			setFormValidationErrors();
 			return;
 		}
