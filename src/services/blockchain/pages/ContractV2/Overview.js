@@ -37,7 +37,7 @@ const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftIma
 				<Container>
 					<Grid container>
 						<Grid item md={6} xs={12}>
-							<ContractDetails contract={contract} />
+							<ContractDetails contract={contract} contractState={contractState} isLoading={isLoading} />
 
 							<Stack gap={2} mt={4}>
 								<Box>
