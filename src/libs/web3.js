@@ -107,8 +107,8 @@ export const Web3Provider = ({ children }) => {
             await walletController.loadWalletProvider('phantom');
 
             const contract = await retrieveSolanaContract(contractAddress, chainid, env);
-            if (!contract) {
-                return null;
+            if (contract.error) {
+                return contract;
             }
 
             const balance = (await getBalance(new PublicKey(contractAddress), env) / LAMPORTS_PER_SOL);
@@ -216,7 +216,10 @@ export const Web3Provider = ({ children }) => {
             };
         } catch (e) {
             console.log(e, 'Error! retrieveSolanaContract');
-            return null;
+
+            return {
+                error: e.message === `Account does not exist ${candyMachineAddress}` && `This contract has been closed and withdrawn!` || e.message
+            }
         }
     }
 
@@ -319,6 +322,16 @@ export const Web3Provider = ({ children }) => {
         }
     }
 
+	const encodeConstructor = async (contract) => {
+    const web3 = window.web3
+		const structs = ["string", "string", "uint256"]
+		const args = [contract.name, contract.symbol, contract.nftCollection.size]
+			
+		const encodedConstructor = await web3.eth.abi.encodeParameters(structs,args)
+		
+		return encodedConstructor.slice(2);
+	}
+
     return (
         <Web3Context.Provider
             value={{
@@ -333,6 +346,7 @@ export const Web3Provider = ({ children }) => {
                 getPublicContractVariables,
                 walletController,
                 loading,
+								encodeConstructor
             }}>
             {children}
         </Web3Context.Provider>

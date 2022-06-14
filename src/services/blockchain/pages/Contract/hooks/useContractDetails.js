@@ -27,10 +27,10 @@ export const useContractDetails = (contractAddress, chainid, blockchain, renderE
 
         const contractState = await getPublicContractVariables(contractAddress, chainid, blockchain);
         const isSolana = chainid.indexOf('solana') !== -1;
-        if (!contractState) {
-
+        
+        if (contractState.error) {
             if (isSolana) {
-                renderError('This contract has been closed and withdrawn!');
+                renderError(contractState.error);
             }
 
             addToast({ severity: 'error', message: 'Oops! unable to fetch contract details!' });

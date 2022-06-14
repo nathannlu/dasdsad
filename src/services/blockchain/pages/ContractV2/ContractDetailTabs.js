@@ -10,6 +10,7 @@ import Tabs from '@mui/material/Tabs';
 import Overview from './Overview';
 import Settings from './Settings';
 import Embed from '../Contract/Embed';
+import Verify from './Verify';
 
 const ContractDetailTabs = (props) => {
     const [value, setValue] = React.useState('overview');
@@ -23,6 +24,7 @@ const ContractDetailTabs = (props) => {
                     {/* <Tab label="Actions" value="actions" /> */}
                     <Tab label="Settings" value="settings" />
                     <Tab label="Embed" value="embed" />
+                    <Tab label="Verify" value="verify" />
                     {/* <Tab label="Balance" value="balance" /> */}
                 </Tabs>
             </Container>
@@ -33,6 +35,7 @@ const ContractDetailTabs = (props) => {
                     // actions: <Actions {...props} />,
                     settings: <Settings {...props} />,
                     embed: <Embed {...props} />,
+                    verify: <Verify {...props} />,
                     // balance: <Balance {...props} />
                 }[value]}
             </Box>
