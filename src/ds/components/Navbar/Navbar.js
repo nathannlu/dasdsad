@@ -17,7 +17,7 @@ import { AppBar, Chip } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { LAMPORTS_PER_SOL,clusterApiUrl } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js'
 import * as anchor from '@project-serum/anchor'
 
 const Navbar = ({ pageName }) => {
@@ -32,12 +32,7 @@ const Navbar = ({ pageName }) => {
 	const [balance, setBalance] = useState('');
 
 	useEffect(() => {
-		//        console.log(walletController, 'walletController NAVBAR', walletController?.getState());
 		const { wallet, address } = walletController?.getState();
-
-		console.log(wallet)
-
-
 		setState((prevState) => ({
 			...prevState,
 			walletType: wallet || null,
@@ -54,10 +49,7 @@ const Navbar = ({ pageName }) => {
 			const balance = await connection.getBalance(wallet.publicKey)
 			setBalance(balance)
 		*/
-
-
-	}, [])
-
+	}, []);
 
 	return (
 		<AppBar
@@ -82,45 +74,44 @@ const Navbar = ({ pageName }) => {
 							src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png"
 						/>
 					</Link>
-				<Stack direction="row" alignItems="center" gap={2} className="ml-auto">
-					<a target="_blank" style={{display: 'inline-block', color: 'black', fontSize: '16px'}} href="https://ambition.so/help-center">
-						Docs
-					</a>
-					{state.walletAddress ? (
-						<Box
-							id="account-button"
-							aria-controls="account-menu"
-							aria-haspopup="true"
-							aria-expanded={open ? 'true' : undefined}
-							onClick={(e) => setAnchorEl(e.currentTarget)}
-							className="ml-auto"
-							sx={{
-								color: '#000',
-								cursor: 'pointer',
-								border: '1px solid rgba(0,0,0,.25)',
-								padding: '8px',
-								borderRadius: '5px',
-								width: '260px',
-								transition: 'all .2s',
-								'&:hover': {
-									backgroundColor: '#E5E5EA'
-								},
-								backgroundColor: open ? '#E5E5EA' : '#fff'
-							}}>
+					<Stack direction="row" alignItems="center" gap={2} className="ml-auto">
+						<a target="_blank" style={{ display: 'inline-block', color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
+							Docs
+						</a>
+						{state.walletAddress ? (
+							<Box
+								id="account-button"
+								aria-controls="account-menu"
+								aria-haspopup="true"
+								aria-expanded={open ? 'true' : undefined}
+								onClick={(e) => setAnchorEl(e.currentTarget)}
+								className="ml-auto"
+								sx={{
+									color: '#000',
+									cursor: 'pointer',
+									border: '1px solid rgba(0,0,0,.25)',
+									padding: '8px',
+									borderRadius: '5px',
+									width: '260px',
+									transition: 'all .2s',
+									'&:hover': {
+										backgroundColor: '#E5E5EA'
+									},
+									backgroundColor: open ? '#E5E5EA' : '#fff'
+								}}>
 								<Stack alignItems="center" justifyContent="center" gap={1} direction="row">
-									<Box sx={{margin: '0 auto'}}>
+									<Box sx={{ margin: '0 auto' }}>
 										{{
 											'solana': (<img src="https://static.opensea.io/solana-just-s-symbol-colored.svg" />),
-											'0x1': (<img style={{height: '25px'}} src="https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg" />),
-											'0x4': (<img style={{height: '25px'}} src="https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg" />),
-											'0x89': (<img style={{height: '25px'}} src="https://cryptopolitanimg.s3.amazonaws.com/wp-content/uploads/2021/06/10164005/polygon-matic-logo.png" />),
-											'0x13881': (<img style={{height: '25px'}} src="https://cryptopolitanimg.s3.amazonaws.com/wp-content/uploads/2021/06/10164005/polygon-matic-logo.png" />),
+											'0x1': (<img style={{ height: '25px' }} src="https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg" />),
+											'0x4': (<img style={{ height: '25px' }} src="https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg" />),
+											'0x89': (<img style={{ height: '25px' }} src="https://cryptopolitanimg.s3.amazonaws.com/wp-content/uploads/2021/06/10164005/polygon-matic-logo.png" />),
+											'0x13881': (<img style={{ height: '25px' }} src="https://cryptopolitanimg.s3.amazonaws.com/wp-content/uploads/2021/06/10164005/polygon-matic-logo.png" />),
 										}[walletController.getNetworkID()]}
 									</Box>
 
-
-									<Stack sx={{width: '60%'}}>
-										<Typography sx={{fontSize: '13px', lineHeight: 1.2,fontWeight: 'bold'}} size="small">
+									<Stack sx={{ width: '60%' }}>
+										<Typography sx={{ fontSize: '13px', lineHeight: 1.2, fontWeight: 'bold' }} size="small">
 											{balance} {{
 												'solana': 'SOL',
 												'0x1': 'ETH',
@@ -129,7 +120,7 @@ const Navbar = ({ pageName }) => {
 												'0x13881': 'MATIC'
 											}[walletController.getNetworkID()]}
 										</Typography>
-										<Typography sx={{fontSize: '13px', lineHeight: 1.2, opacity: .5}} size="small">
+										<Typography sx={{ fontSize: '13px', lineHeight: 1.2, opacity: .5 }} size="small">
 											{state.walletAddress.substring(0, 4)}...
 											{state.walletAddress.slice(-3)} {{
 												'solana': '(Solana)',
@@ -162,20 +153,25 @@ const Navbar = ({ pageName }) => {
 											/>
 										)}
 									</Box>
-									
+
 									<Box>
-										<KeyboardArrowDownIcon sx={{fontSize: '16px'}} />
+										<KeyboardArrowDownIcon sx={{ fontSize: '16px' }} />
 									</Box>
 								</Stack>
+
 						</Box>
 							) : (
 								<Button
 									variant="contained"
 									size="small"
+									startIcon={<AccountBalanceWalletIcon/>}
 									sx={{
 										width: '260px',
-										height: '49px'
+										height: '49px',
+										color: 'white',
+										borderRadius: '5px',
 									}}
+									color="black"
 									onClick={async () => {
 										const curentWalletType = window.localStorage.getItem('ambition-wallet');
 										await walletController.loadWalletProvider(curentWalletType)
@@ -190,12 +186,13 @@ const Navbar = ({ pageName }) => {
 									Connect wallet
 								</Button>
 							)}
+
 						<Menu
 							id="account-menu"
 							anchorEl={anchorEl}
 							open={open}
 							onClose={() => setAnchorEl(null)}
-							sx={{mt: 1}}
+							sx={{ mt: 1 }}
 							anchorOrigin={{
 								vertical: 'bottom',
 								horizontal: 'center',
@@ -204,23 +201,23 @@ const Navbar = ({ pageName }) => {
 								vertical: 'top',
 								horizontal: 'center',
 							}}>
-							<Box sx={{ width: '260px', borderRadius: '8px'}}>
+							<Box sx={{ width: '260px', borderRadius: '8px' }}>
 								<Stack px={2} py={1} direction="row" gap={1}>
-									<Typography sx={{fontWeight: 'bold'}}>
+									<Typography sx={{ fontWeight: 'bold' }}>
 										Personal Wallet
 									</Typography>
-									<Chip label="CONNECTED" color="success" size="small" sx={{fontSize: '12px'}} />
+									<Chip label="CONNECTED" color="success" size="small" sx={{ fontSize: '12px' }} />
 								</Stack>
 
 								<MenuItem component={Link} to="/billing">
 									<ListItemIcon>
-										<AccountBalanceWalletIcon sx={{fontSize: '16px'}} />
+										<AccountBalanceWalletIcon sx={{ fontSize: '16px' }} />
 									</ListItemIcon>
 									<ListItemText primary="Billing" />
 								</MenuItem>
 								<MenuItem onClick={logout}>
 									<ListItemIcon>
-										<LogoutIcon sx={{fontSize: '16px'}} />
+										<LogoutIcon sx={{ fontSize: '16px' }} />
 									</ListItemIcon>
 									<ListItemText primary="Disconnect" />
 								</MenuItem>

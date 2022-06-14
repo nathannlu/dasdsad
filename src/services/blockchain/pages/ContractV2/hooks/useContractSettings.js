@@ -82,7 +82,7 @@ export const useContractSettings = () => {
 			}
 
 			if (metadataUrl.value.indexOf('ipfs://') === -1) {
-				throw new Error('Invalid Metadata url!');
+				throw new Error('Invalid Metadata url! Url must start with "ipfs://" and end with a "/".');
 			}
 
 			setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
@@ -115,10 +115,12 @@ export const useContractSettings = () => {
 			return;
 		}
 
+		/*
 		if (!price || price === 0) {
 			addToast({ severity: 'error', message: `max per wallet can't be zero` });
 			return;
 		}
+		*/
 
 		const web3 = window.web3;
 		const priceInWei = web3.utils.toWei(`${price}`);
