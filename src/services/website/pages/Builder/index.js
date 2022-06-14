@@ -18,6 +18,7 @@ const App = (props) => {
     const { title, pageName } = props.match.params; // Used to query DB for page data
 
 
+
     // Update old websites
     useEffect(() => {
         if (website && !Object.keys(website).length > 0) return;
@@ -25,11 +26,13 @@ const App = (props) => {
             await updateOldWebsites();
         };
         update();
-    }, [websites]);
+			console.log(website)
+    }, [website, websites]);
 
     // Load website data on load
     useEffect(() => {
         const w = websites.find((website) => website.title == title);
+			console.log(w)
 				setWebsite(w)
 
         if (w && !Object.keys(w).length > 0) return;
