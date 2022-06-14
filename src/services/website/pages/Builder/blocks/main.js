@@ -48,7 +48,6 @@ import StatsATemplate from './Stats/a';
 import StatsBTemplate from './Stats/b';
 import StatsCTemplate from './Stats/c';
 
-import BAYC from './BAYC';
 import BAYCa from './BAYC/a';
 import BAYCb from './BAYC/b';
 import BAYCc from './BAYC/c';
@@ -78,7 +77,6 @@ const templatesArray = [
     { key: 'Footer_A', template: FooterATemplate, defaults: FooterAProps },
     { key: 'Header_A', template: NavATemplate, defaults: NavAProps },
 
-    { key: 'BAYC', template: BAYC },
 	{ key: 'BAYC_a', template: BAYCa, defaults: BAYCAProps },
 	{ key: 'BAYC_b', template: BAYCb, defaults: BAYCBProps },
 	{ key: 'BAYC_c', template: BAYCc, defaults: BAYCCProps },

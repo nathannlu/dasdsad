@@ -24,6 +24,11 @@ import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 
+const templates = [
+	{ title: 'Blank', value: 'BLANK' },
+	{ title: 'BAYC', value: 'BAYC' },
+];
+
 const Website = (props) => {
     const [contracts, setContracts] = useState([]);
     const [websiteTitle, setWebsiteTitle] = useState('');
@@ -31,10 +36,12 @@ const Website = (props) => {
     const [selectInput, setSelectInput] = useState('Select your contract');
     const { addToast } = useToast();
     const history = useHistory();
+	const [selectedTemplate, setSelectedTemplate] = useState(templates[0].value);
 
     const [createWebsite] = useCreateWebsite({
         title: websiteTitle.toLowerCase(),
         contractAddress: selectInput,
+				template: selectedTemplate == templates[1].value ? 'BAYC' : null,
         onCompleted: (data) => {
             addToast({
                 severity: 'success',
@@ -52,7 +59,6 @@ const Website = (props) => {
         }
     });
 
-	/*
     useGetContracts({
         onCompleted: (data) => {
 					console.log(data)
@@ -65,7 +71,6 @@ const Website = (props) => {
             setSelectInput(availableContracts[0].address);
         },
     });
-		*/
 
     const onSubmit = () => {
         try {
@@ -180,16 +185,26 @@ const Website = (props) => {
 															Choose a starting template
                             </FormLabel>
 													<Grid container>
-														<Grid p={1} item xs={3}>
-															<Card sx={{height: '250px'}}>
-																Blank
-															</Card>
-														</Grid>
-														<Grid p={1} item xs={3}>
-															<Card sx={{height: '250px'}}>
-																BAYC
-															</Card>
-														</Grid>
+														{templates.map(template => (
+															<Grid p={1} item xs={3}>
+																<Card 
+																	onClick={() => setSelectedTemplate(template.value)}
+																	sx={{
+																		height: '250px', 
+																		border: selectedTemplate == template.value ? '1px solid blue' : null,
+																		transition: 'all .2s',
+																		alignItems:"center",
+																		justifyContent:"center",
+																		display: 'flex'
+																	}}
+																>
+																	<Typography sx={{fontWeight: 'bold'}}>
+																		{template.title}
+																	</Typography>
+																</Card>
+															</Grid>
+														))}
+
 													</Grid>
                         </Stack>
 

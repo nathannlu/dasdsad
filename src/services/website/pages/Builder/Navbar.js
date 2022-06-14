@@ -63,6 +63,11 @@ const Navbar = () => {
             }),
     });
 
+	useEffect(() => {
+		console.log(website)
+	}, [website])
+
+
     useGetWebsites();
 
     const onSuccessPayment = async (data) => {
@@ -83,9 +88,12 @@ const Navbar = () => {
     return (
         <Fade in>
 					<div className="fixed w-full z-10 shadow-lg items-center">
-						<Alert className="">
-							asd
-						</Alert>
+						{!website?.settings?.connectedContractAddress || website?.settings?.connectedContractAddress == 'Select your contract' ? (
+							<Alert severity="warning" sx={{justifyContent: 'center'}}>
+								You do not have your smart contract connected. Please go to <span onClick={goToSettings} style={{textDecoration: 'underline', cursor: 'pointer' }}>settings</span> to connect.
+							</Alert>
+						) : null}
+
             <Box
                 className="flex"
                 sx={{ bgcolor: 'rgba(255, 255, 255, 0.9)', height: '64px' }}>

@@ -53,18 +53,12 @@ const App = (props) => {
             <Viewport page={page}>
                 {enabled && (
                     <Frame data={websiteData}>
-												<Element is={templates.Container} canvas>
-													<templates.BAYC_nav />
-													<templates.BAYC_hero />
-													<templates.BAYC_a />
-													<templates.BAYC_b />
-													<templates.BAYC_c />
-													<templates.BAYC_d />
-													<templates.BAYC_footer />
-												</Element>
-											{/*
-											<BAYCStarter />
-											*/}
+													<Element is={templates.Container} canvas>
+			<templates.Header_A />
+			<templates.Hero_A />
+			<templates.Feature_A />
+			<templates.Footer_A />
+		</Element>
                     </Frame>
                 )}
             </Viewport>

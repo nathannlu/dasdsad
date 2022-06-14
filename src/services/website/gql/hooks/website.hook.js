@@ -56,6 +56,7 @@ export const useGetPublished = ({ title, onCompleted }) => {
 export const useCreateWebsite = ({
     title,
     contractAddress,
+	template,
     onCompleted,
     onError,
 }) => {
@@ -65,6 +66,7 @@ export const useCreateWebsite = ({
         variables: {
             title,
             contractAddress,
+					template,
         },
         onCompleted: (data) => {
             setWebsite(data?.createWebsite);
