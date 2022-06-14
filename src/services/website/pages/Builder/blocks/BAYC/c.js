@@ -2,8 +2,9 @@ import React from 'react';
 
 const BAYCc = (props) => {
 	return (
-		<div className="container mx-auto flex flex-wrap">
+		<div style={{backgroundColor: props.background.value}}>
 			<section
+				className="container mx-auto flex flex-wrap"
 				style={{
 					backgroundColor: props.background.value,
 					color: props.color.value,

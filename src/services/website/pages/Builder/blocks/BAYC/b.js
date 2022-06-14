@@ -3,8 +3,8 @@ import React from 'react';
 const BAYCb = (props) => {
 	
 	return (
-										<section className="container mx-auto py-12 px-8 flex flex-wrap" style={{ background: props.background.value }}>
-														
+										<section style={{ background: props.background.value }}>
+														<div className="container mx-auto py-12 px-8 flex flex-wrap">
 									<div className="mb-4 w-full">
 										<h2 style={{color: props.titleColor.value, fontWeight: 500, fontStyle: 'italic', fontSize: '24px'}}>
 											{props.title.value}
@@ -23,6 +23,7 @@ const BAYCb = (props) => {
 											{props.contentB.value}
 										</p>
 									</div>
+														</div>
 								</section>
 	)
 };

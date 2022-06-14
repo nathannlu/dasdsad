@@ -2,8 +2,10 @@ import React from 'react';
 
 const BAYChero = (props) => {
 	return (
-		<header className="container mx-auto" style={{background: props.background.value}}>
-			<img src={props.image.value} />
+		<header style={{background: props.background.value}}>
+			<div className="container mx-auto">
+				<img src={props.image.value} />
+			</div>
 		</header>
 
 
