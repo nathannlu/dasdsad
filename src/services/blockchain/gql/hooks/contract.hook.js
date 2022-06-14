@@ -63,7 +63,7 @@ export const useGetContracts = async ({ onCompleted, onError }) => {
 
             onCompleted && onCompleted(data);
 
-//					 setFetchContractLoading(false);
+					 setFetchContractLoading(false);
 
         },
     });
