@@ -1,17 +1,17 @@
 import React from 'react';
 
-const BAYCfooter = () => {
+const BAYCfooter = (props) => {
 	return (
-									<footer className="px-8 py-8">
+		<footer className="px-8 py-8" style={{background: props.background.value}}>
 								<hr style={{background: 'white'}} />
 								<div className="flex flex-wrap items-center">
 									<div className="text-left" style={{width: '180px'}}>
-										<img src="https://ik.imagekit.io/bayc/assets/bayc-footer.png" />
+										<img src={props.logo.value} />
 									</div>
 
 									<div className="ml-auto text-right">
 										<small>
-											© 2021 Yuga Labs LLC
+											{props.copyright.value}
 										</small>
 									</div>
 								</div>

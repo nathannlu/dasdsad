@@ -4,18 +4,21 @@ const BAYCa = (props) => {
 	return (
 		<section
 			className="container mx-auto flex flex-wrap py-12 px-8"
-			style={{ background: props.background.value, color: props.color.value }}>
+			style={{ background: props.background.value }}>
 			<div className="w-2/3 pr-32">
 				<h2
 					style={{
 						fontStyle: 'italic',
 						fontWeight: 900,
 						fontSize: '28px',
+						color: props.titleColor.value
 					}}
 					className="mb-4">
 					{props.title.value}
 				</h2>
-				<p>
+				<p style={{
+					color: props.paragraphColor.value
+				}}>
 					{props.content.value}
 				</p>
 			</div>

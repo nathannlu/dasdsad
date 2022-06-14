@@ -1,30 +1,29 @@
 import React from 'react';
 
-const BAYCb = () => {
+const BAYCb = (props) => {
 	
 	return (
-										<section className="container mx-auto py-12 px-8 flex flex-wrap">
+										<section className="container mx-auto py-12 px-8 flex flex-wrap" style={{ background: props.background.value }}>
+														
 									<div className="mb-4 w-full">
-										<h2 style={{color: '#bfc500', fontWeight: 500, fontStyle: 'italic', fontSize: '24px'}}>
-											FAIR DISTRIBUTION
+										<h2 style={{color: props.titleColor.value, fontWeight: 500, fontStyle: 'italic', fontSize: '24px'}}>
+											{props.title.value}
 										</h2>
-										<h3>
-											(BONDING CURVES ARE A PONZI)
+										<h3 style={{color: props.paragraphColor.value}}>
+											{props.subtitle.value}
 										</h3>
 									</div>
 									<div className="w-1/2">
-										<p>
-											There are no bonding curves here. Buying a Bored Ape costs 0.08 ETH. There are no price tiers; BAYC membership costs the same for everyone.
+										<p style={{color: props.paragraphColor.value}}>
+											{props.contentA.value}
 										</p>
 									</div>
 									<div className="w-1/2 pl-4">
-										<p>
-											Note: Thirty apes are being withheld from the sale. These will be used for giveaways, puzzle rewards—and for the creators' BAYC memberships.
+										<p style={{color: props.paragraphColor.value}}>
+											{props.contentB.value}
 										</p>
 									</div>
 								</section>
-
-		
 	)
 };
 

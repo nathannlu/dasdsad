@@ -1,10 +1,10 @@
 import React from 'react';
 
-const BAYChero = () => {
+const BAYChero = (props) => {
 	return (
-									<header className="container mx-auto">
-								<img src="https://ik.imagekit.io/bayc/assets/bayc-mutant-hero.jpg" />
-							</header>
+		<header className="container mx-auto" style={{background: props.background.value}}>
+			<img src={props.image.value} />
+		</header>
 
 
 	)

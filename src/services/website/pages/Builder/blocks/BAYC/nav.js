@@ -1,10 +1,10 @@
 import React from 'react';
 
-const BAYCnav = () => {
+const BAYCnav = (props) => {
 	return (
-						<nav className="w-full">
+		<nav className="w-full" style={{background: props.background.value}}>
 					<div>
-						<img style={{height: '75px'}} src="https://ik.imagekit.io/bayc/assets/bayc-logo-z.png" />
+						<img style={{height: '75px'}} src={props.logo.value} />
 					</div>
 				</nav>
 	)
