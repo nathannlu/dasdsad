@@ -9,6 +9,7 @@ import {
     Checkbox,
     Typography,
     Divider,
+	Alert,
 } from '@mui/material';
 import { useWebsite } from 'services/website/provider';
 import {
@@ -62,6 +63,11 @@ const Navbar = () => {
             }),
     });
 
+	useEffect(() => {
+		console.log(website)
+	}, [website])
+
+
     useGetWebsites();
 
     const onSuccessPayment = async (data) => {
@@ -81,9 +87,18 @@ const Navbar = () => {
 
     return (
         <Fade in>
+					<div className="fixed w-full z-10 shadow-lg items-center">
+						{!website?.settings?.connectedContractAddress || website?.settings?.connectedContractAddress == 'Select your contract' ? (
+							<Alert severity="warning" sx={{justifyContent: 'center'}}>
+								You do not have your smart contract connected. Please go to <span onClick={goToSettings} style={{textDecoration: 'underline', cursor: 'pointer' }}>settings</span> to connect.
+							</Alert>
+						) : null}
+
             <Box
-                className="w-full flex z-10 fixed shadow-lg items-center"
+                className="flex"
                 sx={{ bgcolor: 'rgba(255, 255, 255, 0.9)', height: '64px' }}>
+
+
                 <div className="container mx-auto flex flex-wrap items-center">
                     <Box>
                         <a href="/websites">
@@ -219,6 +234,7 @@ const Navbar = () => {
                     </Stack>
                 </div>
             </Box>
+					</div>
         </Fade>
     );
 };
