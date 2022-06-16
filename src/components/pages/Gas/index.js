@@ -82,7 +82,7 @@ const Gas = () => {
                                     </FormGroup>
                                 </Stack>
                                 <Typography fontSize='10pt'>
-                                    Estimates calculated at {gasBaseFee?.solana} gwei and the SOL price of ${priceUSD?.solana}
+                                    Estimates calculated at the SOL price of ${priceUSD?.solana}
                                 </Typography>
                                 <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px' maxWidth='300px'>
                                     <Typography fontWeight='bold'>
