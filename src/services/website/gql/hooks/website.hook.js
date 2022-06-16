@@ -25,12 +25,13 @@ import {
 import { REAUTHENTICATE } from 'gql/users.gql';
 
 export const useGetWebsites = () => {
-    const { setWebsite } = useWebsite();
+    const { setWebsites, setWebsite } = useWebsite();
 
     const { ...queryResult } = useQuery(GET_WEBSITES, {
         onCompleted: (data) => {
-            setWebsite(data?.getWebsites[0]);
-            //console.log(data.getWebsites[0])
+            setWebsites(data?.getWebsites);
+//					setWebsite(data?.getWebsites[0]);
+//            console.log(data.getWebsites[0])
         },
     });
 
@@ -55,6 +56,7 @@ export const useGetPublished = ({ title, onCompleted }) => {
 export const useCreateWebsite = ({
     title,
     contractAddress,
+	template,
     onCompleted,
     onError,
 }) => {
@@ -64,6 +66,7 @@ export const useCreateWebsite = ({
         variables: {
             title,
             contractAddress,
+					template,
         },
         onCompleted: (data) => {
             setWebsite(data?.createWebsite);
