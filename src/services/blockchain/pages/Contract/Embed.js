@@ -2,11 +2,14 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Box, Button, Stack, TextField, Typography } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 import React, { useEffect, useState } from 'react';
+import { useEmbedBttonStyling } from './hooks/useEmbedBttonStyling';
 
 const Embed = ({ contract, id }) => {
     const { addToast } = useToast();
     const [embedCode, setEmbedCode] = useState('');
     const [customEmbedCode, setCustomEmbedCode] = useState('');
+
+    const { getCssString } = useEmbedBttonStyling(contract, id);
 
     const copyEmbedCode = () => {
         navigator.clipboard.writeText(embedCode);
@@ -36,22 +39,15 @@ const Embed = ({ contract, id }) => {
             "details": "details"
         };
 
-        const css = `
-            .connect-button {
-                /* background-color: red !important; */
-            }
-            .mint-button {}
-            .details-container {}
-            .details {}
-        `;
+        const css = getCssString(contract?.embed?.css && JSON.parse(contract?.embed.css) || undefined);
 
         setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contractAddress}" type="${contractType}" classes='${JSON.stringify(classes)}'></ambition-button>
         <script defer="defer" src="${bundleUrl}"></script>
         <style>${css}</style>`);
 
         setCustomEmbedCode(`
-            const onload = () => {
-                const iframe = document.getElementById('#iframe').contentWindow.document;
+            function handleOnLoad() {
+                const iframe = document.getElementById('iframe').contentWindow.document;
                 const ambitionButton = document.createElement("ambition-button");
 
                 const chainid = document.createAttribute("chainid");
@@ -143,7 +139,7 @@ const Embed = ({ contract, id }) => {
                         rows={1}
                         multiline={true}
                         InputProps={{ readOnly: true }}
-                        value={`<iframe width="320" id="iframe" scrolling="no" frameBorder="0" onLoad={onload}></iframe>`}
+                        value={`<iframe width="320" id="iframe" scrolling="no" frameBorder="0" onload="handleOnLoad()"></iframe>`}
                     />
                     <Typography variant="p" sx={{ fontStyle: 'italic' }} color="gray">
                         **Copy aove the iframe code in html where you want to load the embed button

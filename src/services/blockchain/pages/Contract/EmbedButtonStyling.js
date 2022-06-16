@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Box, Button, Stack, TextField, Typography } from 'ds/components';
 import Accordion from '@mui/material/Accordion';
@@ -13,14 +13,20 @@ const EmbedButtonStyling = ({ contract, id }) => {
     const {
         cssContext,
         onChange,
-        loadEmbedButtonIframe,
-        save
+        handleIframeOnLoad,
+        save,
+        setCssContext
     } = useEmbedBttonStyling(contract, id);
 
     const [expanded, setExpanded] = React.useState(false);
     const handleChange = (panel) => (event, isExpanded) => setExpanded(isExpanded ? panel : false);
 
-    console.log(cssContext);
+    useEffect(() => {
+        if (contract?.embed?.css) {
+            setCssContext(JSON.parse(contract?.embed?.css));
+            setTimeout(() => handleIframeOnLoad(), 500);
+        }
+    }, []);
 
     return (
         <Stack gap={2} alignItems="flex-start">
@@ -28,7 +34,7 @@ const EmbedButtonStyling = ({ contract, id }) => {
                 Embed Button Styling
             </Typography>
 
-            {contract && <iframe width="100%" id="embed-button-iframe" scrolling="no" frameBorder="0" onLoad={loadEmbedButtonIframe} /> || <CircularProgress />}
+            {contract && <iframe width="100%" id="embed-button-iframe" scrolling="no" frameBorder="0" onLoad={handleIframeOnLoad} /> || <CircularProgress />}
 
             {Object.keys(cssContext).map(key => {
                 const accordionLabel = key.replace(/-/g, " ");
@@ -62,7 +68,7 @@ const EmbedButtonStyling = ({ contract, id }) => {
             })}
 
             <Grid container={true} justifyContent="flex-end" gap={4}>
-                <Button size="small" color="secondary" variant="contained" onClick={loadEmbedButtonIframe}>View Changes</Button>
+                <Button size="small" color="secondary" variant="contained" onClick={handleIframeOnLoad}>View Changes</Button>
                 <Button size="small" color="primary" variant="contained" onClick={save}>Save</Button>
             </Grid>
         </Stack>

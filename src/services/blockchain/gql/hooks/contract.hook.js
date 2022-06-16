@@ -207,7 +207,7 @@ export const useSetEmbedButtonCss = ({ onCompleted, onError }) => {
                     if (contract.id == updated.id) {
                         return {
                             ...contract,
-                            embed: { ...contract.embed, css: JSON.parse(updated.embed.css) }
+                            embed: { ...contract.embed, ...updated.embed }
                         };
                     }
                     return contract;

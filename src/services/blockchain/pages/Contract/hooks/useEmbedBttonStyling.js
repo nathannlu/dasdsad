@@ -3,38 +3,39 @@ import { useToast } from 'ds/hooks/useToast';
 import { useSetEmbedButtonCss } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getBlockchainChainId } from '@ambition-blockchain/controllers';
 
-const DEFAULT_STYLES = {
+// elementType: 'button' | undefined; 
+const DEFAULT_STYLES = (elementType) => ({
     backgroundColor: {
         value: undefined,
         type: 'color',
-        label: 'Button Color'
+        label: elementType === 'button' && 'Button Color' || 'Background Color'
     },
     color: {
         value: undefined,
         type: 'color',
-        label: 'Button Text Color'
+        label: elementType === 'button' && 'Button Text Color' || 'text Color'
     },
     fontSize: {
         value: undefined,
         type: 'number',
-        label: 'Button Text Size'
+        label: elementType === 'button' && 'Button Text Size' || 'Text Size'
     },
     borderRadius: {
         value: undefined,
         type: 'number',
         label: 'Corner Radius'
     },
-    px: {
+    mx: {
         value: undefined,
         type: 'number',
         label: 'Horizontal Spacing'
     },
-    py: {
+    my: {
         value: undefined,
         type: 'number',
         label: 'Vertical Spacing'
     }
-}
+});
 
 export const useEmbedBttonStyling = (contract, id) => {
     const { addToast } = useToast();
@@ -42,10 +43,10 @@ export const useEmbedBttonStyling = (contract, id) => {
 
     const [state, setState] = useState({
         cssContext: {
-            'connect-button': { ...DEFAULT_STYLES },
-            'mint-button': { ...DEFAULT_STYLES },
-            'details-container': { ...DEFAULT_STYLES },
-            'details': { ...DEFAULT_STYLES }
+            'connect-button': { ...DEFAULT_STYLES('button') },
+            'mint-button': { ...DEFAULT_STYLES('button') },
+            'details-container': { ...DEFAULT_STYLES() },
+            'details': { ...DEFAULT_STYLES() }
         }
     });
 
@@ -75,7 +76,44 @@ export const useEmbedBttonStyling = (contract, id) => {
         setEmbedButtonCss({ variables: { id, css: JSON.stringify(state.cssContext) } });
     }
 
-    const loadEmbedButtonIframe = () => {
+    const getCssString = (cssContext) => {
+        return `
+            .connect-button {
+                background-color: ${cssContext?.['connect-button']?.['backgroundColor']?.['value']} !important; 
+                color: ${cssContext?.['connect-button']?.['color']?.['value']} !important; 
+                font-size: ${cssContext?.['connect-button']?.['fontSize']?.['value']}px !important; 
+                border-radius: ${cssContext?.['connect-button']?.['borderRadius']?.['value']}px !important; 
+                margin: ${cssContext?.['connect-button']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+            }
+            .mint-button {
+                background-color: ${cssContext?.['mint-button']?.['backgroundColor']?.['value']} !important; 
+                color: ${cssContext?.['mint-button']?.['color']?.['value']} !important; 
+                font-size: ${cssContext?.['mint-button']?.['fontSize']?.['value']}px !important; 
+                border-radius: ${cssContext?.['mint-button']?.['borderRadius']?.['value']}px !important; 
+                margin: ${cssContext?.['mint-button']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+            }
+            .details-container {
+                background-color: ${cssContext?.['details-container']?.['backgroundColor']?.['value']} !important; 
+                color: ${cssContext?.['details-container']?.['color']?.['value']} !important; 
+                font-size: ${cssContext?.['details-container']?.['fontSize']?.['value']}px !important; 
+                border-radius: ${cssContext?.['details-container']?.['borderRadius']?.['value']}px !important; 
+                margin: ${cssContext?.['details-container']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+            }
+            .details {
+                background-color: ${cssContext?.['details']?.['backgroundColor']?.['value']} !important; 
+                color: ${cssContext?.['details']?.['color']?.['value']} !important; 
+                font-size: ${cssContext?.['details']?.['fontSize']?.['value']}px !important; 
+                border-radius: ${cssContext?.['details']?.['borderRadius']?.['value']}px !important; 
+                margin: ${cssContext?.['details']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+            }
+
+            .details p,
+            .details p b {
+                color: inherit !important;
+            }
+        `};
+
+    const handleIframeOnLoad = () => {
         const iframeElement = document.getElementById('embed-button-iframe');
         if (!iframeElement) {
             return;
@@ -84,16 +122,16 @@ export const useEmbedBttonStyling = (contract, id) => {
         const iframe = iframeElement?.contentWindow.document;
         const ambitionButton = document.createElement("ambition-button");
 
+        const renderLogo = document.createAttribute("renderlogo");
         const chainid = document.createAttribute("chainid");
         const contractaddress = document.createAttribute("contractaddress");
         const type = document.createAttribute("type");
-        const renderLogo = document.createAttribute("renderlogo");
         const classes = document.createAttribute("classes");
 
+        renderLogo.value = "false";
         chainid.value = getBlockchainChainId(contract?.blockchain);
         contractaddress.value = contract?.address;
         type.value = contract?.type;
-        renderLogo.value = "false";
         classes.value = JSON.stringify({
             'connect-button': 'connect-button',
             'mint-button': 'mint-button',
@@ -112,24 +150,7 @@ export const useEmbedBttonStyling = (contract, id) => {
         script.src = "https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js";
 
         const style = document.createElement('style');
-        const css = `
-            .connect-button {
-                background-color: ${state.cssContext['connect-button']['backgroundColor']['value']} !important; 
-                color: ${state.cssContext['connect-button']['color']['value']} !important; 
-                font-size: ${state.cssContext['connect-button']['fontSize']['value']}px !important; 
-                border-radius: ${state.cssContext['connect-button']['borderRadius']['value']}px !important; 
-                margin: ${state.cssContext['connect-button']['py']['value'] || 0}px ${state.cssContext['connect-button']['px']['value'] || 0}px !important; 
-            }
-            .mint-button {
-                background-color: ${state.cssContext['mint-button']['backgroundColor']['value']} !important; 
-                color: ${state.cssContext['mint-button']['color']['value']} !important; 
-                font-size: ${state.cssContext['mint-button']['fontSize']['value']}px !important; 
-                border-radius: ${state.cssContext['mint-button']['borderRadius']['value']}px !important; 
-                margin: ${state.cssContext['mint-button']['py']['value'] || 0}px ${state.cssContext['connect-button']['px']['value'] || 0}px !important; 
-            }
-            .details-container {}
-            .details {}
-        `;
+        const css = getCssString(state.cssContext);
 
         if (style.styleSheet) {
             style.styleSheet.cssText = css;
@@ -160,11 +181,15 @@ export const useEmbedBttonStyling = (contract, id) => {
         }))
     };
 
+    const setCssContext = (cssContext) => setState(prevState => ({ ...prevState, cssContext: { ...prevState.cssContext, ...cssContext } }));
+
     return {
         ...state,
-        loadEmbedButtonIframe,
+        setCssContext,
+        handleIframeOnLoad,
         save,
-        onChange
+        onChange,
+        getCssString
     };
 };
 
