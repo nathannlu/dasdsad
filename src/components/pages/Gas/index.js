@@ -7,6 +7,9 @@ import { useGas } from './hooks/useGas'
 
 const Gas = () => {
     const { 
+        gasBaseFee,
+        priceUSD,
+        estimates,
         isEthUsd,
         setIsEthUsd,
         isSolUsd,
@@ -28,54 +31,72 @@ const Gas = () => {
                     <Typography as='h1' fontSize='2rem'>
                         Gas Estimator
                     </Typography>
-                    <Typography fontSize='10pt'>
-                        Estimates calculated at 34 gwei and the ETH price of $1455.27.
-                    </Typography>
                     <Box display='flex' flexDirection='column' mt='.5em'>
                         <Stack spacing='1em' direction='row' alignItems='center' mt='1em'>
                             <Stack spacing='1em'>
                                 <Stack direction='row' spacing='1em' alignItems='center'>
                                     <Chip label="Ethereum (ERC721A)" />
                                     <FormGroup>
-                                        <FormControlLabel control={<Switch value={isEthUsd} onChange={(e) => setIsEthUsd(e.target.value)} />} label="to USD" />
+                                        <FormControlLabel control={<Switch checked={isEthUsd} onChange={(e) => setIsEthUsd(e.target.checked)} />} label="in USD" />
                                     </FormGroup>
                                 </Stack>
-                                <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px'>
+                                <Typography fontSize='10pt'>
+                                    Estimates calculated at {gasBaseFee?.ethereum} gwei and the ETH price of ${priceUSD?.ethereum}
+                                </Typography>
+                                <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px' maxWidth='300px'>
                                     <Typography fontWeight='bold'>
                                         NFT Collection
                                     </Typography>
-                                    <Stack direction='row' alignItems='center' spacing='.5em'>
-                                        <GrCircleInformation />
+                                    <Stack direction='row' alignItems='center' spacing='.5em' justifyContent='space-between'>
+                                        <Stack direction='row' alignItems='center' spacing='.5em'>
+                                            <GrCircleInformation />
+                                            <Typography fontSize='10pt'>
+                                                Contract creation:
+                                            </Typography>
+                                        </Stack>
                                         <Typography fontSize='10pt'>
-                                            Contract creation: 
+                                            {isEthUsd ? `$${estimates?.ethereum?.contractCreation?.usd} USD` : `${estimates?.ethereum?.contractCreation?.eth} ETH`}
                                         </Typography>
                                     </Stack>
-                                    <Stack direction='row' alignItems='center' spacing='.5em'>
-                                        <GrCircleInformation />
+                                    <Stack direction='row' alignItems='center' spacing='.5em' justifyContent='space-between'>
+                                        <Stack direction='row' alignItems='center' spacing='.5em'>
+                                            <GrCircleInformation />
+                                            <Typography fontSize='10pt'>
+                                                Mint fees:
+                                            </Typography>
+                                        </Stack>
                                         <Typography fontSize='10pt'>
-                                            Mint fees:
+                                            {isEthUsd ? `$${estimates?.ethereum?.mintFees?.usd} USD` : `${estimates?.ethereum?.mintFees?.eth} ETH`}
                                         </Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
                         </Stack>
 
-                        <Stack spacing='1em' direction='row' alignItems='center' mt='1.5em'>
+                        <Stack spacing='1em' direction='row' alignItems='center' mt='2em'>
                             <Stack spacing='1em'>
                                 <Stack direction='row' spacing='1em' alignItems='center'>
                                     <Chip label="Solana" />
                                     <FormGroup>
-                                        <FormControlLabel control={<Switch value={isSolUsd} onChange={(e) => setIsSolUsd(e.target.value)} />} label="to USD" />
+                                        <FormControlLabel control={<Switch checked={isSolUsd} onChange={(e) => setIsSolUsd(e.target.checked)} />} label="in USD" />
                                     </FormGroup>
                                 </Stack>
-                                <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px'>
+                                <Typography fontSize='10pt'>
+                                    Estimates calculated at {gasBaseFee?.solana} gwei and the SOL price of ${priceUSD?.solana}
+                                </Typography>
+                                <Stack spacing='.75em' padding='1.5em' bgcolor='rgb(245,245,245)' border='1px solid #e2e8f0' borderRadius='10px' maxWidth='300px'>
                                     <Typography fontWeight='bold'>
                                         NFT Collection
                                     </Typography>
-                                    <Stack direction='row' alignItems='center' spacing='.5em'>
-                                        <GrCircleInformation />
+                                    <Stack direction='row' alignItems='center' spacing='.5em' justifyContent='space-between'>
+                                        <Stack direction='row' alignItems='center' spacing='.5em'>
+                                            <GrCircleInformation />
+                                            <Typography fontSize='10pt'>
+                                                Deployment rent:
+                                            </Typography>
+                                        </Stack>
                                         <Typography fontSize='10pt'>
-                                            Deployment rent: 
+                                            {isSolUsd ? `$${estimates?.solana?.deploymentRent?.usd} USD` : `${estimates?.solana?.deploymentRent?.sol} SOL`}
                                         </Typography>
                                     </Stack>
                                 </Stack>
