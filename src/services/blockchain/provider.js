@@ -90,7 +90,7 @@ export const ContractProvider = ({ children }) => {
         loading,
         setLoading,
 			fetchContractLoading,
-			setFetchContractLoading,
+									setFetchContractLoading,
         activeStep,
         setActiveStep,
         start,

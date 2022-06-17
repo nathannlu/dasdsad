@@ -93,7 +93,9 @@ export const Settings = () => {
         }
     };
 
+	// adds new feature item
     const addItem = (key) => {
+			console.log(key)
         let newObj;
         if (key === 'features') {
             newObj = {

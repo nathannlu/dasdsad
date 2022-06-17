@@ -20,4 +20,7 @@ export default {
     company: {
         walletAddress: '0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166',
     },
+    etherscan: {
+        key: 'UI9IGQR2RXFAUKDYHMEXFEVT1GKPX8JIYY'
+    }
 };

@@ -53,7 +53,7 @@ export const useDeleteContract = ({ onCompleted, onError }) => {
 };
 
 export const useGetContracts = async ({ onCompleted, onError }) => {
-    const { setContracts, setFetchContractLoading } = useContract();
+    const { setContracts, setFetchContractLoading, } = useContract();
 
     const { ...queryResult } = useQuery(GET_CONTRACTS, {
         fetchPolicy: 'network-only',
@@ -64,7 +64,9 @@ export const useGetContracts = async ({ onCompleted, onError }) => {
 
             onCompleted && onCompleted(data);
 
+
             setFetchContractLoading(false);
+
 
         },
     });

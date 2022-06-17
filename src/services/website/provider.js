@@ -20,6 +20,7 @@ export const useWebsite = () => useContext(WebsiteContext);
 export const WebsiteProvider = ({ children }) => {
     const { addToast } = useToast();
     const [website, setWebsite] = useState({});
+    const [websites, setWebsites] = useState([]);
     const [imagePlaceHolders, setImagePlaceHolders] = useState([
         'https://via.placeholder.com/',
         'https://dummyimage.com/',
@@ -68,16 +69,24 @@ export const WebsiteProvider = ({ children }) => {
         getABIFunctions();
     }, [website])
 
+
+		const getWebsite = (title) => {
+        return websites?.find((website) => website.title == title);
+    };
+
     const getWebsitePage = (pageName) => {
         return website?.pages.find((page) => page.name == pageName);
     };
 
     const onSave = async (query) => {
+            onSaveChanges(query);
+			/*
         if (!website.isSubscribed) {
             setIsCheckoutModalOpen(true);
         } else {
             onSaveChanges(query);
         }
+				*/
     };
 
     const onSaveChanges = async (query) => {
@@ -346,6 +355,8 @@ export const WebsiteProvider = ({ children }) => {
             value={{
                 website,
                 setWebsite,
+                websites,
+                setWebsites,
                 getWebsitePage,
                 deleteImage,
                 deleteImageBulk,

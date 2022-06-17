@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_WEBSITE = gql`
-    mutation CreateWebsite($title: String!, $contractAddress: String) {
-        createWebsite(title: $title, contractAddress: $contractAddress) {
+		mutation CreateWebsite($title: String!, $contractAddress: String, $template: String) {
+				createWebsite(title: $title, contractAddress: $contractAddress, template: $template) {
             author
             title
             isPublished

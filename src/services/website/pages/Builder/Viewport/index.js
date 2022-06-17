@@ -69,7 +69,7 @@ const Viewport = (props) => {
                                     null
                                 )
                             }>
-                            <div className="relative flex-col flex items-center pb-8 pt-24">
+                            <div className="relative flex-col flex items-center pb-8 pt-32">
                                 <div
                                     className="rounded-md shadow-lg overflow-hidden"
                                     style={{ width: '1200px' }}>

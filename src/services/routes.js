@@ -7,6 +7,7 @@ import Layout from 'components/layout/Layout';
 //import Generator from 'services/generator';
 import Blockchain from 'services/blockchain';
 import Website from 'services/website';
+import Gas from 'components/pages/Gas';
 
 import Payment from 'components/pages/Payments';
 
@@ -24,6 +25,7 @@ const AppRoutes = () => {
 
         { path: '/smart-contracts', component: Blockchain },
         { path: '/websites', component: Website },
+        { path: '/gas', component: Gas },
         /*
         {
             path: '/dashboard/settings',
