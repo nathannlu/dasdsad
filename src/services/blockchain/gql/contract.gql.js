@@ -11,6 +11,9 @@ export const CREATE_CONTRACT = gql`
             blockchain
             address
             isSubscribed
+            embed {
+                css
+            }
             nftCollection {
                 price
                 currency
@@ -91,6 +94,9 @@ export const GET_CONTRACTS = gql`
             blockchain
             address
             isSubscribed
+            embed {
+                css
+            }
             nftCollection {
                 price
                 currency
@@ -114,6 +120,9 @@ export const GET_CONTRACT = gql`
             author
             blockchain
             address
+            embed {
+                css
+            }
             nftCollection {
                 price
                 currency
@@ -190,6 +199,17 @@ export const SET_WHITELIST = gql`
                 baseUri
                 unRevealedBaseUri
                 whitelist
+            }
+        }
+    }
+`;
+
+export const SET_EMBED_BUTTON_CSS = gql`
+    mutation SetEmbedButtonCss($css: String!, $id: ID!) {
+        setEmbedButtonCss(css: $css, id: $id) {
+            id
+            embed {
+                css
             }
         }
     }

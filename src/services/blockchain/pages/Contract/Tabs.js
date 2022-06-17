@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Action from './Action';
 import Details from './Details';
 import Embed from './Embed';
+import EmbedButtonStyling from './EmbedButtonStyling';
 
 const View = ({ id, contract, renderError }) => {
     const [value, setValue] = React.useState('details');
@@ -26,6 +27,7 @@ const View = ({ id, contract, renderError }) => {
                     <Tab label="Details" value="details" />
                     <Tab label="Action" value="action" />
                     <Tab label="Embed" value="embed" />
+                    <Tab label="Embed Button Styling" value="embedButtonStyling" />
                 </Tabs>
             </Box>
             <Box py={2}>
@@ -34,6 +36,7 @@ const View = ({ id, contract, renderError }) => {
                         details: <Details id={id} contract={contract} renderError={renderError} />,
                         action: <Action id={id} contract={contract} />,
                         embed: <Embed id={id} contract={contract} />,
+                        embedButtonStyling: <EmbedButtonStyling id={id} contract={contract} />
                     }[value]
                 }
             </Box>

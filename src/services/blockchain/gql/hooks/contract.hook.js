@@ -9,7 +9,8 @@ import {
     SET_WHITELIST,
     GET_CONTRACT,
     DELETE_CONTRACT,
-    SET_NFT_PRICE
+    SET_NFT_PRICE,
+    SET_EMBED_BUTTON_CSS
 } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
@@ -63,7 +64,9 @@ export const useGetContracts = async ({ onCompleted, onError }) => {
 
             onCompleted && onCompleted(data);
 
-					 setFetchContractLoading(false);
+
+            setFetchContractLoading(false);
+
 
         },
     });
@@ -191,6 +194,34 @@ export const useSetWhitelist = ({ onCompleted, onError }) => {
     });
 
     return [setWhitelist, { ...mutationResult }];
+};
+
+export const useSetEmbedButtonCss = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+
+    const [setEmbedButtonCss, { ...mutationResult }] = useMutation(SET_EMBED_BUTTON_CSS, {
+        onCompleted: async (data) => {
+            const updated = data.setEmbedButtonCss;
+
+            // Find obj in arr and updated
+            setContracts((prevState) => {
+                const newState = prevState.map((contract) => {
+                    if (contract.id == updated.id) {
+                        return {
+                            ...contract,
+                            embed: { ...contract.embed, ...updated.embed }
+                        };
+                    }
+                    return contract;
+                });
+                return newState;
+            });
+            onCompleted && onCompleted(data);
+        },
+        onError
+    });
+
+    return [setEmbedButtonCss, { ...mutationResult }];
 };
 
 export const useUpdateContractAddress = ({ onCompleted, onError }) => {
