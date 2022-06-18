@@ -8,7 +8,7 @@ import { ContractController, getIpfsUrl, getResolvedImageUrl, getWalletType } fr
 import { useParams } from 'react-router-dom';
 import { useContract } from 'services/blockchain/provider';
 
-import IPFSModal from '../Contract/IPFSModal';
+import IPFSModal from '../Contract/IPFSModal/Raw';
 
 import ContractDetailTabs from './ContractDetailTabs';
 import Newv2 from '../NewV2';
@@ -130,7 +130,7 @@ const ContractV2 = () => {
 		<IPFSModal
 			id={id}
 			contract={contract}
-			isModalOpen={isModalOpen}
+			isModalOpen={true}
 			setIsModalOpen={setIsModalOpen}
 			renderUploadUnRevealedImage={true}
 		/>
@@ -159,10 +159,12 @@ const ContractV2 = () => {
 						width: '100%'
 					}}>
 
+
 					{!isSetupComplete ? (
 						<React.Fragment>
-							<Newv2 contract={contract} />
-							{contract?.id && ipfsModal}
+							<Box pt={4}>
+								{contract?.id && ipfsModal}
+							</Box>
 						</React.Fragment>
 					) : (
 						<React.Fragment>
