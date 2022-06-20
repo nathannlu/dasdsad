@@ -46,6 +46,9 @@ const Metadata = (props) => {
 				throw new Error('Error! File upload limit is 25GB.');
 			}
 
+			setUploadedJson([...uploadedJson, ...acceptedFiles]);
+
+			/*
 			const formData = new FormData();
 			for (const file of acceptedFiles) formData.append('file', file);
 
@@ -61,6 +64,7 @@ const Metadata = (props) => {
 			};
 			xhr.open('POST', 'https://httpbin.org/post', true);
 			xhr.send(formData);
+			*/
 		} catch (e) {
 			addToast({
 				severity: 'error',
@@ -124,7 +128,6 @@ const Metadata = (props) => {
 							</Box>
 						)}
 					</Dropzone>
-					<LinearProgress variant="determinate" value={percent} />
 				</Box>
 			) : (
 				<Stack>
