@@ -8,6 +8,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useEmbedBttonStyling } from './hooks/useEmbedBttonStyling';
 import { CircularProgress, Grid } from '@mui/material';
+import { FaSave } from 'react-icons/fa'
+import { IoMdRefresh } from 'react-icons/io'
 
 const EmbedButtonStyling = ({ contract, id }) => {
     const {
@@ -28,50 +30,72 @@ const EmbedButtonStyling = ({ contract, id }) => {
         }
     }, []);
 
-    return (
-        <Stack gap={2} alignItems="flex-start">
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Embed Button Styling
-            </Typography>
+    const renderInput = (key, styleKey) => {
+        const label = cssContext[key][styleKey]['label'];
+        const value = cssContext[key][styleKey]['value'] || '';
+        const type = cssContext[key][styleKey]['type'];
+        const props = { label, value, type };
 
-            {contract && <iframe width="100%" id="embed-button-iframe" scrolling="no" frameBorder="0" onLoad={handleIframeOnLoad} /> || <CircularProgress />}
-
-            {Object.keys(cssContext).map(key => {
-                const accordionLabel = key.replace(/-/g, " ");
-
+        switch(type) {
+            case 'color':
                 return (
-                    <Accordion key={key} expanded={expanded === key} onChange={handleChange(key)} sx={{ width: '100%' }}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls={`${key}-content`}
-                            id={`${key}-header`}
-                        >
-                            <Typography sx={{ textTransform: 'uppercase' }}>{accordionLabel}</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            {Object.keys(cssContext[key]).map(styleKey => {
-                                return (
-                                    <Stack key={`${key}-${styleKey}`}>
-                                        <TextField
-                                            label={cssContext[key][styleKey]['label']}
-                                            value={cssContext[key][styleKey]['value'] || ''}
-                                            type={cssContext[key][styleKey]['type']}
-                                            onChange={e => onChange(e.target.value, key, styleKey)}
-                                            margin="normal"
-                                        />
-                                    </Stack>
-                                )
-                            })}
-                        </AccordionDetails>
-                    </Accordion>
+                    <TextField
+                        {...props}
+                        onChange={e => onChange(e.target.value, key, styleKey)}
+                        margin="normal"
+                    />
                 )
-            })}
+            case 'number':
+                return (
+                    <TextField
+                        {...props}
+                        onChange={e => onChange(e.target.value, key, styleKey)}
+                        margin="normal"
+                    />
+                )
+            default:
+                return null;
+        }
+    }
 
-            <Grid container={true} justifyContent="flex-end" gap={4}>
-                <Button size="small" color="secondary" variant="contained" onClick={handleIframeOnLoad}>View Changes</Button>
-                <Button size="small" color="primary" variant="contained" onClick={save}>Save</Button>
-            </Grid>
-        </Stack>
+    return (
+        <Grid direction='row' container={true} gap={2} alignItems="flex-start" wrap='wrap' columns={2} marginTop='1em'>
+            <Stack flex='1'>
+                {Object.keys(cssContext).map(key => {
+                    const accordionLabel = key.replace(/-/g, " ");
+
+                    return (
+                        <Accordion key={key} expanded={expanded === key} onChange={handleChange(key)} sx={{ width: '100%' }}>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls={`${key}-content`}
+                                id={`${key}-header`}
+                            >
+                                <Typography sx={{ textTransform: 'uppercase' }} fontSize='10pt' color='#707070'>{accordionLabel}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {Object.keys(cssContext[key]).map(styleKey => {
+                                    return (
+                                        <Stack key={`${key}-${styleKey}`}>
+                                            {renderInput(key, styleKey)}
+                                        </Stack>
+                                    )
+                                })}
+                            </AccordionDetails>
+                        </Accordion>
+                    )
+                })}
+            </Stack>
+            <Stack flex='1' gap={2}>
+                <Box p='2em' backgroundColor='rgb(245,245,245)' border='1px solid #e2e8f0'>
+                    {contract && <iframe width="100%" id="embed-button-iframe" scrolling="no" frameBorder="0" onLoad={handleIframeOnLoad} /> || <CircularProgress />}
+                </Box>
+                <Grid container={true} justifyContent="flex-end" gap={2}>
+                    <Button size="small" color="secondary" variant="contained" onClick={handleIframeOnLoad} startIcon={<IoMdRefresh />}>View Changes</Button>
+                    <Button size="small" color="primary" variant="contained" onClick={save} startIcon={<FaSave />}>Save</Button>
+                </Grid>
+            </Stack>
+        </Grid>
     );
 };
 
