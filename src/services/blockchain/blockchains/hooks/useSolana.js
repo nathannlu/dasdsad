@@ -67,7 +67,7 @@ export const useSolana = () => {
 
             return json?.properties?.creators.map(c => ({ ...c, verified: true }));
         } catch (e) {
-//            console.log('Error getContractCreators:', e);
+            //            console.log('Error getContractCreators:', e);
             return [{ address, verified: true, share: 100 }];
         }
     }
@@ -95,10 +95,10 @@ export const useSolana = () => {
             if (!json?.properties?.seller_fee_basis_points) {
                 throw new Error('Secondary sales field missing!');
             }
-						return json?.properties?.seller_fee_basis_points;
+            return json?.properties?.seller_fee_basis_points;
         } catch (e) {
-//            console.log('Error getContractCreators:', e);
-					// returns default 10%
+            //            console.log('Error getContractCreators:', e);
+            // returns default 10%
             return 1000;
         }
     }
@@ -114,13 +114,13 @@ export const useSolana = () => {
         cacheHash,
         id,
         env,
-			creators,
+        creators,
     }) => {
         try {
-					console.log(creators)
+            console.log(creators)
             //mintV2();
-//            const creators = await getContractCreators(uri, address);
-							const sellerFeeBasisPoints = await getSellerFeeBasisPoints(uri, address),
+            //            const creators = await getContractCreators(uri, address);
+            const sellerFeeBasisPoints = await getSellerFeeBasisPoints(uri, address);
 
             const res = await createSolanaContract({
                 uri,
@@ -129,7 +129,7 @@ export const useSolana = () => {
                 symbol,
                 size,
                 price,
-							sellerFeeBasisPoints,
+                sellerFeeBasisPoints,
                 liveDate,
                 creators,
                 cacheHash,
@@ -152,9 +152,9 @@ export const useSolana = () => {
                 message = 'Your wallet has no Sol. Is your sol on the correct network (mainnet/devnet)?'
             }
 
-						if (err == 'Error: Invalid config, creators shares must add up to 100') {
+            if (err == 'Error: Invalid config, creators shares must add up to 100') {
                 message = 'Invalid config, creators shares must add up to 100'
-						}
+            }
 
             if (err == 'TypeError: Blob.encode requires (length 32) Buffer as src') {
                 message = `Non-valid Solana address found in creators`
