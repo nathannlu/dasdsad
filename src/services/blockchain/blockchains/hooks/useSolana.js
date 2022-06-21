@@ -72,6 +72,37 @@ export const useSolana = () => {
         }
     }
 
+    const getSellerFeeBasisPoints = async (baseUri, address) => {
+        const hasAppendingSlash = baseUri.charAt(baseUri.length - 1) === '/';
+
+        try {
+            const ipfsUrl = `https://gateway.pinata.cloud/ipfs/`;
+            let baseUriHash = null;
+
+            if (baseUri?.indexOf('ipfs://') !== -1) {
+                baseUriHash = `${ipfsUrl}${baseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}1.json`;
+            } else {
+                baseUriHash = `${baseUri}${hasAppendingSlash && '' || '/'}1.json`;
+            }
+
+            if (!baseUriHash) {
+                throw new Error('Invalid baseUri');
+            }
+
+            const fetchResponse = await fetch(baseUriHash);
+            const json = await fetchResponse.json();
+
+            if (!json?.properties?.seller_fee_basis_points) {
+                throw new Error('Secondary sales field missing!');
+            }
+						return json?.properties?.seller_fee_basis_points;
+        } catch (e) {
+//            console.log('Error getContractCreators:', e);
+					// returns default 10%
+            return 1000;
+        }
+    }
+
     const deploySolanaContract = async ({
         uri,
         name,
@@ -89,6 +120,8 @@ export const useSolana = () => {
 					console.log(creators)
             //mintV2();
 //            const creators = await getContractCreators(uri, address);
+							const sellerFeeBasisPoints = await getSellerFeeBasisPoints(uri, address),
+
             const res = await createSolanaContract({
                 uri,
                 name,
@@ -96,6 +129,7 @@ export const useSolana = () => {
                 symbol,
                 size,
                 price,
+							sellerFeeBasisPoints,
                 liveDate,
                 creators,
                 cacheHash,
