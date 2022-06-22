@@ -141,32 +141,6 @@ const EmbedButtonStyling = ({ contract, id }) => {
         )
     }
 
-    const renderInputContainer = (key) => {
-        return (
-            <Stack gap={2} backgroundColor='rgb(253,253,253)' padding='1em'>
-                <Stack direction='row' gap={2} alignItems='flex-start' justifyContent='space-between'>
-                    <Stack direction='row' gap={3}>
-                        {renderInput('backgroundColor', key)}
-                        {renderInput('color', key)}
-                    </Stack>
-                    <Stack direction='row' alignItems='flex-end' gap={1}>
-                        {renderInput('fontWeight', key)}
-                        {renderInput('textDecoration', key)}
-                        {renderInput('fontStyle', key)}
-                    </Stack>
-                </Stack>
-                <Stack direction='row' gap={2}>
-                    {renderInput('fontSize', key)}
-                    {renderInput('lineHeight', key)}
-                    {renderInput('letterSpacing', key)}
-                </Stack>
-                {renderInput('borderRadius', key)}
-                {renderInput('margin', key)}
-                {renderInput('padding', key)}
-            </Stack>
-        )
-    }
-
     return (
         <Grid direction='row' container={true} gap={2} alignItems="flex-start" wrap='wrap' columns={2} marginTop='1em'>
             <Stack flex='1'>
@@ -183,7 +157,27 @@ const EmbedButtonStyling = ({ contract, id }) => {
                                 <Typography sx={{ textTransform: 'uppercase' }} fontSize='10pt' color='#707070'>{accordionLabel}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                {renderInputContainer(key)}
+                                <Stack gap={2} backgroundColor='rgb(253,253,253)' padding='1em'>
+                                    <Stack direction='row' gap={2} alignItems='flex-start' justifyContent='space-between'>
+                                        <Stack direction='row' gap={3}>
+                                            {renderInput('backgroundColor', key)}
+                                            {renderInput('color', key)}
+                                        </Stack>
+                                        <Stack direction='row' alignItems='flex-end' gap={1}>
+                                            {renderInput('fontWeight', key)}
+                                            {renderInput('textDecoration', key)}
+                                            {renderInput('fontStyle', key)}
+                                        </Stack>
+                                    </Stack>
+                                    <Stack direction='row' gap={2}>
+                                        {renderInput('fontSize', key)}
+                                        {renderInput('lineHeight', key)}
+                                        {renderInput('letterSpacing', key)}
+                                    </Stack>
+                                    {renderInput('borderRadius', key)}
+                                    {renderInput('margin', key)}
+                                    {renderInput('padding', key)}
+                                </Stack>
                             </AccordionDetails>
                         </Accordion>
                     )
