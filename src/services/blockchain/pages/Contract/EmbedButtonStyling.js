@@ -102,6 +102,17 @@ const EmbedButtonStyling = ({ contract, id }) => {
                             ))}
                         </Stack>
                     )
+                case 'slider':
+                    return (
+                        <input
+                            value={value}
+                            type='range'
+                            min='0'
+                            max='100'
+                            name={label}
+                            onChange={e => onChange(e.target.value, key, styleKey)}
+                        />
+                    )
                 default:
                     return null;
             }

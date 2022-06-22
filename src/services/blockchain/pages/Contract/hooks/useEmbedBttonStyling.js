@@ -21,8 +21,8 @@ const DEFAULT_STYLES = (elementType) => ({
         label: elementType === 'button' && 'Button Font Size' || 'Font Size'
     },
     borderRadius: {
-        value: undefined,
-        type: 'number',
+        value: '4',
+        type: 'slider',
         label: 'Corner Radius'
     },
     margin: {
