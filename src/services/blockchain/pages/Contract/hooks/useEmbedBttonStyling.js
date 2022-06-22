@@ -13,29 +13,57 @@ const DEFAULT_STYLES = (elementType) => ({
     color: {
         value: undefined,
         type: 'color',
-        label: elementType === 'button' && 'Button Text Color' || 'text Color'
+        label: elementType === 'button' && 'Button Text Color' || 'Text Color'
     },
     fontSize: {
         value: undefined,
         type: 'number',
-        label: elementType === 'button' && 'Button Text Size' || 'Text Size'
+        label: elementType === 'button' && 'Button Font Size' || 'Font Size'
     },
     borderRadius: {
         value: undefined,
         type: 'number',
         label: 'Corner Radius'
     },
-    mx: {
-        value: undefined,
-        type: 'number',
-        label: 'Horizontal Spacing'
+    margin: {
+        value: [0,0,0,0],
+        type: 'direction',
+        label: 'Margin: Outer Spacing'
     },
-    my: {
-        value: undefined,
-        type: 'number',
-        label: 'Vertical Spacing'
+    padding: {
+        value: [0,0,0,0],
+        type: 'direction',
+        label: 'Padding: Inner Spacing'
     }
 });
+
+const TEXT_STYLES = {
+    lineHeight: {
+        value: undefined,
+        type: 'number',
+        label: 'Line Height'
+    },
+    letterSpacing: {
+        value: undefined,
+        type: 'number',
+        label: 'Letter Spacing'
+    },
+    fontWeight: {
+        value: false,
+        type: 'toggle',
+        label: 'Style'
+    },
+    textDecoration: {
+        value: false,
+        type: 'toggle',
+        label: ''
+    },
+    fontStyle: {
+        value: false,
+        type: 'toggle',
+        label: ''
+    }
+}
 
 export const useEmbedBttonStyling = (contract, id) => {
     const { addToast } = useToast();
@@ -43,7 +71,7 @@ export const useEmbedBttonStyling = (contract, id) => {
 
     const [state, setState] = useState({
         cssContext: {
-            'connect-button': { ...DEFAULT_STYLES('button') },
+            'connect-button': { ...DEFAULT_STYLES('button'), ...TEXT_STYLES },
             'mint-button': { ...DEFAULT_STYLES('button') },
             'details-container': { ...DEFAULT_STYLES() },
             'details': { ...DEFAULT_STYLES() }
@@ -163,8 +191,15 @@ export const useEmbedBttonStyling = (contract, id) => {
         iframe.head.append(script);
     }
 
-    const onChange = (value, key, styleKey) => {
+    const onChange = (value, key, styleKey, data = {}) => {
         console.log({ value, key, styleKey })
+
+        let newValue = value;
+
+        if (data?.type === 'direction') {
+            newValue = [...data?.valueArray];
+            newValue[data?.index] = value;
+        }
 
         setState(prevState => ({
             ...prevState,
@@ -174,7 +209,7 @@ export const useEmbedBttonStyling = (contract, id) => {
                     ...prevState.cssContext[key],
                     [styleKey]: {
                         ...prevState.cssContext[key][styleKey],
-                        value
+                        value: newValue
                     }
                 }
             }
