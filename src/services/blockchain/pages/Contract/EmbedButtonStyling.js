@@ -28,9 +28,7 @@ const EmbedButtonStyling = ({ contract, id }) => {
 
     useEffect(() => {
         if (contract?.embed?.css) {
-            console.log(contract?.embed?.css)
-            setCssContext(JSON.parse(contract?.embed?.css));
-            setTimeout(() => handleIframeOnLoad(), 500);
+            setCssContext(JSON.parse(contract?.embed?.css));     
         }
     }, []);
 
