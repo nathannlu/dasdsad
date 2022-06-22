@@ -73,7 +73,7 @@ export const useEmbedBttonStyling = (contract, id) => {
     const [state, setState] = useState({
         cssContext: {
             'connect-button': { ...DEFAULT_STYLES('button'), ...TEXT_STYLES },
-            'mint-button': { ...DEFAULT_STYLES('button') },
+            'mint-button': { ...DEFAULT_STYLES('button'), ...TEXT_STYLES },
             'details-container': { ...DEFAULT_STYLES() },
             'details': { ...DEFAULT_STYLES() }
         }
@@ -119,6 +119,8 @@ export const useEmbedBttonStyling = (contract, id) => {
                 font-weight: ${cssContext?.['connect-button']?.['fontWeight']?.['value'] ? 'bold' : 'initial' || 'initial'} !important;
                 font-style: ${cssContext?.['connect-button']?.['fontStyle']?.['value'] ? 'italic' : 'initial' || 'initial'} !important;
                 text-decoration: ${cssContext?.['connect-button']?.['textDecoration']?.['value'] ? 'underline' : 'initial' || 'initial'} !important;
+                line-height: ${cssContext?.['connect-button']?.['lineHeight']?.['value'] || 1.75} !important; 
+                letter-spacing: ${cssContext?.['connect-button']?.['letterSpacing']?.['value'] || 0.45712}px !important;
             }
             .mint-button {
                 background-color: ${cssContext?.['mint-button']?.['backgroundColor']?.['value']} !important; 
@@ -130,6 +132,8 @@ export const useEmbedBttonStyling = (contract, id) => {
                 font-weight: ${cssContext?.['mint-button']?.['fontWeight']?.['value'] ? 'bold' : 'initial' || 'initial'} !important;
                 font-style: ${cssContext?.['mint-button']?.['fontStyle']?.['value'] ? 'italic' : 'initial' || 'initial'} !important;
                 textDecoration: ${cssContext?.['mint-button']?.['textDecoration']?.['value'] ? 'underline' : 'initial' || 'initial'} !important;
+                line-height: ${cssContext?.['mint-button']?.['lineHeight']?.['value'] || 1.75} !important; 
+                letter-spacing: ${cssContext?.['mint-button']?.['letterSpacing']?.['value'] || 0.45712}px !important;
             }
             .details-container {
                 background-color: ${cssContext?.['details-container']?.['backgroundColor']?.['value']} !important; 
@@ -138,9 +142,6 @@ export const useEmbedBttonStyling = (contract, id) => {
                 border-radius: ${cssContext?.['details-container']?.['borderRadius']?.['value'] || 4}px !important; 
                 margin: ${cssContext?.['details-container']?.['margin']?.['value']?.join('px ') || 0}px !important;
                 padding: ${cssContext?.['details-container']?.['padding']?.['value']?.join('px ') || '6px 16px'} !important;
-                font-weight: ${cssContext?.['details-container']?.['fontWeight']?.['value'] ? 'bold' : 'initial' || 'initial'} !important;
-                font-style: ${cssContext?.['details-container']?.['fontStyle']?.['value'] ? 'italic' : 'initial' || 'initial'} !important;
-                text-decoration: ${cssContext?.['details-container']?.['textDecoration']?.['value'] ? 'underline' : 'initial' || 'initial'} !important;
             }
             .details {
                 background-color: ${cssContext?.['details']?.['backgroundColor']?.['value']} !important; 
@@ -149,9 +150,6 @@ export const useEmbedBttonStyling = (contract, id) => {
                 border-radius: ${cssContext?.['details']?.['borderRadius']?.['value'] || 4}px !important; 
                 margin: ${cssContext?.['details']?.['margin']?.['value']?.join('px ') || 0}px !important;
                 padding: ${cssContext?.['details']?.['padding']?.['value']?.join('px ') || '6px 16px'} !important;
-                font-weight: ${cssContext?.['details']?.['fontWeight']?.['value'] ? 'bold' : 'initial' || 'initial'} !important;
-                font-style: ${cssContext?.['details']?.['fontStyle']?.['value'] ? 'italic' : 'initial' || 'initial'} !important;
-                text-decoration: ${cssContext?.['details']?.['textDecoration']?.['value'] ? 'underline' : 'initial' || 'initial'} !important;
             }
 
             .details p,

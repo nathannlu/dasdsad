@@ -59,13 +59,21 @@ const EmbedButtonStyling = ({ contract, id }) => {
                     )
                 case 'number':
                     return (
-                        <TextField                    
-                            value={value}
-                            type={type}
-                            variant='outlined'
-                            onChange={e => onChange(e.target.value, key, styleKey)}
-                            size='small'
-                        />
+                        <Stack direction='row' alignItems='flex-end' gap='5px'>
+                            <TextField                    
+                                value={value}
+                                type={type}
+                                variant='outlined'
+                                onChange={e => onChange(e.target.value, key, styleKey)}
+                                size='small'
+                            />
+                            <Typography fontSize='9pt' color='rgb(140,140,140)'>
+                                {{
+                                    fontSize: 'pt',
+                                    letterSpacing: 'px',
+                                }[styleKey]}
+                            </Typography>
+                        </Stack>
                     )
                 case 'toggle':
                     return (
@@ -86,19 +94,24 @@ const EmbedButtonStyling = ({ contract, id }) => {
                     return (
                         <Stack direction='row' justifyContent='space-between' gap={2}>
                             {value.map((val, idx) => (
-                                <TextField           
-                                    value={val}
-                                    type='number'
-                                    label={['Top', 'Right', 'Bottom', 'Left'][idx]}
-                                    variant='outlined'
-                                    onChange={e => onChange(e.target.value, key, styleKey, {
-                                        type,
-                                        index: idx,
-                                        valueArray: value
-                                    })}
-                                    size='small'
-                                    key={idx}
-                                />
+                                <Stack direction='row' alignItems='flex-end' gap='5px'>
+                                    <TextField           
+                                        value={val}
+                                        type='number'
+                                        label={['Top', 'Right', 'Bottom', 'Left'][idx]}
+                                        variant='outlined'
+                                        onChange={e => onChange(e.target.value, key, styleKey, {
+                                            type,
+                                            index: idx,
+                                            valueArray: value
+                                        })}
+                                        size='small'
+                                        key={idx}
+                                    />
+                                    <Typography fontSize='9pt' color='rgb(140,140,140)'>
+                                        px
+                                    </Typography>
+                                </Stack>
                             ))}
                         </Stack>
                     )
