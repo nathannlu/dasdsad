@@ -92,7 +92,7 @@ module.exports = env => {
 				'components': `${__dirname}/src/components`,
 				'libs': `${__dirname}/src/libs`,
 				'utils': `${__dirname}/src/utils`,
-				'config': `${__dirname}/src/config`,
+				'configs': `${__dirname}/src/configs`,
 				'core': `${__dirname}/src/core`,
 				'gql': `${__dirname}/src/gql`,
 				'ethereum': `${__dirname}/src/ethereum`,
