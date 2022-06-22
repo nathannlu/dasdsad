@@ -19,7 +19,8 @@ const EmbedButtonStyling = ({ contract, id }) => {
         onChange,
         handleIframeOnLoad,
         save,
-        setCssContext
+        setCssContext,
+        isSaving
     } = useEmbedBttonStyling(contract, id);
 
     const [expanded, setExpanded] = React.useState(false);
@@ -27,6 +28,7 @@ const EmbedButtonStyling = ({ contract, id }) => {
 
     useEffect(() => {
         if (contract?.embed?.css) {
+            console.log(contract?.embed?.css)
             setCssContext(JSON.parse(contract?.embed?.css));
             setTimeout(() => handleIframeOnLoad(), 500);
         }
@@ -171,7 +173,7 @@ const EmbedButtonStyling = ({ contract, id }) => {
                 </Box>
                 <Grid container={true} justifyContent="flex-end" gap={2}>
                     <Button size="small" color="secondary" variant="contained" onClick={handleIframeOnLoad} startIcon={<IoMdRefresh />}>View Changes</Button>
-                    <Button size="small" color="primary" variant="contained" onClick={save} startIcon={<FaSave />}>Save</Button>
+                    <Button size="small" color="primary" variant="contained" onClick={save} startIcon={<FaSave />} disabled={isSaving}>Save</Button>
                 </Grid>
             </Stack>
         </Grid>
