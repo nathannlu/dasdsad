@@ -64,7 +64,7 @@ const RadioLabel = ({ type, isTestnetEnabled }) => {
 	)
 }
 
-const New = ({ contract }) => {
+const New = ({ contract, skipLoadWalletProviderOnLoad }) => {
 	const { walletController } = useWeb3();
 	const history = useHistory();
 	const { addToast } = useToast();
@@ -134,7 +134,7 @@ const New = ({ contract }) => {
 		}
 	}
 
-//	useEffect(() => setContract(contract), [contract])
+	//	useEffect(() => setContract(contract), [contract])
 
 	useEffect(() => {
 		if (!contractState.nftCollection.baseUri) {
@@ -168,17 +168,18 @@ const New = ({ contract }) => {
 	}, [contract?.nftCollection?.unRevealedBaseUri]);
 
 	const setContractStateIneditMode = async () => {
+		if (!skipLoadWalletProviderOnLoad) {
+			const blockchain = contract?.blockchain || getBlockchainType(activeBlockchain, isTestnetBlockchain);
 
-		const blockchain = contract?.blockchain || getBlockchainType(activeBlockchain, isTestnetBlockchain);
-
-		// initiate wallet controller connection
-		await walletController?.loadWalletProvider(getWalletType(blockchain));
-		await walletController?.compareNetwork(blockchain, async (error) => {
-			if (error) {
-				addToast({ severity: 'error', message: error.message });
-				return;
-			}
-		});
+			// initiate wallet controller connection
+			await walletController?.loadWalletProvider(getWalletType(blockchain));
+			await walletController?.compareNetwork(blockchain, async (error) => {
+				if (error) {
+					addToast({ severity: 'error', message: error.message });
+					return;
+				}
+			});
+		}
 
 		if (contract) {
 			setContractState(contract);
@@ -301,7 +302,7 @@ const New = ({ contract }) => {
 									variant="outlined"
 									{...price}
 									type="number"
-//									error={Boolean(formValidationErrors.price)}
+								//									error={Boolean(formValidationErrors.price)}
 								/>
 							</Stack>
 							<Stack gap={2}>

@@ -181,7 +181,7 @@ const Navbar = ({ pageName }) => {
 									color="black"
 									onClick={async () => {
 										const curentWalletType = window.localStorage.getItem('ambition-wallet');
-										await walletController.loadWalletProvider(curentWalletType)
+										await walletController.loadWalletProvider(curentWalletType || 'metamask');
 										const { wallet, address } = walletController?.getState();
 
 										setState((prevState) => ({
