@@ -68,12 +68,15 @@ export const useIPFS = () => {
 		// Generate metadata files for unrevealed image with data
 		// from contract obj (saved in db)
 		let metadataData = new FormData();
+		console.log(contract)
 		for (let i = 1; i < contract.nftCollection.size + 1; i++) {
 			const jsonMetadata = {
 				name: contract.name,
 				description: `Unrevealed ${contract.name} NFT`,
 				image: unrevealedImageUrl
 			};
+
+			console.log(jsonMetadata)
 
 			// Attach JSON to formdata for Pinata upload
 			const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
@@ -86,6 +89,8 @@ export const useIPFS = () => {
 		// Pinata folder name
 		const metadata = JSON.stringify({ name: 'metadata' });
 		metadataData.append('pinataMetadata', metadata);
+		console.log(metadataData)
+
 
 		// @TODO Check formdata is under 25GB to upload
 		/*
@@ -95,6 +100,7 @@ export const useIPFS = () => {
 
 		// Send API request to Pinata
 		const res = await axios.post(url, metadataData, opt(metadataData));
+		console.log(res)
 		return withIpfsUrls(res.data.IpfsHash);
 	};
 

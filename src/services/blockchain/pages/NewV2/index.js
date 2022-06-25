@@ -10,10 +10,14 @@ const New = () => {
 	const [state, setState] = useState();
 
 	return (
-		<StepWizard>
-			<Step1 />
-			<Step2 />
-		</StepWizard>
+		<Box sx={{background: '#f5f5f5', minHeight: '100vh'}}>
+			<Container>
+				<StepWizard>
+					<Step1 />
+					<Step2 />
+				</StepWizard>
+			</Container>
+		</Box>
 	)
 };
 

@@ -15,7 +15,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useToast } from 'ds/hooks/useToast';
 
 const Embed = ({ contract, id }) => {
-    console.log(contract, 'contract');
 
     const { addToast } = useToast();
     const [embedCode, setEmbedCode] = useState('');

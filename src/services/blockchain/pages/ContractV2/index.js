@@ -1,192 +1,471 @@
-import React, { useState, useEffect } from 'react';
-import { Stack, Box, Container } from 'ds/components';
-import { useWeb3 } from 'libs/web3';
-import { useToast } from 'ds/hooks/useToast';
-
-import { ContractController, getIpfsUrl, getResolvedImageUrl, getWalletType } from '@ambition-blockchain/controllers';
-
+import React from 'react';
+import {
+	Fade,
+	Container,
+	Button,
+	Divider,
+	Typography,
+	Stack,
+	Grid,
+	Box,
+	Link,
+} from 'ds/components';
 import { useParams } from 'react-router-dom';
+import UploadToIPFS from '../Contract/IPFSModal/Raw';
 import { useContract } from 'services/blockchain/provider';
-
-import IPFSModal from '../Contract/IPFSModal/Raw';
-
 import ContractDetailTabs from './ContractDetailTabs';
-import Newv2 from '../NewV2';
-import { CircularProgress } from '@mui/material';
+import CSVWidget from '../../widgets/CSVWidget';
+
+
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
+import SmartButtonIcon from '@mui/icons-material/SmartButton';
+
+
+
+import { useModal } from 'ds/hooks/useModal';
 
 const ContractV2 = () => {
-	const { walletController } = useWeb3();
-	const { addToast } = useToast();
-
-	const [contract, setContract] = useState(null);
-	const [contractState, setContractState] = useState(null);
-	const [contractController, setContractController] = useState(null);
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isLoading, setIsLoading] = useState(true); // default
-	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
-	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: false });
-	const [nftPrice, setNftPrice] = useState({ currency: null, price: null });
-
-	const { contracts } = useContract();
 	const { id } = useParams();
+	const { contract } = useContract();
 
-	const isSetupComplete = contract?.address;
-
-	// Move to separate utils 
-	const fetchRevealedNftImage = async (metadataUrl) => {
-		try {
-			setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const imageSrc = await getResolvedImageUrl(metadataUrl);
-			setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchImageSrc:', e);
-			setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-		}
-	}
-
-	const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
-		if (!unRevealedBaseUri) {
-			return;
-		}
-
-		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
-			return;
-		}
-		try {
-			setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchUnrevealedImageSrc:', e);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-		}
-	}
-
-
-	const init = async () => {
-		const contract = contracts.find((c) => c.id === id);
-		if (!contract) {
-			return;
-		}
-
-
-		const baseIpfsUrl = getIpfsUrl(undefined, true);
-
-			if (contract?.nftCollection?.unRevealedBaseUri) {
-				if (contract?.nftCollection?.unRevealedBaseUri?.indexOf('ipfs://') !== -1) {
-					const unRevealedBaseUri = contract?.nftCollection?.unRevealedBaseUri;
-					const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
-					const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
-//					setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
-
-				fetchUnRevealedNftImage(unRevealedBaseUri);
-				}
-			}
-
-		if (contract?.nftCollection?.baseUri) {
-			const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-			const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
-
-			fetchRevealedNftImage(metadataUrl);
-			setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
-		} else {
-			setContract(contract);
-		}
-
-		await walletController?.loadWalletProvider(getWalletType(contract.blockchain));
-		await walletController?.compareNetwork(contract?.blockchain, async (error) => {
-			if (error) {
-				addToast({ severity: 'error', message: error.message });
-				return;
-			}
-		});
-
-		setNftPrice(prevState => ({ ...prevState, currency: contract?.nftCollection?.currency, price: contract?.nftCollection?.price }));
-		setIsLoading(false);
-
-		console.log(contract, 'contract');
-
-		if (contract.address) {
-			const contractController = new ContractController(contract.address, contract.blockchain, contract.type);
-			setContractController(contractController);
-
-			console.log(contractController, 'contractController');
-
-
-			const contractState = await contractController.populateContractInfo();
-			console.log(contractState, 'contractState');
-
-			setContractState(contractState);
-
-		}
-
-	}
-
-	useEffect(() => {
-		if (contracts.length) { init(); }
-	}, [contracts]);
-
-	const ipfsModal = (
-		<IPFSModal
-			id={id}
-			contract={contract}
-			isModalOpen={true}
-			setIsModalOpen={setIsModalOpen}
-			renderUploadUnRevealedImage={true}
-		/>
-	);
-
-	if (isLoading) {
-		return (
-			<Stack>
-				<Container>
-					<Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
-						<CircularProgress />
-					</Stack>
-				</Container>
-			</Stack>
-		);
-	}
+	const hasBaseUri = true; // contract?.nftCollection?.baseUri ? true : false
 
 	return (
-		<Stack>
+		<Fade in>
 			<Container>
-				<Box
-					sx={{
-						background: 'white',
-						zIndex: 10,
-						top: '58px',
-						width: '100%'
-					}}>
-
-
-					{!isSetupComplete ? (
-						<React.Fragment>
-							<Box pt={4}>
-								{contract?.id && ipfsModal}
-							</Box>
-						</React.Fragment>
-					) : (
-						<React.Fragment>
-							<ContractDetailTabs
-								id={id}
-								contract={contract}
-								contractState={contractState}
-								setContractState={setContractState}
-								contractController={contractController}
-								walletController={walletController}
-								unRevealedtNftImage={unRevealedtNftImage}
-								revealedNftImage={revealedNftImage}
-								nftPrice={nftPrice}
-								setIsModalOpen={setIsModalOpen}
-							/>
-							{contract?.id && ipfsModal}
-						</React.Fragment>
-					)}
-				</Box>
+				{!hasBaseUri ? (
+					<UploadToIPFS
+						id={id}
+						contract={contract}
+						isModalOpen={true}
+						setIsModalOpen={() => {}}
+						renderUploadUnRevealedImage={true}
+					/>
+				) : (
+					<Dashboard contract={contract} />
+				)}
 			</Container>
+		</Fade>
+	);
+};
+
+const AdvancedSettings = <div>asd</div>;
+
+const DeployToMainnetModal = (
+	<Stack>
+		<Grid container>
+			<Grid xs={5} item>
+				<Stack p={4} gap={2}>
+					<Box>
+						<Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+							Deploy to Ethereum mainnet
+						</Typography>
+						<Typography variant="body">
+							Project names need to be distinct
+						</Typography>
+					</Box>
+
+					<Grid container>
+						<Grid xs={4} item>
+							<Stack gap={0.5} sx={{ color: '#6a7383' }}>
+								<Typography>Name</Typography>
+								<Typography>Symbol:</Typography>
+								<Typography>Collection size:</Typography>
+								<Typography>Cost:</Typography>
+								<Typography>Max per mint:</Typography>
+								<Typography>Max per wallet:</Typography>
+								<Typography>Deployer address:</Typography>
+							</Stack>
+						</Grid>
+
+						<Grid xs={6} item>
+							<Stack gap={0.5} sx={{ color: '#404452' }}>
+								<Typography>Headspace Hunters</Typography>
+								<Typography>HEAD</Typography>
+								<Typography>100</Typography>
+								<Typography>0.05ETH</Typography>
+								<Typography>5</Typography>
+								<Typography>5</Typography>
+							</Stack>
+						</Grid>
+					</Grid>
+
+					<Box>
+						<Button variant="contained" size="small">
+							Deploy
+						</Button>
+					</Box>
+				</Stack>
+			</Grid>
+			<Grid
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+				xs={7}
+				item>
+				<Stack gap={2} direction="row">
+					<Box
+						sx={{
+							boxShadow:
+								'0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)',
+							height: '250px',
+							width: '250px',
+							borderRadius: '5px',
+						}}>
+						Unrevealed
+					</Box>
+					<Box
+						sx={{
+							boxShadow:
+								'0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)',
+							height: '250px',
+							width: '250px',
+							borderRadius: '5px',
+						}}>
+						Revealed
+					</Box>
+				</Stack>
+			</Grid>
+		</Grid>
+	</Stack>
+);
+
+const Details = () => {
+	const { createModal } = useModal();
+	const [, setIsSettingsModalOpen] = createModal(AdvancedSettings);
+
+	return (
+		<Grid mt={4} container>
+			<Grid xs={7} item>
+				<Stack gap={1}>
+					<Typography variant="h6">Details</Typography>
+					<Divider />
+					<Grid container>
+						<Grid xs={4} item>
+							<Stack gap={0.5} sx={{ color: '#6a7383' }}>
+								<Typography>Blockchain</Typography>
+								<Typography>Sales status:</Typography>
+								<Typography>Collection size:</Typography>
+								<Typography>NFTs sold:</Typography>
+								<Typography>Earnings:</Typography>
+							</Stack>
+						</Grid>
+
+						<Grid xs={4} item>
+							<Stack gap={0.5} sx={{ color: '#404452' }}>
+								<Typography>Testnet (Rinkeby)</Typography>
+								<Typography>Whitelist only</Typography>
+								<Typography>100</Typography>
+								<Typography>100</Typography>
+								<Typography>0.05ETH</Typography>
+							</Stack>
+						</Grid>
+					</Grid>
+					<Stack mt={2} gap={0.5}>
+						<Link onClick={() => setIsSettingsModalOpen(true)}>
+							View advanced settings
+						</Link>
+					</Stack>
+				</Stack>
+			</Grid>
+
+			<Grid xs={4} sx={{ ml: 'auto' }} item>
+				<Stack gap={4}>
+					<Stack direction="row">
+						<Typography variant="h6">Preview</Typography>
+
+						<Box sx={{ ml: 'auto' }}>
+							<Button size="small" variant="outlined">
+								Reveal NFT
+							</Button>
+						</Box>
+					</Stack>
+
+					<NFTRender />
+				</Stack>
+			</Grid>
+		</Grid>
+	);
+};
+
+const NFTRender = () => {
+	return (
+		<Box
+			sx={{
+				boxShadow:
+					'0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)',
+				height: '400px',
+				width: '400px',
+				borderRadius: '5px',
+			}}></Box>
+	);
+};
+
+const Dashboard = (contract) => {
+	return (
+		<Box sx={{ minHeight: '100vh' }}>
+			<Header />
+			<Details />
+			<Actions />
+			<Integrations />
+
+			<Stack gap={1} mt={4}></Stack>
+		</Box>
+	);
+};
+
+const Header = () => {
+	const { createModal } = useModal();
+	const [, setIsDeployModalOpen] = createModal(DeployToMainnetModal);
+	return (
+		<Stack direction="row" mt={4}>
+			<Stack gap={1}>
+				<Typography variant="body" sx={{ fontWeight: 'bold' }}>
+					Contract dashboard
+				</Typography>
+				<Typography variant="h4">Headspace Hunters</Typography>
+				<Typography variant="body">
+					Copy and share to start accepting payments with this link.
+				</Typography>
+
+				<Stack gap={1} mt={2} direction="row">
+					<Box
+						sx={{
+							background: '#f6f8fa',
+							boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.1)',
+							borderRadius: '5px',
+							px: 1,
+							fontWeight: 'bold',
+						}}>
+						0xfd6c3bD6dB6D7cbB77Ee64d1E406B2ACB63A5166
+					</Box>
+					<Box>
+						<Button variant="outlined" size="small">
+							Copy
+						</Button>
+					</Box>
+				</Stack>
+			</Stack>
+			<Box sx={{ ml: 'auto' }}>
+				<Button
+					size="small"
+					onClick={() => setIsDeployModalOpen(true)}
+					variant="contained">
+					Deploy to mainnet
+				</Button>
+			</Box>
 		</Stack>
 	);
 };
+
+
+
+const AirdropModal = () => {
+	const airdropAddresses = [];
+
+	return (
+		<CSVWidget
+			addresses={airdropAddresses}
+			onSave={addresses => {
+				setAirdropAddresses(addresses.map(({ address, count }) => ({ address, count })));
+				toggleAirdropDialog(false);
+			}}
+		/>
+	)
+};
+
+const WhitelistModal = () => {
+	const whitelistAddresses = [];
+
+
+	return (
+		<CSVWidget
+			count={1}
+			addresses={whitelistAddresses.map(a => ({ address: a }))}
+			onSave={addresses => {
+				console.log(addresses);
+//				setWhitelistAddresses(addresses.map(({ address }) => address));
+//				toggleWhitelistAddressDialog(false);
+			}}
+		/>
+	)
+};
+
+
+const MintData = () => {
+	const whitelistAddresses = [];
+	
+	
+	return (
+		<Box>
+			asd
+		</Box>
+	)
+};
+
+const Actions = () => {
+	const { createModal } = useModal();
+//	const [, setIsMintModalOpen] = createModal(MintData);
+
+	const listOfActions = [
+		{
+			icon: <CreditScoreIcon />,
+			title: 'Mint an NFT',
+			description: 'Mint an NFT from your collection',
+			modal: MintData,
+		},
+		{
+			icon: <AccountBalanceWalletIcon />,
+			title: 'Withdraw your funds',
+			description: 'Send the funds from your sale to your wallet.',
+			modal: MintData,
+		},
+		{
+			icon: <FormatListNumberedIcon />,
+			title: 'Set your whitelist',
+			description:
+				'Set a list of users that can mint your NFT during pre-sale phase.',
+			modal: WhitelistModal,
+		},
+		{
+			icon: <SystemUpdateAltIcon />,
+			title: 'Airdrop your NFT',
+			description:
+				'Used to reward users with a free NFT. Use this function to send NFTs to your community.',
+			modal: AirdropModal,
+		},
+	];
+
+	return (
+		<Stack gap={1} mt={4}>
+			<Stack direction="row" justifyContent="space-between">
+				<Typography variant="h6">Actions</Typography>
+			</Stack>
+			<Divider />
+
+			<Grid container>
+				{listOfActions.map((action, i) => {
+					const [, setIsModalOpen] = createModal(action.modal);
+
+					return (
+					<Grid key={i} item xs={4}>
+						<Stack
+							onClick={() => setIsModalOpen(true)}
+							gap={1}
+							p={2.5}
+							mr={1}
+							mb={1}
+							sx={{
+								height: '160px',
+								border: '1px solid rgba(0,0,0,.15)',
+								borderRadius: '5px',
+								transition: 'all .2s',
+								cursor: 'pointer',
+								'&:hover': {
+									boxShadow: '0 0 8px rgba(0,0,0,.15)',
+								},
+							}}>
+							<Stack alignItems="center" gap={1} direction="row">
+								{action.icon}
+								<Typography
+									variant="body"
+									sx={{
+										color: '#404452',
+										fontSize: '18px',
+									}}>
+									{action.title}
+								</Typography>
+							</Stack>
+							<Typography
+								variant="body"
+								sx={{ color: '#6a7383', fontSize: '14px' }}>
+								{action.description}
+							</Typography>
+						</Stack>
+					</Grid>
+				)})}
+			</Grid>
+		</Stack>
+	);
+};
+
+const Integrations  = () => {
+	const { createModal } = useModal();
+	const [, setIsMintModalOpen] = createModal(MintData);
+
+	const listOfIntegrations = [
+		{
+			icon: <SmartButtonIcon />,
+			title: 'Embed a mint button',
+			description: 'Add a minting button to a website builder of your choice',
+		},
+		{
+			icon: <img style={{height: '25px'}} src="https://etherscan.io/images/brandassets/etherscan-logo-circle.png" />,
+			title: 'Verify on Etherscan',
+			description:
+				'Set a list of users that can mint your NFT during pre-sale phase.',
+		},
+		{
+			icon: <img style={{height: '25px'}} src="https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.png" />,
+			title: 'Connect with OpenSea',
+			description: 'Import your collection onto Opensea. You must have at least one NFT minted before you can integrate.',
+		},
+	];
+
+	return (
+		<Stack gap={1} mt={4}>
+			<Stack direction="row" justifyContent="space-between">
+				<Typography variant="h6">Integrations</Typography>
+			</Stack>
+			<Divider />
+
+			<Grid container>
+				{listOfIntegrations.map((action, i) => (
+					<Grid key={i} item xs={4}>
+						<Stack
+							onClick={() => setIsMintModalOpen(true)}
+							gap={1}
+							p={2.5}
+							mr={1}
+							mb={1}
+							sx={{
+								height: '160px',
+								border: '1px solid rgba(0,0,0,.15)',
+								borderRadius: '5px',
+								transition: 'all .2s',
+								cursor: 'pointer',
+								'&:hover': {
+									boxShadow: '0 0 8px rgba(0,0,0,.15)',
+								},
+							}}>
+							<Stack alignItems="center" gap={1} direction="row">
+								{action.icon}
+								<Typography
+									variant="body"
+									sx={{
+										color: '#404452',
+										fontSize: '18px',
+									}}>
+									{action.title}
+								</Typography>
+							</Stack>
+							<Typography
+								variant="body"
+								sx={{ color: '#6a7383', fontSize: '14px' }}>
+								{action.description}
+							</Typography>
+						</Stack>
+					</Grid>
+				))}
+			</Grid>
+		</Stack>
+	);
+};
+
 
 export default ContractV2;
