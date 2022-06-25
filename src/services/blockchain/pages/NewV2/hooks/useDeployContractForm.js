@@ -197,7 +197,13 @@ export const useDeployContractForm = () => {
 					setState(prevState => ({ ...prevState, deployingMessage: 'Uploading NFT metadata url to Contract! Please be patient it will take couple of seconds...' }));
 
 					const contractController = new ContractController(contractAddress, blockchain, CONTRACT_VERSION);
+
+					// No unrevealedBaseUri should use revealed
+					if(state.contractState?.nftCollection?.unRevealedBaseUri == null) {
+						await contractController.updateReveal(walletAddress, false, state.contractState?.nftCollection?.baseUri);
+					}
 					await contractController.updateReveal(walletAddress, false, state.contractState?.nftCollection?.unRevealedBaseUri);
+
 				}
 
 				// Update backend

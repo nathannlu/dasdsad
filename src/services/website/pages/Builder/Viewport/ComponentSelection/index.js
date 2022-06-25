@@ -109,15 +109,16 @@ const ComponentSelection = (props) => {
                                                     '0 3px 14px 0 rgb(0 0 0 / 5%)',
                                                 borderRadius: '4px',
                                                 overflow: 'hidden',
+																							minHeight: '50px'
                                             }}
                                             onClick={() =>
                                                 addComponent(t.template)
                                             }>
-                                            {
+																							{group.groupKey !== 'BAYC' ? 
                                                 iconList[group.groupKey][
                                                     t.variant
-                                                ]
-                                            }
+																								] : t.variant
+																							}
                                         </Grid>
                                     ))}
                                 </Stack>

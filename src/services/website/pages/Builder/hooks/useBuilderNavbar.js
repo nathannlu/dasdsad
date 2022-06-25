@@ -8,7 +8,7 @@ import { useToast } from 'ds/hooks/useToast';
 
 const useBuilderNavbar = () => {
     const { addToast } = useToast();
-    const { website, getPageName } = useWebsite();
+    const { website, getPageName, setIsCheckoutModalOpen } = useWebsite();
     const [menuAnchor, setMenuAnchor] = useState(null);
     const openAnchor = Boolean(menuAnchor);
     const [isPublishing, setIsPublishing] = useState(false);
@@ -28,13 +28,15 @@ const useBuilderNavbar = () => {
     });
 
     const onPublish = (e) => {
+			/*
         if (!website.isSubscribed) {
             addToast({
-                severity: 'error',
+                severity: 'info',
                 message: 'Your website must be subscribed',
             });
-            return;
+            setIsCheckoutModalOpen(true);
         }
+				*/
         setMenuAnchor(e.currentTarget);
     };
 
@@ -47,8 +49,17 @@ const useBuilderNavbar = () => {
         const indexOfPublished = website.published.findIndex(
             (page) => page.name === curPage
         );
-        setIsPublishing(true);
 
+				if (!website.isSubscribed) {
+            addToast({
+                severity: 'info',
+                message: 'Your website must be subscribed',
+            });
+            setIsCheckoutModalOpen(true);
+        } else {
+
+
+        setIsPublishing(true);
         try {
             if (indexOfPublished === -1) {
                 const indexOfPage = website.pages.findIndex(
@@ -87,6 +98,7 @@ const useBuilderNavbar = () => {
             setIsPublishing(false);
             console.log(err);
         }
+				}
     };
 
     const isPagePublished = () => {

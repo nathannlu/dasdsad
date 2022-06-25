@@ -52,18 +52,19 @@ const Header = ({ contract }) => {
                 </Typography>
             </Box>
 
-            <Box>
+            <Stack direction="row" gap={1}>
                 <Typography variant="body">Status:</Typography>
                 {!isSetupComplete ? (
                     <Chip
                         icon={<WarningAmberIcon />}
                         color="warning"
                         label="Set up required"
+                        size='small'
                     />
                 ) : (
-                    <Chip color="success" label="Live on blockchain" />
+                    <Chip color="success" label="Live on blockchain"  size='small'/>
                 )}
-            </Box>
+            </Stack>
             {contract?.address && (
                 <Stack direction="column" gap={2}>
                     <Box>

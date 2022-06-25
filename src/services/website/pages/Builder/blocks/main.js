@@ -48,6 +48,16 @@ import StatsATemplate from './Stats/a';
 import StatsBTemplate from './Stats/b';
 import StatsCTemplate from './Stats/c';
 
+import BAYCa from './BAYC/a';
+import BAYCb from './BAYC/b';
+import BAYCc from './BAYC/c';
+import BAYCd from './BAYC/d';
+import BAYCnav from './BAYC/nav';
+import BAYChero from './BAYC/hero';
+import BAYCfooter from './BAYC/footer';
+import { BAYCAProps, BAYCBProps, BAYCCProps, BAYCDProps, BAYCNavProps, BAYCHeroProps, BAYCFooterProps } from './BAYC/defaults';
+
+
 import MintATemplate from './Mint/a';
 
 const templatesArray = [
@@ -66,6 +76,14 @@ const templatesArray = [
 
     { key: 'Footer_A', template: FooterATemplate, defaults: FooterAProps },
     { key: 'Header_A', template: NavATemplate, defaults: NavAProps },
+
+	{ key: 'BAYC_a', template: BAYCa, defaults: BAYCAProps },
+	{ key: 'BAYC_b', template: BAYCb, defaults: BAYCBProps },
+	{ key: 'BAYC_c', template: BAYCc, defaults: BAYCCProps },
+	{ key: 'BAYC_d', template: BAYCd, defaults: BAYCDProps },
+	{ key: 'BAYC_nav', template: BAYCnav, defaults: BAYCNavProps },
+	{ key: 'BAYC_hero', template: BAYChero, defaults: BAYCHeroProps },
+	{ key: 'BAYC_footer', template: BAYCfooter, defaults: BAYCFooterProps },
 
     // depreciated
     /*
