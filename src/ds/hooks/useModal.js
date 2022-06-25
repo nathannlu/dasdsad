@@ -42,7 +42,6 @@ export const ModalManager = (props) => {
 					alignItems: 'center',
 					display: 'flex',
 					zIndex: 5000,
-					...modalStyles
 				}}>
 				<Box
 					p={3}
@@ -52,6 +51,10 @@ export const ModalManager = (props) => {
 						margin: '0 auto',
 						background: '#fff',
 						borderRadius: '10px',
+						maxHeight: '90vh',
+						overflow: 'scroll',
+						'&:focus-visible': { outline: 'none' },
+						...modalStyles
 					}}>
 					<Stack>
 						<IconButton sx={{ ml: 'auto' }}>

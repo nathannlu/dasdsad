@@ -10,11 +10,14 @@ import {
 	Box,
 	Link,
 } from 'ds/components';
+import { Stepper, Step, StepLabel } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import UploadToIPFS from '../Contract/IPFSModal/Raw';
 import { useContract } from 'services/blockchain/provider';
 import ContractDetailTabs from './ContractDetailTabs';
 import CSVWidget from '../../widgets/CSVWidget';
+import Embed from '../Contract/Embed';
+import Verify from './Verify';
 
 
 import CreditScoreIcon from '@mui/icons-material/CreditScore';
@@ -308,6 +311,31 @@ const MintData = () => {
 	)
 };
 
+const TransactionModal = () => {
+	const transactions = [1,1,1,1]
+
+	return ( 
+		<Box>
+			<Typography variant="h6">
+				Deploying to Rinkeby
+			</Typography>
+			<Stepper orientation="vertical" activeStep={1}>
+				{transactions.map(txn => (
+					<Step>
+						<StepLabel
+              optional={
+                  <Typography variant="caption">Open MetaMask and sign the transaction.</Typography>
+              }
+            >
+							Awaiting signature
+            </StepLabel>
+					</Step>
+				))}
+			</Stepper>
+		</Box>
+	)
+};
+
 const Actions = () => {
 	const { createModal } = useModal();
 //	const [, setIsMintModalOpen] = createModal(MintData);
@@ -317,7 +345,7 @@ const Actions = () => {
 			icon: <CreditScoreIcon />,
 			title: 'Mint an NFT',
 			description: 'Mint an NFT from your collection',
-			modal: MintData,
+			modal: TransactionModal,
 		},
 		{
 			icon: <AccountBalanceWalletIcon />,
@@ -394,26 +422,40 @@ const Actions = () => {
 	);
 };
 
+const EmbedModal = () => {
+	const contract = {
+		blockchain: 'ethereum'
+	}
+	return (
+		<Embed id={""} contract={contract} />
+	)
+};
+
+const VerifyModal = () => {
+	const contract = {
+		blockchain: 'ethereum'
+	}
+	return (
+		<Verify contract={contract} />
+	)
+};
+
 const Integrations  = () => {
 	const { createModal } = useModal();
-	const [, setIsMintModalOpen] = createModal(MintData);
 
 	const listOfIntegrations = [
 		{
 			icon: <SmartButtonIcon />,
 			title: 'Embed a mint button',
 			description: 'Add a minting button to a website builder of your choice',
+			modal: EmbedModal,
 		},
 		{
 			icon: <img style={{height: '25px'}} src="https://etherscan.io/images/brandassets/etherscan-logo-circle.png" />,
 			title: 'Verify on Etherscan',
 			description:
 				'Set a list of users that can mint your NFT during pre-sale phase.',
-		},
-		{
-			icon: <img style={{height: '25px'}} src="https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.png" />,
-			title: 'Connect with OpenSea',
-			description: 'Import your collection onto Opensea. You must have at least one NFT minted before you can integrate.',
+			modal: VerifyModal,
 		},
 	];
 
@@ -425,10 +467,13 @@ const Integrations  = () => {
 			<Divider />
 
 			<Grid container>
-				{listOfIntegrations.map((action, i) => (
+				{listOfIntegrations.map((action, i) => {
+					const [, setIsModalOpen] = createModal(action.modal);
+
+						return (
 					<Grid key={i} item xs={4}>
 						<Stack
-							onClick={() => setIsMintModalOpen(true)}
+							onClick={() => setIsModalOpen(true)}
 							gap={1}
 							p={2.5}
 							mr={1}
@@ -461,7 +506,42 @@ const Integrations  = () => {
 							</Typography>
 						</Stack>
 					</Grid>
-				))}
+				)})}
+					<Grid item xs={4}>
+						<Stack
+							onClick={() => window.open("https://opensea.io/get-listed/step-two", '_blank').focus()}
+							gap={1}
+							p={2.5}
+							mr={1}
+							mb={1}
+							sx={{
+								height: '160px',
+								border: '1px solid rgba(0,0,0,.15)',
+								borderRadius: '5px',
+								transition: 'all .2s',
+								cursor: 'pointer',
+								'&:hover': {
+									boxShadow: '0 0 8px rgba(0,0,0,.15)',
+								},
+							}}>
+							<Stack alignItems="center" gap={1} direction="row">
+								<img style={{height: '25px'}} src="https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.png" />
+								<Typography
+									variant="body"
+									sx={{
+										color: '#404452',
+										fontSize: '18px',
+									}}>
+									Connect with OpenSea
+								</Typography>
+							</Stack>
+							<Typography
+								variant="body"
+								sx={{ color: '#6a7383', fontSize: '14px' }}>
+								Import your collection onto Opensea. You must have at least one NFT minted before you can integrate.
+							</Typography>
+						</Stack>
+					</Grid>
 			</Grid>
 		</Stack>
 	);
