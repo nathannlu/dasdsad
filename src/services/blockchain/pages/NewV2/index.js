@@ -278,6 +278,7 @@ const New = ({ contract, skipLoadWalletProviderOnLoad }) => {
 										}
 									}}
 									error={Boolean(formValidationErrors.name)}
+									inputProps={{ 'data-testid': 'contract-name' }}
 								/>
 							</Stack>
 							<Stack sx={{ mb: 4 }}>
@@ -285,7 +286,7 @@ const New = ({ contract, skipLoadWalletProviderOnLoad }) => {
 									variant="outlined"
 									sx={{ flex: 1 }}
 									{...symbol}
-									inputProps={{ maxLength: 5 }}
+									inputProps={{ maxLength: 5, 'data-testid': 'contract-symbol' }}
 									error={Boolean(formValidationErrors.symbol)}
 								/>
 							</Stack>
@@ -295,6 +296,7 @@ const New = ({ contract, skipLoadWalletProviderOnLoad }) => {
 									{...maxSupply}
 									type="number"
 									error={Boolean(formValidationErrors.maxSupply)}
+									inputProps={{ 'data-testid': 'contract-max-supply' }}
 								/>
 							</Stack>
 							<Stack sx={{ mb: 4 }}>
@@ -302,7 +304,8 @@ const New = ({ contract, skipLoadWalletProviderOnLoad }) => {
 									variant="outlined"
 									{...price}
 									type="number"
-								//									error={Boolean(formValidationErrors.price)}
+									inputProps={{ 'data-testid': 'contract-price' }}
+								// error={Boolean(formValidationErrors.price)}
 								/>
 							</Stack>
 							<Stack gap={2}>

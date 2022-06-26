@@ -75,16 +75,16 @@ const Navbar = ({ pageName }) => {
 						/>
 					</Link>
 					<Stack direction="row" alignItems="center" gap='2em' className="ml-auto">
-                        <Box>
-                            <a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="/gas">
-                                Gas Estimate
-                            </a>
-                        </Box>
 						<Box>
-                            <a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
-                                Docs
-                            </a>
-                        </Box>
+							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="/gas">
+								Gas Estimate
+							</a>
+						</Box>
+						<Box>
+							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
+								Docs
+							</a>
+						</Box>
 						{state.walletAddress ? (
 							<Box
 								id="account-button"
@@ -166,33 +166,33 @@ const Navbar = ({ pageName }) => {
 									</Box>
 								</Stack>
 
-						</Box>
-							) : (
-								<Button
-									variant="contained"
-									size="small"
-									startIcon={<AccountBalanceWalletIcon/>}
-									sx={{
-										width: '260px',
-										height: '49px',
-										color: 'white',
-										borderRadius: '5px',
-									}}
-									color="black"
-									onClick={async () => {
-										const curentWalletType = window.localStorage.getItem('ambition-wallet');
-										await walletController.loadWalletProvider(curentWalletType || 'metamask');
-										const { wallet, address } = walletController?.getState();
+							</Box>
+						) : (
+							<Button
+								variant="contained"
+								size="small"
+								startIcon={<AccountBalanceWalletIcon />}
+								sx={{
+									width: '260px',
+									height: '49px',
+									color: 'white',
+									borderRadius: '5px',
+								}}
+								color="black"
+								onClick={async () => {
+									const curentWalletType = window.localStorage.getItem('ambition-wallet');
+									await walletController.loadWalletProvider(curentWalletType || 'metamask');
+									const { wallet, address } = walletController?.getState();
 
-										setState((prevState) => ({
-											...prevState,
-											walletType: wallet || null,
-											walletAddress: address || null,
-										}));
-									}}>
-									Connect wallet
-								</Button>
-							)}
+									setState((prevState) => ({
+										...prevState,
+										walletType: wallet || null,
+										walletAddress: address || null,
+									}));
+								}}>
+								Connect wallet
+							</Button>
+						)}
 
 						<Menu
 							id="account-menu"

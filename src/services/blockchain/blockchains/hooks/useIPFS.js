@@ -61,7 +61,7 @@ export const useIPFS = () => {
 		contract,
 		unrevealedImageUrl
 	) => {
-		if(!contract) {
+		if (!contract) {
 			throw new Error('Cannot generate metadata. Please open at ticket in Discord for help')
 		}
 
@@ -125,7 +125,7 @@ export const useIPFS = () => {
 		const res = await axios.post(url, data, opt(data));
 
 		// On success
-		if(res) {
+		if (res) {
 			return withIpfsUrls(res.data.IpfsHash);
 		}
 
@@ -156,7 +156,7 @@ export const useIPFS = () => {
 		const res = await axios.post(url, data, opt(data));
 
 
-		if(res) {
+		if (res) {
 			return withIpfsUrls(res.data.IpfsHash)
 		}
 
@@ -229,11 +229,11 @@ export const useIPFS = () => {
 	/**
 	 * Mime type to file extension
 	 */
-	const resolveFileExtension = (mimeType) => 
+	const resolveFileExtension = (mimeType) =>
 		(mimeType === 'image/webp' && 'webp') ||
 		(mimeType === 'video/mp4' && 'mp4') ||
 		'png';
-	
+
 
 	return {
 		pinUnrevealedImage,

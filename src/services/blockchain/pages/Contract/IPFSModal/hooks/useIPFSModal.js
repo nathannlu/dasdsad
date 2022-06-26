@@ -13,9 +13,9 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 		pinMetadata,
 		pinataPercentage,
 	} = useIPFS();
-	const { 
-		uploadedUnRevealedImageFile, 
-		setUploadedUnRevealedImageFile, 
+	const {
+		uploadedUnRevealedImageFile,
+		setUploadedUnRevealedImageFile,
 		setMetadataUrl,
 		uploadedFiles,
 		uploadedJson,
@@ -29,12 +29,12 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 	const [percent, setPercent] = useState(0);
 	const [loading, setLoading] = useState(false);
 
-	
+
 	// Select different urls based on blockchain
 	// Solana - use gateway url
 	// Ethereum - use ipfs url
 	const resolvedUrl = contract.blockchain === 'solana' || contract.blockchain === 'solanadevnet' ? 'gateway' : 'url'
-	
+
 	/**
 	 * Handle file upload to IPFS
 	 */
@@ -56,7 +56,7 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 			}
 
 			// Save url to database
-      setUnRevealedBaseUri(metadataUrls[resolvedUrl]);
+			setUnRevealedBaseUri(metadataUrls[resolvedUrl]);
 			addToast({
 				severity: 'success',
 				message: 'Image and metadata were uploaded successfully'
@@ -96,7 +96,7 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 				message: e.message,
 			});
 			callback(false);
-		} finally { 
+		} finally {
 			setLoading(false);
 		}
 	}
