@@ -19,6 +19,10 @@ export const Step1 = ({ nextStep }) => {
 			<Typography variant="h5">
 				Set up your project
 			</Typography>
+			<Typography variant="body">
+				Let's create a free testnet contract for your NFT collection.
+				Don't worry about these values for testnet, but note that they can't be changed on mainnet.
+			</Typography>
 			<Grid container>
 				<Grid xs={8} sx={{mx:'auto'}} item>
 					<Stack gap={1}>

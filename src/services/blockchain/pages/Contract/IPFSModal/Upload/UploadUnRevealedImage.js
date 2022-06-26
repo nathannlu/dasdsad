@@ -71,10 +71,9 @@ const UploadUnRevealedImage = (props) => {
 	return (
 		<Stack gap={2}>
 			<Box>
-				<Typography variant="h6">Upload your NFT pre-reveal image</Typography>
+				<Typography variant="h6">Upload your placeholder to IPFS</Typography>
 				<Typography variant="body">
-					Add your single image file for your unrevealed NFT placeholder. We
-					support upload limits of up to 25GB
+					Also known as the pre-reveal image/video. It ensures fair rarity distribution & adds anticipation to the reveal. Max upload limit of 25GB
 				</Typography>
 			</Box>
 			<Divider />

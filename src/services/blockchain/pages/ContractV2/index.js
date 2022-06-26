@@ -67,7 +67,7 @@ const DeployToMainnetModal = (
 							Deploy to Ethereum mainnet
 						</Typography>
 						<Typography variant="body">
-							Project names need to be distinct
+							Here is a quick recap. You can change the name, symbol, and collection size later only by re-creating the contract.
 						</Typography>
 					</Box>
 
@@ -77,6 +77,7 @@ const DeployToMainnetModal = (
 								<Typography>Name</Typography>
 								<Typography>Symbol:</Typography>
 								<Typography>Collection size:</Typography>
+
 								<Typography>Cost:</Typography>
 								<Typography>Max per mint:</Typography>
 								<Typography>Max per wallet:</Typography>
@@ -355,9 +356,9 @@ const Actions = () => {
 		},
 		{
 			icon: <FormatListNumberedIcon />,
-			title: 'Set your whitelist',
+			title: 'Create a new presale list',
 			description:
-				'Set a list of users that can mint your NFT during pre-sale phase.',
+				'Upload list of wallets to set up early minting via merkle proofs',
 			modal: WhitelistModal,
 		},
 		{
@@ -447,7 +448,7 @@ const Integrations  = () => {
 		{
 			icon: <SmartButtonIcon />,
 			title: 'Embed a mint button',
-			description: 'Add a minting button to a website builder of your choice',
+			description: 'Add a mint button to your website on Webflow, Squarespace, or WordPress',
 			modal: EmbedModal,
 		},
 		{
