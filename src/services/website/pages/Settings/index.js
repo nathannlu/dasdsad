@@ -49,8 +49,11 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import ImportModal from './ImportModal'
 
-const Settings = () => {
-    const { website, openImportModal } = useWebsite();
+const Settings = (props) => {
+		const { website, setWebsite, websites, openImportModal } = useWebsite();
+	const { title: websiteTitle } = props.match.params; // Used to query DB for page data
+
+
     const {
         tabValue,
         setTabValue,
@@ -113,6 +116,16 @@ const Settings = () => {
         onUrlChange,
     } = useSEOForm(setSeoSaveStatus);
 
+    // Load website data on load
+    useEffect(() => {
+        const w = websites.find((website) => website.title == websiteTitle);
+
+			if(w) {
+				setWebsite(w)
+			}
+
+    }, [websites]);
+
     return (
         <Box
             sx={{
@@ -139,7 +152,7 @@ const Settings = () => {
                 onDomainNameChange={onDomainNameChange}
                 isAddingDomain={isAddingDomain}
             />
-            {website && website.seo && (
+					{website && website.seo && (
                 <Box paddingTop="8em" paddingBottom="8em" bgcolor="grey.200">
                     <Box
                         maxWidth="1100px"

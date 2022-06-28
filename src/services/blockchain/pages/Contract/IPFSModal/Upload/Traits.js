@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, LoadingButton, Stack, Divider } from 'ds/components';
-import { LinearProgress, Typography } from '@mui/material';
+import { LinearProgress, CircularProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFSModal } from '../hooks/useIPFSModal';
@@ -44,6 +44,10 @@ const Traits = (props) => {
 				throw new Error('Error! File upload limit is 25GB.');
 			}
 
+			setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
+
+
+			/*
 			const formData = new FormData();
 			for (const file of acceptedFiles) formData.append('file', file);
 
@@ -59,6 +63,7 @@ const Traits = (props) => {
 			};
 			xhr.open('POST', 'https://httpbin.org/post', true);
 			xhr.send(formData);
+			*/
 		} catch (e) {
 			addToast({
 				severity: 'error',
@@ -96,9 +101,9 @@ const Traits = (props) => {
 					<Dropzone
 						accept={IMAGE_MIME_TYPES}
 						multiple
-						onDrop={(acceptedFiles) =>
+						onDrop={(acceptedFiles) => {
 							handleImagesUpload(acceptedFiles)
-						}>
+						}}>
 						{({ getRootProps, getInputProps }) => (
 							<Box
 								sx={{

@@ -37,6 +37,7 @@ export const createSolanaContract = async ({
     liveDate,
     creators,
     cacheHash,
+	sellerFeeBasisPoints,
     env = 'mainnet',
 }) => {
     console.log('[Ambition] Solana Contract Deployment');
@@ -81,7 +82,7 @@ export const createSolanaContract = async ({
             itemsAvailable: new BN(size),
             uuid: null,
             symbol,
-            sellerFeeBasisPoints: null,
+            sellerFeeBasisPoints,
             isMutable: true,
             maxSupply: new BN(0),
             retainAuthority: false,

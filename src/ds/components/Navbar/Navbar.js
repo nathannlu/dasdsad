@@ -74,10 +74,17 @@ const Navbar = ({ pageName }) => {
 							src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/61d34ab7c783ea4e08774112_combination-primary-logo.png"
 						/>
 					</Link>
-					<Stack direction="row" alignItems="center" gap={2} className="ml-auto">
-						<a target="_blank" style={{ display: 'inline-block', color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
-							Docs
-						</a>
+					<Stack direction="row" alignItems="center" gap='2em' className="ml-auto">
+                        <Box>
+                            <a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="/gas">
+                                Gas Estimate
+                            </a>
+                        </Box>
+						<Box>
+                            <a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
+                                Docs
+                            </a>
+                        </Box>
 						{state.walletAddress ? (
 							<Box
 								id="account-button"

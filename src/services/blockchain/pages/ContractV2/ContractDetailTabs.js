@@ -10,6 +10,7 @@ import Tabs from '@mui/material/Tabs';
 import Overview from './Overview';
 import Settings from './Settings';
 import Embed from '../Contract/Embed';
+import EmbedButtonStyling from '../Contract/EmbedButtonStyling';
 import Verify from './Verify';
 
 const ContractDetailTabs = (props) => {
@@ -24,6 +25,7 @@ const ContractDetailTabs = (props) => {
                     {/* <Tab label="Actions" value="actions" /> */}
                     <Tab label="Settings" value="settings" />
                     <Tab label="Embed" value="embed" />
+                    <Tab label="Embed Button Styling" value="embedButtonStyling" />
                     <Tab label="Verify" value="verify" />
                     {/* <Tab label="Balance" value="balance" /> */}
                 </Tabs>
@@ -35,6 +37,7 @@ const ContractDetailTabs = (props) => {
                     // actions: <Actions {...props} />,
                     settings: <Settings {...props} />,
                     embed: <Embed {...props} />,
+                    embedButtonStyling: <EmbedButtonStyling {...props} />,
                     verify: <Verify {...props} />,
                     // balance: <Balance {...props} />
                 }[value]}
