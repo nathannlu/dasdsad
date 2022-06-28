@@ -13,6 +13,8 @@ export const useContractDetails = (contractAddress, chainid, blockchain, renderE
     const [isPublicSaleOpen, setIsPublicSaleOpen] = useState(false);
     const [max, setMax] = useState('');
     const [metadataUrl, setMetadataUrl] = useState('');
+    const [owner, setOwner] = useState(null);
+    const [creators, setCreators] = useState([]);
     const [loading, setLoading] = useState(true);
     const { getPublicContractVariables } = useWeb3();
 
@@ -47,6 +49,8 @@ export const useContractDetails = (contractAddress, chainid, blockchain, renderE
             open,
             maxPerMint,
             baseTokenUri,
+            owner, 
+            creators
         } = contractState;
 
         setBalance(balanceInEth);
@@ -57,6 +61,8 @@ export const useContractDetails = (contractAddress, chainid, blockchain, renderE
         setMetadataUrl(baseTokenUri);
         setMax(maxPerMint);
         setSize(totalSupply);
+        setOwner(owner);
+        setCreators(creators);
 
         setLoading(false);
     };
@@ -70,8 +76,9 @@ export const useContractDetails = (contractAddress, chainid, blockchain, renderE
         size,
         isPresaleOpen,
         isPublicSaleOpen,
+        owner,
+        creators,
         loading,
-
         refresh,
     };
 };
