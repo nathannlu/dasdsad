@@ -84,7 +84,7 @@
     "dev": "webpack-dev-server --mode=development",
     "build": "webpack --mode production",
     "build:analyze": "npm run build --env.addons=bundleanalyzer",
-    "test": "cross-env NODE_ENV=test jest ./tests --config jest.config.js --bail --runInBand --forceExit --no-cache --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest ./tests/erc721a.test.js --config jest.config.js --bail --runInBand --forceExit --no-cache --detectOpenHandles",
     "eject": "react-scripts eject",
     "postinstall": "patch-package",
     "test2": "jest",

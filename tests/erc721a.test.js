@@ -23,6 +23,9 @@ import { ThemeProvider } from 'ds/hooks/useTheme';
 import NewV2 from 'services/blockchain/pages/NewV2';
 import Success from 'services/blockchain/pages/NewV2/Success';
 
+// import fs from 'fs';
+// import path from 'path';
+
 const MAX_SAFE_INTEGER = 900719925474099;
 
 jest.mock('react-router-dom', () => {
@@ -223,17 +226,23 @@ describe("metamask wallet connection", () => {
     test("it should upload 10K nfts successfully to ipfs", async () => {
 
         try {
-            const filesCount = 10000;
+            const filesCount = 1;
             const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`; // Pinata API url
 
-            let files = [];
-            for (let i = 0; i < filesCount; i++) {
-                files = [...files, new File([new ArrayBuffer(i)], `mockfile-${i}.png`, { type: "image/png", lastModified: new Date().getTime() })];
-            }
+            // const fileBuffer = fs.readFileSync(path.join(__dirname, './1.png'));
+            // const file = new File(fileBuffer, 'mockfile-1.png');
+
+            // let files = [];
+            // for (let i = 1; i <= filesCount; i++) {
+            //     const file = new File([new ArrayBuffer(i)], `mockfile-${i}.png`, { type: "image/png", lastModified: new Date().getTime() });
+            //     files = [...files, file];
+            // }
 
             let data = new FormData();
-            for (let i = 0; i < files.length; i++) {
-                data.append('file', files[i], `/assets/${files[i].name}`);
+            for (let i = 1; i <= filesCount; i++) {
+                // const file = new File(fileBuffer, `${i}.png`);
+                const file = new File([new ArrayBuffer(1)], `mockfile-${i}.png`, { type: "image/png", lastModified: new Date().getTime() });
+                data.append('file', file, `/assets/${file.name}`);
             }
 
             // Name Pinata folder
@@ -247,7 +256,7 @@ describe("metamask wallet connection", () => {
                 {
                     maxBodyLength: 'Infinity',
                     headers: {
-                        'Content-Type': `multipart/form-data; boundary= ${data._boundary}`,
+                        'Content-Type': `multipart/form-data; boundary=${data._boundary};`,
                         pinata_api_key: config.pinata.key,
                         pinata_secret_api_key: config.pinata.secret,
                     }
