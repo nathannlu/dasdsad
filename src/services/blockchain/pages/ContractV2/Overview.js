@@ -46,6 +46,11 @@ const Overview = ({ contract, contractState, unRevealedtNftImage, revealedNftIma
 									</Typography>
 									<Stack>
 										<Details
+											primary="Owner"
+											secondary={contractState?.owner}
+											isLoading={isLoading}
+										/>
+										<Details
 											primary="Collection size"
 											secondary={contractState?.collectionSize}
 											isLoading={isLoading}

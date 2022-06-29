@@ -141,7 +141,7 @@ const Embed = ({ contract, id }) => {
                         value={`<iframe width="320" id="iframe" scrolling="no" frameBorder="0" onload="handleOnLoad()"></iframe>`}
                     />
                     <Typography variant="p" sx={{ fontStyle: 'italic' }} color="gray">
-                        **Copy aove the iframe code in html where you want to load the embed button
+                        **Copy the above iframe code in html where you want to load the embed button
                     </Typography>
                 </Box>
             </Box>

@@ -122,7 +122,8 @@ export const Web3Provider = ({ children }) => {
                 costInEth: contract.price,
                 baseTokenUri: contract.metadataUrl,
                 open: contract.publicSale,
-                presaleOpen: contract.presale
+                presaleOpen: contract.presale,
+                creators: contract.creators
             };
 
         } else {
@@ -204,7 +205,9 @@ export const Web3Provider = ({ children }) => {
 
             const presale = (whiteListSettings == null) ? 0 : 1;
             const publicSale = (goLiveDate >= currDate) ? 0 : 1;
-            console.log(whiteListSettings)
+            console.log(whiteListSettings);
+
+            const creators = candyMachineObj.data.creators.map(c => ({ address: c.address.toString(), share: c.share }));
 
             return {
                 itemsRedeemed,
@@ -213,7 +216,8 @@ export const Web3Provider = ({ children }) => {
                 itemsRemaining,
                 metadataUrl,
                 publicSale,
-                presale
+                presale,
+                creators
             };
         } catch (e) {
             console.log(e, 'Error! retrieveSolanaContract');
@@ -323,15 +327,15 @@ export const Web3Provider = ({ children }) => {
         }
     }
 
-	const encodeConstructor = async (contract) => {
-    const web3 = window.web3
-		const structs = ["string", "string", "uint256"]
-		const args = [contract.name, contract.symbol, contract.nftCollection.size]
-			
-		const encodedConstructor = await web3.eth.abi.encodeParameters(structs,args)
-		
-		return encodedConstructor.slice(2);
-	}
+    const encodeConstructor = async (contract) => {
+        const web3 = window.web3
+        const structs = ["string", "string", "uint256"]
+        const args = [contract.name, contract.symbol, contract.nftCollection.size]
+
+        const encodedConstructor = await web3.eth.abi.encodeParameters(structs, args)
+
+        return encodedConstructor.slice(2);
+    }
 
     return (
         <Web3Context.Provider
@@ -347,7 +351,7 @@ export const Web3Provider = ({ children }) => {
                 getPublicContractVariables,
                 walletController,
                 loading,
-								encodeConstructor
+                encodeConstructor
             }}>
             {children}
         </Web3Context.Provider>

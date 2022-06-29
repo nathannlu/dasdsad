@@ -13,38 +13,67 @@ const DEFAULT_STYLES = (elementType) => ({
     color: {
         value: undefined,
         type: 'color',
-        label: elementType === 'button' && 'Button Text Color' || 'text Color'
+        label: elementType === 'button' && 'Button Text Color' || 'Text Color'
     },
     fontSize: {
         value: undefined,
         type: 'number',
-        label: elementType === 'button' && 'Button Text Size' || 'Text Size'
+        label: elementType === 'button' && 'Button Font Size' || 'Font Size'
     },
     borderRadius: {
-        value: undefined,
-        type: 'number',
+        value: '4',
+        type: 'slider',
         label: 'Corner Radius'
     },
-    mx: {
-        value: undefined,
-        type: 'number',
-        label: 'Horizontal Spacing'
+    margin: {
+        value: [0,0,0,0],
+        type: 'direction',
+        label: 'Margin: Outer Spacing'
     },
-    my: {
-        value: undefined,
-        type: 'number',
-        label: 'Vertical Spacing'
+    padding: {
+        value: [6,16,6,16],
+        type: 'direction',
+        label: 'Padding: Inner Spacing'
     }
 });
+
+const TEXT_STYLES = {
+    lineHeight: {
+        value: undefined,
+        type: 'number',
+        label: 'Line Height'
+    },
+    letterSpacing: {
+        value: undefined,
+        type: 'number',
+        label: 'Letter Spacing'
+    },
+    fontWeight: {
+        value: false,
+        type: 'toggle',
+        label: 'Style'
+    },
+    textDecoration: {
+        value: false,
+        type: 'toggle',
+        label: ''
+    },
+    fontStyle: {
+        value: false,
+        type: 'toggle',
+        label: ''
+    }
+}
 
 export const useEmbedBttonStyling = (contract, id) => {
     const { addToast } = useToast();
     const [setEmbedButtonCss] = useSetEmbedButtonCss({});
+    const [isSaving, setIsSaving] = useState(false);
 
     const [state, setState] = useState({
         cssContext: {
-            'connect-button': { ...DEFAULT_STYLES('button') },
-            'mint-button': { ...DEFAULT_STYLES('button') },
+            'connect-button': { ...DEFAULT_STYLES('button'), ...TEXT_STYLES },
+            'mint-button': { ...DEFAULT_STYLES('button'), ...TEXT_STYLES },
             'details-container': { ...DEFAULT_STYLES() },
             'details': { ...DEFAULT_STYLES() }
         }
@@ -72,8 +101,10 @@ export const useEmbedBttonStyling = (contract, id) => {
         });
     };
 
-    const save = () => {
-        setEmbedButtonCss({ variables: { id, css: JSON.stringify(state.cssContext) } });
+    const save = async () => {
+        setIsSaving(true);
+        await setEmbedButtonCss({ variables: { id, css: JSON.stringify(state.cssContext) } });
+        setIsSaving(false);
     }
 
     const getCssString = (cssContext) => {
@@ -81,30 +112,44 @@ export const useEmbedBttonStyling = (contract, id) => {
             .connect-button {
                 background-color: ${cssContext?.['connect-button']?.['backgroundColor']?.['value']} !important; 
                 color: ${cssContext?.['connect-button']?.['color']?.['value']} !important; 
-                font-size: ${cssContext?.['connect-button']?.['fontSize']?.['value']}px !important; 
-                border-radius: ${cssContext?.['connect-button']?.['borderRadius']?.['value']}px !important; 
-                margin: ${cssContext?.['connect-button']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+                font-size: ${cssContext?.['connect-button']?.['fontSize']?.['value'] || 14}px !important; 
+                border-radius: ${cssContext?.['connect-button']?.['borderRadius']?.['value'] || 4}px !important; 
+                margin: ${cssContext?.['connect-button']?.['margin']?.['value']?.join('px ') || 0}px !important;
+                padding: ${cssContext?.['connect-button']?.['padding']?.['value']?.join('px ') || '6px 16px'} !important;
+                font-weight: ${cssContext?.['connect-button']?.['fontWeight']?.['value'] ? 'bold' : 'initial' || 'initial'} !important;
+                font-style: ${cssContext?.['connect-button']?.['fontStyle']?.['value'] ? 'italic' : 'initial' || 'initial'} !important;
+                text-decoration: ${cssContext?.['connect-button']?.['textDecoration']?.['value'] ? 'underline' : 'initial' || 'initial'} !important;
+                line-height: ${cssContext?.['connect-button']?.['lineHeight']?.['value'] || 1.75} !important; 
+                letter-spacing: ${cssContext?.['connect-button']?.['letterSpacing']?.['value'] || 0.45712}px !important;
             }
             .mint-button {
                 background-color: ${cssContext?.['mint-button']?.['backgroundColor']?.['value']} !important; 
                 color: ${cssContext?.['mint-button']?.['color']?.['value']} !important; 
-                font-size: ${cssContext?.['mint-button']?.['fontSize']?.['value']}px !important; 
-                border-radius: ${cssContext?.['mint-button']?.['borderRadius']?.['value']}px !important; 
-                margin: ${cssContext?.['mint-button']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+                font-size: ${cssContext?.['mint-button']?.['fontSize']?.['value'] || 14}px !important; 
+                border-radius: ${cssContext?.['mint-button']?.['borderRadius']?.['value'] || 4}px !important; 
+                margin: ${cssContext?.['mint-button']?.['margin']?.['value']?.join('px ') || 0}px !important;
+                padding: ${cssContext?.['mint-button']?.['padding']?.['value']?.join('px ') || '6px 16px'} !important;
+                font-weight: ${cssContext?.['mint-button']?.['fontWeight']?.['value'] ? 'bold' : 'initial' || 'initial'} !important;
+                font-style: ${cssContext?.['mint-button']?.['fontStyle']?.['value'] ? 'italic' : 'initial' || 'initial'} !important;
+                textDecoration: ${cssContext?.['mint-button']?.['textDecoration']?.['value'] ? 'underline' : 'initial' || 'initial'} !important;
+                line-height: ${cssContext?.['mint-button']?.['lineHeight']?.['value'] || 1.75} !important; 
+                letter-spacing: ${cssContext?.['mint-button']?.['letterSpacing']?.['value'] || 0.45712}px !important;
             }
             .details-container {
                 background-color: ${cssContext?.['details-container']?.['backgroundColor']?.['value']} !important; 
                 color: ${cssContext?.['details-container']?.['color']?.['value']} !important; 
-                font-size: ${cssContext?.['details-container']?.['fontSize']?.['value']}px !important; 
-                border-radius: ${cssContext?.['details-container']?.['borderRadius']?.['value']}px !important; 
-                margin: ${cssContext?.['details-container']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+                font-size: ${cssContext?.['details-container']?.['fontSize']?.['value'] || 14}px !important; 
+                border-radius: ${cssContext?.['details-container']?.['borderRadius']?.['value'] || 4}px !important; 
+                margin: ${cssContext?.['details-container']?.['margin']?.['value']?.join('px ') || 0}px !important;
+                padding: ${cssContext?.['details-container']?.['padding']?.['value']?.join('px ') || '6px 16px'} !important;
             }
             .details {
                 background-color: ${cssContext?.['details']?.['backgroundColor']?.['value']} !important; 
                 color: ${cssContext?.['details']?.['color']?.['value']} !important; 
-                font-size: ${cssContext?.['details']?.['fontSize']?.['value']}px !important; 
-                border-radius: ${cssContext?.['details']?.['borderRadius']?.['value']}px !important; 
-                margin: ${cssContext?.['details']?.['my']?.['value'] || 0}px ${cssContext?.['connect-button']?.['mx']?.['value'] || 0}px !important; 
+                font-size: ${cssContext?.['details']?.['fontSize']?.['value'] || 14}px !important; 
+                border-radius: ${cssContext?.['details']?.['borderRadius']?.['value'] || 4}px !important; 
+                margin: ${cssContext?.['details']?.['margin']?.['value']?.join('px ') || 0}px !important;
+                padding: ${cssContext?.['details']?.['padding']?.['value']?.join('px ') || '6px 16px'} !important;
             }
 
             .details p,
@@ -163,22 +208,21 @@ export const useEmbedBttonStyling = (contract, id) => {
         iframe.head.append(script);
     }
 
-    const onChange = (value, key, styleKey) => {
-        console.log({ value, key, styleKey })
+    const onChange = (value, key, styleKey, data = {}) => {
+        //console.log({ value, key, styleKey })
 
-        setState(prevState => ({
-            ...prevState,
-            cssContext: {
-                ...prevState.cssContext,
-                [key]: {
-                    ...prevState.cssContext[key],
-                    [styleKey]: {
-                        ...prevState.cssContext[key][styleKey],
-                        value
-                    }
-                }
-            }
-        }))
+        let newValue = value;
+
+        if (data?.type === 'direction') {
+            newValue = [...data?.valueArray];
+            newValue[data?.index] = value;
+        }
+
+        let newState = {...state};
+        newState.cssContext[key][styleKey].value = newValue;
+        setState(newState);
+
+        setTimeout(() => handleIframeOnLoad(), 500);
     };
 
     const setCssContext = (cssContext) => setState(prevState => ({ ...prevState, cssContext: { ...prevState.cssContext, ...cssContext } }));
@@ -189,7 +233,8 @@ export const useEmbedBttonStyling = (contract, id) => {
         handleIframeOnLoad,
         save,
         onChange,
-        getCssString
+        getCssString,
+        isSaving
     };
 };
 
