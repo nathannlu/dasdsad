@@ -11,6 +11,7 @@ export const CREATE_CONTRACT = gql`
             blockchain
             address
             isSubscribed
+            nftStorageType
             embed {
                 css
             }
@@ -38,6 +39,7 @@ export const UPDATE_CONTRACT_DETAILS = gql`
             blockchain
             address
             isSubscribed
+            nftStorageType
             nftCollection {
                 price
                 currency
@@ -62,6 +64,7 @@ export const UPDATE_CONTRACT_ADDRESS = gql`
             blockchain
             address
             isSubscribed
+            nftStorageType
             nftCollection {
                 price
                 currency
@@ -94,6 +97,7 @@ export const GET_CONTRACTS = gql`
             blockchain
             address
             isSubscribed
+            nftStorageType
             embed {
                 css
             }
@@ -120,6 +124,7 @@ export const GET_CONTRACT = gql`
             author
             blockchain
             address
+            nftStorageType
             embed {
                 css
             }

@@ -4,7 +4,7 @@ import { LinearProgress, CircularProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFSModal } from '../hooks/useIPFSModal';
-import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'ambition-constants';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useToast } from 'ds/hooks/useToast';
@@ -12,10 +12,11 @@ import { useToast } from 'ds/hooks/useToast';
 
 const Traits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useContract();
-	const { uploadImages, loading, pinataPercentage } = useIPFSModal(
+	const { uploadImages, uploadLoading, uploadPercentage } = useIPFSModal(
 		props.contract,
 		props.step,
-		props.setActiveStep
+		props.setActiveStep,
+		props.nftStorageType
 	);
 	const [percent, setPercent] = useState(0);
 	const { addToast } = useToast();
@@ -91,7 +92,7 @@ const Traits = (props) => {
 			<Box>
 				<Typography variant="h6">Upload NFT collection images</Typography>
 				<Typography mb={2} variant="body">
-					Now, add your folder of NFT images to IPFS by dropping them below. 
+					Now, add your folder of NFT images to IPFS by dropping them below.
 					Support upload limits of up to 25GB
 				</Typography>
 			</Box>
@@ -120,7 +121,7 @@ const Traits = (props) => {
 									style={{ padding: '64px', textAlign: 'center' }}
 									{...getRootProps()}>
 									<input {...getInputProps()} />
-									<FileUploadIcon sx={{opacity: .3, fontSize: '64px'}} />
+									<FileUploadIcon sx={{ opacity: .3, fontSize: '64px' }} />
 									<p
 										style={{
 											opacity: 0.5,
@@ -153,8 +154,8 @@ const Traits = (props) => {
 
 					<LoadingButton
 						variant="outlined"
-						loading={loading}
-						onClick={async () => await uploadImages()}>
+						loading={uploadLoading}
+						onClick={async () => await uploadImages(props.nftStorageType)}>
 						Upload
 					</LoadingButton>
 					<Box
@@ -166,12 +167,12 @@ const Traits = (props) => {
 						<Box sx={{ width: '100%', mr: 1 }}>
 							<LinearProgress
 								variant="determinate"
-								value={pinataPercentage}
+								value={uploadPercentage}
 							/>
 						</Box>
 						<Box sx={{ minWidth: 35 }}>
 							<Typography variant="body2" color="text.secondary">
-								{pinataPercentage.toFixed(2)}%
+								{uploadPercentage.toFixed(2)}%
 							</Typography>
 						</Box>
 					</Box>

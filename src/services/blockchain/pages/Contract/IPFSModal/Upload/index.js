@@ -10,11 +10,11 @@ import Traits from './Traits';
 import Metadata from './Metadata';
 import Confirmation from './Confirmation';
 
-const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id) => {
-    const uploadUnRevealedImage = <UploadUnRevealedImage setActiveStep={setActiveStep} contract={contract} step={0} />;
-    const traits = <Traits setActiveStep={setActiveStep} contract={contract} step={renderUploadUnRevealedImage && 1 || 0} />;
-    const metadata = <Metadata setActiveStep={setActiveStep} contract={contract} step={renderUploadUnRevealedImage && 2 || 1} />;
-    const confirmation = <Confirmation id={id} setIsModalOpen={setIsModalOpen} setActiveStep={setActiveStep} renderUploadUnRevealedImage={renderUploadUnRevealedImage} />;
+const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id, nftStorageType) => {
+    const uploadUnRevealedImage = <UploadUnRevealedImage nftStorageType={nftStorageType} setActiveStep={setActiveStep} contract={contract} step={0} />;
+    const traits = <Traits nftStorageType={nftStorageType} setActiveStep={setActiveStep} contract={contract} step={renderUploadUnRevealedImage && 1 || 0} />;
+    const metadata = <Metadata nftStorageType={nftStorageType} setActiveStep={setActiveStep} contract={contract} step={renderUploadUnRevealedImage && 2 || 1} />;
+    const confirmation = <Confirmation nftStorageType={nftStorageType} id={id} setIsModalOpen={setIsModalOpen} setActiveStep={setActiveStep} renderUploadUnRevealedImage={renderUploadUnRevealedImage} />;
 
     if (renderUploadUnRevealedImage) {
         return { 0: uploadUnRevealedImage, 1: traits, 2: metadata, 3: confirmation };
@@ -23,7 +23,7 @@ const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, set
     return { 0: traits, 1: metadata, 2: confirmation };
 }
 
-const Steps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage }) => {
+const UploadSteps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage, nftStorageType }) => {
     const [activeStep, setActiveStep] = useState(0);
 
     return (
@@ -44,11 +44,11 @@ const Steps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage }) =>
                 </Step>
             </Stepper>
 
-            {getComponents(renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id)[activeStep]}
+            {getComponents(renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id, nftStorageType)[activeStep]}
 
         </React.Fragment>
     );
 };
 
 
-export default Steps;
+export default UploadSteps;

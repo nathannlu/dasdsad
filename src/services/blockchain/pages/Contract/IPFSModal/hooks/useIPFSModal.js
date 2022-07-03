@@ -1,62 +1,86 @@
 import { useState } from 'react';
-import { useIPFS, MAX_UPLOAD_LIMIT } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { useS3 } from 'services/blockchain/blockchains/hooks/useS3';
 import { useContract } from 'services/blockchain/provider';
 import { useToast } from 'ds/hooks/useToast';
 
 export const bytesToMegaBytes = (bytes) => bytes / 1024 ** 2;
 
-export const useIPFSModal = (contract, step, setActiveStep) => {
+export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	const {
 		pinUnrevealedImage,
 		generateUnrevealedImageMetadata,
 		pinImages,
 		pinMetadata,
-		pinataPercentage,
+		pinataUploadPercentage
 	} = useIPFS();
-	const { 
-		uploadedUnRevealedImageFile, 
-		setUploadedUnRevealedImageFile, 
+
+	const {
+		deleteS3Collection,
+		uploadTraitsToS3,
+		uploadMetadataToS3,
+		s3UploadPercentage
+	} = useS3(contract.id);
+
+	const {
+		uploadedUnRevealedImageFile,
+		setUploadedUnRevealedImageFile,
 		setMetadataUrl,
 		uploadedFiles,
 		uploadedJson,
 
 		unRevealedBaseUri,
 		setUnRevealedBaseUri,
-		imagesUrl, setImagesUrl,
+		imagesUrl,
+		setImagesUrl,
 		setBaseUri,
 	} = useContract();
 	const { addToast } = useToast();
-	const [percent, setPercent] = useState(0);
-	const [loading, setLoading] = useState(false);
+	const [uploadLoading, setUploadLoading] = useState(false);
 
-	
-	// Select different urls based on blockchain
-	// Solana - use gateway url
-	// Ethereum - use ipfs url
-	const resolvedUrl = contract.blockchain === 'solana' || contract.blockchain === 'solanadevnet' ? 'gateway' : 'url'
-	
 	/**
 	 * Handle file upload to IPFS
+	 * nftStorageType: 's3' | 'ipfs
 	 */
-	const uploadUnrevealedImage = async () => {
+	const uploadUnrevealedImage = async (nftStorageType) => {
 		try {
-			setLoading(true);
+			setUploadLoading(true);
+			if (nftStorageType === 's3' || true) {
+				const traitsUrl = await uploadTraitsToS3(uploadedUnRevealedImageFile, 'unrevealed');
+				console.log(traitsUrl);
 
-			const imageUrls = await pinUnrevealedImage(uploadedUnRevealedImageFile)
-			if (!imageUrls || !imageUrls[resolvedUrl]) {
-				throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				if (!traitsUrl) {
+					throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				}
+
+				const metadataUrl = await uploadMetadataToS3([], 'unrevealed', contract, traitsUrl);
+				if (!metadataUrl) {
+					throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
+				}
+
+				// Save url to database
+				setUnRevealedBaseUri(metadataUrl);
+			} else {
+
+				// if the nftStorageType === 'ipfs'
+				const imageUrls = await pinUnrevealedImage(uploadedUnRevealedImageFile);
+				if (!imageUrls || !imageUrls[resolvedUrl]) {
+					throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				}
+
+				const metadataUrls = await generateUnrevealedImageMetadata(
+					contract,
+					imageUrls[resolvedUrl]
+				)
+				if (!metadataUrls || !metadataUrls[resolvedUrl]) {
+					throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
+				}
+
+				// Save url to database
+				setUnRevealedBaseUri(metadataUrls[resolvedUrl]);
 			}
 
-			const metadataUrls = await generateUnrevealedImageMetadata(
-				contract,
-				imageUrls[resolvedUrl]
-			)
-			if (!metadataUrls || !metadataUrls[resolvedUrl]) {
-				throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
-			}
 
-			// Save url to database
-      setUnRevealedBaseUri(metadataUrls[resolvedUrl]);
 			addToast({
 				severity: 'success',
 				message: 'Image and metadata were uploaded successfully'
@@ -73,44 +97,29 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 			// Let users reupload
 			callback(false);
 		} finally {
-			setLoading(false);
+			setUploadLoading(false);
 		}
 	}
 
-	const uploadImages = async () => {
+	const uploadImages = async (nftStorageType) => {
 		try {
-			setLoading(true);
+			setUploadLoading(true);
+			if (nftStorageType === 's3') {
+				const traitsUrl = await uploadTraitsToS3(uploadedFiles, 'revealed');
+				console.log(traitsUrl);
 
-			const imagesUrls = await pinImages(uploadedFiles);
-			if (!imagesUrls || !imagesUrls[resolvedUrl]) {
-				throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				if (!traitsUrl) {
+					throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				}
+
+				setImagesUrl(traitsUrl);
+			} else {
+				const imagesUrls = await pinImages(uploadedFiles);
+				if (!imagesUrls || !imagesUrls[resolvedUrl]) {
+					throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				}
+				setImagesUrl(imagesUrls[resolvedUrl]);
 			}
-
-			setImagesUrl(imagesUrls[resolvedUrl])
-
-			// Move to next step
-			callback(true);
-		} catch (e) {
-			addToast({
-				severity: 'error',
-				message: e.message,
-			});
-			callback(false);
-		} finally { 
-			setLoading(false);
-		}
-	}
-
-	const uploadMetadata = async () => {
-		try {
-			setLoading(true);
-
-			const metadataUrls = await pinMetadata(uploadedJson, imagesUrl);
-			if (!metadataUrls || !metadataUrls[resolvedUrl]) {
-				throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
-			}
-
-			setBaseUri(metadataUrls[resolvedUrl])
 
 			// Move to next step
 			callback(true);
@@ -121,10 +130,42 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 			});
 			callback(false);
 		} finally {
-			setLoading(false)
+			setUploadLoading(false);
 		}
 	}
 
+	const uploadMetadata = async (nftStorageType) => {
+		try {
+			setUploadLoading(true);
+
+			if (nftStorageType === 's3') {
+				const metadataUrl = await uploadMetadataToS3(uploadedJson, 'revealed', contract, imagesUrl);
+				if (!metadataUrl) {
+					throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
+				}
+
+				setBaseUri(metadataUrl);
+			} else {
+				const metadataUrls = await pinMetadata(uploadedJson, imagesUrl);
+				if (!metadataUrls || !metadataUrls[resolvedUrl]) {
+					throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+				}
+
+				setBaseUri(metadataUrls[resolvedUrl]);
+			}
+
+			// Move to next step
+			callback(true);
+		} catch (e) {
+			addToast({
+				severity: 'error',
+				message: e.message,
+			});
+			callback(false);
+		} finally {
+			setUploadLoading(false)
+		}
+	}
 
 	/**
 	 * status marks if images were successfully pinned on pinata.cloud
@@ -140,14 +181,13 @@ export const useIPFSModal = (contract, step, setActiveStep) => {
 		setActiveStep(status ? step + 1 : step);
 	};
 
+	const uploadPercentage = nftStorageType === 's3' ? s3UploadPercentage : pinataUploadPercentage;
+
 	return {
 		uploadUnrevealedImage,
 		uploadImages,
 		uploadMetadata,
-
-		//@TODO fix monkey code... repetitive exports
-		loading,
-		pinataPercentage,
-		percent,
+		uploadPercentage,
+		uploadLoading
 	}
 }

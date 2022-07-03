@@ -22,7 +22,7 @@ import {
 } from 'ds/components';
 import { Lock as LockIcon } from '@mui/icons-material';
 
-const CheckoutModal = ({ contractId, planId, callback }) => {
+const CheckoutForm = ({ contractId, planId, callback, nftStorageType }) => {
     const { user } = useAuth();
     const { productPrices, selectedPlan, setSelectedPlan } =
         useGetPlanSettings(planId);
@@ -45,6 +45,7 @@ const CheckoutModal = ({ contractId, planId, callback }) => {
         customerId: user.stripeCustomerId,
         objectId: contractId,
         type: 'contract',
+        nftStorageType,
         onCompleted: (data) => {
             onPaymentSuccess(data);
             callback(data);
@@ -212,4 +213,4 @@ const CheckoutModal = ({ contractId, planId, callback }) => {
     );
 };
 
-export default CheckoutModal;
+export default CheckoutForm;

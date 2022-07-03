@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getMainnetBlockchainType, isTestnetBlockchain, getIpfsUrl } from '@ambition-blockchain/controllers';
+import { getMainnetBlockchainType, isTestnetBlockchain } from '@ambition-blockchain/controllers';
 
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 import CircleIcon from '@mui/icons-material/Circle';
@@ -15,7 +15,7 @@ import {
     Typography,
     Button,
     CircularProgress,
-	LoadingButton,
+    LoadingButton,
 } from 'ds/components';
 
 import solanaLogo from 'assets/images/solana.png';
@@ -59,18 +59,18 @@ export const BlockchainTypeChip = ({ blockchain }) => {
 }
 
 export const ContractDetails = ({ contract, contractState, isLoading }) => {
-	const [hasMintedOne, setHasMintedOne] = useState(false);
+    const [hasMintedOne, setHasMintedOne] = useState(false);
     const contractName = contract.name.replace(/\s+/g, '-').toLowerCase();
     const isContractDeployedOnTestnet = isTestnetBlockchain(contract?.blockchain);
 
     const openSeaLink = isContractDeployedOnTestnet && `https://testnets.opensea.io/collection/${contractName}` || `https://opensea.io/collection/${contractName}`;
     const openSeaLink2 = isContractDeployedOnTestnet && `https://testnets.opensea.io/get-listed/step-two` || `https://opensea.io/get-listed/step-two`;
 
-	useEffect(() => {
-		if(contractState?.amountSold >= 1) {
-			setHasMintedOne(true)
-		}
-	}, [contractState])
+    useEffect(() => {
+        if (contractState?.amountSold >= 1) {
+            setHasMintedOne(true)
+        }
+    }, [contractState])
 
     return (
         <Box>
@@ -96,20 +96,20 @@ export const ContractDetails = ({ contract, contractState, isLoading }) => {
             </Box>
 
             <Stack sx={{ my: 2 }}>
-							{/*
+                {/*
                 <Link target="_blank" href={openSeaLink} sx={{ fontSize: 14, color: '#000' }}>{openSeaLink}</Link>
 							*/}
-							<Box>
-								<LoadingButton onClick={() => window.open(openSeaLink2,"_blank").focus()} variant="contained" size="small" loading={isLoading} disabled={!hasMintedOne}>
-									Connect with Opensea
-								</LoadingButton>
-							</Box>
-							{!isLoading && !hasMintedOne && (
-								<Typography sx={{fontSize: '14px'}} variant="small">
-									You must have one NFT minted before you can connect with Opensea
-								</Typography>
-							)}
-							{/*
+                <Box>
+                    <LoadingButton onClick={() => window.open(openSeaLink2, "_blank").focus()} variant="contained" size="small" loading={isLoading} disabled={!hasMintedOne}>
+                        Connect with Opensea
+                    </LoadingButton>
+                </Box>
+                {!isLoading && !hasMintedOne && (
+                    <Typography sx={{ fontSize: '14px' }} variant="small">
+                        You must have one NFT minted before you can connect with Opensea
+                    </Typography>
+                )}
+                {/*
                 <Typography sx={{ fontSize: 13, fontStyle: 'italic', mt: 1 }} color="GrayText">
                     **Trouble opening above link**<br />
                     <Link target="_blank" href={openSeaLink2} sx={{ color: '#000' }}>{openSeaLink2}</Link>

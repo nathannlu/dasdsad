@@ -3,7 +3,7 @@ import { Stack, Box, Container } from 'ds/components';
 import { useWeb3 } from 'libs/web3';
 import { useToast } from 'ds/hooks/useToast';
 
-import { ContractController, getIpfsUrl, getResolvedImageUrl, getWalletType } from '@ambition-blockchain/controllers';
+import { ContractController, getWalletType } from '@ambition-blockchain/controllers';
 
 import { useParams } from 'react-router-dom';
 import { useContract } from 'services/blockchain/provider';
@@ -33,35 +33,34 @@ const ContractV2 = () => {
 	const isSetupComplete = contract?.address;
 
 	// Move to separate utils 
-	const fetchRevealedNftImage = async (metadataUrl) => {
-		try {
-			setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const imageSrc = await getResolvedImageUrl(metadataUrl);
-			setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchImageSrc:', e);
-			setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-		}
-	}
+	// const fetchRevealedNftImage = async (metadataUrl) => {
+	// 	try {
+	// 		setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
+	// 		const imageSrc = await getResolvedImageUrl(metadataUrl);
+	// 		setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+	// 	} catch (e) {
+	// 		console.log('Error fetchImageSrc:', e);
+	// 		setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+	// 	}
+	// }
 
-	const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
-		if (!unRevealedBaseUri) {
-			return;
-		}
+	// const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
+	// 	if (!unRevealedBaseUri) {
+	// 		return;
+	// 	}
 
-		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
-			return;
-		}
-		try {
-			setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchUnrevealedImageSrc:', e);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-		}
-	}
-
+	// 	if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
+	// 		return;
+	// 	}
+	// 	try {
+	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
+	// 		const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
+	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+	// 	} catch (e) {
+	// 		console.log('Error fetchUnrevealedImageSrc:', e);
+	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+	// 	}
+	// }
 
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
@@ -69,26 +68,25 @@ const ContractV2 = () => {
 			return;
 		}
 
+		// const baseIpfsUrl = getIpfsUrl(undefined, true);
 
-		const baseIpfsUrl = getIpfsUrl(undefined, true);
-
-			if (contract?.nftCollection?.unRevealedBaseUri) {
-				if (contract?.nftCollection?.unRevealedBaseUri?.indexOf('ipfs://') !== -1) {
-					const unRevealedBaseUri = contract?.nftCollection?.unRevealedBaseUri;
-					const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
-					const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
-//					setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
-
-				fetchUnRevealedNftImage(unRevealedBaseUri);
-				}
+		if (contract?.nftCollection?.unRevealedBaseUri) {
+			if (contract?.nftCollection?.unRevealedBaseUri?.indexOf('ipfs://') !== -1) {
+				const unRevealedBaseUri = contract?.nftCollection?.unRevealedBaseUri;
+				const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
+				// const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
+				// setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+				// fetchUnRevealedNftImage(unRevealedBaseUri);
 			}
+		}
 
 		if (contract?.nftCollection?.baseUri) {
-			const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-			const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
+			// const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
+			// const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
 
-			fetchRevealedNftImage(metadataUrl);
-			setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
+			// // fetchRevealedNftImage(metadataUrl);
+			// setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
+			setContract(contract);
 		} else {
 			setContract(contract);
 		}
@@ -112,14 +110,11 @@ const ContractV2 = () => {
 
 			console.log(contractController, 'contractController');
 
-
 			const contractState = await contractController.populateContractInfo();
 			console.log(contractState, 'contractState');
 
 			setContractState(contractState);
-
 		}
-
 	}
 
 	useEffect(() => {

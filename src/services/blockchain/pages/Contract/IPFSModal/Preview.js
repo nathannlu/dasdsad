@@ -21,6 +21,7 @@ const Preview = (props) => {
                 item
                 onClick={() => {
                     posthog.capture('User selected upload to IPFS');
+                    props.setNftStorageType('ipfs');
                     props.goToStep(3);
                 }}>
                 <Stack justifyContent="space-between" sx={{ height: '100%' }}>
@@ -50,7 +51,54 @@ const Preview = (props) => {
                     </Box>
                 </Stack>
             </Grid>
+
             <Grid
+                sx={{
+                    p: 3,
+                    flex: 1,
+                    cursor: 'pointer',
+                    boxShadow: 'inset 0 0 0 1px #ddd',
+                    transition: '.2s all',
+                    '&:hover': {
+                        background: '#f5f5f5',
+                        boxShadow: 'none',
+                    },
+                }}
+                item
+                onClick={() => {
+                    posthog.capture('User selected upload to S3');
+                    props.setNftStorageType('s3');
+                    props.goToStep(3);
+                }}>
+                <Stack justifyContent="space-between" sx={{ height: '100%' }}>
+                    <Box>
+                        <Stack gap={1} direction="row" alignItems="center">
+                            <Chip color="success" label="Suggested solution" />
+
+                            <Box>5 - 20 mins</Box>
+                        </Stack>
+                        <Typography gutterBottom variant="h5">
+                            Upload your images on Ambition Server
+                        </Typography>
+                        <Typography variant="body">
+                            Pin your images on our premium decentralized network
+                            for high availability, reliable displays. Built for
+                            NFTs.
+                        </Typography>
+                    </Box>
+                    <Stack direction="row">
+                        <Typography variant="h4">$19.99</Typography>
+                        <Typography variant="body">/mo</Typography>
+                    </Stack>
+                    <Box>
+                        <Button variant="contained" fullWidth>
+                            Next
+                        </Button>
+                    </Box>
+                </Stack>
+            </Grid>
+
+            {/* <Grid
                 item
                 onClick={() => {
                     posthog.capture('User selected upload to personal storage');
@@ -84,7 +132,7 @@ const Preview = (props) => {
                         <Button fullWidth>Next</Button>
                     </Box>
                 </Stack>
-            </Grid>
+            </Grid> */}
         </Grid>
     );
 };

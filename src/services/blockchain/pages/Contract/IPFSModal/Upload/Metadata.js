@@ -3,23 +3,22 @@ import { Box, Button, LoadingButton, Stack, Divider } from 'ds/components';
 import { LinearProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import { useIPFSModal } from '../hooks/useIPFSModal';
-import { MAX_UPLOAD_LIMIT, METADATA_MIME_TYPES } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { MAX_UPLOAD_LIMIT, METADATA_MIME_TYPES } from 'ambition-constants';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useToast } from 'ds/hooks/useToast';
 
-
 const Metadata = (props) => {
 	const { uploadedJson, setUploadedJson, ipfsUrl } = useContract();
-	const { uploadMetadata, loading, pinataPercentage } = useIPFSModal(
+	const { uploadMetadata, uploadLoading, uploadPercentage } = useIPFSModal(
 		props.contract,
 		props.step,
-		props.setActiveStep
+		props.setActiveStep,
+		props.nftStorageType
 	);
 	const [percent, setPercent] = useState(0);
 	const { addToast } = useToast();
-
 
 	const handleJsonUpload = (acceptedFiles) => {
 		try {
@@ -32,8 +31,6 @@ const Metadata = (props) => {
 			}
 
 			for (let i = 0; i < acceptedFiles.length; i++) {
-				console.log(!METADATA_MIME_TYPES.includes(acceptedFiles[i]?.type))
-
 				if (!METADATA_MIME_TYPES.includes(acceptedFiles[i]?.type)) {
 					throw new Error(`Error! File type not supported. We support ${METADATA_MIME_TYPES.toString()}`);
 				}
@@ -146,9 +143,9 @@ const Metadata = (props) => {
 					</Box>
 
 					<LoadingButton
-						loading={loading}
+						loading={uploadLoading}
 						variant="outlined"
-						onClick={async () => await uploadMetadata()}>
+						onClick={async () => await uploadMetadata(props.nftStorageType)}>
 						Upload
 					</LoadingButton>
 					<Box
@@ -160,12 +157,12 @@ const Metadata = (props) => {
 						<Box sx={{ width: '100%', mr: 1 }}>
 							<LinearProgress
 								variant="determinate"
-								value={pinataPercentage}
+								value={uploadPercentage}
 							/>
 						</Box>
 						<Box sx={{ minWidth: 35 }}>
 							<Typography variant="body2" color="text.secondary">
-								{pinataPercentage.toFixed(2)}%
+								{uploadPercentage.toFixed(2)}%
 							</Typography>
 						</Box>
 					</Box>

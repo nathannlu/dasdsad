@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useWeb3 } from 'libs/web3';
 import { useToast } from 'ds/hooks/useToast';
 
-import { getResolvedImageUrl, isTestnetBlockchain, getMainnetBlockchainType, getWalletType, getIpfsUrl, getBlockchainType } from '@ambition-blockchain/controllers';
+import { isTestnetBlockchain, getMainnetBlockchainType, getWalletType, getBlockchainType } from '@ambition-blockchain/controllers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import {
@@ -101,49 +101,44 @@ const New = ({ contract }) => {
 
 	const nftPrice = { currency: contractState?.nftCollection?.currency, price: contractState?.nftCollection?.price };
 
-	const fetchRevealedNftImage = async (metadataUrl) => {
-		try {
-			setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const imageSrc = await getResolvedImageUrl(metadataUrl);
-			setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchImageSrc:', e);
-			setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-		}
-	}
+	// const fetchRevealedNftImage = async (metadataUrl) => {
+	// 	try {
+	// 		setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
+	// 		const imageSrc = await getResolvedImageUrl(metadataUrl);
+	// 		setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+	// 	} catch (e) {
+	// 		console.log('Error fetchImageSrc:', e);
+	// 		setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+	// 	}
+	// }
 
-	const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
-		if (!unRevealedBaseUri) {
-			return;
-		}
+	// const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
+	// 	if (!unRevealedBaseUri) {
+	// 		return;
+	// 	}
 
-		if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
-			return;
-		}
+	// 	if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
+	// 		return;
+	// 	}
 
+	// 	try {
+	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
+	// 		const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
+	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
+	// 	} catch (e) {
+	// 		console.log('Error fetchUnrevealedImageSrc:', e);
+	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+	// 	}
+	// }
 
+	// useEffect(() => {
+	// 	if (!contractState.nftCollection.baseUri) {
+	// 		return;
+	// 	}
+	// 	fetchRevealedNftImage(contractState.nftCollection.baseUri);
+	// }, [contractState.nftCollection.baseUri]);
 
-
-		try {
-			setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-		} catch (e) {
-			console.log('Error fetchUnrevealedImageSrc:', e);
-			setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-		}
-	}
-
-//	useEffect(() => setContract(contract), [contract])
-
-	useEffect(() => {
-		if (!contractState.nftCollection.baseUri) {
-			return;
-		}
-		fetchRevealedNftImage(contractState.nftCollection.baseUri);
-	}, [contractState.nftCollection.baseUri]);
-
-	useEffect(() => { fetchUnRevealedNftImage(contractState?.nftCollection?.unRevealedBaseUri); }, [contractState.nftCollection.unRevealedBaseUri]);
+	// useEffect(() => { fetchUnRevealedNftImage(contractState?.nftCollection?.unRevealedBaseUri); }, [contractState.nftCollection.unRevealedBaseUri]);
 
 	useEffect(() => {
 		if (activeBlockchain === 'solana') {
@@ -151,24 +146,23 @@ const New = ({ contract }) => {
 		}
 	}, [activeBlockchain]);
 
-	useEffect(() => {
-		if (!contract?.nftCollection?.baseUri) {
-			return;
-		}
-		setContractState(contract);
-		fetchRevealedNftImage(contract?.nftCollection?.baseUri);
-	}, [contract?.nftCollection?.baseUri]);
+	// useEffect(() => {
+	// 	if (!contract?.nftCollection?.baseUri) {
+	// 		return;
+	// 	}
+	// 	setContractState(contract);
+	// 	fetchRevealedNftImage(contract?.nftCollection?.baseUri);
+	// }, [contract?.nftCollection?.baseUri]);
 
-	useEffect(() => {
-		if (!contract?.nftCollection?.unRevealedBaseUri) {
-			return;
-		}
-		setContractState(contract);
-		fetchUnRevealedNftImage(contract?.nftCollection?.unRevealedBaseUri);
-	}, [contract?.nftCollection?.unRevealedBaseUri]);
+	// useEffect(() => {
+	// 	if (!contract?.nftCollection?.unRevealedBaseUri) {
+	// 		return;
+	// 	}
+	// 	setContractState(contract);
+	// 	fetchUnRevealedNftImage(contract?.nftCollection?.unRevealedBaseUri);
+	// }, [contract?.nftCollection?.unRevealedBaseUri]);
 
 	const setContractStateIneditMode = async () => {
-
 		const blockchain = contract?.blockchain || getBlockchainType(activeBlockchain, isTestnetBlockchain);
 
 		// initiate wallet controller connection
@@ -301,7 +295,7 @@ const New = ({ contract }) => {
 									variant="outlined"
 									{...price}
 									type="number"
-//									error={Boolean(formValidationErrors.price)}
+								//									error={Boolean(formValidationErrors.price)}
 								/>
 							</Stack>
 							<Stack gap={2}>
