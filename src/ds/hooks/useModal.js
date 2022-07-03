@@ -15,9 +15,8 @@ export const ModalManager = (props) => {
 	const [modalStyles, setModalStyles] = useState({});
 
 	const createModal = (data, styles) => {
-
-		const setIsModalOpenA = (value) => {
-			if(styles) setModalStyles(styles)
+		const openModal = (value) => {
+			styles !== undefined ? setModalStyles(styles) : setModalStyles({})
 			setModalData(data)
 			setIsModalOpen(true)
 		}
@@ -26,7 +25,7 @@ export const ModalManager = (props) => {
 			setIsModalOpen(!isModalOpen);
 		}
 
-		return [isModalOpen, setIsModalOpenA, toggleModal];
+		return [isModalOpen, openModal, toggleModal];
 	}
 
 	return (

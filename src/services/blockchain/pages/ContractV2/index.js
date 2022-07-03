@@ -12,13 +12,13 @@ import {
 } from 'ds/components';
 import { Stepper, Step, StepLabel } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import StepWizard from "react-step-wizard";
 import UploadToIPFS from '../Contract/IPFSModal/Raw';
 import { useContract } from 'services/blockchain/provider';
 import ContractDetailTabs from './ContractDetailTabs';
 import CSVWidget from '../../widgets/CSVWidget';
 import Embed from '../Contract/Embed';
 import Verify from './Verify';
-
 
 import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -58,7 +58,27 @@ const ContractV2 = () => {
 const AdvancedSettings = <div>asd</div>;
 
 const DeployToMainnetModal = (
-	<Stack>
+	<div>
+			<StepWizard>
+			<TestTest />
+				{/*
+			<DeployToMainnetPreview />
+			<TransactionModal />
+			*/}
+		</StepWizard>
+		asd
+	</div>
+);
+
+const TestTest = () =>  {
+	<div>
+		asd
+	</div>
+};
+
+const DeployToMainnetPreview = () => {
+	return (
+		<Stack>
 		<Grid container>
 			<Grid xs={5} item>
 				<Stack p={4} gap={2}>
@@ -137,7 +157,8 @@ const DeployToMainnetModal = (
 			</Grid>
 		</Grid>
 	</Stack>
-);
+)
+};
 
 const Details = () => {
 	const { createModal } = useModal();
@@ -379,7 +400,7 @@ const Actions = () => {
 
 			<Grid container>
 				{listOfActions.map((action, i) => {
-					const [, setIsModalOpen] = createModal(action.modal);
+					const [, setIsModalOpen] = createModal(action.modal, { width: '500px' });
 
 					return (
 					<Grid key={i} item xs={4}>
