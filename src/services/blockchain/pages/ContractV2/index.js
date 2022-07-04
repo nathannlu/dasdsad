@@ -58,16 +58,86 @@ const ContractV2 = () => {
 const AdvancedSettings = <div>asd</div>;
 
 const DeployToMainnetModal = (
-	<div>
-			<StepWizard>
-			<TestTest />
-				{/*
-			<DeployToMainnetPreview />
-			<TransactionModal />
-			*/}
-		</StepWizard>
-		asd
-	</div>
+			<Stack>
+		<Grid container>
+			<Grid xs={5} item>
+				<Stack p={4} gap={2}>
+					<Box>
+						<Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+							Deploy to Ethereum mainnet
+						</Typography>
+						<Typography variant="body">
+							Here is a quick recap. You can change the name, symbol, and collection size later only by re-creating the contract.
+						</Typography>
+					</Box>
+
+					<Grid container>
+						<Grid xs={4} item>
+							<Stack gap={0.5} sx={{ color: '#6a7383' }}>
+								<Typography>Name</Typography>
+								<Typography>Symbol:</Typography>
+								<Typography>Collection size:</Typography>
+
+								<Typography>Cost:</Typography>
+								<Typography>Max per mint:</Typography>
+								<Typography>Max per wallet:</Typography>
+								<Typography>Deployer address:</Typography>
+							</Stack>
+						</Grid>
+
+						<Grid xs={6} item>
+							<Stack gap={0.5} sx={{ color: '#404452' }}>
+								<Typography>Headspace Hunters</Typography>
+								<Typography>HEAD</Typography>
+								<Typography>100</Typography>
+								<Typography>0.05ETH</Typography>
+								<Typography>5</Typography>
+								<Typography>5</Typography>
+							</Stack>
+						</Grid>
+					</Grid>
+
+					<Box>
+						<Button variant="contained" size="small">
+							Deploy
+						</Button>
+					</Box>
+				</Stack>
+			</Grid>
+			<Grid
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+				xs={7}
+				item>
+				<Stack gap={2} direction="row">
+					<Box
+						sx={{
+							boxShadow:
+								'0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)',
+							height: '250px',
+							width: '250px',
+							borderRadius: '5px',
+						}}>
+						Unrevealed
+					</Box>
+					<Box
+						sx={{
+							boxShadow:
+								'0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)',
+							height: '250px',
+							width: '250px',
+							borderRadius: '5px',
+						}}>
+						Revealed
+					</Box>
+				</Stack>
+			</Grid>
+		</Grid>
+	</Stack>
+
 );
 
 const TestTest = () =>  {
