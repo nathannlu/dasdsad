@@ -13,8 +13,12 @@ import IPFSModal from '../Contract/IPFSModal';
 import ContractDetailTabs from './ContractDetailTabs';
 import Newv2 from '../NewV2';
 import { CircularProgress } from '@mui/material';
+import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { useS3 } from 'services/blockchain/blockchains/hooks/useS3';
 
 const ContractV2 = () => {
+	const { getResolvedImageUrlFromIpfsUri } = useIPFS();
+	const { getResolvedImageUrlFromS3Uri } = useS3();
 	const { walletController } = useWeb3();
 	const { addToast } = useToast();
 
@@ -23,8 +27,10 @@ const ContractV2 = () => {
 	const [contractController, setContractController] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true); // default
-	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: false });
-	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: false });
+
+	const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: true });
+	const [revealedNftImage, setRevealedNftImage] = useState({ src: null, isLoading: true });
+
 	const [nftPrice, setNftPrice] = useState({ currency: null, price: null });
 
 	const { contracts } = useContract();
@@ -32,35 +38,23 @@ const ContractV2 = () => {
 
 	const isSetupComplete = contract?.address;
 
-	// Move to separate utils 
-	// const fetchRevealedNftImage = async (metadataUrl) => {
-	// 	try {
-	// 		setRevealedNftImage(prevState => ({ ...prevState, isLoading: true }));
-	// 		const imageSrc = await getResolvedImageUrl(metadataUrl);
-	// 		setRevealedNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-	// 	} catch (e) {
-	// 		console.log('Error fetchImageSrc:', e);
-	// 		setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-	// 	}
-	// }
-
-	// const fetchUnRevealedNftImage = async (unRevealedBaseUri) => {
-	// 	if (!unRevealedBaseUri) {
-	// 		return;
-	// 	}
-
-	// 	if (unRevealedBaseUri?.indexOf('ipfs://') === -1) {
-	// 		return;
-	// 	}
-	// 	try {
-	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
-	// 		const imageSrc = await getResolvedImageUrl(unRevealedBaseUri);
-	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, src: imageSrc, isLoading: false }));
-	// 	} catch (e) {
-	// 		console.log('Error fetchUnrevealedImageSrc:', e);
-	// 		setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
-	// 	}
-	// }
+	/**
+	 * @param {*} uri baseuri of revealed or unrevealed images
+	 * @param {*} type revealed or unrevealed
+	 */
+	const fetchNftImageFromUri = async (uri, type) => {
+		try {
+			if (!uri) {
+				throw new Error(`fetchNftImageFromUri: ipfs uri undefined for ${type} collection.`);
+			}
+			type === 'revealed' ? setRevealedNftImage(prevState => ({ ...prevState, isLoading: true })) : setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
+			const src = contract?.nftStorageType === 's3' ? await getResolvedImageUrlFromS3Uri(uri) : await getResolvedImageUrlFromIpfsUri(uri);
+			type === 'revealed' ? setRevealedNftImage(prevState => ({ ...prevState, src, isLoading: false })) : setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
+		} catch (e) {
+			console.log('Error fetchUnrevealedImageSrc:', e);
+			type === 'revealed' ? setRevealedNftImage(prevState => ({ ...prevState, src: null, isLoading: false })) : setUnRevealedtNftImage(prevState => ({ ...prevState, src: null, isLoading: false }));
+		}
+	}
 
 	const init = async () => {
 		const contract = contracts.find((c) => c.id === id);
@@ -68,28 +62,13 @@ const ContractV2 = () => {
 			return;
 		}
 
-		// const baseIpfsUrl = getIpfsUrl(undefined, true);
+		setContract(contract);
 
-		if (contract?.nftCollection?.unRevealedBaseUri) {
-			if (contract?.nftCollection?.unRevealedBaseUri?.indexOf('ipfs://') !== -1) {
-				const unRevealedBaseUri = contract?.nftCollection?.unRevealedBaseUri;
-				const hasAppendingSlash = unRevealedBaseUri.charAt(unRevealedBaseUri.length - 1) === '/';
-				// const src = `${baseIpfsUrl}${unRevealedBaseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}unrevealed.png`;
-				// setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
-				// fetchUnRevealedNftImage(unRevealedBaseUri);
-			}
-		}
+		// fetch revealed image
+		fetchNftImageFromUri(contract?.nftCollection?.baseUri, 'revealed');
 
-		if (contract?.nftCollection?.baseUri) {
-			// const baseUri = contract?.nftCollection?.baseUri.indexOf('ipfs://') !== -1 ? contract?.nftCollection?.baseUri.split('ipfs://') : null;
-			// const metadataUrl = baseUri && baseIpfsUrl && `${baseIpfsUrl}${baseUri[1]}` || contract?.nftCollection?.baseUri;
-
-			// // fetchRevealedNftImage(metadataUrl);
-			// setContract({ ...contract, nftCollection: { ...contract.nftCollection, metadataUrl } });
-			setContract(contract);
-		} else {
-			setContract(contract);
-		}
+		// fetch unrevealed image
+		fetchNftImageFromUri(contract?.nftCollection?.unRevealedBaseUri, 'unrevealed');
 
 		await walletController?.loadWalletProvider(getWalletType(contract.blockchain));
 		await walletController?.compareNetwork(contract?.blockchain, async (error) => {

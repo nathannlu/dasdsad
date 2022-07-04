@@ -1,12 +1,8 @@
 import { useState, useRef } from 'react';
 
-import config from 'config';
-import basePathConverter from 'base-path-converter';
-import axios from 'axios';
 import posthog from 'posthog-js';
 
-import { useToast } from 'ds/hooks/useToast';
-import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES, METADATA_MIME_TYPES } from 'ambition-constants';
+import { MAX_UPLOAD_LIMIT, resolveFileExtension } from 'ambition-constants';
 
 import { useUploadS3NftCollection, useDeleteS3NftCollection } from 'services/blockchain/gql/hooks/s3NftCollection.hook.js';
 
@@ -50,12 +46,13 @@ export const useS3 = (contractId) => {
     }
 
     /**
-   * Creates folder for NFT collection on s3 bucket. This function pins a folder
-   * to IPFS via Pinata API, then returns an object containing
-   * IPFS urls (url, hash, gateway)
-   *
-   * @param traits - An array of File objects
-   */
+     * Creates folder for NFT collection on s3 bucket. This function pins a folder
+     * to AWS S3 bucket, then returns url
+     * 
+     * upload traits: png or video files
+     *
+     * @param traits - An array of File objects
+     */
     const uploadTraitsToS3 = async (traits, collectionType) => {
         console.log(traits, collectionType);
         if (!traits)
@@ -67,29 +64,32 @@ export const useS3 = (contractId) => {
             throw new Error('Error! Max upload limit reached. Your files are larger than 25GB');
 
         startmockProgress();
+
+        // find the 
+        const fileExtension = resolveFileExtension(traits[0].type);
+
         const response = await uploadS3NftCollection({ variables: { collection: traits, contractId, collectionType, type: 'traits' } });
         if (!response.data || !response.data.uploadS3NftCollection) {
             throw new Error('Error! Unable to upload nft collection.');
         }
 
-        return response.data.uploadS3NftCollection;
+        return { traitsUrl: `${response.data.uploadS3NftCollection}/traits`, fileExtension };
     };
 
-
     /**
-     * Pins NFT metadata folder to IPFS via Pinata API. Smart contracts will
-     * look inside this folder and append the token ID (e.g. 1.json, 2.json)
-     * to get the description, traits, and resolve the token image.
-     * Returns object containing IPFS urls (url, hash, gateway)
+     * Creates folder for NFT collection on s3 bucket. This function pins a folder
+     * to AWS S3 bucket, then returns url
+     * 
+     * upload metadata: json files
      *
      * @param folder - An array of File objects
      * @param imageUrl - Resolved URI of images folder. Can either be ipfs url or gateway
      */
 
-    const uploadMetadataToS3 = async (folder, collectionType, contract, traitsUrl) => {
+    const uploadMetadataToS3 = async (folder, collectionType, contract, traitsUrl, fileExtension) => {
         startmockProgress();
 
-        const metadata = collectionType === 'unrevealed' ? generateUnrevealedImageMetadata(contract, traitsUrl) : await generateRevealedImageMetadata(folder, traitsUrl);
+        const metadata = collectionType === 'unrevealed' ? generateUnrevealedImageMetadata(contract, traitsUrl, fileExtension) : await generateRevealedImageMetadata(folder, traitsUrl);
         console.log(metadata, 'uploadMetadataToS3');
 
         const response = await uploadS3NftCollection({ variables: { collection: metadata, contractId, collectionType, type: 'metadata' } });
@@ -98,10 +98,10 @@ export const useS3 = (contractId) => {
             throw new Error('Error! Unable to upload nft collection.');
         }
 
-        return response.data.uploadS3NftCollection;
+        return `${response.data.uploadS3NftCollection}/metadata`;
     };
 
-    const generateUnrevealedImageMetadata = (contract, unrevealedTraitsUrl) => {
+    const generateUnrevealedImageMetadata = (contract, unrevealedTraitsUrl, fileExtension) => {
         if (!contract) {
             throw new Error('Contract details missing! Cannot generate metadata. Please open at ticket in Discord for help.');
         }
@@ -111,7 +111,7 @@ export const useS3 = (contractId) => {
             const jsonMetadata = {
                 name: contract.name,
                 description: `Unrevealed ${contract.name} NFT`,
-                image: `${unrevealedTraitsUrl}/traits/`
+                image: `${unrevealedTraitsUrl}/${i}.${fileExtension}`
             };
 
             const file = new File([new Blob([JSON.stringify(jsonMetadata)])], `${i}.json`, { type: "application/json", lastModified: new Date().getTime() })
@@ -139,9 +139,9 @@ export const useS3 = (contractId) => {
                     // Parse JSON and modify
                     const jsonMetadata = JSON.parse(evt.target.result);
                     const tokenId = file.name.split('.')[0];
-                    const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type)
+                    const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type);
 
-                    jsonMetadata.image = `${traitsUrl}/traits/${tokenId}.${fileExtension}`;
+                    jsonMetadata.image = `${traitsUrl}/${tokenId}.${fileExtension}`;
 
                     const file = new File([new Blob([JSON.stringify(jsonMetadata)])], `${tokenId}.json`, { type: "application/json", lastModified: new Date().getTime() });
                     resolve(file);
@@ -153,10 +153,42 @@ export const useS3 = (contractId) => {
         });
     };
 
+    /** 
+     * saved bucket uri in BE
+     * - <user_id>/<contract_id>/revealed/
+     * - <user_id>/<contract_id>/unrevealed/
+     * 
+     * Revealed
+     * - traits url: <user_id>/<contract_id>/revealed/traits/<file_name>
+     * - metadata url: <user_id>/<contract_id>/revealed/metadata</file_name>
+     * 
+     * UnRevealed
+     * - traits url: <user_id>/<contract_id>/unrevealed/traits/<file_name>
+     * - metadata url: <user_id>/<contract_id>/unrevealed/metadata</file_name>
+     */
+
+    const getResolvedImageUrlFromS3Uri = async (metadataUrl) => {
+        try {
+            const url = `${metadataUrl}/1.json`;
+            const fetchResponse = await fetch(url);
+            const json = await fetchResponse.json();
+
+            if (!json?.image) {
+                throw new Error('image field missing!');
+            }
+
+            return json?.image;
+        } catch (e) {
+            console.log('Error fetchImageSrc:', e);
+            return null;
+        }
+    }
+
     return {
         deleteS3Collection,
         uploadTraitsToS3,
         uploadMetadataToS3,
         s3UploadPercentage,
+        getResolvedImageUrlFromS3Uri
     };
 };

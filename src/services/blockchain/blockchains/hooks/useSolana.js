@@ -3,8 +3,10 @@ import posthog from 'posthog-js';
 import { useUpdateContractAddress } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
 import { createSolanaContract } from 'solana';
+import { useIPFS } from './useIPFS';
 
 export const useSolana = () => {
+    const { getIpfsGatewayUrl } = useIPFS();
     const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
     const { addToast } = useToast();
     const [updateContractAddress] = useUpdateContractAddress({
@@ -42,23 +44,18 @@ export const useSolana = () => {
     };
 
     const getContractCreators = async (baseUri, address) => {
-        const hasAppendingSlash = baseUri.charAt(baseUri.length - 1) === '/';
-
         try {
-            const ipfsUrl = `https://gateway.pinata.cloud/ipfs/`;
-            let baseUriHash = null;
+            let metadataUrlHash = `${getIpfsGatewayUrl(baseUri)}/1.json`;
 
-            if (baseUri?.indexOf('ipfs://') !== -1) {
-                baseUriHash = `${ipfsUrl}${baseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}1.json`;
-            } else {
-                baseUriHash = `${baseUri}${hasAppendingSlash && '' || '/'}1.json`;
+            if (!metadataUrlHash) {
+                throw new Error('Invalid metadataurl');
             }
 
-            if (!baseUriHash) {
-                throw new Error('Invalid baseUri');
+            if (metadataUrlHash.indexOf('//1.json') !== -1) {
+                metadataUrlHash = metadataUrlHash.replace('//1.json', '/1.json');
             }
 
-            const fetchResponse = await fetch(baseUriHash);
+            const fetchResponse = await fetch(metadataUrlHash);
             const json = await fetchResponse.json();
 
             if (!json?.properties?.creators || !json?.properties?.creators.length) {
@@ -73,23 +70,18 @@ export const useSolana = () => {
     }
 
     const getSellerFeeBasisPoints = async (baseUri, address) => {
-        const hasAppendingSlash = baseUri.charAt(baseUri.length - 1) === '/';
-
         try {
-            const ipfsUrl = `https://gateway.pinata.cloud/ipfs/`;
-            let baseUriHash = null;
+            let metadataUrlHash = `${getIpfsGatewayUrl(baseUri)}/1.json`;
 
-            if (baseUri?.indexOf('ipfs://') !== -1) {
-                baseUriHash = `${ipfsUrl}${baseUri?.split('ipfs://')[1]}${hasAppendingSlash && '' || '/'}1.json`;
-            } else {
-                baseUriHash = `${baseUri}${hasAppendingSlash && '' || '/'}1.json`;
+            if (!metadataUrlHash) {
+                throw new Error('Invalid metadataurl');
             }
 
-            if (!baseUriHash) {
-                throw new Error('Invalid baseUri');
+            if (metadataUrlHash.indexOf('//1.json') !== -1) {
+                metadataUrlHash = metadataUrlHash.replace('//1.json', '/1.json');
             }
 
-            const fetchResponse = await fetch(baseUriHash);
+            const fetchResponse = await fetch(metadataUrlHash);
             const json = await fetchResponse.json();
 
             if (!json?.properties?.seller_fee_basis_points) {

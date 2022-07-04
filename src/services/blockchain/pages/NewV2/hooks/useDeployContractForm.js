@@ -37,6 +37,7 @@ export const useDeployContractForm = () => {
 			address: null,
 			blockchain: null,
 			type: CONTRACT_VERSION,
+			nftStorageType: null,
 			nftCollection: {
 				baseUri: null,
 				unRevealedBaseUri: null,
@@ -199,7 +200,7 @@ export const useDeployContractForm = () => {
 					const contractController = new ContractController(contractAddress, blockchain, CONTRACT_VERSION);
 
 					// No unrevealedBaseUri should use revealed
-					if(state.contractState?.nftCollection?.unRevealedBaseUri == null) {
+					if (state.contractState?.nftCollection?.unRevealedBaseUri == null) {
 						await contractController.updateReveal(walletAddress, false, state.contractState?.nftCollection?.baseUri);
 					}
 					await contractController.updateReveal(walletAddress, false, state.contractState?.nftCollection?.unRevealedBaseUri);
@@ -215,10 +216,10 @@ export const useDeployContractForm = () => {
 				// Save contract details in backend
 				await saveContract(contractAddress);
 
-                posthog.capture('User successfully deployed contract to blockchain', {
-                    blockchain,
-                    version: '2'
-                });
+				posthog.capture('User successfully deployed contract to blockchain', {
+					blockchain,
+					version: '2'
+				});
 			});
 		} catch (e) {
 			console.log(e, 'Error! deploying contract.');
