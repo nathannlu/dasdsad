@@ -78,14 +78,14 @@ const Settings = ({ contract, contractController, walletController, contractStat
 
 	useEffect(() => {
 		setPrice(contract.nftCollection.price || '1');
-		setMetadataUrl(contract?.nftCollection?.baseUri || '');
+		setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
 	}, []);
 
 	useEffect(() => {
 		if (isNftRevealEnabled) {
-			setMetadataUrl(contract?.nftCollection?.baseUri || '');
+			setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
 		} else {
-			setMetadataUrl(contract?.nftCollection?.unRevealedBaseUri || '');
+			setMetadataUrl(`${contract?.nftCollection?.unRevealedBaseUri}/` || '');
 		}
 	}, [contract?.nftCollection?.baseUri, contract?.nftCollection?.unRevealedBaseUri, isNftRevealEnabled]);
 
@@ -131,6 +131,8 @@ const Settings = ({ contract, contractController, walletController, contractStat
 		);
 	}
 
+	const nftStorageType = contract?.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+
 	return (
 		<Box>
 			<Stack mt={8}>
@@ -154,8 +156,27 @@ const Settings = ({ contract, contractController, walletController, contractStat
 						</Button>
 					</Grid>
 
-					<Stack gap={2} direction="horizontal">
-						<TextField {...metadataUrl} size="small" fullWidth={true} label='Metadata Url' />
+					<Stack gap={2} direction="column">
+						{/* <TextField {...metadataUrl} size="small" fullWidth={true} label='Metadata Url' /> */}
+
+						<Stack gap={1}>
+							<Box>
+								<Typography sx={{ fontWeight: 'bold' }}>Pre-reveal metadata</Typography>
+								<Typography>Below is the {nftStorageType} url pointing to the metadata that was generated to support the pre-reveal image you uploaded.</Typography>
+							</Box>
+
+							<Typography sx={{ fontWeight: 'bold', color: '#006aff', wordBreak: 'break-all' }}>{contract?.nftCollection?.unRevealedBaseUri}/</Typography>
+						</Stack>
+
+						<Stack gap={1}>
+							<Box>
+								<Typography sx={{ fontWeight: 'bold' }}>Reveal metadata</Typography>
+								<Typography>Below is the {nftStorageType} url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on {nftStorageType}</Typography>
+							</Box>
+
+							<Typography sx={{ fontWeight: 'bold', color: '#006aff', wordBreak: 'break-all' }}>{contract?.nftCollection?.baseUri}/</Typography>
+						</Stack>
+
 					</Stack>
 
 					<Stack gap={2} direction="horizontal">

@@ -25,19 +25,20 @@ const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, set
 
 const UploadSteps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage, nftStorageType }) => {
     const [activeStep, setActiveStep] = useState(0);
+    const _nftStorageType_ = nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
 
     return (
         <React.Fragment>
             <Stepper activeStep={activeStep} sx={{ marginBottom: '1em' }}>
                 {renderUploadUnRevealedImage && <Step>
-                    <StepLabel>Upload Unrevealed image to IPFS</StepLabel>
+                    <StepLabel>Upload Unrevealed image to {_nftStorageType_}</StepLabel>
                 </Step> || null}
 
                 <Step>
-                    <StepLabel>Upload images to IPFS</StepLabel>
+                    <StepLabel>Upload images to {_nftStorageType_}</StepLabel>
                 </Step>
                 <Step>
-                    <StepLabel>Upload metadata to IPFS</StepLabel>
+                    <StepLabel>Upload metadata to {_nftStorageType_}</StepLabel>
                 </Step>
                 <Step>
                     <StepLabel>Confirmation</StepLabel>

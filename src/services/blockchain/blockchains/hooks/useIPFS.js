@@ -26,8 +26,6 @@ export const useIPFS = () => {
 
 		// Formatting image support
 		const file = images[0];
-		const fileExtension = resolveFileExtension(file.type);
-
 		// Pin the placeholder image to Pinata
 		let imageData = new FormData();
 		imageData.append('file', file);
@@ -36,7 +34,7 @@ export const useIPFS = () => {
 
 		// Send API request to Pinata
 		const res = await axios.post(url, imageData, opt(imageData));
-		return { imageUrls: withIpfsUrls(res.data.IpfsHash), fileExtension };
+		return withIpfsUrls(res.data.IpfsHash);
 	};
 
 	/**
@@ -48,7 +46,7 @@ export const useIPFS = () => {
 	 * @param contract - Used to reflect name, description, and collection size
 	 * @param unrevealedImageUrl - Ipfs or gateway url to unrevealed image
 	 */
-	const generateUnrevealedImageMetadata = async (contract, unrevealedImageUrl, fileExtension) => {
+	const generateUnrevealedImageMetadata = async (contract, unrevealedImageUrl) => {
 		if (!contract) {
 			throw new Error('Cannot generate metadata. Please open at ticket in Discord for help')
 		}
@@ -60,7 +58,7 @@ export const useIPFS = () => {
 			const jsonMetadata = {
 				name: contract.name,
 				description: `Unrevealed ${contract.name} NFT`,
-				image: `${unrevealedImageUrl}/${i}.${fileExtension}`
+				image: unrevealedImageUrl
 			};
 
 			// Attach JSON to formdata for Pinata upload
@@ -186,7 +184,7 @@ export const useIPFS = () => {
 					// Parse JSON and modify
 					const jsonMetadata = JSON.parse(evt.target.result);
 					const tokenId = file.name.split('.')[0];
-					const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type)
+					const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type);
 
 					jsonMetadata.image = ipfsUrl + `${tokenId}.${fileExtension}`;
 

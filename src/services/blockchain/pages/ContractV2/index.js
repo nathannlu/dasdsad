@@ -42,13 +42,13 @@ const ContractV2 = () => {
 	 * @param {*} uri baseuri of revealed or unrevealed images
 	 * @param {*} type revealed or unrevealed
 	 */
-	const fetchNftImageFromUri = async (uri, type) => {
+	const fetchNftImageFromUri = async (uri, type, nftStorageType) => {
 		try {
 			if (!uri) {
 				throw new Error(`fetchNftImageFromUri: ipfs uri undefined for ${type} collection.`);
 			}
 			type === 'revealed' ? setRevealedNftImage(prevState => ({ ...prevState, isLoading: true })) : setUnRevealedtNftImage(prevState => ({ ...prevState, isLoading: true }));
-			const src = contract?.nftStorageType === 's3' ? await getResolvedImageUrlFromS3Uri(uri) : await getResolvedImageUrlFromIpfsUri(uri);
+			const src = nftStorageType === 's3' ? await getResolvedImageUrlFromS3Uri(uri) : await getResolvedImageUrlFromIpfsUri(uri);
 			type === 'revealed' ? setRevealedNftImage(prevState => ({ ...prevState, src, isLoading: false })) : setUnRevealedtNftImage(prevState => ({ ...prevState, src, isLoading: false }));
 		} catch (e) {
 			console.log('Error fetchUnrevealedImageSrc:', e);
@@ -65,10 +65,10 @@ const ContractV2 = () => {
 		setContract(contract);
 
 		// fetch revealed image
-		fetchNftImageFromUri(contract?.nftCollection?.baseUri, 'revealed');
+		fetchNftImageFromUri(contract?.nftCollection?.baseUri, 'revealed', contract.nftStorageType);
 
 		// fetch unrevealed image
-		fetchNftImageFromUri(contract?.nftCollection?.unRevealedBaseUri, 'unrevealed');
+		fetchNftImageFromUri(contract?.nftCollection?.unRevealedBaseUri, 'unrevealed', contract.nftStorageType);
 
 		await walletController?.loadWalletProvider(getWalletType(contract.blockchain));
 		await walletController?.compareNetwork(contract?.blockchain, async (error) => {

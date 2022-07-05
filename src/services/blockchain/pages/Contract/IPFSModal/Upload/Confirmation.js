@@ -86,20 +86,22 @@ const Confirmation = (props) => {
 		props.renderUploadUnRevealedImage,
 	]);
 
+	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+
 	return (
 		<Stack gap={2}>
 			<Stack gap={1}>
 				<Box>
 					<Typography sx={{ fontWeight: 'bold' }}>Pre-reveal</Typography>
-					<Typography>Below is the IPFS url pointing to the metadata that was generated to support the pre-reveal image you uploaded in the first step.</Typography>
+					<Typography>Below is the {nftStorageType} url pointing to the metadata that was generated to support the pre-reveal image you uploaded in the first step.</Typography>
 				</Box>
 
 				<Typography sx={{ fontWeight: 'bold', color: '#006aff' }}>{unRevealedBaseUri}</Typography>
 			</Stack>
 			<Stack gap={1}>
 				<Box>
-					<Typography sx={{ fontWeight: 'bold' }}>Location of your NFT images on IPFS</Typography>
-					<Typography>Below is the url pointing to the images uploaded in step 2. This data has been automatically linked with your metadata on IPFS</Typography>
+					<Typography sx={{ fontWeight: 'bold' }}>Location of your NFT images on {nftStorageType}</Typography>
+					<Typography>Below is the url pointing to the images uploaded in step 2. This data has been automatically linked with your metadata on {nftStorageType}</Typography>
 				</Box>
 
 				<Typography sx={{ fontWeight: 'bold', color: '#006aff' }}>{imagesUrl}</Typography>
@@ -107,7 +109,7 @@ const Confirmation = (props) => {
 			<Stack gap={1}>
 				<Box>
 					<Typography sx={{ fontWeight: 'bold' }}>Location of your metadata</Typography>
-					<Typography>Below is the IPFS url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on IPFS</Typography>
+					<Typography>Below is the {nftStorageType} url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on {nftStorageType}</Typography>
 				</Box>
 
 				<Typography sx={{ fontWeight: 'bold', color: '#006aff' }}>{baseUri}</Typography>

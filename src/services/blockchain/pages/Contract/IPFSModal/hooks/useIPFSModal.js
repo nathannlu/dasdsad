@@ -44,7 +44,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	const resolvedUrl = (contract?.blockchain === 'solana' || contract?.blockchain === 'solanadevnet') ? 'gateway' : 'url';
 
 	/**
-	 * Handle file upload to IPFS
+	 * Handle file upload to IPFS or aws s3
 	 * nftStorageType: 's3' | 'ipfs
 	 */
 	const uploadUnrevealedImage = async (nftStorageType) => {
@@ -71,7 +71,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 				}
 				default: {
 					// if the nftStorageType === 'ipfs'
-					const { imageUrls, fileExtension } = await pinUnrevealedImage(uploadedUnRevealedImageFile);
+					const imageUrls = await pinUnrevealedImage(uploadedUnRevealedImageFile);
 					if (!imageUrls || !imageUrls[resolvedUrl]) {
 						throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
 					}
@@ -111,7 +111,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	}
 
 	/**
-	 * Handle file upload to IPFS
+	 * Handle file upload to IPFS or aws s3
 	 * nftStorageType: 's3' | 'ipfs
 	 */
 	const uploadImages = async (nftStorageType) => {
@@ -153,7 +153,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	}
 
 	/**
-	 * Handle file upload to IPFS
+	 * Handle file upload to IPFS or aws s3
 	 * nftStorageType: 's3' | 'ipfs
 	 */
 	const uploadMetadata = async (nftStorageType) => {

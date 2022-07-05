@@ -13,8 +13,7 @@ export const useS3 = (contractId) => {
 
     const [uploadS3NftCollection] = useUploadS3NftCollection({
         onCompleted: data => {
-            console.log(data);
-            setS3UploadPercentage(100);
+            setS3UploadPercentage(90);
             clearInterval(interval.current);
             posthog.capture('User uploaded nft collection on aws s3 bucket successfully!');
         },
@@ -28,7 +27,6 @@ export const useS3 = (contractId) => {
     const [deleteS3NftCollection] = useDeleteS3NftCollection({
         onCompleted: data => {
             console.log(data);
-            // TOOD update the contract
             posthog.capture('Error! Nft collection on aws s3 bucket deleted successfully!');
         },
         onError: (e) => {
@@ -38,7 +36,10 @@ export const useS3 = (contractId) => {
     });
 
     const startmockProgress = () => {
-        interval.current = setInterval(() => setS3UploadPercentage(prevState => prevState + 5), 1000);
+        interval.current = setInterval(() => {
+            const incrementBy = Math.floor(Math.random() * 11);
+            setS3UploadPercentage(prevState => prevState + incrementBy >= 90 ? 90 : prevState + incrementBy);
+        }, 1000);
     }
 
     const deleteS3Collection = async () => {
@@ -143,8 +144,8 @@ export const useS3 = (contractId) => {
 
                     jsonMetadata.image = `${traitsUrl}/${tokenId}.${fileExtension}`;
 
-                    const file = new File([new Blob([JSON.stringify(jsonMetadata)])], `${tokenId}.json`, { type: "application/json", lastModified: new Date().getTime() });
-                    resolve(file);
+                    const jsomFile = new File([new Blob([JSON.stringify(jsonMetadata)])], `${tokenId}.json`, { type: "application/json", lastModified: new Date().getTime() });
+                    resolve(jsomFile);
                 };
                 fileReader.readAsText(file);
             } else {

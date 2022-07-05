@@ -78,7 +78,7 @@ const Preview = (props) => {
                             <Box>5 - 20 mins</Box>
                         </Stack>
                         <Typography gutterBottom variant="h5">
-                            Upload your images on Ambition Server
+                            Upload your images on Ambition S3 Server
                         </Typography>
                         <Typography variant="body">
                             Pin your images on our premium decentralized network

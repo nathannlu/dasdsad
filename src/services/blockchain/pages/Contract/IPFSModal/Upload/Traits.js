@@ -47,7 +47,6 @@ const Traits = (props) => {
 
 			setUploadedFiles([...uploadedFiles, ...acceptedFiles]);
 
-
 			/*
 			const formData = new FormData();
 			for (const file of acceptedFiles) formData.append('file', file);
@@ -87,12 +86,14 @@ const Traits = (props) => {
 		props.setActiveStep(status ? props.step + 1 : props.step);
 	};
 
+	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+
 	return (
 		<Stack gap={2}>
 			<Box>
 				<Typography variant="h6">Upload NFT collection images</Typography>
 				<Typography mb={2} variant="body">
-					Now, add your folder of NFT images to IPFS by dropping them below.
+					Now, add your folder of NFT images to {nftStorageType} by dropping them below.
 					Support upload limits of up to 25GB
 				</Typography>
 			</Box>
@@ -128,7 +129,7 @@ const Traits = (props) => {
 											textAlign: 'center',
 										}}>
 										Drag &apos;n&apos; drop your NFT collection images
-										here to upload to IPFS
+										here to upload to {nftStorageType}
 									</p>
 								</div>
 							</Box>

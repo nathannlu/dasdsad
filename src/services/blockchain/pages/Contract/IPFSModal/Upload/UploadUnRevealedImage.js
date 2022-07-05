@@ -62,6 +62,8 @@ const UploadUnRevealedImage = (props) => {
 			});
 		}
 	};
+	
+	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
 
 	return (
 		<Stack gap={2}>
@@ -104,7 +106,7 @@ const UploadUnRevealedImage = (props) => {
 										}}
 									>
 										Drag &apos;n&apos; drop your pre-reveal thumbnail
-										here to upload to IPFS
+										here to upload to {nftStorageType}
 									</p>
 								</div>
 							</Box>

@@ -81,9 +81,9 @@ export const useContractSettings = () => {
 				throw new Error('Metadata url can not be empty!');
 			}
 
-			if (metadataUrl.value.indexOf('ipfs://') === -1) {
-				throw new Error('Invalid Metadata url! Url must start with "ipfs://" and end with a "/".');
-			}
+			// if (metadataUrl.value.indexOf('ipfs://') === -1) {
+			// 	throw new Error('Invalid Metadata url! Url must start with "ipfs://" and end with a "/".');
+			// }
 
 			setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
 			// @TODO ask to set reveal as true or false

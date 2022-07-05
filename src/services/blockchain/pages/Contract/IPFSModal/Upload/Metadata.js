@@ -70,6 +70,8 @@ const Metadata = (props) => {
 		}
 	};
 
+	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+
 	return (
 		<Stack gap={2}>
 			<Box>
@@ -77,7 +79,7 @@ const Metadata = (props) => {
 					Upload NFT collection metadata
 				</Typography>
 				<Typography mb={2} variant="body">
-					Now, add your folder of NFT images to IPFS by dropping them
+					Now, add your folder of NFT images to {nftStorageType} by dropping them
 					below. Support upload limits of up to 25GB
 				</Typography>
 			</Box>

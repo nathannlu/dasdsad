@@ -32,6 +32,7 @@ import { NFTStack } from '../../widgets';
 import AppDialog from '../../widgets/AppDialog';
 import IPFSModal from '../Contract/IPFSModal';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
+import { useS3 } from 'services/blockchain/blockchains/hooks/useS3';
 
 const RadioLabel = ({ type, isTestnetEnabled }) => {
 	const content = { imgSrc: null, description: null };
@@ -110,9 +111,7 @@ const New = ({ contract }) => {
 	 * @param {*} uri baseuri of revealed or unrevealed images
 	 * @param {*} type revealed or unrevealed
 	 */
-	const fetchNftImageFromUri = async (uri, type) => {
-		const nftStorageType = contractState.nftStorageType || contract.nftStorageType;
-
+	const fetchNftImageFromUri = async (uri, type, nftStorageType) => {
 		try {
 			if (!uri) {
 				throw new Error(`fetchNftImageFromUri: ipfs uri undefined for ${type} collection.`);
@@ -133,13 +132,15 @@ const New = ({ contract }) => {
 	}, [activeBlockchain]);
 
 	useEffect(() => {
-		const uri = contractState.nftCollection.baseUri || contract?.nftCollection?.baseUri;
-		fetchNftImageFromUri(uri, 'revealed');
+		const uri = contractState?.nftCollection?.baseUri || contract?.nftCollection?.baseUri;
+		const nftStorageType = contractState?.nftStorageType || contract?.nftStorageType;
+		fetchNftImageFromUri(uri, 'revealed', nftStorageType);
 	}, [contract?.nftCollection?.baseUri, contractState.nftCollection.baseUri]);
 
 	useEffect(() => {
 		const uri = contractState.nftCollection.unRevealedBaseUri || contract?.nftCollection?.unRevealedBaseUri;
-		fetchNftImageFromUri(uri, 'unrevealed');
+		const nftStorageType = contractState?.nftStorageType || contract?.nftStorageType;
+		fetchNftImageFromUri(uri, 'unrevealed', nftStorageType);
 	}, [contract?.nftCollection?.unRevealedBaseUri, contractState.nftCollection.unRevealedBaseUri]);
 
 	const setContractStateForEditMode = async () => {

@@ -248,6 +248,7 @@ const NFT = ({ contract, nftImage, nftPrice, isRevealed, disabled }) => {
                             objectFit: 'cover',
                         }}
                         src={nftImage.src || imageNotFound}
+                        crossorigin="*"
                     /> || null}
                 </Box>
                 <NFTDetails contract={contract} nftPrice={nftPrice} disabled={disabled} />
