@@ -9,6 +9,7 @@ import UploadUnRevealedImage from './UploadUnRevealedImage';
 import Traits from './Traits';
 import Metadata from './Metadata';
 import Confirmation from './Confirmation';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, setIsModalOpen, id, nftStorageType) => {
     const uploadUnRevealedImage = <UploadUnRevealedImage nftStorageType={nftStorageType} setActiveStep={setActiveStep} contract={contract} step={0} />;
@@ -25,8 +26,8 @@ const getComponents = (renderUploadUnRevealedImage, setActiveStep, contract, set
 
 const UploadSteps = ({ id, setIsModalOpen, contract, renderUploadUnRevealedImage, nftStorageType }) => {
     const [activeStep, setActiveStep] = useState(0);
-    const _nftStorageType_ = nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
-
+    const _nftStorageType_ = getNftStorageTypeLabel(nftStorageType);
+    
     return (
         <React.Fragment>
             <Stepper activeStep={activeStep} sx={{ marginBottom: '1em' }}>

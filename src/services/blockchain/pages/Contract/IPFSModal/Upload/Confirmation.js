@@ -14,6 +14,7 @@ import {
 	useSetUnRevealedBaseUri,
 } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Confirmation = (props) => {
 	const { imagesUrl, baseUri, metadataUrl, ipfsUrl, unRevealedBaseUri } = useContract();
@@ -86,8 +87,8 @@ const Confirmation = (props) => {
 		props.renderUploadUnRevealedImage,
 	]);
 
-	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
-
+	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
+	
 	return (
 		<Stack gap={2}>
 			<Stack gap={1}>

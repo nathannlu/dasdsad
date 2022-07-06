@@ -8,6 +8,7 @@ import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useToast } from 'ds/hooks/useToast';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Metadata = (props) => {
 	const { uploadedJson, setUploadedJson, ipfsUrl } = useContract();
@@ -70,7 +71,7 @@ const Metadata = (props) => {
 		}
 	};
 
-	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
 
 	return (
 		<Stack gap={2}>

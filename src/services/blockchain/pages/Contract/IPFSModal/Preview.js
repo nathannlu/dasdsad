@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Grid, Stack, Typography, Button } from 'ds/components';
 import { Chip } from '@mui/material';
 import posthog from 'posthog-js';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Preview = (props) => {
     return (
@@ -78,7 +79,7 @@ const Preview = (props) => {
                             <Box>5 - 20 mins</Box>
                         </Stack>
                         <Typography gutterBottom variant="h5">
-                            Upload your images on Ambition S3 Server
+                            Upload your images on {getNftStorageTypeLabel('s3')}
                         </Typography>
                         <Typography variant="body">
                             Pin your images on our premium decentralized network

@@ -11,3 +11,4 @@ export const resolveFileExtension = (mimeType) =>
     'png';
 
 // type nftStorageType: 's3' | 'ipfs';
+export const getNftStorageTypeLabel = (type) => type === 's3' ? 'Ambition S3 Server' : 'IPFS';

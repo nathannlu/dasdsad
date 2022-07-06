@@ -19,6 +19,7 @@ import { useContract } from 'services/blockchain/provider';
 import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'ambition-constants';
 import { useIPFSModal, bytesToMegaBytes } from '../hooks/useIPFSModal';
 import { useToast } from 'ds/hooks/useToast';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const UploadUnRevealedImage = (props) => {
 	const { uploadUnrevealedImage, uploadLoading, uploadPercentage } = useIPFSModal(props.contract, props.step, props.setActiveStep, props.nftStorageType);
@@ -63,7 +64,7 @@ const UploadUnRevealedImage = (props) => {
 		}
 	};
 	
-	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
 
 	return (
 		<Stack gap={2}>

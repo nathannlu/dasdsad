@@ -20,6 +20,7 @@ import {
 import { Skeleton, FormControlLabel, Switch } from '@mui/material';
 
 import { useContractSettings } from './hooks/useContractSettings';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 import { ContractDetails, ErrorMessage, AddressList } from '../../widgets';
 import AppDialog from '../../widgets/AppDialog';
@@ -35,23 +36,20 @@ const cards = [
 ];
 
 const Settings = ({ contract, contractController, walletController, contractState, setContractState, setIsModalOpen }) => {
+	const { id } = useParams();
 	const {
 		actionForm: { maxPerMint, maxPerWallet, price, metadataUrl },
 		updateSales,
 		setPresales,
 		updateReveal,
-		setMaxPerMint,
-		setMaxPerWallet,
-		setPrice,
 		setWhitelistAddresses,
 		setAirdropAddresses,
 		setIsNftRevealEnabled,
-		setMetadataUrl,
-
+		toggleWhitelistAddressDialog,
+		toggleAirdropDialog,
 		mint,
 		withdraw,
 		airdrop,
-
 		isNftRevealEnabled,
 		isSavingMetadatUrl,
 		isSavingAirdrop,
@@ -59,35 +57,14 @@ const Settings = ({ contract, contractController, walletController, contractStat
 		isSavingPreSales,
 		isMinting,
 		isWithdrawing,
-
 		whitelistAddresses,
-		airdropAddresses
-	} = useContractSettings();
-
-	const { id } = useParams();
+		airdropAddresses,
+		isWhitelistAddressDialogOpen,
+		isAirdropDialogOpen
+	} = useContractSettings(contract, contractState);
 
 	const walletAddress = walletController.state.address;
 	const methodProps = { contractController, setContractState, walletAddress, contractId: id };
-
-	useEffect(() => {
-		setMaxPerMint(contractState?.maxPerMint || '1');
-		setMaxPerWallet(contractState?.maxPerWallet || '1');
-		setWhitelistAddresses(contract?.nftCollection?.whitelist || []);
-		setIsNftRevealEnabled(contractState?.isRevealed || false);
-	}, [contractState]);
-
-	useEffect(() => {
-		setPrice(contract.nftCollection.price || '1');
-		setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
-	}, []);
-
-	useEffect(() => {
-		if (isNftRevealEnabled) {
-			setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
-		} else {
-			setMetadataUrl(`${contract?.nftCollection?.unRevealedBaseUri}/` || '');
-		}
-	}, [contract?.nftCollection?.baseUri, contract?.nftCollection?.unRevealedBaseUri, isNftRevealEnabled]);
 
 	const cardStyle = {
 		maxWidth: 760,
@@ -95,14 +72,6 @@ const Settings = ({ contract, contractController, walletController, contractStat
 		padding: 3,
 		borderRadius: 4
 	};
-
-	const [state, setState] = useState({
-		isWhitelistAddressDialogOpen: false,
-		isAirdropDialogOpen: false
-	});
-
-	const toggleWhitelistAddressDialog = (isWhitelistAddressDialogOpen) => setState(prevState => ({ ...prevState, isWhitelistAddressDialogOpen }));
-	const toggleAirdropDialog = (isAirdropDialogOpen) => setState(prevState => ({ ...prevState, isAirdropDialogOpen }));
 
 	const isBalanceToWithdrawAvailable = contractState?.balanceInEth && Number(contractState?.balanceInEth) > 0;
 
@@ -131,7 +100,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 		);
 	}
 
-	const nftStorageType = contract?.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+	const nftStorageType = getNftStorageTypeLabel(contract?.nftStorageType);
 
 	return (
 		<Box>
@@ -413,7 +382,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 
 			<AppDialog
 				maxWidth="xl"
-				open={state.isWhitelistAddressDialogOpen}
+				open={isWhitelistAddressDialogOpen}
 				handleClose={() => toggleWhitelistAddressDialog(false)}
 				heading="Whitelist"
 				subHeading={
@@ -436,7 +405,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 
 			<AppDialog
 				maxWidth="xl"
-				open={state.isAirdropDialogOpen}
+				open={isAirdropDialogOpen}
 				handleClose={() => toggleAirdropDialog(false)}
 				heading="Airdrop"
 				subHeading={

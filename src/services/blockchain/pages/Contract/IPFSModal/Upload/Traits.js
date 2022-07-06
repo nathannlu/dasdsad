@@ -8,7 +8,7 @@ import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'ambition-constants';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useToast } from 'ds/hooks/useToast';
-
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Traits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useContract();
@@ -86,7 +86,7 @@ const Traits = (props) => {
 		props.setActiveStep(status ? props.step + 1 : props.step);
 	};
 
-	const nftStorageType = props.nftStorageType === 's3' ? 'Ambition S3 Server' : 'IPFS';
+	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
 
 	return (
 		<Stack gap={2}>

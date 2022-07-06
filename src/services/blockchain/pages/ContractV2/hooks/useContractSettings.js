@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 
 import { useSetWhitelist, useSetBaseUri, useSetNftPrice, useSetUnRevealedBaseUri } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
-export const useContractSettings = () => {
+export const useContractSettings = (contract, contractState) => {
 	const { addToast } = useToast();
 	const [state, setState] = useState({
 		isSavingMetadatUrl: false,
@@ -15,9 +15,10 @@ export const useContractSettings = () => {
 		isMinting: false,
 		isWithdrawing: false,
 		isNftRevealEnabled: false, // default
-
 		whitelistAddresses: [],
-		airdropAddresses: []
+		airdropAddresses: [],
+		isWhitelistAddressDialogOpen: false,
+		isAirdropDialogOpen: false
 	});
 
 	const [setWhitelist] = useSetWhitelist({});
@@ -209,25 +210,46 @@ export const useContractSettings = () => {
 	const setWhitelistAddresses = (whitelistAddresses) => setState(prevState => ({ ...prevState, whitelistAddresses }));
 	const setAirdropAddresses = (airdropAddresses) => setState(prevState => ({ ...prevState, airdropAddresses }));
 	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, isNftRevealEnabled }));
+	const toggleWhitelistAddressDialog = (isWhitelistAddressDialogOpen) => setState(prevState => ({ ...prevState, isWhitelistAddressDialogOpen }));
+	const toggleAirdropDialog = (isAirdropDialogOpen) => setState(prevState => ({ ...prevState, isAirdropDialogOpen }));
+
+	useEffect(() => {
+		setMaxPerMint(contractState?.maxPerMint || '1');
+		setMaxPerWallet(contractState?.maxPerWallet || '1');
+		setWhitelistAddresses(contract?.nftCollection?.whitelist || []);
+		setIsNftRevealEnabled(contractState?.isRevealed || false);
+	}, [contractState]);
+
+	useEffect(() => {
+		if (state.isNftRevealEnabled) {
+			setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
+		} else {
+			setMetadataUrl(`${contract?.nftCollection?.unRevealedBaseUri}/` || '');
+		}
+	}, [contract?.nftCollection?.baseUri, contract?.nftCollection?.unRevealedBaseUri, state.isNftRevealEnabled]);
+
+	useEffect(() => {
+		setPrice(contract.nftCollection.price || '1');
+		setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
+	}, []);
 
 	return {
 		...state,
-
 		updateReveal,
 		updateSales,
 		setPresales,
 		airdrop,
 		withdraw,
 		mint,
-
 		setMaxPerMint,
 		setMaxPerWallet,
 		setPrice,
-
 		setWhitelistAddresses,
 		setAirdropAddresses,
 		setIsNftRevealEnabled,
 		setMetadataUrl,
+		toggleWhitelistAddressDialog,
+		toggleAirdropDialog,
 		actionForm
 	};
 };
