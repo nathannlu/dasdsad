@@ -134,7 +134,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 								<Typography>Below is the {nftStorageType} url pointing to the metadata that was generated to support the pre-reveal image you uploaded.</Typography>
 							</Box>
 
-							<Typography sx={{ fontWeight: 'bold', color: '#006aff', wordBreak: 'break-all' }}>{contract?.nftCollection?.unRevealedBaseUri}/</Typography>
+							<Typography sx={{ fontWeight: 'bold', color: '#006aff', wordBreak: 'break-all' }}>{contract?.nftCollection?.unRevealedBaseUri}</Typography>
 						</Stack>
 
 						<Stack gap={1}>
@@ -143,7 +143,7 @@ const Settings = ({ contract, contractController, walletController, contractStat
 								<Typography>Below is the {nftStorageType} url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on {nftStorageType}</Typography>
 							</Box>
 
-							<Typography sx={{ fontWeight: 'bold', color: '#006aff', wordBreak: 'break-all' }}>{contract?.nftCollection?.baseUri}/</Typography>
+							<Typography sx={{ fontWeight: 'bold', color: '#006aff', wordBreak: 'break-all' }}>{contract?.nftCollection?.baseUri}</Typography>
 						</Stack>
 
 					</Stack>

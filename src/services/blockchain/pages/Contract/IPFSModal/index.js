@@ -16,10 +16,10 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
 
     useEffect(() => {
         // If contract is subscribed, skip to next step
-        if (contract?.isSubscribed) {
+        if (contract?.isSubscribed || contract?.nftStorageType === 's3' || nftStorageType === 's3') {
             setInitialStep(4);
         }
-    }, [contract]);
+    }, [contract, nftStorageType]);
 
     return (
         <Modal
@@ -47,7 +47,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
                 </Stack>
 
                 <StepWizard initialStep={initialStep} transitions={{}}>
-                    <Preview setNftStorageType={setNftStorageType} />
+                    <Preview setNftStorageType={setNftStorageType} contract={contract} />
                     {/* user imports their own link */}
                     <ImportLink id={id} setIsModalOpen={setIsModalOpen} />
 

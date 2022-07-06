@@ -222,15 +222,15 @@ export const useContractSettings = (contract, contractState) => {
 
 	useEffect(() => {
 		if (state.isNftRevealEnabled) {
-			setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
+			setMetadataUrl(contract?.nftCollection?.baseUri || '');
 		} else {
-			setMetadataUrl(`${contract?.nftCollection?.unRevealedBaseUri}/` || '');
+			setMetadataUrl(contract?.nftCollection?.unRevealedBaseUri || '');
 		}
 	}, [contract?.nftCollection?.baseUri, contract?.nftCollection?.unRevealedBaseUri, state.isNftRevealEnabled]);
 
 	useEffect(() => {
 		setPrice(contract.nftCollection.price || '1');
-		setMetadataUrl(`${contract?.nftCollection?.baseUri}/` || '');
+		setMetadataUrl(contract?.nftCollection?.baseUri || '');
 	}, []);
 
 	return {

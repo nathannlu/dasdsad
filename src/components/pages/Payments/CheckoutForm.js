@@ -8,17 +8,13 @@ import {
     Stack,
     FormLabel,
     TextField,
-    Modal,
     Grid,
     Box,
     LoadingButton,
     Card,
     Typography,
     Divider,
-    CardElement,
-    Button,
-    Select,
-    MenuItem,
+    CardElement
 } from 'ds/components';
 import { Lock as LockIcon } from '@mui/icons-material';
 

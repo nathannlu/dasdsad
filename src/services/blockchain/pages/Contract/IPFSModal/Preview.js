@@ -1,10 +1,25 @@
 import React from 'react';
-import { Box, Grid, Stack, Typography, Button } from 'ds/components';
+import { Box, Grid, Stack, Typography, Button, CircularProgress } from 'ds/components';
 import { Chip } from '@mui/material';
 import posthog from 'posthog-js';
 import { getNftStorageTypeLabel } from 'ambition-constants';
+import { useSetNftStorageType } from 'services/blockchain/gql/hooks/contract.hook';
 
 const Preview = (props) => {
+    const [setNftStorageType, { loading }] = useSetNftStorageType({
+        onCompleted: (data) => {
+            posthog.capture('User selected nftStorageType as S3');
+            props.setNftStorageType('s3');
+            props.goToStep(4);
+        },
+        onError: (err) => {
+            addToast({
+                severity: 'error',
+                message: `Error! selecting Ambition S3 Server for saving Nft's. Please create ticket on discord.`,
+            });
+        }
+    });
+
     return (
         <Grid gap={2} container sx={{ minHeight: '500px' }}>
             <Grid
@@ -18,6 +33,7 @@ const Preview = (props) => {
                         background: '#f5f5f5',
                         boxShadow: 'none',
                     },
+                    pointerEvents: loading ? 'none' : undefined
                 }}
                 item
                 onClick={() => {
@@ -46,7 +62,7 @@ const Preview = (props) => {
                         <Typography variant="body">/mo</Typography>
                     </Stack>
                     <Box>
-                        <Button variant="contained" fullWidth>
+                        <Button variant="contained" fullWidth disabled={loading}>
                             Next
                         </Button>
                     </Box>
@@ -64,18 +80,23 @@ const Preview = (props) => {
                         background: '#f5f5f5',
                         boxShadow: 'none',
                     },
+                    pointerEvents: loading ? 'none' : undefined
                 }}
                 item
-                onClick={() => {
-                    posthog.capture('User selected upload to S3');
-                    props.setNftStorageType('s3');
-                    props.goToStep(3);
-                }}>
+                onClick={async () => {
+                    if (!props.contract || !props.contract.id) {
+                        addToast({
+                            severity: 'error',
+                            message: `Error! selecting Ambition S3 Server for saving Nft's. Please create ticket on discord.`,
+                        });
+                        return;
+                    }
+                    await setNftStorageType({ variables: { id: props.contract.id, nftStorageType: 's3' } });
+                }}
+            >
                 <Stack justifyContent="space-between" sx={{ height: '100%' }}>
                     <Box>
                         <Stack gap={1} direction="row" alignItems="center">
-                            <Chip color="success" label="Suggested solution" />
-
                             <Box>5 - 20 mins</Box>
                         </Stack>
                         <Typography gutterBottom variant="h5">
@@ -88,11 +109,11 @@ const Preview = (props) => {
                         </Typography>
                     </Box>
                     <Stack direction="row">
-                        <Typography variant="h4">$19.99</Typography>
-                        <Typography variant="body">/mo</Typography>
+                        <Typography variant="h4">Free</Typography>
                     </Stack>
                     <Box>
-                        <Button variant="contained" fullWidth>
+                        <Button variant="contained" fullWidth disabled={loading}>
+                            {loading && <CircularProgress isButtonSpinner={true} /> || null}
                             Next
                         </Button>
                     </Box>
@@ -134,7 +155,7 @@ const Preview = (props) => {
                     </Box>
                 </Stack>
             </Grid> */}
-        </Grid>
+        </Grid >
     );
 };
 

@@ -10,7 +10,8 @@ import {
     GET_CONTRACT,
     DELETE_CONTRACT,
     SET_NFT_PRICE,
-    SET_EMBED_BUTTON_CSS
+    SET_EMBED_BUTTON_CSS,
+    SET_NFT_STORAGE_TYPE
 } from '../contract.gql';
 import { useContract } from 'services/blockchain/provider';
 
@@ -281,4 +282,27 @@ export const useUpdateContractDetails = ({ onCompleted, onError }) => {
     );
 
     return [updateContractDetails, { ...mutationResult }];
+};
+
+export const useSetNftStorageType = ({ onCompleted, onError }) => {
+    const { setContracts } = useContract();
+
+    return useMutation(SET_NFT_STORAGE_TYPE, {
+        onCompleted: async (data) => {
+            const updated = data.setNftStorageType;
+
+            // Find obj in arr and updated
+            setContracts((prevState) => {
+                const newState = prevState.map((contract) => {
+                    if (contract.id == updated.id) {
+                        return { ...contract, nftStorageType: updated.nftStorageType };
+                    }
+                    return contract;
+                });
+                return newState;
+            });
+            onCompleted && onCompleted(data);
+        },
+        onError
+    });
 };

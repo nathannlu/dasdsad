@@ -219,3 +219,12 @@ export const SET_EMBED_BUTTON_CSS = gql`
         }
     }
 `;
+
+export const SET_NFT_STORAGE_TYPE = gql`
+    mutation SetNftStorageType($nftStorageType: String!, $id: ID!) {
+        setNftStorageType(nftStorageType: $nftStorageType, id: $id) {
+            id
+            nftStorageType
+        }
+    }
+`;
