@@ -7,6 +7,7 @@ export const SUBSCRIBE_PLAN = gql`
         $priceId: String!
         $objectId: ID
         $type: String
+        $nftStorageType: String
     ) {
         subscribe(
             paymentMethodId: $paymentMethodId
@@ -14,6 +15,7 @@ export const SUBSCRIBE_PLAN = gql`
             priceId: $priceId
             objectId: $objectId
             type: $type
+            nftStorageType: $nftStorageType
         )
     }
 `;

@@ -1,18 +1,12 @@
 import config from 'config';
-import basePathConverter from 'base-path-converter';
 import axios from 'axios';
 import { useState } from 'react';
-import { useToast } from 'ds/hooks/useToast';
-import { getIpfsUrl } from '@ambition-blockchain/controllers';
+import { MAX_UPLOAD_LIMIT, resolveFileExtension } from 'ambition-constants';
 
 const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`; // Pinata API url
-export const MAX_UPLOAD_LIMIT = 26843545600 // Pinata max upload limit (25gb)
-export const IMAGE_MIME_TYPES = ['image/png', 'image/webp', 'video/mp4']	// Mime types for NFT artwork + placeholder img
-export const METADATA_MIME_TYPES = ['application/json'] // Mime types for NFT metadata
 
 export const useIPFS = () => {
-	const [pinataPercentage, setPinataPercentage] = useState(0);
-	const { addToast } = useToast();
+	const [pinataUploadPercentage, setPinataUploadPercentage] = useState(0);
 
 	/**
 	 * Pins an image via Pinata API. Returns object containing 
@@ -20,26 +14,21 @@ export const useIPFS = () => {
 	 *
 	 * @param image - Array len 1 with a File object
 	 */
-	const pinUnrevealedImage = async (image) => {
+	const pinUnrevealedImage = async (images) => {
 		// Checks
-		if (!image)
+		if (!images)
 			throw new Error('Error! File to be uploaded not selected.');
 
-		if (image[0].size > MAX_UPLOAD_LIMIT)
+		if (images[0].size > MAX_UPLOAD_LIMIT)
 			throw new Error(
 				'Error! Max upload limit reached. Your files are larger than 25GB'
 			);
 
 		// Formatting image support
-		const file = image[0];
-		const fileExtension = resolveFileExtension(file.type)
-
+		const file = images[0];
 		// Pin the placeholder image to Pinata
 		let imageData = new FormData();
-		imageData.append(
-			'file',
-			file,
-		);
+		imageData.append('file', file);
 		const metadata = JSON.stringify({ name: 'assets' });
 		imageData.append('pinataMetadata', metadata);
 
@@ -57,11 +46,8 @@ export const useIPFS = () => {
 	 * @param contract - Used to reflect name, description, and collection size
 	 * @param unrevealedImageUrl - Ipfs or gateway url to unrevealed image
 	 */
-	const generateUnrevealedImageMetadata = async (
-		contract,
-		unrevealedImageUrl
-	) => {
-		if(!contract) {
+	const generateUnrevealedImageMetadata = async (contract, unrevealedImageUrl) => {
+		if (!contract) {
 			throw new Error('Cannot generate metadata. Please open at ticket in Discord for help')
 		}
 
@@ -80,11 +66,7 @@ export const useIPFS = () => {
 
 			// Attach JSON to formdata for Pinata upload
 			const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
-			metadataData.append(
-				'file',
-				metadataFile,
-				`/metadata/${i}.json`
-			);
+			metadataData.append('file', metadataFile, `/metadata/${i}.json`);
 		}
 		// Pinata folder name
 		const metadata = JSON.stringify({ name: 'metadata' });
@@ -131,7 +113,7 @@ export const useIPFS = () => {
 		const res = await axios.post(url, data, opt(data));
 
 		// On success
-		if(res) {
+		if (res) {
 			return withIpfsUrls(res.data.IpfsHash);
 		}
 
@@ -162,7 +144,7 @@ export const useIPFS = () => {
 		const res = await axios.post(url, data, opt(data));
 
 
-		if(res) {
+		if (res) {
 			return withIpfsUrls(res.data.IpfsHash)
 		}
 
@@ -183,7 +165,7 @@ export const useIPFS = () => {
 		onUploadProgress: (progressEvent) => {
 			const percentage =
 				(progressEvent.loaded / progressEvent.total) * 100;
-			setPinataPercentage(percentage);
+			setPinataUploadPercentage(percentage);
 		},
 	});
 
@@ -208,7 +190,7 @@ export const useIPFS = () => {
 					// Parse JSON and modify
 					const jsonMetadata = JSON.parse(evt.target.result);
 					const tokenId = file.name.split('.')[0];
-					const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type)
+					const fileExtension = resolveFileExtension(jsonMetadata.properties?.files[0]?.type);
 
 					jsonMetadata.image = ipfsUrl + `${tokenId}.${fileExtension}`;
 
@@ -232,20 +214,44 @@ export const useIPFS = () => {
 		});
 	};
 
-	/**
-	 * Mime type to file extension
-	 */
-	const resolveFileExtension = (mimeType) => 
-		(mimeType === 'image/webp' && 'webp') ||
-		(mimeType === 'video/mp4' && 'mp4') ||
-		'png';
-	
+	const getIpfsGatewayUrl = (uri) => {
+		const ipfsGatewayUrl = 'https://gateway.pinata.cloud/ipfs/';
+		return uri?.indexOf('ipfs://') !== -1 ? `${ipfsGatewayUrl}${uri?.split('ipfs://')[1]}` : uri;
+	}
+
+	const getResolvedImageUrlFromIpfsUri = async (metadataUrl) => {
+		try {
+			let metadataUrlHash = `${getIpfsGatewayUrl(metadataUrl)}/1.json`;
+
+			if (!metadataUrlHash) {
+				throw new Error('Invalid metadataurl');
+			}
+
+			if (metadataUrlHash.indexOf('//1.json') !== -1) {
+				metadataUrlHash = metadataUrlHash.replace('//1.json', '/1.json');
+			}
+
+			const fetchResponse = await fetch(metadataUrlHash);
+			const json = await fetchResponse.json();
+
+			if (!json?.image) {
+				throw new Error('image field missing!');
+			}
+
+			return getIpfsGatewayUrl(json?.image);
+		} catch (e) {
+			console.log('Error fetchImageSrc:', e);
+			return null;
+		}
+	}
 
 	return {
 		pinUnrevealedImage,
 		generateUnrevealedImageMetadata,
 		pinImages,
 		pinMetadata,
-		pinataPercentage
+		pinataUploadPercentage,
+		getResolvedImageUrlFromIpfsUri,
+		getIpfsGatewayUrl
 	};
 };

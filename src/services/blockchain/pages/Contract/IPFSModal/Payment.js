@@ -15,11 +15,19 @@ const Payment = (props) => {
     }, [props]);
 
     const callback = () => {
-        posthog.capture('User subscribed to IPFS', {
-            $set: {
-                paidForIPFSHosting: true,
-            },
-        });
+        if (props.nftStorageType === 's3') {
+            posthog.capture('User subscribed to S3 hosting', {
+                $set: {
+                    paidForS3Hosting: true,
+                },
+            });
+        } else {
+            posthog.capture('User subscribed to IPFS', {
+                $set: {
+                    paidForIPFSHosting: true,
+                },
+            });
+        }
 
         props.nextStep();
     };
@@ -30,6 +38,7 @@ const Payment = (props) => {
                 planId={config.stripe.products.contract}
                 callback={callback}
                 contractId={props.contractId}
+                nftStorageType={props.nftStorageType}
             />
         </Elements>
     );

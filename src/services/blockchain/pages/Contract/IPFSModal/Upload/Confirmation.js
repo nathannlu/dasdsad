@@ -14,10 +14,10 @@ import {
 	useSetUnRevealedBaseUri,
 } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Confirmation = (props) => {
-	const { imagesUrl, baseUri, metadataUrl, ipfsUrl, unRevealedBaseUri } =
-		useContract();
+	const { imagesUrl, baseUri, metadataUrl, ipfsUrl, unRevealedBaseUri } = useContract();
 	const { addToast } = useToast();
 	const [metadataPreview, setMetadataPreview] = useState('');
 
@@ -87,31 +87,33 @@ const Confirmation = (props) => {
 		props.renderUploadUnRevealedImage,
 	]);
 
+	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
+	
 	return (
 		<Stack gap={2}>
 			<Stack gap={1}>
 				<Box>
-					<Typography sx={{fontWeight: 'bold'}}>Pre-reveal</Typography>
-					<Typography>Below is the IPFS url pointing to the metadata that was generated to support the pre-reveal image you uploaded in the first step.</Typography>
+					<Typography sx={{ fontWeight: 'bold' }}>Pre-reveal</Typography>
+					<Typography>Below is the {nftStorageType} url pointing to the metadata that was generated to support the pre-reveal image you uploaded in the first step.</Typography>
 				</Box>
 
-				<Typography sx={{fontWeight: 'bold', color: '#006aff'}}>{unRevealedBaseUri}</Typography>
+				<Typography sx={{ fontWeight: 'bold', color: '#006aff' }}>{unRevealedBaseUri}</Typography>
 			</Stack>
 			<Stack gap={1}>
 				<Box>
-					<Typography sx={{fontWeight: 'bold'}}>Location of your NFT images on IPFS</Typography>
-					<Typography>Below is the url pointing to the images uploaded in step 2. This data has been automatically linked with your metadata on IPFS</Typography>
+					<Typography sx={{ fontWeight: 'bold' }}>Location of your NFT images on {nftStorageType}</Typography>
+					<Typography>Below is the url pointing to the images uploaded in step 2. This data has been automatically linked with your metadata on {nftStorageType}</Typography>
 				</Box>
 
-				<Typography sx={{fontWeight: 'bold', color: '#006aff'}}>{imagesUrl}</Typography>
+				<Typography sx={{ fontWeight: 'bold', color: '#006aff' }}>{imagesUrl}</Typography>
 			</Stack>
 			<Stack gap={1}>
 				<Box>
-					<Typography sx={{fontWeight: 'bold'}}>Location of your metadata</Typography>
-					<Typography>Below is the IPFS url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on IPFS</Typography>
+					<Typography sx={{ fontWeight: 'bold' }}>Location of your metadata</Typography>
+					<Typography>Below is the {nftStorageType} url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on {nftStorageType}</Typography>
 				</Box>
 
-				<Typography sx={{fontWeight: 'bold', color: '#006aff'}}>{baseUri}</Typography>
+				<Typography sx={{ fontWeight: 'bold', color: '#006aff' }}>{baseUri}</Typography>
 			</Stack>
 
 			{/*
@@ -196,7 +198,7 @@ const Confirmation = (props) => {
                     </Typography>
                 </Box>
             </Box>
-								*/}
+*/}
 
 			<Button
 				variant="contained"

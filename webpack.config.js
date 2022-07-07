@@ -100,6 +100,7 @@ module.exports = env => {
 				'services': `${__dirname}/src/services`,
 				'solana': `${__dirname}/src/solana`,
 				'controllers': `${__dirname}/src/controllers`,
+				'ambition-constants': `${__dirname}/src/ambition-constants`,
 			},
 			/*
 			fallback: {

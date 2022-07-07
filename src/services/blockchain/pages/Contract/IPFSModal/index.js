@@ -7,18 +7,19 @@ import CloseIcon from '@mui/icons-material/Close';
 import Preview from './Preview';
 import ImportLink from './ImportLink';
 import Payment from './Payment';
-import Upload from './Upload';
+import UploadSteps from './Upload';
 
 // renderUploadUnRevealedImage={true} is currrntly only for erc-721a contracts
 const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRevealedImage }) => {
     const [initialStep, setInitialStep] = useState(1);
+    const [nftStorageType, setNftStorageType] = useState(); // 'ipfs' | 's3'
 
     useEffect(() => {
         // If contract is subscribed, skip to next step
-        if (contract?.isSubscribed) {
+        if (contract?.isSubscribed || contract?.nftStorageType === 's3' || nftStorageType === 's3') {
             setInitialStep(4);
         }
-    }, [contract]);
+    }, [contract, nftStorageType]);
 
     return (
         <Modal
@@ -46,13 +47,13 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
                 </Stack>
 
                 <StepWizard initialStep={initialStep} transitions={{}}>
-                    <Preview />
+                    <Preview setNftStorageType={setNftStorageType} contract={contract} />
                     {/* user imports their own link */}
                     <ImportLink id={id} setIsModalOpen={setIsModalOpen} />
 
                     {/* uploads to ipfs with us */}
-                    <Payment contractId={id} contract={contract} />
-                    <Upload id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} />
+                    <Payment contractId={id} contract={contract} nftStorageType={nftStorageType} />
+                    <UploadSteps id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} nftStorageType={contract.nftStorageType || nftStorageType} />
                 </StepWizard>
             </Box>
         </Modal>
