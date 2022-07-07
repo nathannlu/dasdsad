@@ -128,7 +128,7 @@ export const useSolana = () => {
                 env,
             });
 
-            await handleDeploymentSuccess(id, res.candyMachineAddress);
+            await handleDeploymentSuccess(id, res?.candyMachineAddress);
         } catch (err) {
 
             let message = 'Please open a ticket in Discord for help. Error: ' + err;
@@ -159,6 +159,7 @@ export const useSolana = () => {
             });
         }
     };
+
 
     return { deploySolanaContract };
 };

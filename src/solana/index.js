@@ -3,6 +3,7 @@ import {
     createCandyMachineV2,
     loadCandyProgramV2,
     getProgramAccounts,
+		setCollection
 } from './helpers/accounts';
 import { withdrawV2 } from './helpers/withdraw';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -85,7 +86,7 @@ export const createSolanaContract = async ({
             sellerFeeBasisPoints,
             isMutable: true,
             maxSupply: new BN(0),
-            retainAuthority: false,
+            retainAuthority: true,
             gatekeeper: null,
             goLiveDate: new BN(parseDate(liveDate)),
             price: parsedPrice,
@@ -98,7 +99,6 @@ export const createSolanaContract = async ({
             },
             creators,
         }
-
     );
 
     console.log('uri', uri);
@@ -106,7 +106,14 @@ export const createSolanaContract = async ({
     let link =
         'https://gateway.pinata.cloud/ipfs/QmUBSH1Acnu2EMbx5NzUmHRmqKVEijVj3AZc4BGdFZWDZs/';
 
-    return res;
+	console.log("Setting collection")
+	const res2 = await setCollection(
+		anchorProgram,
+//		new PublicKey("BPc6sa7tVAMEkMHcEvMxnjtkbx2PF6Rjt5iU55PVTSxQ")
+		res.candyMachineAddress
+	)
+
+	return res;
 };
 
 export const withdraw = async () => {
