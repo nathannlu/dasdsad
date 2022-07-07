@@ -9,6 +9,8 @@ const Details = ({ contract, renderError }) => {
     const networkId = getBlockchainChainId(contract?.blockchain);
 
     const {
+        creators,
+        owner,
         balance,
         soldCount,
         price,
@@ -21,6 +23,8 @@ const Details = ({ contract, renderError }) => {
 
     console.log(contract, 'check here!');
 
+    const isSolanaContract = !!(contract?.blockchain === 'solana' || contract?.blockchain === 'solanadevnet');
+
     return (
         <Stack>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -28,6 +32,16 @@ const Details = ({ contract, renderError }) => {
             </Typography>
 
             <Grid container>
+                <Grid item xs={6}>
+                    {isSolanaContract && 'Creators' || 'Owner'}:
+                </Grid>
+                <Grid sx={{ fontWeight: 'bold' }} item xs={6}>
+                    {loading ? (
+                        <Skeleton width={60} />
+                    ) : (
+                        isSolanaContract && creators.map(c => <Stack key={c.address}>{c.address} - {c.share}%</Stack>) || owner
+                    )}
+                </Grid>
                 <Grid item xs={6}>
                     Balance:
                 </Grid>
