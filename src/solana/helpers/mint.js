@@ -15,7 +15,9 @@ import {
     getMetadata,
     getMasterEdition,
     getCandyMachineCreator,
-    getAtaForMint
+    getAtaForMint,
+		getCollectionPDA,
+		getCollectionAuthorityRecordPDA
 } from './accounts';
 import { MintLayout, Token } from '@solana/spl-token';
 import * as anchor from '@project-serum/anchor';
@@ -54,6 +56,8 @@ export async function mintV2(
     const candyMachine = await anchorProgram.account.candyMachine.fetch(
         candyMachineAddress
     );
+		const retainAuthority = candyMachine.data.retainAuthority;
+		const authority = candyMachine.authority;
 
     let transferAuthority;
     let whitelistBurnAuthority;
@@ -242,6 +246,83 @@ export async function mintV2(
                 remainingAccounts.length > 0 ? remainingAccounts : undefined,
         })
     );
+
+		// Set collection
+  const [collectionPDA] = await getCollectionPDA(candyMachineAddress);
+
+  const collectionPDAAccount =
+    await anchorProgram.provider.connection.getAccountInfo(
+      collectionPDA,
+    );
+
+	console.log('collectionpda:', collectionPDA.toString());
+	console.log('collectionpda account:', collectionPDAAccount);
+	console.log('retain authority:', retainAuthority);
+
+	// 83oY3kyRg2PmTq1Ht2qV332P7i1WvV4KD2GsRTB36gUm
+
+
+	console.log(collectionPDAAccount && retainAuthority)
+  if (collectionPDAAccount && retainAuthority) {
+    try {
+
+			console.log(anchorProgram)
+			console.log(await anchorProgram.account.collectionPda.fetch(new anchor.web3.PublicKey(collectionPDA.toString())))
+      const collectionData =
+        (await anchorProgram.account.collectionPda.fetch(
+          collectionPDA,
+        ));
+      console.log(collectionData);
+      const collectionMint = collectionData.mint;
+      const collectionAuthorityRecord = await getCollectionAuthorityRecordPDA(
+        collectionMint,
+        collectionPDA,
+      );
+      console.log('collection mint:', collectionMint);
+      if (collectionMint) {
+        const collectionMetadata = await getMetadata(collectionMint);
+        const collectionMasterEdition = await getMasterEdition(collectionMint);
+        console.log('Collection PDA: ', collectionPDA.toBase58());
+        console.log('Authority: ', authority.toBase58());
+
+        instructions.push(
+          await anchorProgram.instruction.setCollectionDuringMint({
+            accounts: {
+              candyMachine: candyMachineAddress,
+							metadata: metadataAddress,
+              payer: payerPublicAddress,
+              collectionPda: collectionPDA,
+              tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+              instructions: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
+							collectionMint,
+							collectionMetadata,
+							collectionMasterEdition,
+              authority,
+							collectionAuthorityRecord,
+            }
+          }),
+        );
+
+				console.log({
+              candyMachine: candyMachineAddress,
+							metadata: metadataAddress,
+              payer:payerPublicAddress,
+              collectionPda: collectionPDA,
+              tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+              instructions: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
+              collectionMint,
+              collectionMetadata,
+              collectionMasterEdition,
+              authority: authority,
+              collectionAuthorityRecord,
+						}
+            )
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
     console.log('minting');
     let recentBlockhash =
