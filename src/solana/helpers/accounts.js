@@ -805,7 +805,7 @@ export const getCollectionAuthorityRecordPDA = async (
       ],
       TOKEN_METADATA_PROGRAM_ID,
     )
-  )[0];
+  );
 };
 
 export async function parseCollectionMintPubkey(collectionMint, connection, publicKey) {

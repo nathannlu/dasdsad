@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useToast } from 'ds/hooks/useToast';
 import { useWeb3 } from 'libs/web3';
 import { useEthereum } from 'services/blockchain/blockchains/hooks/useEthereum';
@@ -7,12 +8,15 @@ export const useDeployContract = (contract) => {
     const { deployEthereumContract } = useEthereum();
     const { deploySolanaContract } = useSolana();
     const { addToast } = useToast();
+	const [loading, setLoading] = useState(false);
 
     const { walletController } = useWeb3();
 
     const deployContract = async (creators) => {
         const walletAddress = walletController?.state.address;
         const env = contract?.blockchain == 'solanadevnet' && 'devnet' || 'mainnet';
+
+			setLoading(true);
 
 
 			console.log(creators)
@@ -46,6 +50,7 @@ export const useDeployContract = (contract) => {
 									creators
                 });
             }
+					setLoading(false);
         } catch (err) {
             console.log(err.code);
             addToast({
@@ -55,5 +60,5 @@ export const useDeployContract = (contract) => {
         }
     };
 
-    return { deployContract };
+    return { deployContract, loading };
 };

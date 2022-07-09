@@ -314,7 +314,7 @@ export async function mintV2(
               collectionMetadata,
               collectionMasterEdition,
               authority: authority,
-              collectionAuthorityRecord,
+					collectionAuthorityRecord: collectionAuthorityRecord[0],
 						}
             )
 
