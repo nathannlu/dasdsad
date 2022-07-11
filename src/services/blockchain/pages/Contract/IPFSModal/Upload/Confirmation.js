@@ -27,7 +27,7 @@ const Confirmation = (props) => {
 				severity: 'success',
 				message: 'Successfully added contract base URI',
 			});
-			props.setIsModalOpen(false);
+			props.setIsModalOpen(false, true);
 		},
 	});
 
@@ -88,7 +88,7 @@ const Confirmation = (props) => {
 	]);
 
 	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
-	
+
 	return (
 		<Stack gap={2}>
 			<Stack gap={1}>

@@ -3,14 +3,16 @@ import { useToast } from 'ds/hooks/useToast';
 import { useParams } from 'react-router-dom';
 import { useWeb3 } from 'libs/web3';
 
+import { useContract } from 'services/blockchain/provider';
 import { useIPFS } from 'services/blockchain/blockchains/hooks/useIPFS';
 import { useS3 } from 'services/blockchain/blockchains/hooks/useS3';
 import { ContractController, getWalletType } from '@ambition-blockchain/controllers';
 
-export const useContractv2 = (contracts) => {
+export const useContractDetailsV2 = () => {
     const { addToast } = useToast();
-	const { id } = useParams();
-	const { walletController } = useWeb3();
+    const { id } = useParams();
+    const { walletController } = useWeb3();
+    const { contracts } = useContract();
 
     const { getResolvedImageUrlFromIpfsUri } = useIPFS();
     const { getResolvedImageUrlFromS3Uri } = useS3();
@@ -18,7 +20,7 @@ export const useContractv2 = (contracts) => {
     const [contract, setContract] = useState(null);
     const [contractState, setContractState] = useState(null);
     const [contractController, setContractController] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isIPFSModalOpen, setIsIPFSModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true); // default
 
     const [unRevealedtNftImage, setUnRevealedtNftImage] = useState({ src: null, isLoading: true });
@@ -27,7 +29,7 @@ export const useContractv2 = (contracts) => {
     const [nftPrice, setNftPrice] = useState({ currency: null, price: null });
 
     /**
-     * @param {*} uri baseuri of revealed or unrevealed images
+     * @param {*} uri baseUri of revealed or unrevealed images
      * @param {*} type revealed or unrevealed
      */
     const fetchNftImageFromUri = async (uri, type, nftStorageType) => {
@@ -47,6 +49,7 @@ export const useContractv2 = (contracts) => {
     const init = async () => {
         const contract = contracts.find((c) => c.id === id);
         if (!contract) {
+            addToast({ severity: 'error', message: 'Error! Unable to fetch contract details.' });
             return;
         }
 
@@ -88,11 +91,21 @@ export const useContractv2 = (contracts) => {
         if (contracts.length) { init(); }
     }, [contracts]);
 
+    const hasBaseUri = !!contract?.nftCollection?.baseUri;
+
+    // open IPFS modal if NFT baseUri is not set
+    useEffect(() => {
+        if (isLoading || hasBaseUri) {
+            return;
+        }
+        setIsIPFSModalOpen(true);
+    }, [hasBaseUri, isLoading]);
+
     return {
         setContract,
         setContractState,
         setContractController,
-        setIsModalOpen,
+        setIsIPFSModalOpen,
         setIsLoading,
         setUnRevealedtNftImage,
         setRevealedNftImage,
@@ -100,10 +113,11 @@ export const useContractv2 = (contracts) => {
         contract,
         contractState,
         contractController,
-        isModalOpen,
+        isIPFSModalOpen,
         isLoading,
         unRevealedtNftImage,
         revealedNftImage,
-        nftPrice
+        nftPrice,
+        hasBaseUri
     };
 };

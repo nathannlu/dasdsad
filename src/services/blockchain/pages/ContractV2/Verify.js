@@ -14,12 +14,13 @@ import {
 } from 'ds/components';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useToast } from 'ds/hooks/useToast';
+import { isTestnetBlockchain } from '@ambition-blockchain/controllers';
 
-
-const Verify = ({ contract, contractState }) => {
+const Verify = ({ contract }) => {
 	const { encodeConstructor } = useWeb3();
 	const { addToast } = useToast();
 	const [embedCode, setEmbedCode] = useState('');
+
 	const copyEmbedCode = () => {
 		navigator.clipboard.writeText(embedCode);
 		addToast({
@@ -32,10 +33,9 @@ const Verify = ({ contract, contractState }) => {
 		(async () => {
 			setEmbedCode(await encodeConstructor(contract));
 		})();
-
-		const isTestnet = contract.blockchain == 'rinkeby'
 	}, [contract]);
 
+	const isTestnet = isTestnetBlockchain(contract.blockchain);
 
 	return (
 		<Stack gap={2} alignItems="flex-start">
@@ -74,36 +74,32 @@ const Verify = ({ contract, contractState }) => {
 			<Box display="flex">
 				<Box flex="1" display="flex" flexDirection="column">
 					<Typography>Download solidity Contract Code</Typography>
-					<Button onClick={() => {
-						contract.blockchain == 'rinkeby' 
-							? window.open('https://github.com/ambition-so/controllers/blob/main/src/contracts/ambition-proxy-testnet.sol',"_blank").focus() // testnet contract
-							: window.open('https://github.com/ambition-so/controllers/blob/main/src/contracts/ambition-proxy-mainnet.sol',"_blank").focus() // mainnet contract
-					}} variant="contained">
-							Download
-						</Button>
+					<Button
+						onClick={() => {
+							window.open(`https://github.com/ambition-so/controllers/blob/main/src/contracts/ambition-proxy-${isTestnet && 'testnet' || 'mainnet'}.sol`, "_blank").focus() // testnet contract
+						}}
+						variant="contained"
+					>
+						Download
+					</Button>
 				</Box>
 			</Box>
-
 
 			<Box display="flex">
 				<Box flex="1" display="flex" flexDirection="column">
 					<Typography>Constructor Arguments</Typography>
 					<TextField
-						sx={{
-							width: '600px',
-							mb: '1em',
-						}}
+						sx={{ width: '600px', mb: '1em' }}
 						rows={8}
 						multiline
-						InputProps={{
-							readOnly: true,
-						}}
+						InputProps={{ readOnly: true }}
 						value={embedCode}
 					/>
 					<Button
 						variant="outlined"
 						endIcon={<ContentCopyIcon />}
-						onClick={copyEmbedCode}>
+						onClick={copyEmbedCode}
+					>
 						Copy to clipboard
 					</Button>
 				</Box>

@@ -59,7 +59,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
  *      count: number;
  * }>
  */
-const CSVWidget = ({ addresses, count, onSave }) => {
+const CSVWidget = ({ addresses, count, onSave, saveButtonText }) => {
     const hiddenFileInput = React.useRef(null);
 
     const rowsPerPage = 5;
@@ -108,7 +108,7 @@ const CSVWidget = ({ addresses, count, onSave }) => {
         let isInvalid = false;
 
         setRows(prevState => {
-//            const newRows = prevState.map(r => ({ ...r, isError: !!(!r.address || !r.address.length || isNaN(r.count) || r.isEdit) }));
+            //            const newRows = prevState.map(r => ({ ...r, isError: !!(!r.address || !r.address.length || isNaN(r.count) || r.isEdit) }));
             const newRows = prevState.map(r => ({ ...r, isError: false }));
 
             console.log(newRows);
@@ -264,7 +264,7 @@ const CSVWidget = ({ addresses, count, onSave }) => {
                 <input type="file" ref={hiddenFileInput} onChange={handleChange} style={{ display: 'none' }} accept=".csv" />
                 <Button variant="contained" size="small" disabled={isLoading} onClick={e => hiddenFileInput.current.click()}>Upload CSV</Button>
                 <Button variant="contained" color="secondary" size="small" onClick={e => addRow()}>Add address</Button>
-                <StyledButton variant="contained" color="secondary" size="small" onClick={e => handleOnSave()}>Save</StyledButton>
+                <StyledButton variant="contained" color="secondary" size="small" onClick={e => handleOnSave()}>{saveButtonText || 'Save'}</StyledButton>
             </Grid>
         </Grid>
     );

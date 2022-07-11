@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
+import { useWeb3 } from 'libs/web3';
 
 import { useSetWhitelist, useSetBaseUri, useSetNftPrice, useSetUnRevealedBaseUri } from 'services/blockchain/gql/hooks/contract.hook.js';
 import { getMerkleTreeRoot } from '@ambition-blockchain/controllers';
 
-export const useContractSettings = (contract, contractState) => {
+import { useContractDetailsV2 } from './useContractDetailsV2';
+
+export const useContractSettings = () => {
 	const { addToast } = useToast();
+    const { id } = useParams();
+
+	const { contractController, contract, contractState, setContractState } = useContractDetailsV2();
+
+	const { walletController } = useWeb3();
+	const walletAddress = walletController?.state?.address;
+
 	const [state, setState] = useState({
 		isSavingMetadatUrl: false,
 		isSavingAirdrop: false,
@@ -14,7 +26,6 @@ export const useContractSettings = (contract, contractState) => {
 		isSavingPreSales: false,
 		isMinting: false,
 		isWithdrawing: false,
-		isNftRevealEnabled: false, // default
 		whitelistAddresses: [],
 		airdropAddresses: [],
 		isWhitelistAddressDialogOpen: false,
@@ -40,15 +51,12 @@ export const useContractSettings = (contract, contractState) => {
 			default: '',
 			placeholder: '5',
 
-		},
-		metadataUrl: {
-			default: '',
-			placeholder: 'New metadata URL',
-		},
+		}
 	});
 
-	const onError = (err) => {
-		addToast({ severity: 'error', message: err.message });
+	const onError = (error) => {
+		console.error(error);
+		addToast({ severity: 'error', message: error.message });
 		setState(prevState => ({
 			...prevState,
 			isSavingMetadatUrl: false,
@@ -73,35 +81,37 @@ export const useContractSettings = (contract, contractState) => {
 		}));
 	};
 
-	const updateReveal = async ({ contractController, setContractState, walletAddress, contractId }) => {
-		const { metadataUrl } = actionForm;
-		const isRevealed = state.isNftRevealEnabled;
+	const updateReveal = async () => {
 		try {
 
-			if (!metadataUrl.value) {
+			// set false if already revealed
+			const isRevealed = !contractState?.isRevealed;
+			const url = isRevealed ? contract?.nftCollection?.baseUri : contract?.nftCollection?.unRevealedBaseUri;
+
+			console.log({ contractController, isRevealed, walletAddress, url, contract, contractState }, 'updateReveal ===>');
+
+			if (!url) {
 				throw new Error('Metadata url can not be empty!');
 			}
 
-			// if (metadataUrl.value.indexOf('ipfs://') === -1) {
-			// 	throw new Error('Invalid Metadata url! Url must start with "ipfs://" and end with a "/".');
-			// }
-
 			setState(prevState => ({ ...prevState, isSavingMetadatUrl: true }));
-			// @TODO ask to set reveal as true or false
-			const contractState = await contractController.updateReveal(walletAddress, isRevealed, metadataUrl.value);
-			setContractState(contractState);
-			if (isRevealed) {
-				setBaseUri({ variables: { id: contractId, baseUri: metadataUrl.value } });
+
+			const newContractState = await contractController.updateReveal(walletAddress, isRevealed, url);
+			setContractState(newContractState);
+
+			if (newContractState?.isRevealed) {
+				setBaseUri({ variables: { id, baseUri: url } });
 			} else {
-				setUnRevealedBaseUri({ variables: { id: contractId, unRevealedBaseUri: metadataUrl.value } });
+				setUnRevealedBaseUri({ variables: { id, unRevealedBaseUri: url } });
 			}
+
 			onSuccess('Metadata Url updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
 	}
 
-	const updateSales = async ({ contractController, setContractState, walletAddress, contractId }, isOpen) => {
+	const updateSales = async (isOpen) => {
 		const maxPerMint = parseFloat(actionForm.maxPerMint.value);
 		const maxPerWallet = parseFloat(actionForm.maxPerWallet.value);
 		const price = parseFloat(actionForm.price.value);
@@ -116,13 +126,6 @@ export const useContractSettings = (contract, contractState) => {
 			return;
 		}
 
-		/*
-		if (!price || price === 0) {
-			addToast({ severity: 'error', message: `max per wallet can't be zero` });
-			return;
-		}
-		*/
-
 		const web3 = window.web3;
 		const priceInWei = web3.utils.toWei(`${price}`);
 
@@ -131,41 +134,43 @@ export const useContractSettings = (contract, contractState) => {
 		try {
 			const contractState = await contractController.updateSale(walletAddress, isOpen, priceInWei, maxPerWallet, maxPerMint);
 			setContractState(contractState);
-			setNftPrice({ variables: { id: contractId, price } });
+			setNftPrice({ variables: { id, price } });
 			onSuccess('Public Sale settings updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
 	}
 
-	const setPresales = async ({ contractController, setContractState, walletAddress, contractId }, isOpen) => {
-		if (!state.whitelistAddresses.length) {
+	const setPresales = async (isOpen, whitelistAddresses) => {
+		if (!whitelistAddresses.length) {
 			addToast({ severity: 'error', message: `Whitelist can't be empty!` });
 			return;
 		}
 
-		const markleRoot = getMerkleTreeRoot(state.whitelistAddresses);
+		const markleRoot = getMerkleTreeRoot(whitelistAddresses);
 
 		setState(prevState => ({ ...prevState, isSavingPreSales: true }));
+
+		console.log({ walletAddress, isOpen, markleRoot });
 
 		try {
 			const contractState = await contractController.updatePresale(walletAddress, isOpen, markleRoot);
 			setContractState(contractState);
-			setWhitelist({ variables: { id: contractId, whitelist: state.whitelistAddresses } });
+			setWhitelist({ variables: { id, whitelist: whitelistAddresses } });
 			onSuccess('Pre Sale settings updated successfully!');
 		} catch (e) {
 			onError(e);
 		}
 	}
 
-	const airdrop = async ({ contractController, setContractState, walletAddress }) => {
-		if (!state.airdropAddresses.length) {
+	const airdrop = async (airdropAddresses) => {
+		if (!airdropAddresses.length) {
 			addToast({ severity: 'error', message: `Airdrop list can't be empty!` });
 			return;
 		}
 
-		const recipients = state.airdropAddresses.map(({ address }) => address);
-		const count = state.airdropAddresses.map(({ count }) => count);
+		const recipients = airdropAddresses.map(({ address }) => address);
+		const count = airdropAddresses.map(({ count }) => count);
 
 		setState(prevState => ({ ...prevState, isSavingAirdrop: true }));
 
@@ -178,7 +183,7 @@ export const useContractSettings = (contract, contractState) => {
 		}
 	}
 
-	const withdraw = async ({ contractController, setContractState, walletAddress }) => {
+	const withdraw = async () => {
 		setState(prevState => ({ ...prevState, isWithdrawing: true }));
 
 		try {
@@ -190,7 +195,7 @@ export const useContractSettings = (contract, contractState) => {
 		}
 	}
 
-	const mint = async ({ contractController, setContractState, walletAddress }, count) => {
+	const mint = async (count) => {
 		setState(prevState => ({ ...prevState, isMinting: true }));
 
 		try {
@@ -204,12 +209,10 @@ export const useContractSettings = (contract, contractState) => {
 
 	const setMaxPerMint = (maxPerMint) => setActionFormState(prevState => ({ ...prevState, maxPerMint: { ...prevState.maxPerMint, value: maxPerMint } }));
 	const setMaxPerWallet = (maxPerWallet) => setActionFormState(prevState => ({ ...prevState, maxPerWallet: { ...prevState.maxPerWallet, value: maxPerWallet } }));
-	const setMetadataUrl = (metadataUrl) => setActionFormState(prevState => ({ ...prevState, metadataUrl: { ...prevState.metadataUrl, value: metadataUrl } }));
 	const setPrice = (price) => setActionFormState(prevState => ({ ...prevState, price: { ...prevState.price, value: price } }));
 
 	const setWhitelistAddresses = (whitelistAddresses) => setState(prevState => ({ ...prevState, whitelistAddresses }));
 	const setAirdropAddresses = (airdropAddresses) => setState(prevState => ({ ...prevState, airdropAddresses }));
-	const setIsNftRevealEnabled = (isNftRevealEnabled) => setState(prevState => ({ ...prevState, isNftRevealEnabled }));
 	const toggleWhitelistAddressDialog = (isWhitelistAddressDialogOpen) => setState(prevState => ({ ...prevState, isWhitelistAddressDialogOpen }));
 	const toggleAirdropDialog = (isAirdropDialogOpen) => setState(prevState => ({ ...prevState, isAirdropDialogOpen }));
 
@@ -217,20 +220,10 @@ export const useContractSettings = (contract, contractState) => {
 		setMaxPerMint(contractState?.maxPerMint || '1');
 		setMaxPerWallet(contractState?.maxPerWallet || '1');
 		setWhitelistAddresses(contract?.nftCollection?.whitelist || []);
-		setIsNftRevealEnabled(contractState?.isRevealed || false);
 	}, [contractState]);
 
 	useEffect(() => {
-		if (state.isNftRevealEnabled) {
-			setMetadataUrl(contract?.nftCollection?.baseUri || '');
-		} else {
-			setMetadataUrl(contract?.nftCollection?.unRevealedBaseUri || '');
-		}
-	}, [contract?.nftCollection?.baseUri, contract?.nftCollection?.unRevealedBaseUri, state.isNftRevealEnabled]);
-
-	useEffect(() => {
-		setPrice(contract.nftCollection.price || '1');
-		setMetadataUrl(contract?.nftCollection?.baseUri || '');
+		setPrice(contract?.nftCollection?.price || '1');
 	}, []);
 
 	return {
@@ -246,8 +239,6 @@ export const useContractSettings = (contract, contractState) => {
 		setPrice,
 		setWhitelistAddresses,
 		setAirdropAddresses,
-		setIsNftRevealEnabled,
-		setMetadataUrl,
 		toggleWhitelistAddressDialog,
 		toggleAirdropDialog,
 		actionForm

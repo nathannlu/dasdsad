@@ -4,11 +4,10 @@ import { LinearProgress, CircularProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import { useIPFSModal } from '../hooks/useIPFSModal';
-import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'ambition-constants';
+import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES, getNftStorageTypeLabel } from 'ambition-constants';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useToast } from 'ds/hooks/useToast';
-import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Traits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useContract();

@@ -16,10 +16,9 @@ import {
 	FileUpload as FileUploadIcon,
 } from '@mui/icons-material';
 import { useContract } from 'services/blockchain/provider';
-import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'ambition-constants';
+import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES, getNftStorageTypeLabel } from 'ambition-constants';
 import { useIPFSModal, bytesToMegaBytes } from '../hooks/useIPFSModal';
 import { useToast } from 'ds/hooks/useToast';
-import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const UploadUnRevealedImage = (props) => {
 	const { uploadUnrevealedImage, uploadLoading, uploadPercentage } = useIPFSModal(props.contract, props.step, props.setActiveStep, props.nftStorageType);
@@ -63,15 +62,15 @@ const UploadUnRevealedImage = (props) => {
 			});
 		}
 	};
-	
+
 	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
 
 	return (
 		<Stack gap={2}>
 			<Box>
-				<Typography variant="h6">Upload your placeholder to IPFS</Typography>
+				<Typography variant="h6">Upload your placeholder to {nftStorageType}</Typography>
 				<Typography variant="body">
-					Also known as the pre-reveal image/video. It ensures fair rarity distribution & adds anticipation to the reveal. Max upload limit of 25GB
+					Also known as the pre-reveal image/video. It ensures fair rarity distribution &amp; adds anticipation to the reveal. Max upload limit of 25GB
 				</Typography>
 			</Box>
 			<Divider />

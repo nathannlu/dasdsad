@@ -6,7 +6,6 @@ import { CircularProgress, Stack } from 'ds/components';
 const Dashboard = lazy(() => import('services/blockchain/pages/Dashboard'));
 const New = lazy(() => import('services/blockchain/pages/New'));
 const NewV2 = lazy(() => import('services/blockchain/pages/NewV2'));
-//const Success = lazy(() => import('services/blockchain/pages/NewV2/Success'));
 const Contract = lazy(() => import('services/blockchain/pages/Contract'));
 const ContractV2 = lazy(() => import('services/blockchain/pages/ContractV2'));
 const Embed = lazy(() => import('services/blockchain/pages/Embed'));

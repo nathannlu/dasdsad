@@ -3,12 +3,11 @@ import { Box, Button, LoadingButton, Stack, Divider } from 'ds/components';
 import { LinearProgress, Typography } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import { useIPFSModal } from '../hooks/useIPFSModal';
-import { MAX_UPLOAD_LIMIT, METADATA_MIME_TYPES } from 'ambition-constants';
+import { MAX_UPLOAD_LIMIT, METADATA_MIME_TYPES, getNftStorageTypeLabel } from 'ambition-constants';
 import Folder from '@mui/icons-material/FolderOpenTwoTone';
 import Dropzone from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { useToast } from 'ds/hooks/useToast';
-import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Metadata = (props) => {
 	const { uploadedJson, setUploadedJson, ipfsUrl } = useContract();

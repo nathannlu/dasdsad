@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
+import { useWeb3 } from 'libs/web3';
+import posthog from 'posthog-js';
+
 import { useForm } from 'ds/hooks/useForm';
 import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
-import { useCreateContract, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook';
+import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
 
-import { ContractController, getBlockchainType, getBlockchainCurrency } from '@ambition-blockchain/controllers';
-
-import posthog from 'posthog-js';
+import { ContractController, getBlockchainCurrency } from '@ambition-blockchain/controllers';
 
 const CONTRACT_VERSION = 'erc721a';
-
 
 /**
  * Resonsible for handling contract information state
@@ -19,6 +19,7 @@ const CONTRACT_VERSION = 'erc721a';
  */
 export const useNewContractForm = () => {
 	const history = useHistory();
+	const { walletController } = useWeb3();
 	const { addToast } = useToast();
 	const { setContract, contract, setContracts, contracts } = useContract();
 
@@ -32,11 +33,8 @@ export const useNewContractForm = () => {
 			maxSupply: null,
 			price: null
 		},
-		activeFocusKey: 'NAME', // default,
-		activeBlockchain: 'ethereum', // default,
-		isTestnetEnabled: true, // default
+		activeBlockchain: null,
 		isDeploying: false,
-		isSaving: false,
 		deployingMessage: 'Creating Contract! Please be patient it will take couple of seconds...',
 		contractState: {
 			id: null,
@@ -51,7 +49,7 @@ export const useNewContractForm = () => {
 				price: 1,
 				size: null,
 				currency: null
-			},
+			}
 		}
 	});
 
@@ -92,25 +90,16 @@ export const useNewContractForm = () => {
 			});
 
 			setContracts([...contracts, data?.createContract]);
-
 			setContract(data?.createContract);
 			setContractState(data?.createContract);
-			posthog.capture('User created contract');
-		}
+			posthog.capture(`User created contract on ${state.activeBlockchain}`);
+		},
+		onError
 	});
-
-	const handleRedirectToSuccessPage = (id) => {
-		history.push(`/smart-contracts/v2/${id}/deploy/success`);
-	};
-
-	const handleRedirectToDetailsPage = (id) => {
-		history.push(`/smart-contracts/v2/${id}`);
-	}
 
 	const onError = (err) => {
 		addToast({ severity: 'error', message: err?.message });
 		setIsDeploying(false);
-		setIsSaving(false);
 	};
 
 	/**
@@ -125,7 +114,7 @@ export const useNewContractForm = () => {
 				name: name.value ? null : true,
 				symbol: symbol.value ? null : true,
 				maxSupply: maxSupply.value && Number(maxSupply.value) > 0 ? null : true,
-				price: price.value ? null : true,
+				price: price.value && Number(price.value) >= 0 ? null : true,
 			}
 		}));
 
@@ -146,65 +135,135 @@ export const useNewContractForm = () => {
 	 * Creates contract in backend
 	 */
 	const saveContract = async (contractAddress) => {
-		const blockchain = getBlockchainType(state.activeBlockchain, state.isTestnetEnabled);
 		const { name, symbol, maxSupply, price } = newContractForm;
 
-		// validate form
-		if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0) {
-			setFormValidationErrors();
-			return;
-		}
-
-		setIsSaving(true);
+		setIsDeploying(true);
 
 		try {
 			const contractInput = {
 				name: name.value,
 				symbol: symbol.value,
 				address: contractAddress || '',
-				blockchain,
-				type: CONTRACT_VERSION,
+				blockchain: state.activeBlockchain,
+				type: state.activeBlockchain === 'solanadevnet' ? 'whitelist' : CONTRACT_VERSION,
 				nftCollection: {
 					price: parseFloat(price.value),
 					size: parseInt(maxSupply.value),
-					currency: getBlockchainCurrency(blockchain)
-				},
+					currency: getBlockchainCurrency(state.activeBlockchain)
+				}
 			};
 			console.log(contractInput)
 			const response = await createContract({ variables: { contract: contractInput } });
-
-			// @TODO do we still need?
-			if (contractAddress) {
-				handleRedirectToSuccessPage(response?.data?.createContract?.id);
+			if (response?.data?.createContract?.type === CONTRACT_VERSION) {
+				history.push(`/smart-contracts/v2/${response?.data?.createContract?.id}`);
 			} else {
-				handleRedirectToDetailsPage(response?.data?.createContract?.id);
+				history.push(`/smart-contracts/${response?.data?.createContract?.id}`);
 			}
-
 		} catch (err) {
 			onError(new Error("Error Saving contract details. Please contact an administrator."));
 		} finally {
-			setIsSaving(false);
+			setIsDeploying(false);
 		}
 	};
 
+	/**
+	 * Deploy contract to blockchain
+	 */
+	const deployContract = async () => {
+		try {
+			const { name, symbol, maxSupply, price } = newContractForm;
+
+			// validate form
+			if (!name.value || !symbol.value || !maxSupply.value || Number(maxSupply.value) <= 0 || Number(price.value) < 0) {
+				setFormValidationErrors();
+				return;
+			}
+
+			if (state.activeBlockchain === 'solanadevnet') {
+				if (!walletController.state.wallet || walletController.state.wallet !== 'phantom') {
+					throw new Error('You must login with a phantom wallet to deploy a solana contract');
+				}
+
+				// Save contract details in backend
+				await saveContract();
+				return;
+			}
+
+			const walletAddress = walletController.state.address;
+			if (!walletAddress) {
+				throw new Error('Wallet not connected!');
+			}
+
+			setIsDeploying(true);
+			addToast({
+				severity: 'info',
+				message: 'Deploying contract to blockchain. This might take a couple of seconds...',
+			});
+
+			// get the blockchain type on the basis of isTestnetEnabled 
+			const contractController = new ContractController(null, state.activeBlockchain, CONTRACT_VERSION);
+
+			// switch network to testnet
+			await walletController.compareNetwork(state.activeBlockchain, async (error) => {
+				if (error) {
+					onError(error);
+					return;
+				}
+
+				// deploy contract
+				// No need to update price user can update the price later when they open public sales, This will save GAS
+				const deployedContract = await contractController.deployContract(
+					walletAddress,
+					name.value,
+					symbol.value,
+					maxSupply.value,
+					e => onError(e)
+				);
+
+				if (!deployedContract) {
+					onError(new Error("Error! Something went wrong unable to deploy contract."));
+					return;
+				}
+
+				// wait for some time allow contract to be saved
+				await new Promise(resolve => setTimeout(resolve, 10 * 1000));
+
+				const contractAddress = deployedContract.options.address;
+
+				// Save contract details in backend
+				await saveContract(contractAddress);
+
+				posthog.capture('User successfully deployed contract to blockchain', {
+					blockchain: state.activeBlockchain,
+					version: '2'
+				});
+			});
+		} catch (e) {
+			console.log(e, 'Error! deploying contract.');
+			onError(e);
+		}
+	}
 
 	const setActiveBlockchain = (activeBlockchain) => setState(prevState => ({ ...prevState, activeBlockchain }));
-
-	const setIsTestnetEnabled = (isTestnetEnabled) => setState(prevState => ({ ...prevState, isTestnetEnabled }));
-
 	const setIsDeploying = (isDeploying) => setState(prevState => ({ ...prevState, isDeploying }));
-
-	const setIsSaving = (isSaving) => setState(prevState => ({ ...prevState, isSaving }));
-
 	const setContractState = (contractState) => setState(prevState => ({ ...prevState, contractState: { ...prevState.contractState, ...contractState } }));
+
+	useEffect(() => {
+		(async () => {
+			if (state.activeBlockchain === 'solanadevnet') {
+				await walletController?.loadWalletProvider('phantom');
+				return;
+			}
+			await walletController?.loadWalletProvider('metamask');
+		})();
+	}, [state.activeBlockchain]);
 
 	return {
 		...state,
 		newContractForm,
-		saveContract,
+		deployContract,
 		onError,
 		setActiveBlockchain,
-		setIsTestnetEnabled,
 		setContractState,
 	};
 }
