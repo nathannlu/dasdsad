@@ -16,13 +16,15 @@ export const ARWEAVE_PAYMENT_WALLET = new PublicKey(
     '6FKvsq4ydWFci6nGq9ckbjYMtnmaqAoatz5c9XWjiDuS'
 );
 export const CANDY_MACHINE_PROGRAM_ID = new PublicKey(
-    '2ipqWcraTH7iGYXb4Evs7pfjR2VsESWffmEkw2baK21B'
+	'ammoh4Gi5DMVsCiKpi5geA16fVu5Vy34qFk5y99nWKc'
+//    '2ipqWcraTH7iGYXb4Evs7pfjR2VsESWffmEkw2baK21B'
     //	'8nxdH71B9QBxKYyBLreGerMyZBwAByV9BHDNj1xb5DP5'
     //  'cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ',
 );
 
 export const CANDY_MACHINE_PROGRAM_V2_ID = new PublicKey(
-    '2ipqWcraTH7iGYXb4Evs7pfjR2VsESWffmEkw2baK21B'
+	'ammoh4Gi5DMVsCiKpi5geA16fVu5Vy34qFk5y99nWKc'
+//    '2ipqWcraTH7iGYXb4Evs7pfjR2VsESWffmEkw2baK21B'
     //	'8nxdH71B9QBxKYyBLreGerMyZBwAByV9BHDNj1xb5DP5'
     //	'8VRwdyLCnj3KYuKpsEuWZqyaqgTMQ5ESAZEohS5vwBDN'
     //  'cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ',

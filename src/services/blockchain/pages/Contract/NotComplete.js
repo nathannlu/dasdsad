@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWeb3 } from 'libs/web3';
 
 import { useDeployContract } from './hooks/useDeployContract';
-import { Stack, Typography, Box, Button, FormLabel, TextField, IconButton } from 'ds/components';
+import { Stack, Typography, Box, Button, LoadingButton, FormLabel, TextField, IconButton } from 'ds/components';
 import { useToast } from 'ds/hooks/useToast';
 import { useSolanaCreators } from './hooks/useSolanaCreators';
 import { DeleteOutline as DeleteOutlineIcon } from '@mui/icons-material';
@@ -12,7 +12,7 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 	const { addToast } = useToast();
 	const [activeStep, setActiveStep] = useState(0);
 
-	const { deployContract } = useDeployContract(contract);
+	const { deployContract, loading } = useDeployContract(contract);
 	const { walletController } = useWeb3();
 	const walletAddress = walletController?.state.address;
 	const {
@@ -138,7 +138,8 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 							set public sale.
 						</Typography>
 						<Box>
-							<Button
+							<LoadingButton
+								loading={loading}
 								onClick={async () => {
 									await walletController.compareNetwork(
 										contract?.blockchain,
@@ -157,7 +158,7 @@ const NotComplete = ({ id, contract, setIsModalOpen }) => {
 								}}
 								variant="contained">
 								Deploy to blockchain
-							</Button>
+							</LoadingButton>
 							<Button onClick={() => setActiveStep(1)} size="small">
 								Edit creator shares
 							</Button>

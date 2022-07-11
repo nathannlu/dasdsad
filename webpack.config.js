@@ -102,6 +102,12 @@ module.exports = env => {
 				'controllers': `${__dirname}/src/controllers`,
 				'ambition-constants': `${__dirname}/src/ambition-constants`,
 			},
+		    fallback: {
+            assert: false,
+            buffer: require.resolve("buffer"),
+						path: require.resolve("path-browserify"),
+						fs: false,
+        }
 			/*
 			fallback: {
 				util: require.resolve('util/'),

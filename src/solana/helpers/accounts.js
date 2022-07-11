@@ -794,15 +794,17 @@ export const getCollectionAuthorityRecordPDA = async (
   mint,
   newAuthority
 ) => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('metadata'),
-      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-      mint.toBuffer(),
-      Buffer.from('collection_authority'),
-      newAuthority.toBuffer(),
-    ],
-    TOKEN_METADATA_PROGRAM_ID,
+	  return (
+    await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from('metadata'),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mint.toBuffer(),
+        Buffer.from('collection_authority'),
+        newAuthority.toBuffer(),
+      ],
+      TOKEN_METADATA_PROGRAM_ID,
+    )
   );
 };
 
@@ -978,7 +980,6 @@ export async function setCollection(
         },
       ).instructions,
     );
-		console.log('penis')
 
     instructions.push(
       ...new CreateMasterEditionV3(
@@ -995,7 +996,6 @@ export async function setCollection(
         },
       ).instructions,
     );
-		console.log('vagine')
   } else {
     mintPubkey = await parseCollectionMintPubkey(
       collectionMint,
