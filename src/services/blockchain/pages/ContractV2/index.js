@@ -1,11 +1,10 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Box, CircularProgress, Container, Fade, Stack } from 'ds/components';
 
 import IPFSModal from '../Contract/IPFSModal';
 
-import { useToast } from 'ds/hooks/useToast';
 import { useContractDetailsV2 } from './hooks/useContractDetailsV2';
 
 import Actions from './widgets/Actions';
@@ -15,16 +14,13 @@ import Integrations from './widgets/Integrations';
 import NotComplete from './NotComplete';
 
 const ContractV2 = () => {
-	const history = useHistory();
 	const { id } = useParams();
-	const { addToast } = useToast();
 
 	const {
 		setIsIPFSModalOpen,
 		isIPFSModalOpen,
 		contract,
 		isLoading,
-		hasBaseUri,
 		contractState,
 		nftPrice,
 		unRevealedtNftImage,
@@ -52,8 +48,10 @@ const ContractV2 = () => {
 		setIsIPFSModalOpen
 	};
 
+	const hasMetadaUploaded = !!(contract?.nftCollection?.baseUri && contract?.nftCollection?.unRevealedBaseUri);
 	const isContractDeployed = !!contract?.address;
-	if (!isContractDeployed) {
+
+	if (!isContractDeployed || !hasMetadaUploaded) {
 		return (
 			<Fade in={true}>
 				<Container>
@@ -82,20 +80,7 @@ const ContractV2 = () => {
 					id={id}
 					contract={contract}
 					isModalOpen={isIPFSModalOpen}
-					setIsModalOpen={(isModalOpen, onSuccess) => {
-
-						if (onSuccess) {
-							setIsIPFSModalOpen(false);
-							return;
-						}
-
-						if (!hasBaseUri) {
-							history.push('/smart-contracts/');
-							addToast({ severity: 'info', message: 'Please upload NFT collection to proceed!' });
-							return;
-						}
-						setIsIPFSModalOpen(isModalOpen);
-					}}
+					setIsModalOpen={(isModalOpen) => setIsIPFSModalOpen(isModalOpen)}
 					renderUploadUnRevealedImage={true}
 				/>
 			</Container>

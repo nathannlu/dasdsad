@@ -16,12 +16,12 @@ const NewV2 = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {
 		newContractForm: { name, symbol, maxSupply, price },
-		isDeploying,
+		isSaving,
 		activeBlockchain,
 		formValidationErrors,
 		deployingMessage,
 		setActiveBlockchain,
-		deployContract,
+		saveContract,
 	} = useNewContractForm();
 
 	return (
@@ -71,7 +71,7 @@ const NewV2 = () => {
 					<Modal
 						open={isModalOpen}
 						onClose={() => {
-							if (isDeploying) {
+							if (isSaving) {
 								return;
 							}
 							setActiveBlockchain(null);
@@ -128,16 +128,16 @@ const NewV2 = () => {
 											<Button
 												variant="contained"
 												size="small"
-												onClick={() => deployContract()}
-												disabled={isDeploying}
+												onClick={saveContract}
+												disabled={isSaving}
 											>
-												{isDeploying && <CircularProgress isButtonSpinner={true} /> || null}
-												Deploy Contract on {activeBlockchain}
+												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
+												Create Contract on {activeBlockchain}
 											</Button>
 										</Box>
 
 										<Stack direction="row" py={1} gap={2} alignItems="center">
-											{isDeploying && <Typography sx={{ fontStyle: 'italic', fontSize: 14 }} color="GrayText">
+											{isSaving && <Typography sx={{ fontStyle: 'italic', fontSize: 14 }} color="GrayText">
 												{deployingMessage}
 											</Typography> || null}
 										</Stack>

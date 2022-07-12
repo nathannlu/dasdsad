@@ -5,6 +5,9 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 const stripePromise = loadStripe(config.stripe.publicKey);
 import posthog from 'posthog-js';
+import { Grid, Button } from 'ds/components';
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Payment = (props) => {
     useEffect(() => {
@@ -34,6 +37,12 @@ const Payment = (props) => {
 
     return (
         <Elements stripe={stripePromise}>
+            <Grid container={true} justifyContent="flex-end">
+                <Button color="info" size="small" variant="contained" onClick={e => props.goToStep(1)}>
+                    <ArrowBackIcon />&nbsp;Go Back
+                </Button>
+            </Grid>
+
             <CheckoutForm
                 planId={config.stripe.products.contract}
                 callback={callback}

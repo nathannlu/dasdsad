@@ -91,16 +91,6 @@ export const useContractDetailsV2 = () => {
         if (contracts.length) { init(); }
     }, [contracts]);
 
-    const hasBaseUri = !!contract?.nftCollection?.baseUri;
-
-    // open IPFS modal if NFT baseUri is not set
-    useEffect(() => {
-        if (isLoading || hasBaseUri) {
-            return;
-        }
-        setIsIPFSModalOpen(true);
-    }, [hasBaseUri, isLoading]);
-
     return {
         setContract,
         setContractState,
@@ -117,7 +107,6 @@ export const useContractDetailsV2 = () => {
         isLoading,
         unRevealedtNftImage,
         revealedNftImage,
-        nftPrice,
-        hasBaseUri
+        nftPrice
     };
 };

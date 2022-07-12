@@ -12,6 +12,7 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
 
     const [state, setState] = useState({
         isDeploying: false,
+        isDeploymentStepModalOpen: false,
         activeDeploymentStep: null
     });
 
@@ -19,13 +20,13 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
 
     const onError = (err) => {
         addToast({ severity: 'error', message: err?.message });
-        setState(prevState => ({ ...prevState, activeDeploymentStep: null, isDeploying: false }));
+        setState(prevState => ({ ...prevState, activeDeploymentStep: null, isDeploying: false, isDeploymentStepModalOpen: false }));
     };
 
     const deployContractToMainnet = async () => {
         try {
 
-            setState(prevState => ({ ...prevState, activeDeploymentStep: 0 }));
+            setState(prevState => ({ ...prevState, activeDeploymentStep: 0, isDeploying: true, isDeploymentStepModalOpen: true }));
 
             const { name, symbol, type, nftCollection } = contract;
             const { baseUri, unRevealedBaseUri } = nftCollection;
@@ -124,7 +125,7 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
                     version: '2'
                 });
 
-                setState(prevState => ({ ...prevState, isDeploying: false }));
+                setState(prevState => ({ ...prevState, isDeploying: false, isDeploymentStepModalOpen: false }));
             });
         } catch (e) {
             console.log(e, 'Error! deploying contract.');

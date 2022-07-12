@@ -1,59 +1,11 @@
 import React, { useEffect } from 'react';
 
-import { useModal } from 'ds/hooks/useModal';
-
-import { Box, Button, Grid, Stack, Typography, CircularProgress } from 'ds/components';
-import { Step, StepLabel, Stepper } from '@mui/material';
+import { Box, Button, CircularProgress, Grid, Stack, Typography } from 'ds/components';
 
 import { Details } from '../ContractDetails';
 import { NFT } from '../Nft';
-import { useDeployContractToMainnet } from '../../hooks/useDeployContractToMainet';
 
-import { getMainnetBlockchainType, getWalletType } from '@ambition-blockchain/controllers';
-
-export const DeploymentStepModal = ({ blockchain, activeDeploymentStep, walletType }) => {
-    const deploymentSteps = [
-        {
-            key: 0,
-            title: `Awaiting signature`,
-            description: `Open ${walletType} and sign the transaction.`
-        }, {
-            key: 1,
-            title: `Deploying Contract`,
-            description: `Please be patient, this will take couple of seconds...`
-        }, {
-            key: 2,
-            title: `Updating NFT metadata`,
-            description: `Open ${walletType} and sign the transaction.`
-        }, {
-            key: 3,
-            title: `Updating Sales Settings`,
-            description: `Open ${walletType} and sign the transaction.`
-        }, {
-            key: 4,
-            title: `Confirming Deployment`,
-            description: `Waiting for final transaction confirmation.`
-        }
-    ];
-
-    return (
-        <Box>
-            <Typography variant="h6">
-                Deploying to {blockchain}
-            </Typography>
-
-            <Stepper orientation="vertical" activeStep={activeDeploymentStep}>
-                {deploymentSteps.map(step => (
-                    <Step key={step.key}>
-                        <StepLabel optional={<Typography variant="caption">{step.description}</Typography>}>
-                            {step.title}
-                        </StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-        </Box>
-    );
-};
+import { getMainnetBlockchainType } from '@ambition-blockchain/controllers';
 
 const DeployToMainnetModal = ({ contract, contractState, unRevealedtNftImage, revealedNftImage, nftPrice, deployContractToMainnet, isDeploying }) => {
     const blockchain = contract?.blockchain && getMainnetBlockchainType(contract?.blockchain) || null;

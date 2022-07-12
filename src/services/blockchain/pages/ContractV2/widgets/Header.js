@@ -7,27 +7,24 @@ import { useModal } from 'ds/hooks/useModal';
 import { useToast } from 'ds/hooks/useToast';
 
 import { useDeployContractToMainnet } from '../hooks/useDeployContractToMainet';
-import DeployToMainnetModal, { DeploymentStepModal } from './modal/DeployToMainet.modal';
+
+import DeploymentStepModal from './modal/DeploymentStep.modal';
+import DeployToMainnetModal from './modal/DeployToMainet.modal';
+
 import { isTestnetBlockchain, getWalletType, getMainnetBlockchainType } from '@ambition-blockchain/controllers';
 
 const Header = (props) => {
+    useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
+
     const { id } = useParams();
     const { contract, contractState } = props;
     const { addToast } = useToast();
     const { createModal } = useModal();
 
-    const { activeDeploymentStep, deployContractToMainnet, isDeploying } = useDeployContractToMainnet(contract, contractState, id);
+    const { activeDeploymentStep, deployContractToMainnet, isDeploying, isDeploymentStepModalOpen } = useDeployContractToMainnet(contract, contractState, id);
 
     const walletType = contract?.blockchain && getWalletType(contract?.blockchain) || null;
     const blockchain = contract?.blockchain && getMainnetBlockchainType(contract?.blockchain) || null;
-
-    const [, setIsDeploymentStepModalOpen, closeDeploymentStepModal] = createModal(
-        <DeploymentStepModal
-            blockchain={blockchain}
-            activeDeploymentStep={activeDeploymentStep}
-            walletType={walletType}
-        />, { styles: { maxWidth: 420 } }
-    );
 
     const [, setIsDeployModalOpen] = createModal(
         <DeployToMainnetModal
@@ -47,20 +44,6 @@ const Header = (props) => {
     };
 
     const isTestnet = isTestnetBlockchain(contract?.blockchain);
-
-    useEffect(() => {
-        if (activeDeploymentStep === null) {
-            return;
-        }
-
-        if (activeDeploymentStep === 0) {
-            setIsDeploymentStepModalOpen(true);
-        }
-
-        if (activeDeploymentStep === 4) {
-            closeDeploymentStepModal();
-        }
-    }, [activeDeploymentStep]);
 
     return (
         <Stack direction="row" mt={4}>
@@ -107,6 +90,13 @@ const Header = (props) => {
                     Deploy to mainnet
                 </Button>
             </Box> || null}
+
+            <DeploymentStepModal
+                blockchain={blockchain}
+                activeDeploymentStep={activeDeploymentStep}
+                walletType={walletType}
+                isModalOpen={isDeploymentStepModalOpen}
+            />
 
         </Stack>
     );

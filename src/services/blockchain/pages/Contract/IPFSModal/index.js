@@ -9,17 +9,31 @@ import ImportLink from './ImportLink';
 import Payment from './Payment';
 import UploadSteps from './Upload';
 
-// renderUploadUnRevealedImage={true} is currrntly only for erc-721a contracts
-const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRevealedImage }) => {
-    const [initialStep, setInitialStep] = useState(1);
+export const IPFSModalContent = (props) => {
+    const { contract, setIsModalOpen, id, renderUploadUnRevealedImage } = props;
     const [nftStorageType, setNftStorageType] = useState(); // 'ipfs' | 's3'
 
-    useEffect(() => {
-        // If contract is subscribed, skip to next step
-        if (contract?.isSubscribed || contract?.nftStorageType === 's3' || nftStorageType === 's3') {
-            setInitialStep(4);
-        }
-    }, [contract, nftStorageType]);
+    // If contract is subscribed or if nftStorageType is 's3' skip to next step
+    const initialStep = (contract?.isSubscribed || contract?.nftStorageType === 's3' || nftStorageType === 's3') ? 4 : 1;
+
+    return (
+        <StepWizard initialStep={initialStep} transitions={{}}>
+            <Preview setNftStorageType={setNftStorageType} contract={contract} />
+            {/* user imports their own link */}
+            <ImportLink id={id} setIsModalOpen={setIsModalOpen} />
+
+            {/* uploads to ipfs with us */}
+            < Payment contractId={id} contract={contract} nftStorageType={nftStorageType} />
+            <UploadSteps id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} nftStorageType={contract.nftStorageType || nftStorageType} />
+        </StepWizard>
+    );
+}
+
+/**
+ * renderUploadUnRevealedImage={true} is currrntly only for erc-721a contracts
+ **/
+const IPFSModal = (props) => {
+    const { isModalOpen, setIsModalOpen } = props;
 
     return (
         <Modal
@@ -30,7 +44,8 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
                 alignItems: 'center',
                 display: 'flex',
                 zIndex: 5000
-            }}>
+            }}
+        >
             <Box
                 p={3}
                 pt={1}
@@ -46,15 +61,7 @@ const IPFSModal = ({ contract, isModalOpen, setIsModalOpen, id, renderUploadUnRe
                     </IconButton>
                 </Stack>
 
-                <StepWizard initialStep={initialStep} transitions={{}}>
-                    <Preview setNftStorageType={setNftStorageType} contract={contract} />
-                    {/* user imports their own link */}
-                    <ImportLink id={id} setIsModalOpen={setIsModalOpen} />
-
-                    {/* uploads to ipfs with us */}
-                    <Payment contractId={id} contract={contract} nftStorageType={nftStorageType} />
-                    <UploadSteps id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} nftStorageType={contract.nftStorageType || nftStorageType} />
-                </StepWizard>
+                <IPFSModalContent {...props} />
             </Box>
         </Modal>
     );
