@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Divider, Grid, Stack, Typography } from 'ds/components';
 
@@ -6,42 +6,29 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
 
-import { useModal } from 'ds/hooks/useModal';
 import { useContractSettings } from '../hooks/useContractSettings';
 
 import ActionCard from './ActionCard';
 import CSVWidget from './CSVWidget';
 
-import { getNftStorageTypeLabel } from 'ambition-constants';
-
-const Actions = ({ contract, contractState, setIsIPFSModalOpen }) => {
+const Actions = ({ contractState }) => {
     const actionCardRef = React.createRef();
     const {
-        isMinting,
-        isWithdrawing,
         mint,
         withdraw,
-
-        updateSales,
-        isSavingPublicSales,
-
         setPresales,
         airdrop,
-
+        setWhitelistAddresses,
+        setAirdropAddresses,
         isSavingAirdrop,
         isSavingPreSales,
-
         whitelistAddresses,
         airdropAddresses,
-
-        setWhitelistAddresses,
-        setAirdropAddresses
-
+        isMinting,
+        isWithdrawing
     } = useContractSettings();
 
-    const nftStorageType = getNftStorageTypeLabel(contract?.nftStorageType);
     const isEarningsToWithdrawAvailable = contractState?.balanceInEth && Number(contractState?.balanceInEth) > 0;
 
     const listOfActions = [
@@ -104,12 +91,6 @@ const Actions = ({ contract, contractState, setIsIPFSModalOpen }) => {
                 fullScreen: true,
                 title: 'Airdrop your NFT'
             },
-        },
-        {
-            icon: <UploadFileIcon />,
-            title: 'Re-Upload NFT Collection',
-            description: `We allow re-uploading NFT collection to ${nftStorageType}`,
-            action: () => setIsIPFSModalOpen(true)
         }
     ];
 

@@ -12,8 +12,9 @@ import Embed from '../../Contract/Embed';
 import EmbedButtonStyling from '../../Contract/EmbedButtonStyling';
 import Verify from '../Verify';
 
-const Integrations = ({ contract }) => {
+const Integrations = ({ contract, contractState }) => {
     const { id } = useParams();
+    const isConnectWithOpenseaDisabled = !contractState || !contractState?.amountSold || contractState?.amountSold === '0';
 
     const listOfIntegrations = [
         {
@@ -50,8 +51,10 @@ const Integrations = ({ contract }) => {
             icon: <img style={{ height: '25px' }} src="https://storage.googleapis.com/opensea-static/Logomark/Logomark-Blue.png" />,
             title: 'Connect with OpenSea',
             description: 'Import your collection onto Opensea. You must have at least one NFT minted before you can integrate.',
+            isDisabled: isConnectWithOpenseaDisabled,
+            helperText: isConnectWithOpenseaDisabled && 'Mint at least one NFT to integrate.' || null,
             action: () => window.open("https://opensea.io/get-listed/step-two", '_blank').focus()
-        },
+        }
     ];
 
     return (

@@ -74,7 +74,7 @@ const UploadUnRevealedImage = (props) => {
 				</Typography>
 			</Box>
 			<Divider />
-			{uploadedUnRevealedImageFile < 1 ? (
+			{!uploadedUnRevealedImageFile || uploadedUnRevealedImageFile?.length < 1 ? (
 				<Box>
 					<Dropzone
 						accept={IMAGE_MIME_TYPES}
@@ -117,7 +117,7 @@ const UploadUnRevealedImage = (props) => {
 				<Stack>
 					<Box>
 						<Folder />
-						{uploadedUnRevealedImageFile.length} Files added
+						{uploadedUnRevealedImageFile?.length} Files added
 						<Button
 							onClick={() => {
 								setPercent(0);

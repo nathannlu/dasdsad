@@ -28,7 +28,7 @@ export const ContractProvider = ({ children }) => {
 
     const [unRevealedBaseUri, setUnRevealedBaseUri] = useState(null);
     const [imagesUrl, setImagesUrl] = useState(null); // url of nft images folder
-	const [baseUri, setBaseUri] = useState(null); // new metadata url (use this one)
+    const [baseUri, setBaseUri] = useState(null); // new metadata url (use this one)
 
 
 
@@ -77,8 +77,8 @@ export const ContractProvider = ({ children }) => {
         setUploadedUnRevealedImageFile,
         unRevealedBaseUri,
         setUnRevealedBaseUri,
-			baseUri,
-			setBaseUri,
+        baseUri,
+        setBaseUri,
         uploadedJson,
         setUploadedJson,
 
@@ -89,8 +89,8 @@ export const ContractProvider = ({ children }) => {
 
         loading,
         setLoading,
-			fetchContractLoading,
-									setFetchContractLoading,
+        fetchContractLoading,
+        setFetchContractLoading,
         activeStep,
         setActiveStep,
         start,

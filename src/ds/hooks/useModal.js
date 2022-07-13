@@ -4,7 +4,7 @@ export const ModalContext = React.createContext({});
 export const useModal = (data) => useContext(ModalContext)
 
 import { Modal, Box, Button, Stack, IconButton, Typography, Divider } from 'ds/components';
-import { AppBar } from '@mui/material';
+import { AppBar, Fade } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const ModalAppbar = ({ onClose, variant, title }) => {
@@ -68,9 +68,10 @@ export const ModalManager = (props) => {
 	const [modalSettings, setModalSettings] = useState(DEFAULT_SETTINGS);
 
 	const createModal = (data, settings) => {
-		const openModal = (value) => {
+
+		const openModal = (newData) => {
 			setModalSettings(prevState => ({ ...settings }));
-			setModalData(data);
+			setModalData(newData || data);
 			setIsModalOpen(true);
 		}
 
@@ -78,7 +79,7 @@ export const ModalManager = (props) => {
 			setIsModalOpen(false);
 		}
 
-		return [isModalOpen, openModal, closeModal, setModalData];
+		return [isModalOpen, openModal, closeModal];
 	}
 
 	const fullScreenStyles = modalSettings?.fullScreen && {
@@ -95,7 +96,8 @@ export const ModalManager = (props) => {
 		<ModalContext.Provider
 			value={{
 				createModal,
-				setModalSettings: (settings) => setModalSettings(prevState => ({ ...prevState, ...settings }))
+				setModalSettings: (settings) => setModalSettings(prevState => ({ ...prevState, ...settings })),
+				setModalData
 			}}
 		>
 			{props.children}
@@ -115,33 +117,35 @@ export const ModalManager = (props) => {
 					...fullScreenStyles
 				}}
 			>
-				<Box
-					p={3}
-					pt={1}
-					sx={{
-						width: '1200px',
-						margin: '0 auto',
-						background: '#fff',
-						borderRadius: '10px',
-						maxHeight: '90vh',
-						overflow: 'auto',
-						'&:focus-visible': { outline: 'none' },
-						...fullScreenStyles,
-						...modalSettings.styles
-					}}
-				>
-					<ModalAppbar
-						onClose={() => setIsModalOpen(false)}
-						variant={modalSettings?.fullScreen && 'contained' || null}
-						title={modalSettings?.title || null}
-					/>
+				<Fade in={isModalOpen} timeout={600}>
+					<Box
+						p={3}
+						pt={1}
+						sx={{
+							width: '1200px',
+							margin: '0 auto',
+							background: '#fff',
+							borderRadius: '10px',
+							maxHeight: '90vh',
+							overflow: 'auto',
+							'&:focus-visible': { outline: 'none' },
+							...fullScreenStyles,
+							...modalSettings.styles
+						}}
+					>
+						<ModalAppbar
+							onClose={() => setIsModalOpen(false)}
+							variant={modalSettings?.fullScreen && 'contained' || null}
+							title={modalSettings?.title || null}
+						/>
 
-					{/* assign Top margin */}
-					<Box sx={{ marginTop: modalSettings?.fullScreen ? '84px' : undefined }}>
-						{modalData || null}
+						{/* assign Top margin */}
+						<Box sx={{ marginTop: modalSettings?.fullScreen ? '84px' : undefined }}>
+							{modalData || null}
+						</Box>
+
 					</Box>
-
-				</Box>
+				</Fade>
 			</Modal>
 		</ModalContext.Provider>
 	)

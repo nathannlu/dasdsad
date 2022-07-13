@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, CircularProgress, Grid, Stack, TextField, Typography } from 'ds/components';
 import { Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 
-import { useContractSettings } from '../../hooks/useContractSettings';
+import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const AdvancedSettingsModal = ({
     contractState,
@@ -12,6 +12,7 @@ const AdvancedSettingsModal = ({
     isSavingPublicSales,
     setPresales,
     isSavingPreSales,
+    ipfsModalContent,
     actionForm: { maxPerMint, maxPerWallet, price }
 }) => {
 
@@ -22,9 +23,12 @@ const AdvancedSettingsModal = ({
         borderRadius: 4
     };
 
+    const nftStorageType = getNftStorageTypeLabel(contract?.nftStorageType);
+
     return (
         <Stack>
-            <Grid container>
+            <Grid container={true} direction="column">
+
                 <Stack gap={2} mt={8} sx={cardStyle}>
                     <Grid container={true} justifyContent="space-between">
                         <Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
@@ -115,6 +119,19 @@ const AdvancedSettingsModal = ({
                         </Button>
                     </Stack>
                 </Stack> || null}
+
+                <Stack gap={2} mt={8} mb={8} sx={{ ...cardStyle, maxWidth: 1200 }}>
+                    <Grid container={true} justifyContent="space-between" direction="column">
+                        <Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
+                            Re-Upload NFT Collection
+                        </Typography>
+                        <Typography variant="body">
+                            We allow re-uploading NFT collection to ${nftStorageType}
+                        </Typography>
+                    </Grid>
+
+                    {ipfsModalContent}
+                </Stack>
 
             </Grid>
         </Stack>

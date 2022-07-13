@@ -69,7 +69,6 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
                  * STEP-2
                  * deploy contract
                  */
-                setState(prevState => ({ ...prevState, activeDeploymentStep: 1 }));
                 const deployedContract = await contractController.deployContract(
                     walletAddress,
                     name,
@@ -92,7 +91,7 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
                  * STEP-3
                  * update reveal
                  */
-                setState(prevState => ({ ...prevState, activeDeploymentStep: 2 }));
+                setState(prevState => ({ ...prevState, activeDeploymentStep: 1 }));
                 await contractController.updateReveal(walletAddress, isRevealed, isRevealed ? baseUri : unRevealedBaseUri);
 
                 // wait for some time allow contract to be saved
@@ -102,7 +101,7 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
                  * STEP-4
                  * update public Sale Open
                  */
-                setState(prevState => ({ ...prevState, activeDeploymentStep: 3 }));
+                setState(prevState => ({ ...prevState, activeDeploymentStep: 2 }));
 
                 const web3 = window.web3;
                 const priceInWei = web3.utils.toWei(`${price}`);
@@ -117,7 +116,7 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
                  *  STEP-5
                  *  Save contract details in backend
                  */
-                setState(prevState => ({ ...prevState, activeDeploymentStep: 4 }));
+                setState(prevState => ({ ...prevState, activeDeploymentStep: 3 }));
                 await updateContractAddress({ variables: { id, address: contractAddress } });
 
                 posthog.capture('User successfully deployed contract to mainnet blockchain', {

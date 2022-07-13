@@ -40,6 +40,7 @@ const ContractV2 = () => {
 	}
 
 	const commonProps = {
+		id,
 		contract,
 		contractState,
 		unRevealedtNftImage,

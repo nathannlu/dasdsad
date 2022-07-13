@@ -7,24 +7,16 @@ const DeploymentStepModal = ({ blockchain, activeDeploymentStep, walletType, isM
     const deploymentSteps = [
         {
             key: 0,
-            title: `Awaiting signature`,
-            description: `Open ${walletType} and sign the transaction.`
-        }, {
-            key: 1,
             title: `Deploying Contract`,
             description: `Please be patient, this will take couple of seconds...`
         }, {
-            key: 2,
+            key: 1,
             title: `Updating NFT metadata`,
             description: `Open ${walletType} and sign the transaction.`
         }, {
-            key: 3,
+            key: 2,
             title: `Updating Sales Settings`,
             description: `Open ${walletType} and sign the transaction.`
-        }, {
-            key: 4,
-            title: `Confirming Deployment`,
-            description: `Waiting for final transaction confirmation.`
         }
     ];
 

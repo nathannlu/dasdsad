@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, Button, IconButton, Stack } from 'ds/components';
-import { Stepper, Step, StepLabel, StepContent } from '@mui/material';
+import { Stepper, Step, StepLabel, StepContent, CircularProgress } from '@mui/material';
 import StepWizard from 'react-step-wizard';
 import CloseIcon from '@mui/icons-material/Close';
 

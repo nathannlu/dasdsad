@@ -97,7 +97,7 @@ const Traits = (props) => {
 				</Typography>
 			</Box>
 			<Divider />
-			{uploadedFiles.length < 1 ? (
+			{!uploadedFiles || uploadedFiles?.length < 1 ? (
 				<Box>
 					<Dropzone
 						accept={IMAGE_MIME_TYPES}
@@ -140,7 +140,7 @@ const Traits = (props) => {
 				<Stack>
 					<Box>
 						<Folder />
-						{uploadedFiles.length} Files added
+						{uploadedFiles?.length} Files added
 						<Button
 							onClick={() => {
 								setPercent(0);
