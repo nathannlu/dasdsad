@@ -28,6 +28,14 @@ import {
     A,
     CANDY_MACHINE_PROGRAM_V2_ID,
 } from './constants';
+import {
+  CreateMasterEditionV3,
+  CreateMetadataV2,
+  Creator,
+  DataV2,
+} from '@metaplex-foundation/mpl-token-metadata';
+
+
 import { CLUSTERS, DEFAULT_CLUSTER } from './constants';
 import * as anchor from '@project-serum/anchor';
 //import fs from 'fs';
@@ -37,7 +45,13 @@ import {
 } from './instructions';
 import { web3 } from '@project-serum/anchor';
 import log from 'loglevel';
-import { AccountLayout, u64 } from '@solana/spl-token';
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  MintLayout,
+  Token,
+	AccountLayout, 
+	u64
+} from '@solana/spl-token';
 import Wallet from '../externals/nodewallet';
 import bs58 from 'bs58';
 import { throws } from 'assert';
@@ -765,4 +779,321 @@ function unsafeResAccounts(data) {
         account: unsafeAccount(item.account),
         pubkey: item.pubkey,
     }));
+}
+
+export const getCollectionPDA = async (
+  candyMachineAddress
+) => {
+  return await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from('collection'), candyMachineAddress.toBuffer()],
+    CANDY_MACHINE_PROGRAM_V2_ID,
+  );
+};
+
+export const getCollectionAuthorityRecordPDA = async (
+  mint,
+  newAuthority
+) => {
+	  return (
+    await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from('metadata'),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mint.toBuffer(),
+        Buffer.from('collection_authority'),
+        newAuthority.toBuffer(),
+      ],
+      TOKEN_METADATA_PROGRAM_ID,
+    )
+  );
+};
+
+export async function parseCollectionMintPubkey(collectionMint, connection, publicKey) {
+  let collectionMintPubkey = null;
+
+  if (collectionMint) {
+    try {
+      collectionMintPubkey = new PublicKey(collectionMint);
+    } catch (error) {
+      throw new Error(
+        'Invalid Pubkey option. Please enter it as a base58 mint id',
+      );
+    }
+    const token = new Token(
+      connection,
+      collectionMintPubkey,
+      TOKEN_PROGRAM_ID,
+//      walletKeypair,
+    );
+    await token.getMintInfo();
+  }
+  if (collectionMintPubkey) {
+    const metadata = await Metadata.findByMint(
+      connection,
+      collectionMintPubkey,
+    ).catch();
+    if (metadata.data.updateAuthority !== publicKey.toString()) {
+      throw new Error(
+        'Invalid collection mint option. Metadata update authority does not match provided wallet keypair',
+      );
+    }
+    const edition = await Metadata.getEdition(connection, collectionMintPubkey);
+    if (
+      edition.data.key !== MetadataKey.MasterEditionV1 &&
+      edition.data.key !== MetadataKey.MasterEditionV2
+    ) {
+      throw new Error(
+        'Invalid collection mint. Provided collection mint does not have a master edition associated with it.',
+      );
+    }
+  }
+  return collectionMintPubkey;
+}
+
+
+
+export async function setCollection(
+  anchorProgram,
+  candyMachineAddress,
+  collectionMint,
+) {
+	const sol = await window.solana.connect();
+	const payerPublicAddress = new PublicKey(
+			sol.publicKey.toString().toBuffer()
+	);
+
+//  const wallet = new Wallet(walletKeyPair);
+
+	console.log(candyMachineAddress)
+
+  const instructions = [];
+  let mintPubkey;
+  let metadataPubkey;
+  let masterEditionPubkey;
+  let collectionPDAPubkey;
+  let collectionAuthorityRecordPubkey;
+
+	let mintSigner = null;
+
+  const candyMachine = await anchorProgram.account.candyMachine.fetch(
+    candyMachineAddress,
+  );
+  if (!collectionMint) {
+    const mint = anchor.web3.Keypair.generate();
+    mintPubkey = mint.publicKey;
+    metadataPubkey = await getMetadata(mintPubkey);
+    masterEditionPubkey = await getMasterEdition(mintPubkey);
+    [collectionPDAPubkey] = await getCollectionPDA(candyMachineAddress);
+    [collectionAuthorityRecordPubkey] = await getCollectionAuthorityRecordPDA(
+      mintPubkey,
+      collectionPDAPubkey,
+    );
+    mintSigner = mint; // pub + private key
+    const userTokenAccountAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mint.publicKey,
+      payerPublicAddress,
+    );
+
+    instructions.push(
+      ...[
+        anchor.web3.SystemProgram.createAccount({
+          fromPubkey: payerPublicAddress,
+          newAccountPubkey: mintPubkey,
+          space: MintLayout.span,
+          lamports:
+            await anchorProgram.provider.connection.getMinimumBalanceForRentExemption(
+              MintLayout.span,
+            ),
+          programId: TOKEN_PROGRAM_ID,
+        }),
+        Token.createInitMintInstruction(
+          TOKEN_PROGRAM_ID,
+          mintPubkey,
+          0,
+          payerPublicAddress,
+          payerPublicAddress,
+        ),
+        Token.createAssociatedTokenAccountInstruction(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          mintPubkey,
+          userTokenAccountAddress,
+          payerPublicAddress,
+          payerPublicAddress,
+        ),
+        Token.createMintToInstruction(
+          TOKEN_PROGRAM_ID,
+          mintPubkey,
+          userTokenAccountAddress,
+          payerPublicAddress,
+          [],
+          1,
+        ),
+      ],
+    );
+    const data = new DataV2({
+      symbol: candyMachine.data.symbol ?? '',
+      name: 'Collection NFT',
+      uri: '',
+      sellerFeeBasisPoints: candyMachine.data.seller_fee_basis_points,
+      creators: [
+        new Creator({
+          address: payerPublicAddress.toBase58(),
+          verified: true,
+          share: 100,
+        }),
+      ],
+      collection: null,
+      uses: null,
+    });
+
+
+
+		console.log('asd')
+		console.log(CreateMetadataV2)
+		  const as = new CreateMetadataV2(
+        { feePayer: payerPublicAddress },
+        {
+          metadata: metadataPubkey,
+          metadataData: data,
+          updateAuthority: payerPublicAddress,
+          mint: mintPubkey,
+          mintAuthority: payerPublicAddress,
+        },
+      )
+
+		console.log('brolyn coffee a dachi', as)
+
+
+
+    instructions.push(
+      ...new CreateMetadataV2(
+        { feePayer: payerPublicAddress },
+        {
+          metadata: metadataPubkey,
+          metadataData: data,
+          updateAuthority: payerPublicAddress,
+          mint: mintPubkey,
+          mintAuthority: payerPublicAddress,
+        },
+      ).instructions,
+    );
+
+    instructions.push(
+      ...new CreateMasterEditionV3(
+        {
+          feePayer: payerPublicAddress,
+        },
+        {
+          edition: masterEditionPubkey,
+          metadata: metadataPubkey,
+          mint: mintPubkey,
+          mintAuthority: payerPublicAddress,
+          updateAuthority: payerPublicAddress,
+          maxSupply: new anchor.BN(0),
+        },
+      ).instructions,
+    );
+  } else {
+    mintPubkey = await parseCollectionMintPubkey(
+      collectionMint,
+      anchorProgram.provider.connection,
+//      walletKeyPair,
+    );
+
+
+    metadataPubkey = await getMetadata(mintPubkey);
+    masterEditionPubkey = await getMasterEdition(mintPubkey);
+    [collectionPDAPubkey] = await getCollectionPDA(candyMachineAddress);
+    [collectionAuthorityRecordPubkey] = await getCollectionAuthorityRecordPDA(
+      mintPubkey,
+      collectionPDAPubkey,
+    );
+  }
+
+  instructions.push(
+    await anchorProgram.instruction.setCollection({
+      accounts: {
+        candyMachine: candyMachineAddress,
+        authority: payerPublicAddress,
+        collectionPda: collectionPDAPubkey,
+        payer: payerPublicAddress,
+        systemProgram: SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        metadata: metadataPubkey,
+        mint: mintPubkey,
+        edition: masterEditionPubkey,
+        collectionAuthorityRecord: collectionAuthorityRecordPubkey,
+        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+      },
+    }),
+  );
+
+  log.info('Candy machine address: ', candyMachineAddress.toBase58());
+  log.info('Collection metadata address: ', metadataPubkey.toBase58());
+  log.info('Collection metadata authority: ', payerPublicAddress.toBase58());
+  log.info(
+    'Collection master edition address: ',
+    masterEditionPubkey.toBase58(),
+  );
+  log.info('Collection mint address: ', mintPubkey.toBase58());
+  log.info('Collection PDA address: ', collectionPDAPubkey.toBase58());
+  log.info(
+    'Collection authority record address: ',
+    collectionAuthorityRecordPubkey.toBase58(),
+  );
+
+    // Sign transaction
+    let recentBlockhash =
+        await anchorProgram.provider.connection.getRecentBlockhash();
+    const transaction = new Transaction({
+        recentBlockhash: recentBlockhash.blockhash,
+        feePayer: payerPublicAddress,
+    });
+		for(let i = 0; i < instructions.length; i++) {
+			transaction.add(instructions[i]);
+		}
+
+    let transactionBuffer = transaction.serializeMessage();
+
+    // Request client wallet to sign request
+    const signature1 = await window.solana.request({
+        method: 'signTransaction',
+        params: {
+            message: bs58.encode(transactionBuffer),
+        },
+    });
+
+    transaction.addSignature(
+        payerPublicAddress,
+        bs58.decode(signature1.signature)
+    );
+		if( mintSigner !== null ) {
+			// In addition, sign request with mint
+			let signature2 = nacl.sign.detached(
+					transactionBuffer,
+					mintSigner.secretKey
+			);
+    transaction.addSignature(mintSigner.publicKey, signature2);
+	}
+
+    // Verify signatures and send transaction
+    let isVerifiedSignature = transaction.verifySignatures();
+    console.log(`The signatures were verifed: ${isVerifiedSignature}`);
+    let rawTransaction = transaction.serialize();
+
+    console.log(anchorProgram.provider.connection);
+
+    const asd = await sendAndConfirmRawTransaction(
+        anchorProgram.provider.connection,
+        rawTransaction
+    );
+    console.log(asd);
+
+
+
+	// Send transaction
+  return 'asd';
 }

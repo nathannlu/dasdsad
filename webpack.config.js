@@ -101,6 +101,12 @@ module.exports = env => {
 				'solana': `${__dirname}/src/solana`,
 				'controllers': `${__dirname}/src/controllers`,
 			},
+		    fallback: {
+            assert: false,
+            buffer: require.resolve("buffer"),
+						path: require.resolve("path-browserify"),
+						fs: false,
+        }
 			/*
 			fallback: {
 				util: require.resolve('util/'),
