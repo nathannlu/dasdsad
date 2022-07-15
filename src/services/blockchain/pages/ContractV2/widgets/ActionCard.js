@@ -1,25 +1,16 @@
-import React, { useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import StepWizard from "react-step-wizard";
+import React, { useState } from 'react';
+import AppModal from 'components/common/appModal';
 
 import {
-    Fade,
-    Container,
-    Button,
-    Divider,
     Typography,
     Stack,
     Grid,
-    Box,
-    Link,
     CircularProgress
 } from 'ds/components';
-import { useModal } from 'ds/hooks/useModal';
 
 const ActionCard = React.forwardRef((props, ref) => {
     const { icon, title, description, modal, key, action, isLoading, isDisabled, helperText } = props;
-    const { createModal } = useModal();
-    const [, setIsModalOpen, closeModal] = createModal(modal?.modal || null, { fullScreen: modal?.fullScreen, title: modal?.title });
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const disabledStyles = (isLoading || isDisabled) && {
         pointerEvents: 'none',
@@ -29,7 +20,7 @@ const ActionCard = React.forwardRef((props, ref) => {
         opacity: 0.8
     } || {};
 
-    React.useImperativeHandle(ref, () => ({ closeModal }));
+    React.useImperativeHandle(ref, () => ({ closeModal: () => setIsModalOpen(false) }));
 
     return (
         <Grid key={key} item xs={4}>
@@ -82,6 +73,15 @@ const ActionCard = React.forwardRef((props, ref) => {
                     <Typography color="error" sx={{ my: 1, fontStyle: 'italic', fontSize: 14 }}>** {helperText}</Typography>
                 </Stack> || null}
             </Stack>
+
+            <AppModal
+                content={modal?.modal || null}
+                fullScreen={modal?.fullScreen}
+                title={modal?.title}
+                isModalOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
+
         </Grid>
     );
 });

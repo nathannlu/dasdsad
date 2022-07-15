@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 
 import {
     Container,
@@ -14,12 +14,11 @@ import {
 import { Skeleton, Chip, Link, Fade } from '@mui/material';
 import { isTestnetBlockchain } from '@ambition-blockchain/controllers';
 
-import { useModal } from 'ds/hooks/useModal';
+import AppModal from 'components/common/appModal';
 import { useContractSettings } from '../hooks/useContractSettings';
 
 import AdvancedSettingsModal from './modal/AdvancedSettings.modal';
 import { NFT, BlankNFT } from './Nft';
-import { IPFSModalContent } from '../../Contract/IPFSModal';
 
 export const Details = ({ primary, secondary, isLoading }) => {
     return (
@@ -54,7 +53,7 @@ export const Details = ({ primary, secondary, isLoading }) => {
 }
 
 const ContractDetails = (props) => {
-    const { contract, contractState, nftPrice, unRevealedtNftImage, revealedNftImage, id } = props;
+    const { contract, contractState, nftPrice, unRevealedtNftImage, revealedNftImage } = props;
     const {
         updateReveal,
         updateSales,
@@ -64,27 +63,7 @@ const ContractDetails = (props) => {
         isSavingPreSales,
         actionForm
     } = useContractSettings();
-
-    const { createModal } = useModal();
-
-    const ipfsModalContent = <IPFSModalContent
-        id={id}
-        contract={contract}
-        renderUploadUnRevealedImage={true}
-        setIsModalOpen={() => { return; }}
-    />;
-
-    const advancedSettingsModal = <AdvancedSettingsModal
-        {...props}
-        updateSales={updateSales}
-        isSavingPublicSales={isSavingPublicSales}
-        setPresales={setPresales}
-        isSavingPreSales={isSavingPreSales}
-        actionForm={actionForm}
-        ipfsModalContent={ipfsModalContent}
-    />;
-
-    const [, setIsSettingsModalOpen] = createModal(advancedSettingsModal, { fullScreen: true, title: `Advanced Settings` });
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const isLoading = !contractState;
     const isTestnet = isTestnetBlockchain(contract?.blockchain);
@@ -170,7 +149,7 @@ const ContractDetails = (props) => {
 
                     </Grid>
                     <Stack mt={2} gap={0.5}>
-                        <Link onClick={() => setIsSettingsModalOpen()} sx={{ cursor: 'pointer' }}>
+                        <Link onClick={() => setIsModalOpen(true)} sx={{ cursor: 'pointer' }}>
                             View advanced settings
                         </Link>
                     </Stack>
@@ -213,6 +192,24 @@ const ContractDetails = (props) => {
 
                 </Stack>
             </Grid>
+
+            <AppModal
+                content={
+                    <AdvancedSettingsModal
+                        {...props}
+                        updateSales={updateSales}
+                        isSavingPublicSales={isSavingPublicSales}
+                        setPresales={setPresales}
+                        isSavingPreSales={isSavingPreSales}
+                        actionForm={actionForm}
+                    />
+                }
+                fullScreen={true}
+                title="Advanced Settings"
+                isModalOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
+
         </Grid>
     );
 };

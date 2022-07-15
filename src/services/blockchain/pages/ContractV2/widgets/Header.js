@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 
 import { Box, Button, Stack, Typography, CircularProgress } from 'ds/components';
 
-import { useModal } from 'ds/hooks/useModal';
+import AppModal from 'components/common/appModal';
 import { useToast } from 'ds/hooks/useToast';
 
 import { useDeployContractToMainnet } from '../hooks/useDeployContractToMainet';
@@ -16,24 +16,16 @@ import { isTestnetBlockchain, getWalletType, getMainnetBlockchainType } from '@a
 const Header = (props) => {
     useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const { id } = useParams();
     const { contract, contractState } = props;
     const { addToast } = useToast();
-    const { createModal } = useModal();
 
     const { activeDeploymentStep, deployContractToMainnet, isDeploying, isDeploymentStepModalOpen } = useDeployContractToMainnet(contract, contractState, id);
 
     const walletType = contract?.blockchain && getWalletType(contract?.blockchain) || null;
     const blockchain = contract?.blockchain && getMainnetBlockchainType(contract?.blockchain) || null;
-
-    const [, setIsDeployModalOpen] = createModal(
-        <DeployToMainnetModal
-            id={id}
-            deployContractToMainnet={deployContractToMainnet}
-            isDeploying={isDeploying}
-            {...props}
-        />
-    );
 
     const copyContractAddress = () => {
         navigator.clipboard.writeText(contract.address);
@@ -82,7 +74,7 @@ const Header = (props) => {
             {isTestnet && <Box sx={{ ml: 'auto' }}>
                 <Button
                     size="small"
-                    onClick={() => setIsDeployModalOpen(true)}
+                    onClick={() => setIsModalOpen(true)}
                     variant="contained"
                     disabled={!contractState || !contract}
                 >
@@ -96,6 +88,19 @@ const Header = (props) => {
                 activeDeploymentStep={activeDeploymentStep}
                 walletType={walletType}
                 isModalOpen={isDeploymentStepModalOpen}
+            />
+
+            <AppModal
+                content={
+                    <DeployToMainnetModal
+                        id={id}
+                        deployContractToMainnet={deployContractToMainnet}
+                        isDeploying={isDeploying}
+                        {...props}
+                    />
+                }
+                isModalOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
             />
 
         </Stack>

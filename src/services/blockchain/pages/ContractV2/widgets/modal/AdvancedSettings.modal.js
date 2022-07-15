@@ -4,15 +4,16 @@ import { Button, CircularProgress, Grid, Stack, TextField, Typography } from 'ds
 import { Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 
 import { getNftStorageTypeLabel } from 'ambition-constants';
+import { IPFSModalContent } from '../../../Contract/IPFSModal';
 
 const AdvancedSettingsModal = ({
+    id,
     contractState,
     contract,
     updateSales,
     isSavingPublicSales,
     setPresales,
     isSavingPreSales,
-    ipfsModalContent,
     actionForm: { maxPerMint, maxPerWallet, price }
 }) => {
 
@@ -126,11 +127,17 @@ const AdvancedSettingsModal = ({
                             Re-Upload NFT Collection
                         </Typography>
                         <Typography variant="body">
-                            We allow re-uploading NFT collection to ${nftStorageType}
+                            We allow re-uploading NFT collection to {nftStorageType}
                         </Typography>
                     </Grid>
 
-                    {ipfsModalContent}
+                    <IPFSModalContent
+                        id={id}
+                        contract={contract}
+                        renderUploadUnRevealedImage={true}
+                        setIsModalOpen={() => { return; }}
+                    />
+
                 </Stack>
 
             </Grid>
