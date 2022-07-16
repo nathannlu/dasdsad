@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
-import config from 'config';
+import config from '../config';
 import posthog from 'posthog-js';
 import { MerkleTree } from 'merkletreejs';
 import keccak256 from 'keccak256';
@@ -56,6 +56,7 @@ export const Web3Provider = ({ children }) => {
 
     const init = async () => {
         const curentWalletType = window.localStorage.getItem('ambition-wallet');
+        console.log(curentWalletType, '==>curentWalletType<===');
         if (curentWalletType) {
             await walletController.loadWalletProvider(curentWalletType);
         }

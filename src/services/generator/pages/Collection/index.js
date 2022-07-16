@@ -14,7 +14,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
-const stripePromise = loadStripe(config.stripe.publicKey);
+const stripePromise = loadStripe(config?.stripe?.publicKey);
 
 const Collection = () => {
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);

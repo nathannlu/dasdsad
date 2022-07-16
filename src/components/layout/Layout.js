@@ -1,15 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
-import {
-    Navbar,
-    Link,
-    Box,
-    Stack,
-    Button,
-    Container,
-    Tabs,
-    Tab,
-} from 'ds/components';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+import { Box, Button, Container, Navbar, Stack } from '../../ds/components';
 
 const links = [
     { value: 'Blockchain', link: '/dashboard' },
@@ -26,7 +17,11 @@ const Layout = ({ children }) => {
         history.push(link.link);
     };
 
-    useEffect(() => setSelectedPage(pathname.split('/')[1]), []);
+    useEffect(() => {
+        if (pathname) {
+            setSelectedPage(pathname.split('/')[1]);
+        }
+    }, []);
 
     return (
         <main className="ambition-main" style={{ paddingTop: '120px' }}>
@@ -41,8 +36,8 @@ const Layout = ({ children }) => {
                         background: 'white',
                         zIndex: 10,
                         top: '70px',
-												paddingTop: '2px',
-												paddingBottom: '2px',
+                        paddingTop: '2px',
+                        paddingBottom: '2px',
                         width: '100%',
                     }}>
                     <Container>
@@ -54,7 +49,7 @@ const Layout = ({ children }) => {
                                     size="small"
                                     variant={
                                         selectedPage ==
-                                        link.link.replace('/', '')
+                                            link.link.replace('/', '')
                                             ? 'contained'
                                             : 'text'
                                     }
@@ -73,14 +68,14 @@ const Layout = ({ children }) => {
                             ))}
                         </Stack>
 
-							{/*
+                        {/*
 						<Tabs value={selectedPage} onChange={onChange}>
 							<Tab label="Collections" value="collections" />
 							<Tab label="Blockchain" value="smart-contracts" />
 							<Tab label="Website" value="websites" />
 						</Tabs>
 							*/}
-						
+
                     </Container>
                 </Box>
             </header>

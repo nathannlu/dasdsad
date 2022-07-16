@@ -13,7 +13,7 @@ import { useGetCurrentUser } from 'gql/hooks/users.hook';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { LinearProgress, Chip } from '@mui/material';
 import {
-		Help as HelpIcon,
+    Help as HelpIcon,
     Comment as CommentIcon,
     Twitter as TwitterIcon,
 } from '@mui/icons-material';
@@ -31,28 +31,28 @@ function App() {
     //	const { start, progress } = useGenerator();
     //	const { settingsForm: {size}} = useMetadata();
     /*
-	const initBeforeUnLoad = (showExitPrompt) => {
-		window.onbeforeunload = (event) => {
-			// Show prompt based on state
-			if (showExitPrompt) {
-				const e = event || window.event;
-				e.preventDefault();
-				if (e) {
-					e.returnValue = ''
-				}
-				return '';
-			}
-		};
-	};
+    const initBeforeUnLoad = (showExitPrompt) => {
+        window.onbeforeunload = (event) => {
+            // Show prompt based on state
+            if (showExitPrompt) {
+                const e = event || window.event;
+                e.preventDefault();
+                if (e) {
+                    e.returnValue = ''
+                }
+                return '';
+            }
+        };
+    };
 
-	window.onload = function() {
-			initBeforeUnLoad(start);
-	};
+    window.onload = function() {
+            initBeforeUnLoad(start);
+    };
 
-	useEffect(() => {
-		initBeforeUnLoad(start);
-	}, [start]);
-	*/
+    useEffect(() => {
+        initBeforeUnLoad(start);
+    }, [start]);
+    */
 
     //
 
@@ -146,19 +146,19 @@ function App() {
                         bottom: 50,
                     }}
                     rel="noreferrer"
-										onClick={()=>{
-											let url = window.location.href;
+                    onClick={() => {
+                        let url = window.location.href;
 
-											// hash slash, remove slash
-											if(url.substr(-1) == '/') url = url.slice(0, -1)
+                        // hash slash, remove slash
+                        if (url.substr(-1) == '/') url = url.slice(0, -1)
 
-											// track current url in posthog
-											posthog.capture('User requested help', {
-												page: url.toLowerCase(),
-//												version: '1'
-											});
-										}}>
-									{/*
+                        // track current url in posthog
+                        posthog.capture('User requested help', {
+                            page: url.toLowerCase(),
+                            //												version: '1'
+                        });
+                    }}>
+                    {/*
                     <Avatar
                         sx={{
                             background: '#738ADB',
@@ -170,18 +170,18 @@ function App() {
                         <CommentIcon />
                     </Avatar>
 										*/}
-									<Stack direction="row" p={1} gap={.5} alignItems="center" sx={{
-											boxShadow: '0 0 8px rgba(0,0,0,.1)',
-											cursor: 'pointer',
-											background: 'white',
-											borderRadius: '4px',
-											border: '1px solid rgba(0,0,0,.25)',
-										}}>
-										<HelpIcon sx={{fontSize:'18px'}} />
-										<Typography sx={{fontSize: '14px'}}>
-											Need help?
-										</Typography>
-									</Stack>
+                    <Stack direction="row" p={1} gap={.5} alignItems="center" sx={{
+                        boxShadow: '0 0 8px rgba(0,0,0,.1)',
+                        cursor: 'pointer',
+                        background: 'white',
+                        borderRadius: '4px',
+                        border: '1px solid rgba(0,0,0,.25)',
+                    }}>
+                        <HelpIcon sx={{ fontSize: '18px' }} />
+                        <Typography sx={{ fontSize: '14px' }}>
+                            Need help?
+                        </Typography>
+                    </Stack>
 
                 </a>
             )}

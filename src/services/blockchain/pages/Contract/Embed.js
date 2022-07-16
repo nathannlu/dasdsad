@@ -70,7 +70,7 @@ const Embed = ({ contract, id }) => {
                 script.src = "https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js";
 
                 const style = document.createElement('style');
-                const css = "${css}";
+                const css = \`${css}\`;
 
                 if (style.styleSheet) {
                     style.styleSheet.cssText = css;
@@ -130,7 +130,6 @@ const Embed = ({ contract, id }) => {
 
                     <Typography variant="p" sx={{ fontStyle: 'italic', my: 2 }} color="gray">
                         **Copy the above code and add to script tag on the page<br />
-                        **Replace " with ` around the css variable
                     </Typography>
 
                     <TextField
