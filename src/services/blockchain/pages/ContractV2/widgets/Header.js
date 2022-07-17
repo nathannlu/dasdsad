@@ -40,11 +40,11 @@ const Header = (props) => {
     return (
         <Stack direction="row" mt={4}>
             <Stack gap={1}>
-                <Typography variant="body" sx={{ fontWeight: 'bold' }}>
+							<Typography variant="body" sx={{ textTransform: 'uppercase', color: '#6a7383', fontSize: '13px' }}>
                     Contract dashboard
                 </Typography>
                 <Typography variant="h4">{contract?.name}</Typography>
-                <Typography variant="body">
+							<Typography variant="body" sx={{color: '#404452', fontSize: '14px'}}>
                     Copy and share to start accepting payments with this link.
                 </Typography>
 

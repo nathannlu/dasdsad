@@ -25,27 +25,28 @@ export const Details = ({ primary, secondary, isLoading }) => {
         <React.Fragment>
             <Grid xs={4} item>
                 <Stack gap={0.5} sx={{ color: '#6a7383' }}>
-                    <Typography sx={{ fontWeight: 'bold', display: 'flex', my: 1, gap: 1.5, maxWidth: 600, color: '#6a7383' }}>
+									<Typography sx={{ display: 'flex', fontSize: '14px', my: .5, gap: 1.5, maxWidth: 600, color: '#6a7383' }}>
                         {primary}:
                     </Typography>
                 </Stack>
             </Grid>
 
             <Grid xs={8} item>
-                <Stack gap={0.5} sx={{ color: '#6a7383' }}>
+                <Stack gap={0.5} sx={{ color: 'black' }}>
                     {!isLoading && <Typography
                         sx={{
-                            my: 1,
+                            my: .5,
                             fontWeight: '400',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             paddingRight: 4,
-                            color: '#404452'
+                            color: '#404452',
+													fontSize: '14px',
                         }}
                     >
                         {secondary}
-                    </Typography> || <Skeleton sx={{ width: '50%', my: 1 }} />}
+                    </Typography> || <Skeleton sx={{ width: '50%', my: .5 }} />}
                 </Stack>
             </Grid>
         </React.Fragment>
@@ -103,6 +104,7 @@ const ContractDetails = (props) => {
                             isLoading={isLoading}
                         />
 
+											{/*
                         {!isLoading && contractState?.isRevealed && <Details
                             primary={<span style={{ minWidth: 110, marginRight: -12 }}>Reveal metadata</span>}
                             secondary={contract?.nftCollection?.baseUri}
@@ -114,7 +116,9 @@ const ContractDetails = (props) => {
                             secondary={contract?.nftCollection?.unRevealedBaseUri}
                             isLoading={isLoading}
                         /> || null}
+												*/}
 
+											{/*
                         <Details
                             primary="Max per mint"
                             secondary={contractState?.maxPerMint}
@@ -125,7 +129,9 @@ const ContractDetails = (props) => {
                             secondary={contractState?.maxPerWallet}
                             isLoading={isLoading}
                         />
+												*/}
 
+											{/*
                         <Details
                             primary="Sales status"
                             secondary={(contractState?.isPresaleOpen && contractState?.isPublicSaleOpen && 'Whitelist and Public sales')
@@ -140,6 +146,7 @@ const ContractDetails = (props) => {
                             secondary={<Chip label={contractState?.isPresaleOpen && 'OPEN' || 'CLOSED'} color={contractState?.isPresaleOpen && 'success' || 'error'} size="small" />}
                             isLoading={isLoading}
                         />
+												*/}
 
                         <Details
                             primary="Public sale status"
@@ -177,7 +184,7 @@ const ContractDetails = (props) => {
                         </Box>
                     </Stack>
 
-                    <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', maxWidth: 480, height: 620 }}>
+                    <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', /*maxWidth: 480, height: 620*/ }}>
                         {contract?.nftCollection?.baseUri && <NFT
                             // contract={contract}
                             nftPrice={nftPrice}

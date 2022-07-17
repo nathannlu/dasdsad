@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Box, Divider, Grid, Modal, Stack, Button, TextField, Typography, Container, CircularProgress } from 'ds/components';
+import {
+	Box,
+	Divider,
+	Grid,
+	Modal,
+	Stack,
+	Button,
+	TextField,
+	Typography,
+	Container,
+	CircularProgress,
+} from 'ds/components';
 import { useNewContractForm } from './hooks/useNewContractForm';
 
 import solanaLogo from 'assets/images/solana.png';
@@ -7,9 +18,21 @@ import etherLogo from 'assets/images/ether.png';
 import polygonLogo from 'assets/images/polygon.png';
 
 const contractTypes = [
-	{ title: 'Deploy ERC-721a contract on Ethereum Testnet (Rinkeby)', key: 'rinkeby', imgSrc: etherLogo },
-	{ title: 'Deploy ERC-721a on Polygon Testnet (Mumbai)', key: 'mumbai', imgSrc: polygonLogo },
-	{ title: 'Deploy on Solana Devnet (CandyMachine)', key: 'solanadevnet', imgSrc: solanaLogo }
+	{
+		title: 'Ethereum ERC-721a',
+		key: 'rinkeby',
+		imgSrc: etherLogo,
+	},
+	{
+		title: 'Polygon ERC-721a',
+		key: 'mumbai',
+		imgSrc: polygonLogo,
+	},
+	{
+		title: 'Solana Candy Machine',
+		key: 'solanadevnet',
+		imgSrc: solanaLogo,
+	},
 ];
 
 const NewV2 = () => {
@@ -28,20 +51,19 @@ const NewV2 = () => {
 		<Box sx={{ background: '#f5f5f5', minHeight: '100vh' }}>
 			<Container>
 				<Stack pt={4} gap={2}>
-					<Typography variant="h5">
-						Set up your project
-					</Typography>
+					<Typography variant="h5">Set up your project</Typography>
 
 					<Typography variant="body">
-						Let's create a free testnet contract for your NFT collection.
-						Don't worry about these values for testnet, but note that they can't be changed on mainnet.
+						Let's create a free testnet contract for your NFT
+						collection. Don't worry about these values for testnet,
+						but note that they can't be changed on mainnet.
 					</Typography>
 					<Grid container>
-						<Grid xs={8} sx={{ mx: 'auto' }} item>
-							<Stack gap={1}>
-								{contractTypes.map((contract) => (
-									<Box
+						{contractTypes.map((contract) => (
+							<Grid xs={4} item>
+									<Stack
 										key={contract.key}
+										gap={1}
 										onClick={() => {
 											setActiveBlockchain(contract.key);
 											setIsModalOpen(true);
@@ -55,17 +77,25 @@ const NewV2 = () => {
 											cursor: 'pointer',
 											'&:hover': {
 												border: '1px solid #0B6DFF',
-											}
-										}}
-									>
-										<Grid container={true} alignItems="center">
-											<img style={{ height: 36, width: 'auto', marginRight: 16 }} src={contract.imgSrc} />
+											},
+										}}>
+										<Stack direction="row" alignItems="center" gap={1}>
+											<img style={{height: '30px', objectFit: 'contain'}} src={contract.imgSrc} />
 											<Typography>{contract.title}</Typography>
-										</Grid>
-									</Box>
-								))}
-							</Stack>
-						</Grid>
+										</Stack>
+
+										<Typography>
+											Deploy on Rinkeby
+										</Typography>
+
+										<Button
+											variant="contained"
+											size="small">
+											Create contract
+										</Button>
+									</Stack>
+							</Grid>
+						))}
 					</Grid>
 
 					<Modal
@@ -77,12 +107,20 @@ const NewV2 = () => {
 							setActiveBlockchain(null);
 							setIsModalOpen(false);
 						}}
-						sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
 						aria-labelledby="modal-modal-title"
-						aria-describedby="modal-modal-description"
-					>
-						<Box sx={{ background: 'white', width: '1200px', '&:focus-visible': { outline: 'none' }, borderRadius: '5px' }}>
-
+						aria-describedby="modal-modal-description">
+						<Box
+							sx={{
+								background: 'white',
+								width: '1200px',
+								'&:focus-visible': { outline: 'none' },
+								borderRadius: '5px',
+							}}>
 							<Box p={2}>
 								<Typography variant="h6">
 									Create new NFT collection
@@ -92,36 +130,46 @@ const NewV2 = () => {
 							<Divider />
 
 							<Grid container>
-
 								<Grid xs={5} item>
 									<Stack p={4} gap={2}>
 										<Box>
-											<Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+											<Typography
+												variant="h6"
+												sx={{ fontWeight: 'bold' }}>
 												Name
 											</Typography>
 											<Typography variant="body">
-												Project names need to be distinct
+												Project names need to be
+												distinct
 											</Typography>
 										</Box>
 
 										<TextField
 											{...name}
-											error={Boolean(formValidationErrors.name)}
+											error={Boolean(
+												formValidationErrors.name
+											)}
 										/>
 										<TextField
 											{...symbol}
 											inputProps={{ maxLength: 5 }}
-											error={Boolean(formValidationErrors.symbol)}
+											error={Boolean(
+												formValidationErrors.symbol
+											)}
 										/>
 										<TextField
 											{...maxSupply}
 											type="number"
-											error={Boolean(formValidationErrors.maxSupply)}
+											error={Boolean(
+												formValidationErrors.maxSupply
+											)}
 										/>
 										<TextField
 											{...price}
 											type="number"
-											error={Boolean(formValidationErrors.price)}
+											error={Boolean(
+												formValidationErrors.price
+											)}
 										/>
 
 										<Box>
@@ -129,19 +177,35 @@ const NewV2 = () => {
 												variant="contained"
 												size="small"
 												onClick={saveContract}
-												disabled={isSaving}
-											>
-												{isSaving && <CircularProgress isButtonSpinner={true} /> || null}
-												Create Contract on {activeBlockchain}
+												disabled={isSaving}>
+												{(isSaving && (
+													<CircularProgress
+														isButtonSpinner={true}
+													/>
+												)) ||
+													null}
+												Create Contract on{' '}
+												{activeBlockchain}
 											</Button>
 										</Box>
 
-										<Stack direction="row" py={1} gap={2} alignItems="center">
-											{isSaving && <Typography sx={{ fontStyle: 'italic', fontSize: 14 }} color="GrayText">
-												{deployingMessage}
-											</Typography> || null}
+										<Stack
+											direction="row"
+											py={1}
+											gap={2}
+											alignItems="center">
+											{(isSaving && (
+												<Typography
+													sx={{
+														fontStyle: 'italic',
+														fontSize: 14,
+													}}
+													color="GrayText">
+													{deployingMessage}
+												</Typography>
+											)) ||
+												null}
 										</Stack>
-
 									</Stack>
 								</Grid>
 							</Grid>
@@ -152,6 +216,5 @@ const NewV2 = () => {
 		</Box>
 	);
 };
-
 
 export default NewV2;

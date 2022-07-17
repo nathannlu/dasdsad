@@ -80,7 +80,7 @@ export const NFT = ({ contract, nftImage, nftPrice, isRevealed, disabled }) => {
     const rendetDetails = !!contract;
 
     return (
-        <Card sx={{ width: '100%', height: '100%', borderRadius: 16, boxShadow: '0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)' }} raised={true}>
+        <Card sx={{ width: '500px', height: '500px', borderRadius: '8px', boxShadow: '0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)' }} raised={true}>
             <CardContent sx={{ padding: '0 !important', height: '100%' }}>
                 <Box
                     sx={{
@@ -104,7 +104,9 @@ export const NFT = ({ contract, nftImage, nftPrice, isRevealed, disabled }) => {
                     /> || null}
                 </Box>
                 {rendetDetails && <NFTDetails contract={contract} nftPrice={nftPrice} disabled={disabled} /> || null}
+							{/*
                 <NFTIsRevealedChip isRevealed={isRevealed} disabled={disabled} />
+								*/}
             </CardContent>
         </Card>
     );
