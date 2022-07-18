@@ -106,11 +106,11 @@ const DeployToMainnetModal = ({ contract, contractState, unRevealedtNftImage, re
                     item={true}
                 >
                     <Stack gap={2} direction="row">
-                        <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', minWidth: 328, maxWidth: 328, height: 428 }}>
+                        <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', minWidth: 328, maxWidth: 328, height: 328 }}>
                             <NFT nftImage={revealedNftImage} isRevealed={true} />
                         </Box>
 
-                        <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', minWidth: 328, maxWidth: 328, height: 428 }}>
+                        <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'flex-end', minWidth: 328, maxWidth: 328, height: 328 }}>
                             <NFT nftImage={unRevealedtNftImage} isRevealed={false} />
                         </Box>
                     </Stack>

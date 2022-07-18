@@ -11,6 +11,7 @@ import {
 	Container,
 	CircularProgress,
 } from 'ds/components';
+import { useHistory } from 'react-router-dom';
 import { useNewContractForm } from './hooks/useNewContractForm';
 
 import solanaLogo from 'assets/images/solana.png';
@@ -36,6 +37,7 @@ const contractTypes = [
 ];
 
 const NewV2 = () => {
+	const history = useHistory();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {
 		newContractForm: { name, symbol, maxSupply, price },
@@ -60,11 +62,15 @@ const NewV2 = () => {
 					</Typography>
 					<Grid container>
 						{contractTypes.map((contract) => (
-							<Grid xs={4} item>
+							<Grid p={1} xs={4} item>
 									<Stack
 										key={contract.key}
 										gap={1}
 										onClick={() => {
+											if(contract.key == 'solanadevnet') {
+												history.push("/smart-contracts/new")
+											}
+
 											setActiveBlockchain(contract.key);
 											setIsModalOpen(true);
 										}}
@@ -84,9 +90,11 @@ const NewV2 = () => {
 											<Typography>{contract.title}</Typography>
 										</Stack>
 
+										{/*
 										<Typography>
 											Deploy on Rinkeby
 										</Typography>
+										*/}
 
 										<Button
 											variant="contained"
