@@ -81,6 +81,12 @@ const Navbar = ({ pageName }) => {
 							</a>
 						</Box>
 						<Box>
+							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://www.youtube.com/channel/UCJbdL1g7FnfwBIYuhzDoyGA">
+									Tutorials
+							</a>
+						</Box>
+						<Box>
+
 							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
 								Docs
 							</a>
