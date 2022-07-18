@@ -43,6 +43,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	// Ethereum - use ipfs url
 	const resolvedUrl = (contract?.blockchain === 'solana' || contract?.blockchain === 'solanadevnet') ? 'gateway' : 'url';
 
+
 	/**
 	 * Handle file upload to IPFS or aws s3
 	 * nftStorageType: 's3' | 'ipfs

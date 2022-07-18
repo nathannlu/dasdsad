@@ -71,6 +71,7 @@ const NewV2 = () => {
 												history.push("/smart-contracts/new")
 											}
 
+
 											setActiveBlockchain(contract.key);
 											setIsModalOpen(true);
 										}}

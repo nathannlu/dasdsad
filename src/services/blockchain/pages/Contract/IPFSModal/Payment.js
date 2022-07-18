@@ -3,7 +3,7 @@ import CheckoutForm from 'components/pages/Payments/CheckoutForm';
 import config from 'config';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe(config.stripe.publicKey);
+const stripePromise = loadStripe(config?.stripe?.publicKey);
 import posthog from 'posthog-js';
 import { Grid, Button } from 'ds/components';
 

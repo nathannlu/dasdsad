@@ -244,6 +244,14 @@ export const useIPFS = () => {
 			return null;
 		}
 	}
+	/**
+	 * Mime type to file extension
+	 */
+	const resolveFileExtension = (mimeType) =>
+		(mimeType === 'image/webp' && 'webp') ||
+		(mimeType === 'video/mp4' && 'mp4') ||
+		'png';
+
 
 	return {
 		pinUnrevealedImage,

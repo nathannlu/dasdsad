@@ -6,7 +6,7 @@ import {
 } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useAuth } from 'libs/auth';
-import config from 'config';
+import config from '../../config';
 import axios from 'axios';
 import lz from 'lzutf8';
 import deflate from 'deflate-js';

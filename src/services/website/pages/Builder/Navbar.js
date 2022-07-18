@@ -32,7 +32,7 @@ import useBuilderNavbar from './hooks/useBuilderNavbar';
 import WarningIcon from '@mui/icons-material/Warning';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
-const stripePromise = loadStripe(config.stripe.publicKey);
+const stripePromise = loadStripe(config?.stripe?.publicKey);
 
 const Navbar = () => {
     const {

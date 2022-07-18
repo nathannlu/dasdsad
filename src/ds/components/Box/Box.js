@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { fontSizes, spacing } from '../../units';
+import { spacing } from '../../units';
 import { theme as defaultTheme } from '../../theme';
 
 const StyledBox = ({

@@ -8,17 +8,17 @@ import {
     createHttpLink,
     InMemoryCache,
 } from '@apollo/client';
-import config from 'config';
+import config from '../config';
 
 export const AuthorizedApolloProvider = ({ children }) => {
     const { isAuthenticated } = useAuth();
 
     const httpLink = createHttpLink({
-        uri: config.serverUrl + '/graphql',
+        uri: config?.serverUrl + '/graphql',
     });
 
     const uploadLink = createUploadLink({
-        uri: config.serverUrl + '/graphql',
+        uri: config?.serverUrl + '/graphql',
     });
 
     const getAuthLink = () =>

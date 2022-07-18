@@ -169,7 +169,7 @@ const Upload = () => {
                             <Typography gutterBottom variant="body2">
                                 Set the name for your collection
                             </Typography>
-                            <TextField {...name} fullWidth />
+                            <TextField {...name} fullWidth inputProps={{ 'data-testid': 'solana-contract-name' }} />
                         </Stack>
                         <Stack gap={2} direction="row">
                             <Stack sx={{ flex: 1 }}>
@@ -179,7 +179,7 @@ const Upload = () => {
                                 <Typography gutterBottom variant="body2">
                                     Set the symbol for your collection.
                                 </Typography>
-                                <TextField {...symbol} fullWidth />
+                                <TextField {...symbol} fullWidth inputProps={{ 'data-testid': 'solana-contract-symbol' }} />
                             </Stack>
                         </Stack>
 
@@ -191,7 +191,7 @@ const Upload = () => {
                                 <Typography gutterBottom variant="body2">
                                     Set the price in SOL for minting one NFT.
                                 </Typography>
-                                <TextField {...priceInEth} fullWidth />
+                                <TextField {...priceInEth} fullWidth inputProps={{ 'data-testid': 'solana-contract-price' }} />
                             </Stack>
 
                             <Stack sx={{ flex: 1 }}>
@@ -202,7 +202,7 @@ const Upload = () => {
                                     Set the total number of NFTs in your
                                     collection
                                 </Typography>
-                                <TextField {...maxSupply} fullWidth />
+                                <TextField {...maxSupply} fullWidth inputProps={{ 'data-testid': 'solana-contract-max-supply' }} />
                             </Stack>
                         </Stack>
 
@@ -226,7 +226,9 @@ const Upload = () => {
                                             item.value != selectInput && 0.8,
                                     }}
                                     onClick={() => setSelectInput(item.value)}
-                                    key={i}>
+                                    key={i}
+                                    data-testid={`solana-contract-blockchain-${item.value}`}
+                                >
                                     <Stack
                                         direction="row"
                                         alignItems="center"
