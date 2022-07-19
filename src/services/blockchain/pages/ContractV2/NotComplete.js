@@ -26,11 +26,11 @@ const NotComplete = ({ contract }) => {
 		<Grid item xs={12} sx={{ py: 4 }}>
 
 			<Box>
-				{!hasMetadaUploaded && <Stack sx={{ py: 3, px: 2 }}>
+				{!hasMetadaUploaded && <Stack sx={{ py: 2, px: 2 }}>
 					<Typography variant="body">
 						Link your metadata and images to the smart contract.
 					</Typography>
-					<Box>
+					<Box marginTop='1em'>
 						<IPFSModalContent
 							id={id}
 							contract={contract}
