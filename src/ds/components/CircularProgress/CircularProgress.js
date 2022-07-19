@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box, CircularProgress } from '@mui/material';
 
-const Spinner = ({ isButtonSpinner, style }) => {
+const Spinner = ({ isButtonSpinner, style, size = 20 }) => {
     const buttonSpinnerStyles = {
-        width: 20,
-        height: 20,
+        width: size,
+        height: size,
         position: 'absolute',
-        top: 'calc(50% - 10px)',
-        left: 'calc(50% - 10px)'
+        top: `calc(50% - ${size / 2}px)`,
+        left: `calc(50% - ${size / 2}px)`
     };
     return (
         <Box

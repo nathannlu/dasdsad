@@ -14,11 +14,12 @@ export const useSubscribePlan = ({
     customerId,
     type,
     objectId,
+    nftStorageType,
     onCompleted,
     onError,
 }) => {
     const [subscribe, { ...mutationResult }] = useMutation(SUBSCRIBE_PLAN, {
-        variables: { paymentMethodId, priceId, customerId, type, objectId },
+        variables: { paymentMethodId, priceId, customerId, type, objectId, nftStorageType },
         onCompleted,
         onError,
     });

@@ -2,8 +2,6 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import Web3 from 'web3/dist/web3.min';
 import config from '../config';
 import posthog from 'posthog-js';
-import { MerkleTree } from 'merkletreejs';
-import keccak256 from 'keccak256';
 import { WalletController } from '@ambition-blockchain/controllers';
 
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
@@ -18,7 +16,6 @@ import {
 
 import { useLoginForm } from '../components/pages/Auth/hooks/useLoginForm';
 
-import { useAuth } from 'libs/auth';
 import { loadCandyProgramV2, getBalance } from 'solana/helpers/accounts';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 export const Web3Context = createContext({});

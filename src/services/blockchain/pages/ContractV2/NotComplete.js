@@ -1,115 +1,79 @@
-import React from 'react';
-import {
-	Box,
-	Grid,
-	Typography,
-	Button,
-} from 'ds/components';
-import { Stepper, Step, StepLabel } from '@mui/material';
-import { NFTStack, ContractDetails } from '../../widgets';
-import { useContractSettings } from './hooks/useContractSettings';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-const NotComplete = ({ setIsModalOpen, contract, unRevealedtNftImage, revealedNftImage, nftPrice, contractState }) => {
-	const activeStep = contract?.nftCollection?.baseUri && 2 || 1;
-	const { mint, isMinting } = useContractSettings();
+import { Button, Box, Grid, Typography, CircularProgress, Stack } from 'ds/components';
+
+import { useDeployContractToTestnet } from './hooks/useDeployContractToTestnet';
+
+import { IPFSModalContent } from '../Contract/IPFSModal';
+import DeploymentStepModal from './widgets/modal/DeploymentStep.modal';
+
+import { getWalletType } from '@ambition-blockchain/controllers';
+
+const NotComplete = ({ contract }) => {
+	useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
+
+	const { id } = useParams();
+
+	const { activeDeploymentStep, deployContractToTestnet, isDeploying, isDeploymentStepModalOpen } = useDeployContractToTestnet(contract, id);
+
+	const walletType = contract?.blockchain && getWalletType(contract?.blockchain) || null;
+	const blockchain = contract?.blockchain;
+
+	const hasMetadaUploaded = !!(contract?.nftCollection?.baseUri && contract?.nftCollection?.unRevealedBaseUri);
 
 	return (
-		<React.Fragment>
-			<Grid container>
-				<Grid item xs={12} md={7}>
-					<ContractDetails contract={contract} />
+		<Grid item xs={12} sx={{ py: 4 }}>
 
-					<Box mt={4}>
-						<Typography sx={{ fontWeight: '500' }} variant="h5">
-							Next steps
-						</Typography>
-						<Stepper sx={{ width: '400px' }} activeStep={activeStep} orientation="vertical">
-							<Step>
-								<StepLabel>
-									<Typography sx={{ fontWeight: 'bold' }}>
-										Deploy contract on <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
-									</Typography>
-									<Typography>
-										Configure your contract and deploy it on the <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span> Test Network
-									</Typography>
-								</StepLabel>
-							</Step>
-
-							<Step>
-								<StepLabel
-									onClick={e => {
-										if (activeStep !== 1) {
-											e.preventDefault();
-											return;
-										}
-										setIsModalOpen(true);
-									}}
-									sx={{ cursor: activeStep === 1 && 'pointer' || undefined }}
-								>
-									<Typography sx={{ fontWeight: 'bold' }}>
-										Connect token image &amp; metadata
-									</Typography>
-									<Typography>
-										Test out your contract by minting a test token
-									</Typography>
-								</StepLabel>
-							</Step>
-
-							<Step>
-								<StepLabel>
-									<Typography sx={{ fontWeight: 'bold' }}>
-										Mint a token on <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
-									</Typography>
-									<Typography>
-										Test out your contract by minting a test token
-									</Typography>
-
-									{(activeStep !== 1) && <Button
-										variant="contained"
-										size="small"
-										onClick={() => mint(methodProps, 1)}
-										disabled={!contractState?.isPublicSaleOpen || isMinting}
-									>
-										{isMinting && <CircularProgress isButtonSpinner={true} /> || null}
-										Mint a {contract?.blockchain} token
-									</Button> || null}
-
-								</StepLabel>
-							</Step>
-
-							<Step>
-								<StepLabel>
-									<Typography sx={{ fontWeight: 'bold' }}>
-										Deploy contract on Mainnet
-									</Typography>
-									<Typography>
-										You're officially ready for showtime!
-									</Typography>
-								</StepLabel>
-							</Step>
-						</Stepper>
+			<Box>
+				{!hasMetadaUploaded && <Stack sx={{ py: 2, px: 2 }}>
+					<Typography variant="body">
+						Link your metadata and images to the smart contract.
+					</Typography>
+					<Box marginTop='1em'>
+						<IPFSModalContent
+							id={id}
+							contract={contract}
+							renderUploadUnRevealedImage={true}
+							setIsModalOpen={() => { return; }}
+						/>
 					</Box>
-				</Grid>
+				</Stack> || null}
 
-				<Grid
-					item
-					ml="auto"
-					xs={12}
-					md={5}
-				>
-					<NFTStack
-						contract={contract}
-						nftPrice={nftPrice}
-						disabled={!contract?.id}
-						unRevealedtNftImage={unRevealedtNftImage}
-						revealedNftImage={revealedNftImage}
-						setIsModalOpen={setIsModalOpen}
-					/>
+				{hasMetadaUploaded && <Stack sx={{ py: 3, px: 2 }}>
+					<Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+						Deploy contract on <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
+					</Typography>
+					<Typography variant="body">
+						Deploy your smart contract to the blockchain in
+						order to accept public mints, configure whitelists,
+						set public sale.
+					</Typography>
 
-				</Grid>
-			</Grid>
-		</React.Fragment>
-	)
+					<Box>
+						<Button
+							variant="contained"
+							size="small"
+							onClick={deployContractToTestnet}
+							disabled={isDeploying}
+							sx={{ my: 2 }}
+						>
+							{isDeploying && <CircularProgress isButtonSpinner={true} /> || null}
+							Deploy Contract
+						</Button>
+					</Box>
+				</Stack>}
+			</Box>
+
+			<DeploymentStepModal
+				blockchain={blockchain}
+				activeDeploymentStep={activeDeploymentStep}
+				walletType={walletType}
+				isModalOpen={isDeploymentStepModalOpen}
+			/>
+
+		</Grid>
+	);
 };
 
 export default NotComplete;

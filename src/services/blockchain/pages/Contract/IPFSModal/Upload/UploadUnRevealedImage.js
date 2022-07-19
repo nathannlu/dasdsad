@@ -16,36 +16,32 @@ import {
 	FileUpload as FileUploadIcon,
 } from '@mui/icons-material';
 import { useContract } from 'services/blockchain/provider';
-import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES } from 'services/blockchain/blockchains/hooks/useIPFS';
-import { useIPFSModal,  bytesToMegaBytes } from '../hooks/useIPFSModal';
+import { MAX_UPLOAD_LIMIT, IMAGE_MIME_TYPES, getNftStorageTypeLabel } from 'ambition-constants';
+import { useIPFSModal, bytesToMegaBytes } from '../hooks/useIPFSModal';
 import { useToast } from 'ds/hooks/useToast';
 
 const UploadUnRevealedImage = (props) => {
-	const {
-		uploadUnrevealedImage,
-		loading,
-		pinataPercentage,
-	} = useIPFSModal(props.contract, props.step, props.setActiveStep);
+	const { uploadUnrevealedImage, uploadLoading, uploadPercentage } = useIPFSModal(props.contract, props.step, props.setActiveStep, props.nftStorageType);
 	const { uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile } = useContract();
 	const { addToast } = useToast();
 	const [percent, setPercent] = useState(0);
 
-	const handleImagesUpload = (acceptedFile) => {
+	const handleImagesUpload = (acceptedFiles) => {
 		try {
-			if (acceptedFile.length > 1) {
+			if (acceptedFiles.length > 1) {
 				throw new Error('Cannot have more than 1 unrevealed image');
 			}
 
-			if (acceptedFile[0]?.size > MAX_UPLOAD_LIMIT) {
+			if (acceptedFiles[0]?.size > MAX_UPLOAD_LIMIT) {
 				throw new Error('Error! File upload limit.');
 			}
 
-			if (!IMAGE_MIME_TYPES.includes(acceptedFile[0]?.type)) {
+			if (!IMAGE_MIME_TYPES.includes(acceptedFiles[0]?.type)) {
 				throw new Error(`Error! File type not supported. We support ${IMAGE_MIME_TYPES.toString()}`);
 			}
 
 			const formData = new FormData();
-			formData.append('file', acceptedFile[0]);
+			formData.append('file', acceptedFiles[0]);
 
 			const xhr = new XMLHttpRequest();
 			xhr.upload.onprogress = (event) => {
@@ -55,7 +51,7 @@ const UploadUnRevealedImage = (props) => {
 			xhr.onreadystatechange = () => {
 				if (xhr.readyState !== 4) return;
 				if (xhr.status !== 200) return;
-				setUploadedUnRevealedImageFile(acceptedFile);
+				setUploadedUnRevealedImageFile(acceptedFiles);
 			};
 			xhr.open('POST', 'https://httpbin.org/post', true);
 			xhr.send(formData);
@@ -67,18 +63,18 @@ const UploadUnRevealedImage = (props) => {
 		}
 	};
 
+	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
 
 	return (
 		<Stack gap={2}>
 			<Box>
-				<Typography variant="h6">Upload your NFT pre-reveal image</Typography>
+				<Typography variant="h6">Upload your placeholder to {nftStorageType}</Typography>
 				<Typography variant="body">
-					Add your single image file for your unrevealed NFT placeholder. We
-					support upload limits of up to 25GB
+					Also known as the pre-reveal image/video. It ensures fair rarity distribution &amp; adds anticipation to the reveal. Max upload limit of 25GB
 				</Typography>
 			</Box>
 			<Divider />
-			{uploadedUnRevealedImageFile < 1 ? (
+			{!uploadedUnRevealedImageFile || uploadedUnRevealedImageFile?.length < 1 ? (
 				<Box>
 					<Dropzone
 						accept={IMAGE_MIME_TYPES}
@@ -101,14 +97,15 @@ const UploadUnRevealedImage = (props) => {
 									style={{ padding: '64px', textAlign: 'center' }}
 									{...getRootProps()}>
 									<input {...getInputProps()} />
-									<FileUploadIcon sx={{opacity: .3, fontSize: '64px'}} />
+									<FileUploadIcon sx={{ opacity: .3, fontSize: '64px' }} />
 									<p
 										style={{
 											opacity: 0.5,
 											textAlign: 'center',
-										}}>
-										Drag &apos;n&apos; drop your pre-reveal thumbnail 
-										here to upload to IPFS
+										}}
+									>
+										Drag &apos;n&apos; drop your pre-reveal thumbnail
+										here to upload to {nftStorageType}
 									</p>
 								</div>
 							</Box>
@@ -120,7 +117,7 @@ const UploadUnRevealedImage = (props) => {
 				<Stack>
 					<Box>
 						<Folder />
-						{uploadedUnRevealedImageFile.length} Files added
+						{uploadedUnRevealedImageFile?.length} Files added
 						<Button
 							onClick={() => {
 								setPercent(0);
@@ -133,9 +130,9 @@ const UploadUnRevealedImage = (props) => {
 					</Box>
 
 					<LoadingButton
-						loading={loading}
+						loading={uploadLoading}
 						variant="outlined"
-						onClick={async () => await uploadUnrevealedImage()}>
+						onClick={async () => await uploadUnrevealedImage(props.nftStorageType)}>
 						Upload unrevealed image
 					</LoadingButton>
 					<Box
@@ -147,12 +144,12 @@ const UploadUnRevealedImage = (props) => {
 						<Box sx={{ width: '100%', mr: 1 }}>
 							<LinearProgress
 								variant="determinate"
-								value={pinataPercentage}
+								value={uploadPercentage}
 							/>
 						</Box>
 						<Box sx={{ minWidth: 35 }}>
 							<Typography variant="body2" color="text.secondary">
-								{pinataPercentage.toFixed(2)}%
+								{uploadPercentage.toFixed(2)}%
 							</Typography>
 						</Box>
 					</Box>

@@ -22,8 +22,26 @@ import { useDeleteContract } from 'services/blockchain/gql/hooks/contract.hook';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { WarningAmber as WarningAmberIcon } from '@mui/icons-material';
 
-import { isTestnetBlockchain } from '@ambition-blockchain/controllers';
-import { BlockchainLogo } from '../../widgets';
+import { isTestnetBlockchain, getMainnetBlockchainType } from '@ambition-blockchain/controllers';
+
+import etherLogo from 'assets/images/ether.png';
+import polygonLogo from 'assets/images/polygon.png';
+import solanaLogo from 'assets/images/solana.png';
+
+const BlockchainLogo = ({ blockchain }) => {
+    const blockchainType = getMainnetBlockchainType(blockchain);
+    const logo = blockchainType === 'ethereum' && etherLogo
+        || blockchainType === 'polygon' && polygonLogo
+        || blockchainType === 'solana' && solanaLogo
+        || null;
+
+    if (!logo) {
+        return null;
+    }
+
+    return <img style={{ width: 'auto', height: 24, borderRadius: 9999 }} src={logo} />;
+};
+
 
 const Dashboard = () => {
     const { contracts, onDeleteContract, fetchContractLoading } = useContract();
@@ -62,9 +80,11 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, []);
 
-	return fetchContractLoading ? (
-		<CircularProgress />
-		) : (
+    return fetchContractLoading ? (
+        <Stack alignItems="center" justifyContent="center" sx={{ height: '100vh' }}>
+            <CircularProgress />
+        </Stack>
+    ) : (
         <Fade in>
             <Container sx={{ pt: 4 }}>
                 {contracts.length > 0 ? (
@@ -72,7 +92,7 @@ const Dashboard = () => {
                         <Stack direction="row" alignItems="center">
                             <Box>
                                 <Typography variant="h4">
-																	NFT collection
+                                    NFT collection
                                 </Typography>
                                 <Typography gutterBottom variant="body">
                                     A list of your deployed NFT smart-contracts
