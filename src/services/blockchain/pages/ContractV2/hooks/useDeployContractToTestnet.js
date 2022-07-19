@@ -29,7 +29,7 @@ export const useDeployContractToTestnet = (contract, id) => {
             setState(prevState => ({ ...prevState, activeDeploymentStep: 0, isDeploying: true, isDeploymentStepModalOpen: true }));
 
             const { name, symbol, type, nftCollection } = contract;
-            const { baseUri, size, price } = nftCollection;
+            const { unRevealedBaseUri, size, price } = nftCollection;
 
             const walletType = getWalletType(contract?.blockchain);
             const blockchain = contract?.blockchain;
@@ -89,7 +89,7 @@ export const useDeployContractToTestnet = (contract, id) => {
                  * update reveal
                  */
                 setState(prevState => ({ ...prevState, activeDeploymentStep: 1 }));
-                await contractController.updateReveal(walletAddress, true, baseUri);
+                await contractController.updateReveal(walletAddress, false, unRevealedBaseUri);
 
                 // wait for some time allow contract to be saved
                 await new Promise(resolve => setTimeout(resolve, 10 * 1000));
