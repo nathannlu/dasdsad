@@ -1,103 +1,101 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button, Stack } from 'ds/components';
 import {
-	Stepper,
-	Step,
-	StepLabel,
-	StepContent,
-	Typography,
-	TextField,
+    Stepper,
+    Step,
+    StepLabel,
+    StepContent,
+    Typography,
+    TextField,
 } from '@mui/material';
 import { useContract } from 'services/blockchain/provider';
 import {
-	useSetBaseUri,
-	useSetUnRevealedBaseUri,
+    useSetBaseUri,
+    useSetUnRevealedBaseUri,
 } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { getNftStorageTypeLabel } from 'ambition-constants';
 
 const Confirmation = (props) => {
-	const { imagesUrl, baseUri, metadataUrl, ipfsUrl, unRevealedBaseUri } = useContract();
-	const { addToast } = useToast();
-	const [metadataPreview, setMetadataPreview] = useState();
+    const { imagesUrl, baseUri, metadataUrl, ipfsUrl, unRevealedBaseUri } = useContract();
+    const { addToast } = useToast();
+    const [metadataPreview, setMetadataPreview] = useState();
 
-	const [setBaseUri] = useSetBaseUri({
-		onCompleted: () => {
-			addToast({
-				severity: 'success',
-				message: 'Successfully added contract base URI',
-			});
-			props.setIsModalOpen(false, true);
-		},
-	});
+    const [setBaseUri] = useSetBaseUri({
+        onCompleted: () => {
+            addToast({
+                severity: 'success',
+                message: 'Successfully added contract base URI',
+            });
+            props.setIsModalOpen(false, true);
+        },
+    });
 
-	const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({
-		onCompleted: () => {
-			addToast({
-				severity: 'success',
-				message: 'Successfully updated contract unrevealed base URI',
-			});
-		},
-	});
+    const [setUnRevealedBaseUri] = useSetUnRevealedBaseUri({
+        onCompleted: () => {
+            addToast({
+                severity: 'success',
+                message: 'Successfully updated contract unrevealed base URI',
+            });
+        },
+    });
 
-	/**
-	 * restrict user from proceeding if
-	 * - imagesUrl is null
-	 *  or
-	 * - metadataUrl is null
-	 *  or
-	 * - ipfsUrl is null
-	 */
-	useEffect(() => {
-		if (
-			!imagesUrl ||
-			!baseUri ||
-			!unRevealedBaseUri && props.renderUploadUnRevealedImage
-		) {
-			addToast({
-				severity: 'error',
-				message: 'Oops! something went wrong. Please try again!',
-			});
-			props.setActiveStep(0);
-			return;
-		}
+    /**
+     * restrict user from proceeding if
+     * - imagesUrl is null
+     *  or
+     * - metadataUrl is null
+     *  or
+     * - ipfsUrl is null
+     */
+    useEffect(() => {
+        if (
+            !imagesUrl ||
+            !baseUri ||
+            !unRevealedBaseUri && props.renderUploadUnRevealedImage
+        ) {
+            addToast({
+                severity: 'error',
+                message: 'Oops! something went wrong. Please try again!',
+            });
+            props.setActiveStep(0);
+            return;
+        }
 
-		//Get JSON from ipfsUrl
-		const xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = () => {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				setMetadataPreview(JSON.parse(xhr.responseText));
-			}
-		};
-		xhr.open(
-			'GET',
-			`https://gateway.pinata.cloud/ipfs/${baseUri.substring(7, baseUri.length - 1)}/1.json`,
-			true
-		);
-		xhr.send();
+        const url = props.nftStorageType === 's3' ? `${baseUri}/1.json` : `https://gateway.pinata.cloud/ipfs/${baseUri.substring(7, baseUri.length - 1)}/1.json`;
 
-	}, [
-		imagesUrl,
-		baseUri,
-		ipfsUrl,
-		unRevealedBaseUri,
-		props.renderUploadUnRevealedImage,
-	]);
+        //Get JSON from ipfsUrl
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                setMetadataPreview(JSON.parse(xhr.responseText));
+            }
+        };
+        xhr.open('GET', url, true);
+        xhr.send();
+    }, [
+        imagesUrl,
+        baseUri,
+        ipfsUrl,
+        unRevealedBaseUri,
+        props.renderUploadUnRevealedImage,
+    ]);
 
-	const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
+    const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
+    const url = props.nftStorageType === 's3' ? `${imagesUrl}/1.png` : `https://gateway.pinata.cloud/ipfs/${imagesUrl.substring(7, imagesUrl.length - 1)}/1.png`;
 
-	return (
-		<Stack gap={2} marginTop='2em'>
+    return (
+        <Stack gap={2} marginTop='2em'>
             <Typography variant='body'>
                 If your NFTs show here, then you have successfully connected your metadata and images.
             </Typography>
-            <Box 
+            <Box
                 display='flex'
                 gap={3}
             >
                 <Box width='365px' borderRadius='10px' flex='1'>
-                    <img 
-                        src={`https://gateway.pinata.cloud/ipfs/${imagesUrl.substring(7, imagesUrl.length - 1)}/1.png`} 
+                    <img
+                        src={url}
                         alt='NFT Picture'
                         borderRadius='10px'
                     />
@@ -168,7 +166,7 @@ const Confirmation = (props) => {
                 </Stack>
             </Box>
 
-			<Box display='flex' justifyContent='flex-end' width='100%'>
+            <Box display='flex' justifyContent='flex-end' width='100%'>
                 <Button
                     variant="contained"
                     onClick={() => {
@@ -187,8 +185,8 @@ const Confirmation = (props) => {
                     Confirm
                 </Button>
             </Box>
-		</Stack>
-	);
+        </Stack>
+    );
 };
 
 export default Confirmation;
