@@ -1,7 +1,15 @@
 import React from 'react';
-
+import CircularProgress from '@mui/material/CircularProgress';
 import { Modal, Box, Typography } from 'ds/components';
-import { Step, StepLabel, Stepper } from '@mui/material';
+import { Step, StepLabel, StepIcon, Stepper } from '@mui/material';
+
+const StepperIcon = ({ active, completed }) => {
+
+	return (
+			<CircularProgress size={24} />
+	)
+
+}
 
 const DeploymentStepModal = ({ blockchain, activeDeploymentStep, walletType, isModalOpen }) => {
     const deploymentSteps = [
@@ -19,6 +27,8 @@ const DeploymentStepModal = ({ blockchain, activeDeploymentStep, walletType, isM
             description: `Open ${walletType} and sign the transaction.`
         }
     ];
+
+
 
     return (
         <Modal
@@ -47,9 +57,15 @@ const DeploymentStepModal = ({ blockchain, activeDeploymentStep, walletType, isM
                 <Stepper orientation="vertical" activeStep={activeDeploymentStep}>
                     {deploymentSteps.map(step => (
                         <Step key={step.key}>
-                            <StepLabel optional={<Typography variant="caption">{step.description}</Typography>}>
+													{activeDeploymentStep == step.key ? (
+														<StepLabel StepIconComponent={StepperIcon} optional={<Typography variant="caption">{step.description}</Typography>}>
                                 {step.title}
                             </StepLabel>
+													) : (
+														<StepLabel optional={<Typography variant="caption">{step.description}</Typography>}>
+                                {step.title}
+                            </StepLabel>
+													)}
                         </Step>
                     ))}
                 </Stepper>
