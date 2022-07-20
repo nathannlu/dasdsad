@@ -62,7 +62,7 @@ const Confirmation = (props) => {
             return;
         }
 
-        const url = props.nftStorageType === 's3' ? `${baseUri}/1.json` : `https://gateway.pinata.cloud/ipfs/${baseUri.substring(7, baseUri.length - 1)}/0.json`;
+        const url = props.nftStorageType === 's3' ? `${baseUri}/0.json` : `https://gateway.pinata.cloud/ipfs/${baseUri.substring(7, baseUri.length - 1)}/0.json`;
 
         //Get JSON from ipfsUrl
         const xhr = new XMLHttpRequest();
@@ -82,7 +82,7 @@ const Confirmation = (props) => {
     ]);
 
     const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
-    const url = props.nftStorageType === 's3' ? `${imagesUrl}/1.png` : `https://gateway.pinata.cloud/ipfs/${imagesUrl.substring(7, imagesUrl.length - 1)}/0.png`;
+    const url = props.nftStorageType === 's3' ? `${imagesUrl}/0.png` : `https://gateway.pinata.cloud/ipfs/${imagesUrl?.substring(7, imagesUrl?.length - 1)}/0.png`;
 
     return (
         <Stack gap={2} marginTop='2em'>
@@ -147,27 +147,27 @@ const Confirmation = (props) => {
                             <Typography fontSize='9pt' fontWeight='bold'>Pre-reveal</Typography>
                             <Typography fontSize='9pt'>Below is the {nftStorageType} url pointing to the metadata that was generated to support the pre-reveal image you uploaded in the first step.</Typography>
                         </Box>
-                        <Link href={`https://gateway.pinata.cloud/ipfs/${unRevealedBaseUri.substring(7, unRevealedBaseUri.length - 1)}/unrevealed.png`}>
+                        <a href={`https://gateway.pinata.cloud/ipfs/${unRevealedBaseUri.substring(7, unRevealedBaseUri.length - 1)}/0.json`} target='_blank'>
                             <Typography sx={{ fontWeight: 'bold', color: '#006aff' }} fontSize='8pt'>{unRevealedBaseUri}</Typography>
-                        </Link>
+                        </a>
                     </Stack>
                     <Stack gap={1}>
                         <Box>
                             <Typography fontSize='9pt' fontWeight='bold'>Location of your NFT images on {nftStorageType}</Typography>
                             <Typography fontSize='9pt'>Below is the url pointing to the images uploaded in step 2. This data has been automatically linked with your metadata on {nftStorageType}</Typography>
                         </Box>
-                        <Link href={`https://gateway.pinata.cloud/ipfs/${imagesUrl.substring(7, imagesUrl.length - 1)}/0.png`}>
+                        <a href={`https://gateway.pinata.cloud/ipfs/${imagesUrl.substring(7, imagesUrl.length - 1)}/0.png`} target='_blank'>
                             <Typography sx={{ fontWeight: 'bold', color: '#006aff' }} fontSize='8pt'>{imagesUrl}</Typography>
-                        </Link>
+                        </a>
                     </Stack>
                     <Stack gap={1}>
                         <Box>
                             <Typography fontSize='9pt' fontWeight='bold'>Location of your metadata</Typography>
                             <Typography fontSize='9pt'>Below is the {nftStorageType} url pointing to the metadata of your NFT collection. This metadata has been automatically linked with your images on {nftStorageType}</Typography>
                         </Box>
-                        <Link href={`https://gateway.pinata.cloud/ipfs/${baseUri.substring(7, baseUri.length - 1)}/0.json`}>
+                        <a href={`https://gateway.pinata.cloud/ipfs/${baseUri.substring(7, baseUri.length - 1)}/0.json`} target='_blank'>
                             <Typography sx={{ fontWeight: 'bold', color: '#006aff' }} fontSize='8pt'>{baseUri}</Typography>
-                        </Link>
+                        </a>
                     </Stack>
                 </Stack>
             </Box>
