@@ -102,7 +102,7 @@ export const NFT = ({ contract, nftImage, height, nftPrice, isRevealed, disabled
 																width: nftImage.src && '100%' || '80%',
 																objectFit: 'cover',
 														}}
-														src={nftImage.src /*|| imageNotFound*/}
+														src={nftImage.src || 'http://via.placeholder.com/480x480'}
 														crossOrigin="*"
 													/>
 												) : (
