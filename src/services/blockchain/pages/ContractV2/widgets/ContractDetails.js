@@ -25,7 +25,7 @@ export const Details = ({ primary, secondary, isLoading }) => {
         <React.Fragment>
             <Grid xs={4} item>
                 <Stack gap={0.5} sx={{ color: '#6a7383' }}>
-									<Typography sx={{ display: 'flex', fontSize: '14px', my: .5, gap: 1.5, maxWidth: 600, color: '#6a7383' }}>
+                    <Typography sx={{ display: 'flex', fontSize: '14px', my: .5, gap: 1.5, maxWidth: 600, color: '#6a7383' }}>
                         {primary}:
                     </Typography>
                 </Stack>
@@ -132,14 +132,6 @@ const ContractDetails = (props) => {
 												*/}
 
 											{/*
-                        <Details
-                            primary="Sales status"
-                            secondary={(contractState?.isPresaleOpen && contractState?.isPublicSaleOpen && 'Whitelist and Public sales')
-                                || (contractState?.isPresaleOpen && 'Whitelist only')
-                                || (contractState?.isPublicSaleOpen && 'Public sales only')
-                                || 'Closed'}
-                            isLoading={isLoading}
-                        />
 
                         <Details
                             primary="Pre sale status"
@@ -148,9 +140,23 @@ const ContractDetails = (props) => {
                         />
 												*/}
 
-                        <Details
+                        {/* <Details
                             primary="Public sale status"
                             secondary={<Chip label={contractState?.isPublicSaleOpen && 'OPEN' || 'CLOSED'} color={contractState?.isPublicSaleOpen && 'success' || 'error'} size="small" />}
+                            isLoading={isLoading}
+                        /> */}
+
+                        <Details
+                            primary="Sales status"
+                            secondary={<Chip 
+                                label={(contractState?.isPresaleOpen && contractState?.isPublicSaleOpen && 'Whitelist and Public Sales')
+                                || (contractState?.isPresaleOpen && 'Whitelist Only')
+                                || (contractState?.isPublicSaleOpen && 'Public Sales Only')
+                                || 'Closed'} 
+                                color={(contractState?.isPresaleOpen || contractState?.isPublicSaleOpen && 'success')
+                                || 'error'} 
+                                size="small"
+                            />}
                             isLoading={isLoading}
                         />
 
