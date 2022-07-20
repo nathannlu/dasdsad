@@ -69,16 +69,23 @@ const NFTIsRevealedChip = ({ disabled, isRevealed }) => {
             borderRadius: '0 8px',
             boxShadow: '0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%)'
         }}>
-					{/*
+            {/*
             <CircleIcon sx={{ color: '#C4C4C4' }} /> &nbsp;
 						*/}
-					<Typography sx={{ fontSize: '12px',fontWeight: 600, color:  '#0a2540' }}>{isRevealed && 'Revealed' || 'Unrevealed'}</Typography>
+            <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#0a2540' }}>{isRevealed && 'Revealed' || 'Unrevealed'}</Typography>
         </Box>
     );
 }
 
 export const NFT = ({ contract, nftImage, height, nftPrice, isRevealed, disabled }) => {
     const rendetDetails = !!contract;
+    const defaultStyles = {
+        height: 240,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    };
 
     return (
         <Card sx={{ width: '500px', height: height, borderRadius: '8px', boxShadow: '0 20px 44px rgb(50 50 93 / 12%), 0 -1px 32px rgb(50 50 93 / 6%), 0 3px 12px rgb(0 0 0 / 8%)' }} raised={true}>
@@ -94,26 +101,26 @@ export const NFT = ({ contract, nftImage, height, nftPrice, isRevealed, disabled
                     }}
                 >
                     {!nftImage.isLoading ? (
-											<>
-												{nftImage.src ? (
-													<img
-														style={{
-																height: nftImage.src && '100%' || 'auto',
-																width: nftImage.src && '100%' || '80%',
-																objectFit: 'cover',
-														}}
-														src={nftImage.src || 'http://via.placeholder.com/480x480'}
-														crossOrigin="*"
-													/>
-												) : (
-													<div>
-														Error loading image
-													</div>
-												)}
-											</>
-									) : (
-										<CircularProgress style={{ height: '100%', alignItems: 'center' }} />
-									)}
+                        <>
+                            {nftImage.src ? (
+                                <img
+                                    style={{
+                                        height: nftImage.src && '100%' || 'auto',
+                                        width: nftImage.src && '100%' || '80%',
+                                        objectFit: 'cover',
+                                    }}
+                                    src={nftImage.src || 'http://via.placeholder.com/480x480'}
+                                    crossOrigin="*"
+                                />
+                            ) : (
+                                <div style={{ ...defaultStyles }}>
+                                    Error loading image
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <CircularProgress style={{ ...defaultStyles }} />
+                    )}
                 </Box>
                 {rendetDetails && <NFTDetails contract={contract} nftPrice={nftPrice} disabled={disabled} /> || null}
                 <NFTIsRevealedChip isRevealed={isRevealed} disabled={disabled} />
