@@ -13,6 +13,7 @@ import {
 } from 'ds/components';
 import { useHistory } from 'react-router-dom';
 import { useNewContractForm } from './hooks/useNewContractForm';
+import { useWeb3 } from 'libs/web3'
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
@@ -22,16 +23,19 @@ const contractTypes = [
 	{
 		title: 'Ethereum ERC-721a',
 		key: 'rinkeby',
+        standard: 'eth',
 		imgSrc: etherLogo,
 	},
 	{
 		title: 'Polygon ERC-721a',
 		key: 'mumbai',
+        standard: 'eth',
 		imgSrc: polygonLogo,
 	},
 	{
 		title: 'Solana Candy Machine',
 		key: 'solanadevnet',
+        standard: 'sol',
 		imgSrc: solanaLogo,
 	},
 ];
@@ -48,6 +52,7 @@ const NewV2 = () => {
 		setActiveBlockchain,
 		saveContract,
 	} = useNewContractForm();
+    const { walletState } = useWeb3();
 
 	return (
 		<Box sx={{ background: '#f5f5f5', minHeight: '100vh' }}>
@@ -99,7 +104,12 @@ const NewV2 = () => {
 
 										<Button
 											variant="contained"
-											size="small">
+											size="small"
+                                            disabled={
+                                                (contract.standard === 'eth' && (walletState?.walletType === 'phantom' || !walletState?.walletType)) || 
+                                                (contract.standard === 'sol' && walletState?.walletType !== 'phantom')
+                                            }
+                                        >
 											Create contract
 										</Button>
 									</Stack>

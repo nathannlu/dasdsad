@@ -25,6 +25,10 @@ export const useWeb3 = () => useContext(Web3Context);
 export const Web3Provider = ({ children }) => {
     const [walletController, setWalletController] = useState(new WalletController());
     const [loading, setLoading] = useState(false);
+    const [walletState, setWalletState] = useState({
+		walletType: null,
+		walletAddress: null,
+	});
 
     const [contractVarsState, setContractVarsState] = useState(false);
 
@@ -340,6 +344,8 @@ export const Web3Provider = ({ children }) => {
                 loginToWallet,
                 payGeneratorWithEth,
                 retrieveContract,
+                walletState,
+                setWalletState,
                 //                checkOwner,
                 getPrice,
                 //                getMaximumSupply,
