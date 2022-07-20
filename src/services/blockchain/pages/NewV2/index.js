@@ -68,51 +68,49 @@ const NewV2 = () => {
 					<Grid container>
 						{contractTypes.map((contract) => (
 							<Grid p={1} xs={4} item>
-									<Stack
-										key={contract.key}
-										gap={1}
-										onClick={() => {
-											if(contract.key == 'solanadevnet') {
-												history.push("/smart-contracts/new")
-											}
+                                <Stack
+                                    key={contract.key}
+                                    gap={1}
+                                    sx={{
+                                        borderRadius: '5px',
+                                        p: 2,
+                                        background: 'white',
+                                        border: '1px solid rgba(0,0,0,.1)',
+                                        transition: 'all .2s',
+                                        '&:hover': {
+                                            border: '1px solid #0B6DFF',
+                                        },
+                                    }}
+                                >
+                                    <Stack direction="row" alignItems="center" gap={1}>
+                                        <img style={{height: '30px', objectFit: 'contain'}} src={contract.imgSrc} />
+                                        <Typography>{contract.title}</Typography>
+                                    </Stack>
 
+                                    {/*
+                                    <Typography>
+                                        Deploy on Rinkeby
+                                    </Typography>
+                                    */}
 
-											setActiveBlockchain(contract.key);
-											setIsModalOpen(true);
-										}}
-										sx={{
-											borderRadius: '5px',
-											p: 2,
-											background: 'white',
-											border: '1px solid rgba(0,0,0,.1)',
-											transition: 'all .2s',
-											cursor: 'pointer',
-											'&:hover': {
-												border: '1px solid #0B6DFF',
-											},
-										}}>
-										<Stack direction="row" alignItems="center" gap={1}>
-											<img style={{height: '30px', objectFit: 'contain'}} src={contract.imgSrc} />
-											<Typography>{contract.title}</Typography>
-										</Stack>
-
-										{/*
-										<Typography>
-											Deploy on Rinkeby
-										</Typography>
-										*/}
-
-										<Button
-											variant="contained"
-											size="small"
-                                            disabled={
-                                                (contract.standard === 'eth' && (walletState?.walletType === 'phantom' || !walletState?.walletType)) || 
-                                                (contract.standard === 'sol' && walletState?.walletType !== 'phantom')
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        disabled={
+                                            (contract.standard === 'eth' && (walletState?.walletType === 'phantom' || !walletState?.walletType)) || 
+                                            (contract.standard === 'sol' && walletState?.walletType !== 'phantom')
+                                        }
+                                        onClick={() => {
+                                            if(contract.key == 'solanadevnet') {
+                                                history.push("/smart-contracts/new")
                                             }
-                                        >
-											Create contract
-										</Button>
-									</Stack>
+                                            setActiveBlockchain(contract.key);
+                                            setIsModalOpen(true);
+                                        }}
+                                    >
+                                        Create contract
+                                    </Button>
+                                </Stack>
 							</Grid>
 						))}
 					</Grid>
