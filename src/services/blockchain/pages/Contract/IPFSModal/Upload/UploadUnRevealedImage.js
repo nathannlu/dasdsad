@@ -21,7 +21,7 @@ import { useIPFSModal, bytesToMegaBytes } from '../hooks/useIPFSModal';
 import { useToast } from 'ds/hooks/useToast';
 
 const UploadUnRevealedImage = (props) => {
-	const { uploadUnrevealedImage, uploadLoading, uploadPercentage } = useIPFSModal(props.contract, props.step, props.setActiveStep, props.nftStorageType);
+	const { uploadUnrevealedImage, uploadLoading, uploadPercentage, uploadError } = useIPFSModal(props.contract, props.step, props.setActiveStep, props.nftStorageType);
 	const { uploadedUnRevealedImageFile, setUploadedUnRevealedImageFile } = useContract();
 	const { addToast } = useToast();
 	const [percent, setPercent] = useState(0);
@@ -132,8 +132,9 @@ const UploadUnRevealedImage = (props) => {
 					<LoadingButton
 						loading={uploadLoading}
 						variant="outlined"
-						onClick={async () => await uploadUnrevealedImage(props.nftStorageType)}>
-						Upload unrevealed image
+						onClick={async () => await uploadUnrevealedImage(props.nftStorageType)}
+					>
+						{uploadError && `Retry Uploading unrevealed image` || `Upload unrevealed image`}
 					</LoadingButton>
 					<Box
 						sx={{

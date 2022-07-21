@@ -11,7 +11,7 @@ import { useToast } from 'ds/hooks/useToast';
 
 const Traits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useContract();
-	const { uploadImages, uploadLoading, uploadPercentage } = useIPFSModal(
+	const { uploadImages, uploadLoading, uploadPercentage, uploadError } = useIPFSModal(
 		props.contract,
 		props.step,
 		props.setActiveStep,
@@ -155,8 +155,9 @@ const Traits = (props) => {
 					<LoadingButton
 						variant="outlined"
 						loading={uploadLoading}
-						onClick={async () => await uploadImages(props.nftStorageType)}>
-						Upload
+						onClick={async () => await uploadImages(props.nftStorageType)}
+					>
+						{uploadError && 'Retry Upload' || 'Upload'}
 					</LoadingButton>
 					<Box
 						sx={{

@@ -37,12 +37,16 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	} = useContract();
 	const { addToast } = useToast();
 	const [uploadLoading, setUploadLoading] = useState(false);
+	const [uploadError, setUploadError] = useState(null);
 
 	// Select different urls based on blockchain
 	// Solana - use gateway url
 	// Ethereum - use ipfs url
 	const resolvedUrl = (contract?.blockchain === 'solana' || contract?.blockchain === 'solanadevnet') ? 'gateway' : 'url';
 
+	const onError = () => {
+		setUploadError(false);
+	}
 
 	/**
 	 * Handle file upload to IPFS or aws s3
@@ -54,14 +58,14 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 
 			switch (nftStorageType) {
 				case 's3': {
-					const { traitsUrl, fileExtension } = await uploadTraitsToS3(uploadedUnRevealedImageFile, 'unrevealed');
+					const { traitsUrl, fileExtension } = await uploadTraitsToS3(uploadedUnRevealedImageFile, 'unrevealed', onError);
 					console.log(traitsUrl);
 
 					if (!traitsUrl) {
 						throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
 					}
 
-					const metadataUrl = await uploadMetadataToS3([], 'unrevealed', contract, traitsUrl, fileExtension);
+					const metadataUrl = await uploadMetadataToS3([], 'unrevealed', contract, traitsUrl, fileExtension, onError);
 					if (!metadataUrl) {
 						throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
 					}
@@ -121,7 +125,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 
 			switch (nftStorageType) {
 				case 's3': {
-					const { traitsUrl } = await uploadTraitsToS3(uploadedFiles, 'revealed');
+					const { traitsUrl } = await uploadTraitsToS3(uploadedFiles, 'revealed', onError);
 					console.log(traitsUrl);
 
 					if (!traitsUrl) {
@@ -163,7 +167,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 
 			switch (nftStorageType) {
 				case 's3': {
-					const metadataUrl = await uploadMetadataToS3(uploadedJson, 'revealed', contract, imagesUrl);
+					const metadataUrl = await uploadMetadataToS3(uploadedJson, 'revealed', contract, imagesUrl, onError);
 					if (!metadataUrl) {
 						throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
 					}
@@ -216,6 +220,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 		uploadImages,
 		uploadMetadata,
 		uploadPercentage,
-		uploadLoading
+		uploadLoading,
+		uploadError
 	}
 }
