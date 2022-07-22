@@ -17,9 +17,9 @@ const Traits = (props) => {
 		props.setActiveStep,
 		props.nftStorageType
 	);
+
 	const [percent, setPercent] = useState(0);
 	const { addToast } = useToast();
-
 
 	const handleImagesUpload = (acceptedFiles) => {
 		try {
@@ -104,7 +104,8 @@ const Traits = (props) => {
 						multiple
 						onDrop={(acceptedFiles) => {
 							handleImagesUpload(acceptedFiles)
-						}}>
+						}}
+					>
 						{({ getRootProps, getInputProps }) => (
 							<Box
 								sx={{

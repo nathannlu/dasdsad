@@ -19,9 +19,7 @@ export const useS3 = (contractId) => {
 
     const [uploadS3NftCollection] = useUploadS3NftCollection({
         onCompleted: data => {
-            setS3UploadPercentage(90);
-            clearInterval(interval.current);
-            posthog.capture('User uploaded nft collection on aws s3 bucket successfully!');
+            posthog.capture(`User uploaded nft collection on aws s3 bucket successfully! activeChunk: ${activeChunk}`);
         }
     });
 
@@ -37,10 +35,10 @@ export const useS3 = (contractId) => {
     });
 
     const startmockProgress = (files) => {
-        const incrementBy = 100 / (files?.length * 2);
+        const incrementBy = 100 / files?.length;
         interval.current = setInterval(() => {
             setS3UploadPercentage(prevState => prevState + incrementBy >= 90 ? 90 : prevState + incrementBy);
-        }, 1000);
+        }, 3000);
     }
 
     const deleteS3Collection = async () => {
@@ -77,7 +75,7 @@ export const useS3 = (contractId) => {
      *
      * @param traits - An array of File objects
      */
-    const uploadTraitsToS3 = async (traits, collectionType, oneError) => {
+    const uploadTraitsToS3 = async (traits, collectionType, onError) => {
         if (!traits)
             throw new Error('Error! File(s) to be uploaded not selected.');
 
@@ -100,22 +98,25 @@ export const useS3 = (contractId) => {
                 const response = await uploadS3NftCollection({ variables: { collection: chunks[i], contractId, collectionType, type: 'traits' } });
 
                 if (!response.data || !response.data.uploadS3NftCollection) {
+                    traitsUrl = null;
                     handleError();
-                    oneError();
+                    onError();
                     break;
                 }
 
                 traitsUrl = `${response.data.uploadS3NftCollection}/traits`;
             } catch (e) {
+                traitsUrl = null;
                 console.log(e);
                 handleError();
-                oneError();
+                onError();
                 break;
             }
         }
 
-        if (!traitsUrl) {
-            return { traitsUrl };
+        if (traitsUrl) {
+            setS3UploadPercentage(90);
+            clearInterval(interval.current);
         }
 
         return { traitsUrl, fileExtension };
@@ -131,7 +132,7 @@ export const useS3 = (contractId) => {
      * @param imageUrl - Resolved URI of images folder. Can either be ipfs url or gateway
      */
 
-    const uploadMetadataToS3 = async (folder, collectionType, contract, traitsUrl, fileExtension, oneError) => {
+    const uploadMetadataToS3 = async (folder, collectionType, contract, traitsUrl, fileExtension, onError) => {
         startmockProgress(folder);
 
         const metadata = collectionType === 'unrevealed' ? generateUnrevealedImageMetadata(contract, traitsUrl, fileExtension) : await generateRevealedImageMetadata(folder, traitsUrl);
@@ -139,26 +140,35 @@ export const useS3 = (contractId) => {
 
         const chunks = generateChunks(metadata);
 
+        console.log({ chunks, activeChunk });
+
         let metadataUrl = null;
 
         for (let i = activeChunk; i < chunks.length; i++) {
             try {
                 setActiveChunk(i);
-                const response = await uploadS3NftCollection({ variables: { collection: metadata, contractId, collectionType, type: 'metadata' } });
-
+                const response = await uploadS3NftCollection({ variables: { collection: chunks[i], contractId, collectionType, type: 'metadata' } });
+ 
                 if (!response.data || !response.data.uploadS3NftCollection) {
+                    metadataUrl = null;
                     handleError();
-                    oneError();
+                    onError();
                     break;
                 }
 
                 metadataUrl = `${response.data.uploadS3NftCollection}/metadata`;
             } catch (e) {
+                metadataUrl = null;
                 console.log(e);
                 handleError();
-                oneError();
+                onError();
                 break;
             }
+        }
+
+        if (metadataUrl) {
+            setS3UploadPercentage(90);
+            clearInterval(interval.current);
         }
 
         return metadataUrl;

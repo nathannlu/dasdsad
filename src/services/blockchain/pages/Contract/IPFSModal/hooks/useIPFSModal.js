@@ -45,7 +45,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	const resolvedUrl = (contract?.blockchain === 'solana' || contract?.blockchain === 'solanadevnet') ? 'gateway' : 'url';
 
 	const onError = () => {
-		setUploadError(false);
+		setUploadError(true);
 	}
 
 	/**
@@ -122,14 +122,13 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	const uploadImages = async (nftStorageType) => {
 		try {
 			setUploadLoading(true);
+			setUploadError(false);
 
 			switch (nftStorageType) {
 				case 's3': {
 					const { traitsUrl } = await uploadTraitsToS3(uploadedFiles, 'revealed', onError);
-					console.log(traitsUrl);
-
 					if (!traitsUrl) {
-						throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
+						throw new Error('Error uploading images: Something went wrong. Please try again or contact support for help.');
 					}
 
 					setImagesUrl(traitsUrl);
@@ -147,10 +146,7 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 			// Move to next step
 			callback(true);
 		} catch (e) {
-			addToast({
-				severity: 'error',
-				message: e.message,
-			});
+			addToast({ severity: 'error', message: e.message });
 			callback(false);
 		} finally {
 			setUploadLoading(false);
@@ -164,12 +160,13 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	const uploadMetadata = async (nftStorageType) => {
 		try {
 			setUploadLoading(true);
+			setUploadError(false);
 
 			switch (nftStorageType) {
 				case 's3': {
-					const metadataUrl = await uploadMetadataToS3(uploadedJson, 'revealed', contract, imagesUrl, onError);
+					const metadataUrl = await uploadMetadataToS3(uploadedJson, 'revealed', contract, imagesUrl, null, onError);
 					if (!metadataUrl) {
-						throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
+						throw new Error('Error uploading metadata: Something went wrong. Please try again or contact support for help.');
 					}
 
 					setBaseUri(metadataUrl);
@@ -207,10 +204,9 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 	 * user can try uploading the images again
 	 */
 	const callback = (status) => {
-		if (!status) {
-			setUploadedUnRevealedImageFile(null);
+		if (status) {
+			setActiveStep(step + 1);
 		}
-		setActiveStep(status ? step + 1 : step);
 	};
 
 	const uploadPercentage = nftStorageType === 's3' ? s3UploadPercentage : pinataUploadPercentage;

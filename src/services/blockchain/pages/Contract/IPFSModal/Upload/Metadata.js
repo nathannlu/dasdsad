@@ -11,7 +11,7 @@ import { useToast } from 'ds/hooks/useToast';
 
 const Metadata = (props) => {
 	const { uploadedJson, setUploadedJson, ipfsUrl } = useContract();
-	const { uploadMetadata, uploadLoading, uploadPercentage } = useIPFSModal(
+	const { uploadMetadata, uploadLoading, uploadPercentage, uploadError } = useIPFSModal(
 		props.contract,
 		props.step,
 		props.setActiveStep,
@@ -147,8 +147,9 @@ const Metadata = (props) => {
 					<LoadingButton
 						loading={uploadLoading}
 						variant="outlined"
-						onClick={async () => await uploadMetadata(props.nftStorageType)}>
-						Upload
+						onClick={async () => await uploadMetadata(props.nftStorageType)}
+					>
+						{uploadError && 'Retry Upload' || 'Upload'}
 					</LoadingButton>
 					<Box
 						sx={{
