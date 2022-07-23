@@ -90,7 +90,13 @@ const Navbar = ({ pageName }) => {
 								Docs
 							</a>
 						</Box>
+						<Box style={{color: 'black'}}>
+							<Link to="/dashboard">
+								Billing
+							</Link>
+						</Box>
 						{walletState.walletAddress ? (
+
 							<Box
 								id="account-button"
 								aria-controls="account-menu"
