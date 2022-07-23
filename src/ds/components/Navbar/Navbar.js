@@ -86,10 +86,15 @@ const Navbar = ({ pageName }) => {
 							</a>
 						</Box>
 						<Box>
-
 							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
 								Docs
 							</a>
+						</Box>
+
+						<Box style={{color: 'black'}}>
+							<Link to="/dashboard">
+								Billing
+							</Link>
 						</Box>
 						{state.walletAddress ? (
 							<Box
