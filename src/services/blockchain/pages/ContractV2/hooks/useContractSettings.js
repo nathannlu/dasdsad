@@ -12,7 +12,7 @@ import { useContractDetailsV2 } from './useContractDetailsV2';
 
 export const useContractSettings = () => {
 	const { addToast } = useToast();
-    const { id } = useParams();
+	const { id } = useParams();
 
 	const { contractController, contract, contractState, setContractState } = useContractDetailsV2();
 
@@ -142,7 +142,7 @@ export const useContractSettings = () => {
 	}
 
 	const setPresales = async (isOpen, whitelistAddresses) => {
-		if (!whitelistAddresses.length) {
+		if (!whitelistAddresses?.length) {
 			addToast({ severity: 'error', message: `Whitelist can't be empty!` });
 			return;
 		}
@@ -156,7 +156,11 @@ export const useContractSettings = () => {
 		try {
 			const contractState = await contractController.updatePresale(walletAddress, isOpen, markleRoot);
 			setContractState(contractState);
-			setWhitelist({ variables: { id, whitelist: whitelistAddresses } });
+
+			if (whitelistAddresses?.length && isOpen) {
+				setWhitelist({ variables: { id, whitelist: whitelistAddresses } });
+			}
+
 			onSuccess('Pre Sale settings updated successfully!');
 		} catch (e) {
 			onError(e);

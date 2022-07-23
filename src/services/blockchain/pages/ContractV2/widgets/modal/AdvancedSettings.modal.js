@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button, CircularProgress, Grid, Stack, TextField, Typography } from 'ds/components';
+import { Skeleton } from '@mui/material';
 import { Lock as LockIcon, LockOpen as LockOpenIcon } from '@mui/icons-material';
 
 import { getNftStorageTypeLabel } from 'ambition-constants';
@@ -16,6 +17,8 @@ const AdvancedSettingsModal = ({
     isSavingPreSales,
     actionForm: { maxPerMint, maxPerWallet, price }
 }) => {
+
+    const isLoading = !contractState;
 
     const cardStyle = {
         maxWidth: 760,
@@ -36,7 +39,7 @@ const AdvancedSettingsModal = ({
                             Public Sale Settings
                         </Typography>
 
-                        {contractState?.isPublicSaleOpen ? (
+                        {isLoading ? <Skeleton width={100} /> : contractState?.isPublicSaleOpen ? (
                             <Button
                                 startIcon={<LockIcon />}
                                 size="small"
@@ -66,39 +69,39 @@ const AdvancedSettingsModal = ({
 
                     <Stack gap={2} direction="horizontal">
                         <Stack direction="column">
-                            <TextField {...maxPerMint} size="small" label='Max per mint' />
+                            {isLoading ? <Skeleton width={60} /> : <TextField {...maxPerMint} size="small" label='Max per mint' />}
                         </Stack>
 
                         <Stack direction="column">
-                            <TextField {...maxPerWallet} size="small" label='Max per wallet' />
+                            {isLoading ? <Skeleton width={60} /> : <TextField {...maxPerWallet} size="small" label='Max per wallet' />}
                         </Stack>
 
                         <Stack direction="column">
-                            <TextField
+                            {isLoading ? <Skeleton width={60} /> : <TextField
                                 {...price}
                                 label='Price'
                                 size="small"
                                 InputProps={{ endAdornment: contract.nftCollection.currency }}
-                            />
+                            />}
                         </Stack>
                     </Stack>
 
                     <Stack>
-                        <Button
+                        {isLoading ? <Skeleton width={100} /> : <Button
                             size="small"
                             variant="contained"
-                            onClick={() => updateSales(methodProps, contractState?.isPublicSaleOpen)}
+                            onClick={() => updateSales(contractState?.isPublicSaleOpen)}
                             color="secondary"
                             sx={{ ml: 'auto' }}
                             disabled={isSavingPublicSales}
                         >
                             {isSavingPublicSales && <CircularProgress isButtonSpinner={true} /> || null}
                             UPDATE
-                        </Button>
+                        </Button>}
                     </Stack>
                 </Stack>
 
-                {contractState?.isPresaleOpen && <Stack gap={2} mt={8} sx={cardStyle}>
+                {contractState?.isPresaleOpen && contract?.nftCollection?.whitelist?.length && <Stack gap={2} mt={8} sx={cardStyle}>
                     <Grid container={true} justifyContent="space-between">
                         <Typography variant="h4" sx={{ textTransform: 'capitalize' }}>
                             Pre Sale Settings
@@ -110,7 +113,7 @@ const AdvancedSettingsModal = ({
                             startIcon={<LockIcon />}
                             size="small"
                             variant="contained"
-                            onClick={() => setPresales(methodProps, false)}
+                            onClick={() => setPresales(false, contract?.nftCollection?.whitelist)}
                             color="error"
                             sx={{ ml: 'auto' }}
                             disabled={isSavingPreSales}
