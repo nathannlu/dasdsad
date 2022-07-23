@@ -13,6 +13,7 @@ import {
 } from 'ds/components';
 import { useHistory } from 'react-router-dom';
 import { useNewContractForm } from './hooks/useNewContractForm';
+import { useWeb3 } from 'libs/web3'
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
@@ -22,16 +23,19 @@ const contractTypes = [
 	{
 		title: 'Ethereum ERC-721a',
 		key: 'rinkeby',
+        standard: 'eth',
 		imgSrc: etherLogo,
 	},
 	{
 		title: 'Polygon ERC-721a',
 		key: 'mumbai',
+        standard: 'eth',
 		imgSrc: polygonLogo,
 	},
 	{
 		title: 'Solana Candy Machine',
 		key: 'solanadevnet',
+        standard: 'sol',
 		imgSrc: solanaLogo,
 	},
 ];
@@ -48,6 +52,7 @@ const NewV2 = () => {
 		setActiveBlockchain,
 		saveContract,
 	} = useNewContractForm();
+    const { walletState } = useWeb3();
 
 	return (
 		<Box sx={{ background: '#f5f5f5', minHeight: '100vh' }}>
@@ -63,46 +68,49 @@ const NewV2 = () => {
 					<Grid container>
 						{contractTypes.map((contract) => (
 							<Grid p={1} xs={4} item>
-									<Stack
-										key={contract.key}
-										gap={1}
-										onClick={() => {
-											if(contract.key == 'solanadevnet') {
-												history.push("/smart-contracts/new")
-											}
+                                <Stack
+                                    key={contract.key}
+                                    gap={1}
+                                    sx={{
+                                        borderRadius: '5px',
+                                        p: 2,
+                                        background: 'white',
+                                        border: '1px solid rgba(0,0,0,.1)',
+                                        transition: 'all .2s',
+                                        '&:hover': {
+                                            border: '1px solid #0B6DFF',
+                                        },
+                                    }}
+                                >
+                                    <Stack direction="row" alignItems="center" gap={1}>
+                                        <img style={{height: '30px', objectFit: 'contain'}} src={contract.imgSrc} />
+                                        <Typography>{contract.title}</Typography>
+                                    </Stack>
 
+                                    {/*
+                                    <Typography>
+                                        Deploy on Rinkeby
+                                    </Typography>
+                                    */}
 
-											setActiveBlockchain(contract.key);
-											setIsModalOpen(true);
-										}}
-										sx={{
-											borderRadius: '5px',
-											p: 2,
-											background: 'white',
-											border: '1px solid rgba(0,0,0,.1)',
-											transition: 'all .2s',
-											cursor: 'pointer',
-											'&:hover': {
-												border: '1px solid #0B6DFF',
-											},
-										}}>
-										<Stack direction="row" alignItems="center" gap={1}>
-											<img style={{height: '30px', objectFit: 'contain'}} src={contract.imgSrc} />
-											<Typography>{contract.title}</Typography>
-										</Stack>
-
-										{/*
-										<Typography>
-											Deploy on Rinkeby
-										</Typography>
-										*/}
-
-										<Button
-											variant="contained"
-											size="small">
-											Create contract
-										</Button>
-									</Stack>
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        disabled={
+                                            (contract.standard === 'eth' && (walletState?.walletType === 'phantom' || !walletState?.walletType)) || 
+                                            (contract.standard === 'sol' && walletState?.walletType !== 'phantom')
+                                        }
+                                        onClick={() => {
+                                            if(contract.key == 'solanadevnet') {
+                                                history.push("/smart-contracts/new")
+                                            }
+                                            setActiveBlockchain(contract.key);
+                                            setIsModalOpen(true);
+                                        }}
+                                    >
+                                        Create contract
+                                    </Button>
+                                </Stack>
 							</Grid>
 						))}
 					</Grid>

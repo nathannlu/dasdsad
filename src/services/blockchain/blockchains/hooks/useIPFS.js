@@ -86,6 +86,14 @@ export const useIPFS = () => {
 		return withIpfsUrls(res.data.IpfsHash);
 	};
 
+    /**
+     * Get the size of a form data object in bytes
+     * 
+     * @param formData - form data that contains file names
+     * @returns size of the form data in bytes
+     */
+    const getFormDataSize = (formData) => [...formData].reduce((size, [name, value]) => size + (typeof value === 'string' ? value.length : value.size), 0);
+
 	/**
 	 * Creates location for NFT images. This function pins a folder
 	 * to IPFS via Pinata API, then returns an object containing
@@ -97,11 +105,14 @@ export const useIPFS = () => {
 		// Construct formdata for uploading to Pinata API
 		let data = new FormData();
 		for (let i = 0; i < folder.length; i++) {
-			data.append('file', folder[i], `/assets/${folder[i].name}`);
+            const fileName = folder[i].name;
+            const ext = fileName.slice(fileName.lastIndexOf('.'));
+			data.append('file', folder[i], `/assets/${[i]}${ext}`);
 		}
 
-		// @TODO -- check formdata is not larger than 25gb
-
+		// Check formdata is not larger than 25gb
+        const GB_25_IN_BYTES = 26843545599.999958;
+        if (getFormDataSize(data) > GB_25_IN_BYTES) throw new Error('Form data must not be larger than 25 gb');
 
 		// Name Pinata folder
 		const metadata = JSON.stringify({

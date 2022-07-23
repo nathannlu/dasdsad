@@ -11,15 +11,15 @@ import { useToast } from 'ds/hooks/useToast';
 
 const Traits = (props) => {
 	const { uploadedFiles, setUploadedFiles } = useContract();
-	const { uploadImages, uploadLoading, uploadPercentage } = useIPFSModal(
+	const { uploadImages, uploadLoading, uploadPercentage, uploadError } = useIPFSModal(
 		props.contract,
 		props.step,
 		props.setActiveStep,
 		props.nftStorageType
 	);
+
 	const [percent, setPercent] = useState(0);
 	const { addToast } = useToast();
-
 
 	const handleImagesUpload = (acceptedFiles) => {
 		try {
@@ -104,7 +104,8 @@ const Traits = (props) => {
 						multiple
 						onDrop={(acceptedFiles) => {
 							handleImagesUpload(acceptedFiles)
-						}}>
+						}}
+					>
 						{({ getRootProps, getInputProps }) => (
 							<Box
 								sx={{
@@ -155,8 +156,9 @@ const Traits = (props) => {
 					<LoadingButton
 						variant="outlined"
 						loading={uploadLoading}
-						onClick={async () => await uploadImages(props.nftStorageType)}>
-						Upload
+						onClick={async () => await uploadImages(props.nftStorageType)}
+					>
+						{uploadError && 'Retry Upload' || 'Upload'}
 					</LoadingButton>
 					<Box
 						sx={{

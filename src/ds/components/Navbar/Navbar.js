@@ -22,18 +22,18 @@ import * as anchor from '@project-serum/anchor'
 
 const Navbar = ({ pageName }) => {
 	const { logout } = useAuth();
-	const { walletController, wallet } = useWeb3();
+	const { walletController, wallet, walletState, setWalletState } = useWeb3();
 	const [anchorEl, setAnchorEl] = useState(null);
-	const [state, setState] = useState({
-		walletType: null,
-		walletAddress: null,
-	});
+	// const [state, setState] = useState({
+	// 	walletType: null,
+	// 	walletAddress: null,
+	// });
 	const open = Boolean(anchorEl);
 	const [balance, setBalance] = useState('');
 
 	useEffect(() => {
 		const { wallet, address } = walletController?.getState();
-		setState((prevState) => ({
+		setWalletState((prevState) => ({
 			...prevState,
 			walletType: wallet || null,
 			walletAddress: address || null,
@@ -82,7 +82,7 @@ const Navbar = ({ pageName }) => {
 						</Box>
 						<Box>
 							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://www.youtube.com/channel/UCJbdL1g7FnfwBIYuhzDoyGA">
-									Tutorials
+								Tutorials
 							</a>
 						</Box>
 						<Box>
@@ -90,13 +90,13 @@ const Navbar = ({ pageName }) => {
 								Docs
 							</a>
 						</Box>
-
 						<Box style={{color: 'black'}}>
 							<Link to="/dashboard">
 								Billing
 							</Link>
 						</Box>
-						{state.walletAddress ? (
+						{walletState.walletAddress ? (
+
 							<Box
 								id="account-button"
 								aria-controls="account-menu"
@@ -139,8 +139,8 @@ const Navbar = ({ pageName }) => {
 											}[walletController.getNetworkID()]}
 										</Typography>
 										<Typography sx={{ fontSize: '13px', lineHeight: 1.2, opacity: .5 }} size="small">
-											{state.walletAddress.substring(0, 4)}...
-											{state.walletAddress.slice(-3)} {{
+											{walletState.walletAddress.substring(0, 4)}...
+											{walletState.walletAddress.slice(-3)} {{
 												'solana': '(Solana)',
 												'0x1': '(Ethereum)',
 												'0x4': '(Rinkeby)',
@@ -151,7 +151,7 @@ const Navbar = ({ pageName }) => {
 									</Stack>
 
 									<Box>
-										{state.walletType === 'metamask' ? (
+										{walletState.walletType === 'metamask' ? (
 											<img
 												style={{
 													height: '25px',
@@ -195,7 +195,7 @@ const Navbar = ({ pageName }) => {
 									await walletController.loadWalletProvider(curentWalletType || 'metamask');
 									const { wallet, address } = walletController?.getState();
 
-									setState((prevState) => ({
+									setWalletState((prevState) => ({
 										...prevState,
 										walletType: wallet || null,
 										walletAddress: address || null,
