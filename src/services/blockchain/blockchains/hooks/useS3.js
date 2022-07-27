@@ -148,7 +148,7 @@ export const useS3 = (contractId) => {
             try {
                 setActiveChunk(i);
                 const response = await uploadS3NftCollection({ variables: { collection: chunks[i], contractId, collectionType, type: 'metadata' } });
- 
+
                 if (!response.data || !response.data.uploadS3NftCollection) {
                     metadataUrl = null;
                     handleError();
@@ -242,7 +242,12 @@ export const useS3 = (contractId) => {
 
     const getResolvedImageUrlFromS3Uri = async (metadataUrl) => {
         try {
-            const url = `${metadataUrl}/1.json`;
+            let url = `${metadataUrl}/1.json`;
+
+            if (url.indexOf('//1.json') !== -1) {
+                url = url.replace('//1.json', '/1.json');
+            }
+
             const fetchResponse = await fetch(url);
             const json = await fetchResponse.json();
 

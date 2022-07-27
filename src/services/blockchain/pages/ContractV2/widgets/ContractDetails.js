@@ -20,7 +20,18 @@ import { useContractSettings } from '../hooks/useContractSettings';
 import AdvancedSettingsModal from './modal/AdvancedSettings.modal';
 import { NFT, BlankNFT } from './Nft';
 
-export const Details = ({ primary, secondary, isLoading }) => {
+export const Details = ({ primary, secondary, isLoading, secondaryType }) => {
+    const secondaryStyles = {
+        my: .5,
+        fontWeight: '400',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        paddingRight: 4,
+        color: '#404452',
+        fontSize: '14px',
+    };
+
     return (
         <React.Fragment>
             <Grid xs={4} item>
@@ -33,20 +44,9 @@ export const Details = ({ primary, secondary, isLoading }) => {
 
             <Grid xs={8} item>
                 <Stack gap={0.5} sx={{ color: 'black' }}>
-                    {!isLoading && <Typography
-                        sx={{
-                            my: .5,
-                            fontWeight: '400',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            paddingRight: 4,
-                            color: '#404452',
-													fontSize: '14px',
-                        }}
-                    >
-                        {secondary}
-                    </Typography> || <Skeleton sx={{ width: '50%', my: .5 }} />}
+                    {(!isLoading && secondaryType === 'element' && <Box sx={{ ...secondaryStyles }}>{secondary}</Box>)
+                        || (!isLoading && !secondaryType && <Typography sx={{ ...secondaryStyles }}>{secondary}</Typography>)
+                        || <Skeleton sx={{ width: '50%', my: .5 }} />}
                 </Stack>
             </Grid>
         </React.Fragment>
@@ -104,7 +104,7 @@ const ContractDetails = (props) => {
                             isLoading={isLoading}
                         />
 
-											{/*
+                        {/*
                         {!isLoading && contractState?.isRevealed && <Details
                             primary={<span style={{ minWidth: 110, marginRight: -12 }}>Reveal metadata</span>}
                             secondary={contract?.nftCollection?.baseUri}
@@ -118,7 +118,7 @@ const ContractDetails = (props) => {
                         /> || null}
 												*/}
 
-											{/*
+                        {/*
                         <Details
                             primary="Max per mint"
                             secondary={contractState?.maxPerMint}
@@ -131,7 +131,7 @@ const ContractDetails = (props) => {
                         />
 												*/}
 
-											{/*
+                        {/*
 
                         <Details
                             primary="Pre sale status"
@@ -148,15 +148,17 @@ const ContractDetails = (props) => {
 
                         <Details
                             primary="Sales status"
-                            secondary={<Chip 
-                                label={(contractState?.isPresaleOpen && contractState?.isPublicSaleOpen && 'Whitelist and Public Sales')
-                                || (contractState?.isPresaleOpen && 'Whitelist Only')
-                                || (contractState?.isPublicSaleOpen && 'Public Sales Only')
-                                || 'Closed'} 
-                                color={(contractState?.isPresaleOpen || contractState?.isPublicSaleOpen && 'success')
-                                || 'error'} 
-                                size="small"
-                            />}
+                            secondary={
+                                <Chip
+                                    label={(contractState?.isPresaleOpen && contractState?.isPublicSaleOpen && 'Whitelist and Public Sales')
+                                        || (contractState?.isPresaleOpen && 'Whitelist Only')
+                                        || (contractState?.isPublicSaleOpen && 'Public Sales Only')
+                                        || 'Closed'}
+                                    color={(contractState?.isPresaleOpen || contractState?.isPublicSaleOpen && 'success') || 'error'}
+                                    size="small"
+                                />
+                            }
+                            secondaryType="element"
                             isLoading={isLoading}
                         />
 
