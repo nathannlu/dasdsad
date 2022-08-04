@@ -69,6 +69,7 @@ const Preview = (props) => {
                 </Stack>
             </Grid>
 
+					{/*
             <Grid
                 sx={{
                     p: 3,
@@ -119,8 +120,9 @@ const Preview = (props) => {
                     </Box>
                 </Stack>
             </Grid>
+						*/}
 
-            {/* <Grid
+            <Grid
                 item
                 onClick={() => {
                     posthog.capture('User selected upload to personal storage');
@@ -154,7 +156,7 @@ const Preview = (props) => {
                         <Button fullWidth>Next</Button>
                     </Box>
                 </Stack>
-            </Grid> */}
+            </Grid>
         </Grid >
     );
 };

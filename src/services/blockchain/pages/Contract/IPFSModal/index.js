@@ -14,13 +14,13 @@ export const IPFSModalContent = (props) => {
     const [nftStorageType, setNftStorageType] = useState(); // 'ipfs' | 's3'
 
     // If contract is subscribed or if nftStorageType is 's3' skip to next step
-    const initialStep = (contract?.isSubscribed || contract?.nftStorageType === 's3' || nftStorageType === 's3') ? 4 : 1;
+    const initialStep = contract?.isSubscribed ? 4 : 1;
 
     return (
         <StepWizard initialStep={initialStep} transitions={{}}>
             <Preview setNftStorageType={setNftStorageType} contract={contract} />
             {/* user imports their own link */}
-            <ImportLink id={id} setIsModalOpen={setIsModalOpen} />
+            <ImportLink id={id} contract={contract} renderUploadUnRevealedImage={renderUploadUnRevealedImage}  setIsModalOpen={setIsModalOpen} />
 
             {/* uploads to ipfs with us */}
             < Payment contractId={id} contract={contract} nftStorageType={nftStorageType} />

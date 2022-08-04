@@ -49,10 +49,10 @@ const ContractV2 = () => {
 		setIsIPFSModalOpen
 	};
 
-	const hasMetadaUploaded = !!(contract?.nftCollection?.baseUri && contract?.nftCollection?.unRevealedBaseUri);
+	const hasMetadataUploaded = !!contract?.nftCollection?.baseUri;
 	const isContractDeployed = !!contract?.address;
 
-	if (!isContractDeployed || !hasMetadaUploaded) {
+	if (!isContractDeployed || !hasMetadataUploaded) {
 		return (
 			<Fade in={true}>
 				<Container>

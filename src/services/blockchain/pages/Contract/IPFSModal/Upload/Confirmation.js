@@ -179,8 +179,10 @@ const Confirmation = (props) => {
                 <Button
                     variant="contained"
                     onClick={() => {
+											/*
                         const unRevealedBaseUri = props.nftStorageType === 's3' ? `${unRevealedBaseUri}/` : unRevealedBaseUri;
                         const baseUri = props.nftStorageType === 's3' ? `${baseUri}/` : `${baseUri}`;
+												*/
 
                         if (props.renderUploadUnRevealedImage) {
                             setUnRevealedBaseUri({ variables: { unRevealedBaseUri, id: props.id } });
