@@ -31,9 +31,12 @@ const ethActions = [
 ];
 
 const solActions = [
+	/*
     // { title: 'Update price', value: 'price' },
     { title: 'Set whitelist token', value: 'whitelistToken' },
     { title: 'Set live date', value: 'livedate' },
+    { title: 'Set price', value: 'price' },
+		*/
 ];
 
 const Actions = ({ id, contract }) => {
