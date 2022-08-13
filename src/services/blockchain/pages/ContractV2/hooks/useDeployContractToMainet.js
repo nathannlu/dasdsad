@@ -117,7 +117,7 @@ export const useDeployContractToMainnet = (contract, contractState, id) => {
                  *  Save contract details in backend
                  */
                 setState(prevState => ({ ...prevState, activeDeploymentStep: 3 }));
-                await updateContractAddress({ variables: { id, address: contractAddress } });
+                await updateContractAddress({ variables: { id, address: contractAddress, blockchain } });
 
                 posthog.capture('User successfully deployed contract to mainnet blockchain', {
                     blockchain: blockchain,

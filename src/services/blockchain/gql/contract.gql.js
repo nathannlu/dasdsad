@@ -54,8 +54,8 @@ export const UPDATE_CONTRACT_DETAILS = gql`
 `;
 
 export const UPDATE_CONTRACT_ADDRESS = gql`
-    mutation UpdateContractAddress($id: ID!, $address: String!) {
-        updateContractAddress(id: $id, address: $address) {
+		mutation UpdateContractAddress($id: ID!, $address: String!, $blockchain: String) {
+				updateContractAddress(id: $id, address: $address, blockchain: $blockchain) {
             id
             name
             symbol
