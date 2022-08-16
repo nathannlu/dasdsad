@@ -13,6 +13,7 @@ import {
     Grid,
     Fade,
 } from 'ds/components';
+import PromotionalBanner from 'components/common/PromotionalBanner';
 import { Chip } from '@mui/material';
 import { useToast } from 'ds/hooks/useToast';
 import { CircularProgress } from 'ds/components';
@@ -87,6 +88,8 @@ const Dashboard = () => {
     ) : (
         <Fade in>
             <Container sx={{ pt: 4 }}>
+							<PromotionalBanner />
+
                 {contracts.length > 0 ? (
                     <Stack gap={2}>
                         <Stack direction="row" alignItems="center">

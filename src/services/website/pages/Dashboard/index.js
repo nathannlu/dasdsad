@@ -11,6 +11,7 @@ import {
 	Stack,
 	Typography,
 } from 'ds/components';
+import PromotionalBanner from 'components/common/PromotionalBanner';
 import { Link, useHistory } from 'react-router-dom';
 import { useWebsite } from 'services/website/provider';
 
@@ -30,8 +31,9 @@ const Pages = () => {
 				sx={{
 					flexGrow: 1,
 					overflow: 'hidden',
-					marginTop: '65px',
+					pt: 4
 				}}>
+				<PromotionalBanner />
 				{websites.length > 0 ? (
 					<Stack gap={2}>
 						<Stack direction="row" alignItems="center">
