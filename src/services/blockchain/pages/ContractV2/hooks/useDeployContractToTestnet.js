@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import posthog from 'posthog-js';
 
 import { useWeb3 } from 'libs/web3';
 import { useToast } from 'ds/hooks/useToast';
