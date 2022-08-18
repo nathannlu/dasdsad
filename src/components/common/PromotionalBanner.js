@@ -33,10 +33,7 @@ const PromotionalBanner = () => {
 						Launch NFTs better with animated minting websites
 					</Typography>
 					<Typography variant="body" sx={{ opacity: 0.8 }}>
-						Use Sigma to analyze your Stripe data in an interactive
-						SQL environment in the Dashboard. Customize and share
-						reports from payments, subscriptions, customers,
-						payouts, and more.
+						Skip the cost of hiring a designer and developer to create complex websites. Our website editor enables creators to create high-end websites for their NFT projects. Specifically designed and tested for launching NFT collections.
 					</Typography>
 					<Box>
 						<Button size="small">Sign up today - it's free!</Button>
