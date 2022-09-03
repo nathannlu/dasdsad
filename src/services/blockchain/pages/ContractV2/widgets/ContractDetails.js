@@ -53,6 +53,7 @@ export const Details = ({ primary, secondary, isLoading, secondaryType }) => {
     );
 }
 
+
 const ContractDetails = (props) => {
     const { contract, contractState, nftPrice, unRevealedtNftImage, revealedNftImage } = props;
     const {
@@ -68,6 +69,7 @@ const ContractDetails = (props) => {
 
     const isLoading = !contractState;
     const isTestnet = isTestnetBlockchain(contract?.blockchain);
+
 
     return (
         <Grid mt={4} container>
@@ -154,7 +156,7 @@ const ContractDetails = (props) => {
                                         || (contractState?.isPresaleOpen && 'Whitelist Only')
                                         || (contractState?.isPublicSaleOpen && 'Public Sales Only')
                                         || 'Closed'}
-                                    color={(contractState?.isPresaleOpen || contractState?.isPublicSaleOpen && 'success') || 'error'}
+																	color={contractState?.isPresaleOpen || contractState?.isPublicSaleOpen ? 'success' : 'error'}
                                     size="small"
                                 />
                             }
