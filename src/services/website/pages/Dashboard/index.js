@@ -33,7 +33,9 @@ const Pages = () => {
 					overflow: 'hidden',
 					pt: 4
 				}}>
+				{/*
 				<PromotionalBanner />
+				*/}
 				{websites.length > 0 ? (
 					<Stack gap={2}>
 						<Stack direction="row" alignItems="center">

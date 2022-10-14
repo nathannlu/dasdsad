@@ -88,7 +88,9 @@ const Dashboard = () => {
     ) : (
         <Fade in>
             <Container sx={{ pt: 4 }}>
+							{/*
 							<PromotionalBanner />
+							*/}
 
                 {contracts.length > 0 ? (
                     <Stack gap={2}>
