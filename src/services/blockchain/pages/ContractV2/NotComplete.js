@@ -42,7 +42,7 @@ const NotComplete = ({ contract }) => {
 
 				{hasMetadaUploaded && <Stack sx={{ py: 3, px: 2 }}>
 					<Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-						Deploy contract on <span sx={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
+						Deploy contract on <span style={{ textTransform: 'capitalize' }}>{contract?.blockchain}</span>
 					</Typography>
 					<Typography variant="body">
 						Deploy your smart contract to the blockchain in
