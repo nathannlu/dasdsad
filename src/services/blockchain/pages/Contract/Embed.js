@@ -22,6 +22,7 @@ const Embed = ({ contract, id }) => {
     useEffect(() => {
         let chainId;
         if (contract.blockchain === 'ethereum') chainId = '1';
+        else if (contract.blockchain === 'goerli') chainId = '5';
         else if (contract.blockchain === 'rinkeby') chainId = '4';
         else if (contract.blockchain === 'polygon') chainId = '89';
         else if (contract.blockchain === 'mumbai') chainId = '13881';
