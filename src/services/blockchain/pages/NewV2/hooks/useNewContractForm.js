@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { useWeb3 } from 'libs/web3';
 import posthog from 'posthog-js';
@@ -170,6 +170,7 @@ export const useNewContractForm = () => {
 				history.push(`/smart-contracts/${response?.data?.createContract?.id}`);
 			}
 		} catch (err) {
+			console.log(err)
 			onError(new Error("Error Saving contract details. Please contact an administrator."));
 		} finally {
 			setIsSaving(false);
