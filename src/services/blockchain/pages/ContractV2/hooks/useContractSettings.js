@@ -227,8 +227,9 @@ export const useContractSettings = () => {
 	}, [contractState]);
 
 	useEffect(() => {
+		if (!contract) return;
 		setPrice(contract?.nftCollection?.price || '1');
-	}, []);
+	}, [contract]);
 
 	return {
 		...state,
