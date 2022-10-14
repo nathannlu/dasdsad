@@ -119,7 +119,7 @@ const Dashboard = () => {
                         </Stack>
 
                         <Grid container>
-                            {contracts.map((contract, i) => {
+                            {contracts?.filter((contract) => contract.blockchain !== 'rinkeby')?.map((contract, i) => {
                                 const isSetupComplete = contract?.address && contract?.nftCollection?.baseUri;
                                 return (
                                     <Grid key={i} p={1} item xs={3}>

@@ -38,6 +38,7 @@ export const useMintButton = () => {
             } else {
                 // Metamask
                 await walletController?.loadWalletProvider('metamask');
+
                 await walletController?.compareNetwork(blockchain, async (e) => {
                     if (e) {
                         addToast({ severity: "error", message: e.message });

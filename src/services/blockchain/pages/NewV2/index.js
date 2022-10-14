@@ -22,7 +22,7 @@ import polygonLogo from 'assets/images/polygon.png';
 const contractTypes = [
 	{
 		title: 'Ethereum ERC-721a',
-		key: 'rinkeby',
+		key: 'goerli',
         standard: 'eth',
 		imgSrc: etherLogo,
 	},
