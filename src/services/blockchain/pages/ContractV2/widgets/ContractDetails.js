@@ -70,7 +70,6 @@ const ContractDetails = (props) => {
     const isLoading = !contractState;
     const isTestnet = isTestnetBlockchain(contract?.blockchain);
 
-
     return (
         <Grid mt={4} container>
             <Grid xs={6} item>
