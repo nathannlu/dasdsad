@@ -42,47 +42,36 @@ const Embed = ({ contract, id }) => {
 
         const css = getCssString(contract?.embed?.css && JSON.parse(contract?.embed.css) || undefined);
 
-        setEmbedCode(`<ambition-button chainid="${chainId}" contractaddress="${contractAddress}" type="${contractType}" classes='${JSON.stringify(classes)}'></ambition-button>
-        <script defer="defer" src="${bundleUrl}"></script>
-        <style>${css}</style>`);
+        setEmbedCode(`<ambition-button contractaddress="${contractAddress}"}'></ambition-button>
+        <script defer="defer" src="${bundleUrl}"></script>`);
 
-        setCustomEmbedCode(`
-            function handleOnLoad() {
-                const iframe = document.getElementById('iframe').contentWindow.document;
-                const ambitionButton = document.createElement("ambition-button");
+        setCustomEmbedCode(`function handleOnLoad() {
+        const iframe = document.getElementById('iframe').contentWindow.document;
+        const ambitionButton = document.createElement("ambition-button");
 
-                const chainid = document.createAttribute("chainid");
-                const contractaddress = document.createAttribute("contractaddress");
-                const type = document.createAttribute("type");
-                const classes = document.createAttribute("classes");
+        const contractaddress = document.createAttribute("contractaddress");
 
-                chainid.value = "${chainId}";
-                contractaddress.value = "${contractAddress}";
-                type.value = "${contractType}";
-                classes.value = JSON.stringify(${JSON.stringify(classes)});
+        contractaddress.value = "${contractAddress}";
 
-                ambitionButton.setAttributeNode(chainid);
-                ambitionButton.setAttributeNode(contractaddress);
-                ambitionButton.setAttributeNode(type);
-                ambitionButton.setAttributeNode(classes);
+        ambitionButton.setAttributeNode(contractaddress);
 
-                const script = document.createElement("script");
-                script.type = "text/javascript";
-                script.src = "https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js";
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js";
 
-                const style = document.createElement('style');
-                const css = \`${css}\`;
+        const style = document.createElement('style');
+        const css = \`${css}\`;
 
-                if (style.styleSheet) {
-                    style.styleSheet.cssText = css;
-                } else {
-                    style.appendChild(document.createTextNode(css));
-                }
+        if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
 
-                iframe.body.append(ambitionButton);
-                iframe.head.append(style);
-                iframe.head.append(script);
-            }
+        iframe.body.append(ambitionButton);
+        iframe.head.append(style);
+        iframe.head.append(script);
+        }
         `);
 
     }, [contract]);
@@ -103,7 +92,7 @@ const Embed = ({ contract, id }) => {
                     <TextField
                         fullWidth={true}
                         sx={{ mb: '1em' }}
-                        rows={12}
+                        rows={4}
                         multiline={true}
                         InputProps={{ readOnly: true }}
                         value={embedCode}
