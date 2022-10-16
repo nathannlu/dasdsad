@@ -28,8 +28,9 @@ const Embed = ({ contract, id }) => {
         else if (contract.blockchain === 'mumbai') chainId = '13881';
         else if (contract.blockchain === 'solana') chainId = 'solana';
         else if (contract.blockchain === 'solanadevnet') chainId = 'solanadevnet';
-        else throw new Error('blockchain not supported!');
+        else throw new Error('Blockchain not supported!');
 
+        const tailwindcss = 'https://cdn.tailwindcss.com';
         const bundleUrl = 'https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.v1.1.3.js';
         const contractAddress = contract?.address;
         // const contractType = contract?.type === 'erc721a' && 'erc721a' || 'erc721';
@@ -40,10 +41,10 @@ const Embed = ({ contract, id }) => {
         //     "details": "details"
         // };
 
-        const css = getCssString(contract?.embed?.css && JSON.parse(contract?.embed.css) || undefined);
+        //const css = getCssString(contract?.embed?.css && JSON.parse(contract?.embed.css) || undefined);
 
         setEmbedCode(`<ambition-button contractaddress="${contractAddress}"}'></ambition-button>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="${tailwindcss}"></script>
         <script defer="defer" src="${bundleUrl}"></script>
         `);
 
@@ -59,20 +60,15 @@ const Embed = ({ contract, id }) => {
 
         const script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = "https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js";
+        script.src = "${bundleUrl}";
 
-        const style = document.createElement('style');
-        const css = \`${css}\`;
-
-        if (style.styleSheet) {
-            style.styleSheet.cssText = css;
-        } else {
-            style.appendChild(document.createTextNode(css));
-        }
+        const script2 = document.createElement("script");
+        script2.type = "text/javascript";
+        script2.src = "${tailwindcss}";
 
         iframe.body.append(ambitionButton);
-        iframe.head.append(style);
         iframe.head.append(script);
+        iframe.head.append(script2);
         }
         `);
 
