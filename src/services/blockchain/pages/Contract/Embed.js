@@ -30,20 +30,22 @@ const Embed = ({ contract, id }) => {
         else if (contract.blockchain === 'solanadevnet') chainId = 'solanadevnet';
         else throw new Error('blockchain not supported!');
 
-        const bundleUrl = 'https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.js';
+        const bundleUrl = 'https://cdn.jsdelivr.net/gh/ambition-so/embed-prod-build@main/bundle.v1.1.3.js';
         const contractAddress = contract?.address;
-        const contractType = contract?.type === 'erc721a' && 'erc721a' || 'erc721';
-        const classes = {
-            "connect-button": "connect-button",
-            "mint-button": "mint-button",
-            "details-container": "details-container",
-            "details": "details"
-        };
+        // const contractType = contract?.type === 'erc721a' && 'erc721a' || 'erc721';
+        // const classes = {
+        //     "connect-button": "connect-button",
+        //     "mint-button": "mint-button",
+        //     "details-container": "details-container",
+        //     "details": "details"
+        // };
 
         const css = getCssString(contract?.embed?.css && JSON.parse(contract?.embed.css) || undefined);
 
         setEmbedCode(`<ambition-button contractaddress="${contractAddress}"}'></ambition-button>
-        <script defer="defer" src="${bundleUrl}"></script>`);
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script defer="defer" src="${bundleUrl}"></script>
+        `);
 
         setCustomEmbedCode(`function handleOnLoad() {
         const iframe = document.getElementById('iframe').contentWindow.document;
