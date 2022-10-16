@@ -43,7 +43,7 @@ const Embed = ({ contract, id }) => {
 
         //const css = getCssString(contract?.embed?.css && JSON.parse(contract?.embed.css) || undefined);
 
-        setEmbedCode(`<ambition-button contractaddress="${contractAddress}"}'></ambition-button>
+        setEmbedCode(`<ambition-button contractaddress="${contractAddress}"></ambition-button>
         <script src="${tailwindcss}"></script>
         <script defer="defer" src="${bundleUrl}"></script>
         `);
