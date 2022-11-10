@@ -28,14 +28,18 @@ export const useSolana = () => {
         },
     });
 
-    const handleDeploymentSuccess = async (id, candyMachineAddress) => {
+    const handleDeploymentSuccess = async (id, candyMachineAddress, env) => {
         posthog.capture('User deployed contract to Solana blockchain', {
             $set: {
                 deployedContract: true,
             },
         });
+
+			console.log(env)
+			const blockchain = env == 'devnet' ? 'solanadevnet' : 'solana';
+			console.log(blockchain)
         posthog.capture('User successfully deployed contract to blockchain', {
-            blockchain: 'solana',
+            blockchain: blockchain,
             version: '1'
         });
         await updateContractAddress({
@@ -128,7 +132,7 @@ export const useSolana = () => {
                 env,
             });
 
-            await handleDeploymentSuccess(id, res?.candyMachineAddress);
+            await handleDeploymentSuccess(id, res?.candyMachineAddress, env);
         } catch (err) {
 
             let message = 'Please open a ticket in Discord for help. Error: ' + err;
