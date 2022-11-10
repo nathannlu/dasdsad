@@ -30,6 +30,41 @@ const ImportLink = (props) => {
     });
 
 
+	const saveUrls = () => {
+		if(props.renderUploadUnRevealedImage && !(unrevealedIpfsUrl.length > 1)) {
+			addToast({
+				severity: 'error',
+				message: 'Unrevealed metadata URL field must be filled'
+			});
+			return;
+		}
+		if(!(ipfsUrl.length > 1)) {
+			addToast({
+				severity: 'error',
+				message: 'Collection metadata URL field must be filled'
+			});
+			return;
+		}
+
+
+		// @TODO log to Posthog imported custom URL
+		if (props.renderUploadUnRevealedImage) {
+			setUnRevealedBaseUri({ variables: { unRevealedBaseUri: unrevealedIpfsUrl, id: props.id } });
+		}
+
+		setBaseUri({ variables: { baseUri: ipfsUrl, id: props.id } });
+
+
+
+		/*
+			setBaseUri({
+					variables: { baseUri: ipfsUrl, id: props.id },
+			})
+			*/
+		
+	}
+
+
     return (
         <Stack gap={2}>
             <Box>
@@ -71,34 +106,7 @@ const ImportLink = (props) => {
 
             <Button
                 variant="contained"
-                onClick={() => {
-									if(props.renderUploadUnRevealedImage && !(unrevealedIpfsUrl.length > 1)) {
-										addToast({
-											severity: 'error',
-											message: 'Unrevealed metadata URL field must be filled'
-										});
-										return;
-									}
-									if(!(ipfsUrl.length > 1)) {
-										addToast({
-											severity: 'error',
-											message: 'Collection metadata URL field must be filled'
-										});
-										return;
-									}
-
-									if (props.renderUploadUnRevealedImage) {
-										setUnRevealedBaseUri({ variables: { unRevealedBaseUri: unrevealedIpfsUrl, id: props.id } });
-									}
-
-									setBaseUri({ variables: { baseUri: ipfsUrl, id: props.id } });
-
-									/*
-                    setBaseUri({
-                        variables: { baseUri: ipfsUrl, id: props.id },
-                    })
-										*/
-                }}>
+                onClick={saveUrls}>
                 Confirm
             </Button>
         </Stack>

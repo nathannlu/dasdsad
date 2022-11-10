@@ -40,6 +40,23 @@ const Confirmation = (props) => {
         },
     });
 
+	const saveUrls = () => {
+	/*
+		const unRevealedBaseUri = props.nftStorageType === 's3' ? `${unRevealedBaseUri}/` : unRevealedBaseUri;
+		const baseUri = props.nftStorageType === 's3' ? `${baseUri}/` : `${baseUri}`;
+		*/
+
+
+		// @TODO log to posthog - uploaded to ipfs
+
+
+		if (props.renderUploadUnRevealedImage) {
+				setUnRevealedBaseUri({ variables: { unRevealedBaseUri, id: props.id } });
+		}
+
+		setBaseUri({ variables: { baseUri, id: props.id } });
+	}
+
     /**
      * restrict user from proceeding if
      * - imagesUrl is null
@@ -178,18 +195,7 @@ const Confirmation = (props) => {
             <Box display='flex' justifyContent='flex-end' width='100%'>
                 <Button
                     variant="contained"
-                    onClick={() => {
-											/*
-                        const unRevealedBaseUri = props.nftStorageType === 's3' ? `${unRevealedBaseUri}/` : unRevealedBaseUri;
-                        const baseUri = props.nftStorageType === 's3' ? `${baseUri}/` : `${baseUri}`;
-												*/
-
-                        if (props.renderUploadUnRevealedImage) {
-                            setUnRevealedBaseUri({ variables: { unRevealedBaseUri, id: props.id } });
-                        }
-
-                        setBaseUri({ variables: { baseUri, id: props.id } });
-                    }}
+                    onClick={saveUrls}
                 >
                     Confirm
                 </Button>

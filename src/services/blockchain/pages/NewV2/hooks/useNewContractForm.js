@@ -161,12 +161,20 @@ export const useNewContractForm = () => {
 					currency: getBlockchainCurrency(state.activeBlockchain)
 				}
 			};
-			console.log(contractInput)
 			const response = await createContract({ variables: { contract: contractInput } });
 
+			
+
 			if (response?.data?.createContract?.type === CONTRACT_VERSION) {
+				// Log to posthog
+				posthog.capture('User created contract in dashboard', {
+					blockchain: 'ethereum',
+				});
+
 				history.push(`/smart-contracts/v2/${response?.data?.createContract?.id}`);
 			} else {
+				// Solana contract creation is logged in /New/index.js
+
 				history.push(`/smart-contracts/${response?.data?.createContract?.id}`);
 			}
 		} catch (err) {

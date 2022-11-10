@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import posthog from 'posthog-js';
 
 export const useDeployContractForm = () => {
+    const { selectInput } = useContract();
     const { form: deployContractForm } = useForm({
         name: {
             default: '',
@@ -48,6 +49,12 @@ export const useDeployContractForm = () => {
             message: 'Smart contract successfully created',
         });
         posthog.capture('User created contract');
+
+				posthog.capture('User created contract in dashboard', {
+					blockchain: selectInput	
+				});
+
+
         handleRedirect();
     };
 
