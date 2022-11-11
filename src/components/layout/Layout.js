@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Box, Button, Container, Navbar, Stack } from '../../ds/components';
 
 const links = [
-    { value: 'Blockchain', link: '/dashboard' },
+    { value: 'Blockchain', link: '/smart-contracts' },
     { value: 'Website', link: '/websites' },
 ];
 

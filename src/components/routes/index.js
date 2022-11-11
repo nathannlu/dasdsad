@@ -9,6 +9,7 @@ import ForgotPassword from 'components/pages/Auth/ForgotPassword';
 import Reset from 'components/pages/Auth/Reset';
 //import Generator from 'services/generator';
 
+import Dashboard from 'components/pages/Dashboard';
 import New from 'services/generator/pages/New';
 import Collection from 'services/generator/pages/Collection';
 
@@ -35,6 +36,11 @@ const GlobalRoutes = () => {
             exact: true,
         },
         {
+            path: '/dashboard',
+            component: Dashboard,
+            exact: true,
+        },
+        {
             path: '/generator/download',
             component: Collection,
             private: true,
@@ -50,7 +56,7 @@ const GlobalRoutes = () => {
             exact: true,
         },
 
-        { path: '/', component: () => <Redirect to="/login" />, exact: true },
+        { path: '/', component: () => <Redirect to="/dashboard" />, exact: true },
 
         /**
          * if none of the above routes match, load dashboard routes
