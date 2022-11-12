@@ -15,11 +15,13 @@ import {
 } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { getNftStorageTypeLabel } from 'ambition-constants';
+import { useAnalytics } from 'libs/analytics';
 
 const Confirmation = (props) => {
     const { imagesUrl, baseUri, metadataUrl, ipfsUrl, unRevealedBaseUri } = useContract();
     const { addToast } = useToast();
     const [metadataPreview, setMetadataPreview] = useState();
+	const { trackUploadToIPFS } = useAnalytics();
 
     const [setBaseUri] = useSetBaseUri({
         onCompleted: () => {
@@ -48,7 +50,7 @@ const Confirmation = (props) => {
 
 
 		// @TODO log to posthog - uploaded to ipfs
-
+		trackUploadToIPFS();
 
 		if (props.renderUploadUnRevealedImage) {
 				setUnRevealedBaseUri({ variables: { unRevealedBaseUri, id: props.id } });

@@ -8,6 +8,7 @@ import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
 import { useCreateContract } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
+import { useAnalytics } from 'libs/analytics';
 
 import { ContractController, getBlockchainCurrency } from '@ambition-blockchain/controllers';
 
@@ -22,6 +23,7 @@ export const useNewContractForm = () => {
 	const { walletController } = useWeb3();
 	const { addToast } = useToast();
 	const { setContract, contract, setContracts, contracts } = useContract();
+	const { trackContractCreation } = useAnalytics();
 
 	/**
 	 * General configuration
@@ -167,9 +169,14 @@ export const useNewContractForm = () => {
 
 			if (response?.data?.createContract?.type === CONTRACT_VERSION) {
 				// Log to posthog
+				/*
 				posthog.capture('User created contract in dashboard', {
 					blockchain: 'ethereum',
 				});
+				*/
+
+
+				trackContractCreation();
 
 				history.push(`/smart-contracts/v2/${response?.data?.createContract?.id}`);
 			} else {

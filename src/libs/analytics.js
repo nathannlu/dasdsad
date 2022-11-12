@@ -22,9 +22,51 @@ export const useAnalytics = () => {
         }
     };
 
+
+
+
+		// Website tracking
+
     return {
         initGA,
         initPosthog,
         initLogRocket,
+			...launchpadTracking
     };
 };
+
+const launchpadTracking = {
+	logUserClickedOnCollection: () => {
+		posthog.capture('User selected service', {
+			service: 'NFT launchpad',
+		});
+	},
+	logUserClickedOnWebsite: () => {
+		posthog.capture('User selected service', {
+			service: 'Website builder',
+		});
+	},
+	trackUploadToIPFS: () => {
+		posthog.capture('User connected NFT images + metadata', {
+			service: 'Paid',
+		});
+	},
+	trackPersonalIPFS: () => {
+		posthog.capture('User connected NFT images + metadata', {
+			service: 'Personal',
+		});
+	},
+	// Used to track contract creation on our server-side
+	trackContractCreation: () => {
+		posthog.capture('User created contract in dashboard', {
+			blockchain: 'ethereum',
+		});
+	},
+	// Used to track mainnet/testnet eth, sol devnet/mainnet deployments
+	trackContractDeployment: (blockchain) => {
+		posthog.capture('User successfully deployed contract to blockchain', {
+			blockchain,
+			version: '2'
+		});
+	}
+}

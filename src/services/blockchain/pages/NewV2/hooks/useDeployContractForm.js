@@ -4,6 +4,7 @@ import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
 import { useCreateContract, useUpdateContractDetails } from 'services/blockchain/gql/hooks/contract.hook';
 import { useContract } from 'services/blockchain/provider';
+import { useAnalytics } from 'libs/analytics';
 
 import { ContractController, getBlockchainType, getBlockchainCurrency } from '@ambition-blockchain/controllers';
 
@@ -16,6 +17,7 @@ export const useDeployContractForm = () => {
 
 	const { addToast } = useToast();
 	const { setContract, contract, setContracts, contracts } = useContract();
+	const { trackContractDeployment } = useAnalytics();
 
 	const [state, setState] = useState({
 		formValidationErrors: {
@@ -81,7 +83,7 @@ export const useDeployContractForm = () => {
 
 			setContract(data?.createContract);
 			setContractState(data?.createContract);
-			posthog.capture('User created contract');
+//			posthog.capture('User created contract');
 		}
 	});
 
@@ -215,10 +217,14 @@ export const useDeployContractForm = () => {
 				// Save contract details in backend
 				await saveContract(contractAddress);
 
+				/*
 				posthog.capture('User successfully deployed contract to blockchain', {
 					blockchain,
 					version: '2'
 				});
+				*/
+
+				trackContractDeployment(blockchain);
 			});
 		} catch (e) {
 			console.log(e, 'Error! deploying contract.');

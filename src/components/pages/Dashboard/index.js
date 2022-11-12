@@ -14,20 +14,11 @@ import {
 	Fade,
 } from 'ds/components';
 import posthog from 'posthog-js';
+import { useAnalytics } from 'libs/analytics';
 
 const Dashboard = () => {
+	const { logUserClickedOnCollection, logUserClickedOnWebsite } = useAnalytics()
 
-	const logUserClickedOnCollection = () => {
-		posthog.capture('User selected service', {
-			service: 'NFT launchpad',
-		});
-	}
-
-	const logUserClickedOnWebsite = () => {
-		posthog.capture('User selected service', {
-			service: 'Website builder',
-		});
-	}
 
 
 	return (

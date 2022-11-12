@@ -4,9 +4,11 @@ import { useUpdateContractAddress } from 'services/blockchain/gql/hooks/contract
 import { useContract } from 'services/blockchain/provider';
 import { createSolanaContract } from 'solana';
 import { useIPFS } from './useIPFS';
+import { useAnalytics } from 'libs/analytics';
 
 export const useSolana = () => {
     const { getIpfsGatewayUrl } = useIPFS();
+	const { trackContractDeployment } = useAnalytics();
     const { setLoading, setError, setStart, selectInput, ipfsUrl } = useContract();
     const { addToast } = useToast();
     const [updateContractAddress] = useUpdateContractAddress({
@@ -29,19 +31,24 @@ export const useSolana = () => {
     });
 
     const handleDeploymentSuccess = async (id, candyMachineAddress, env) => {
+			/*
         posthog.capture('User deployed contract to Solana blockchain', {
             $set: {
                 deployedContract: true,
             },
         });
+				*/
 
-			console.log(env)
 			const blockchain = env == 'devnet' ? 'solanadevnet' : 'solana';
-			console.log(blockchain)
+
+			/*
         posthog.capture('User successfully deployed contract to blockchain', {
             blockchain: blockchain,
             version: '1'
         });
+				*/
+
+			trackContractDeployment(blockchain);
         await updateContractAddress({
             variables: { id: id, address: candyMachineAddress },
         });

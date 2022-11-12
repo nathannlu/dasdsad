@@ -5,9 +5,12 @@ import {
     useSetUnRevealedBaseUri,
 } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
+import { useAnalytics } from 'libs/analytics';
+
 
 const ImportLink = (props) => {
     const [ipfsUrl, setIpfsUrl] = useState('');
+	const { trackPersonalIPFS } = useAnalytics();
 		const [unrevealedIpfsUrl, setUnrevealedIpfsUrl] = useState('');
     const { addToast } = useToast();
     const [setBaseUri] = useSetBaseUri({
@@ -48,6 +51,7 @@ const ImportLink = (props) => {
 
 
 		// @TODO log to Posthog imported custom URL
+		trackPersonalIPFS()
 		if (props.renderUploadUnRevealedImage) {
 			setUnRevealedBaseUri({ variables: { unRevealedBaseUri: unrevealedIpfsUrl, id: props.id } });
 		}
