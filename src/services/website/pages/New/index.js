@@ -114,7 +114,7 @@ const Website = (props) => {
                         color: '#000',
                     }}>
                     <Stack direction="row" px={2} gap={2} alignItems="center">
-                        <IconButton onClick={() => history.goBack()}>
+                        <IconButton onClick={() => history.push('/websites')}>
                             <CloseIcon sx={{ fontSize: '18px' }} />
                         </IconButton>
                         <Divider

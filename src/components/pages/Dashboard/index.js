@@ -33,14 +33,13 @@ const Dashboard = () => {
 								p: 3,
 								mb: 3,
 								width: '100%',
-								color: 'white',
-								border: '1px solid rgba(255,255,255,.15)',
-								borderRadius: '5px',
-								backgroundImage:
-									'linear-gradient(to top right, #5CC9FA, #7371FF)',
+								color: '#000',
+								border: '1px solid rgb(226, 226, 226)',
+								borderRadius: '12px',
+								background: 'rgb(246, 242, 240)',
 								transition: 'all .2s',
 								'&:hover': {
-									boxShadow: '0 0 30px rgba(0,0,0,.3)',
+									boxShadow: '0 0 30px rgba(0,0,0,.15)',
 								},
 							}}>
 							<Stack>
@@ -60,10 +59,7 @@ const Dashboard = () => {
 									zero code smart contracts today!
 								</Typography>
 								<Box>
-									<Button
-										color="black"
-										variant="contained"
-										size="small">
+									<Button sx={{width: '100%'}} variant="outlined" size="small">
 										Start today!
 									</Button>
 								</Box>
@@ -77,11 +73,10 @@ const Dashboard = () => {
 								p: 3,
 								mb: 3,
 								width: '100%',
-								color: 'white',
-								border: '1px solid rgba(255,255,255,.15)',
-								borderRadius: '5px',
-								backgroundImage:
-									'linear-gradient(to top right, #577B93, #8CC098)',
+								color: '#fff',
+								border: '1px solid rgb(226, 226, 226)',
+								borderRadius: '12px',
+								background: 'rgb(20, 35, 40)',
 								transition: 'all .2s',
 								'&:hover': {
 									boxShadow: '0 0 30px rgba(0,0,0,.3)',
@@ -106,8 +101,8 @@ const Dashboard = () => {
 								</Typography>
 								<Box>
 									<Button
-										variant="contained"
-										color="black"
+										sx={{width:'100%'}}
+										variant="outlined"
 										size="small">
 										Start today!
 									</Button>
