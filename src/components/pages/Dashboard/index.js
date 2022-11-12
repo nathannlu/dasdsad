@@ -54,7 +54,9 @@ const Dashboard = () => {
 								},
 							}}>
 							<Stack>
+								<img style={{height:'100px', objectFit: 'contain'}} src="/images/cards-01.svg" />
 								<Typography
+									mt={1}
 									sx={{ fontWeight: 'semibold' }}
 									variant="h5">
 									I want to launch an NFT collection
@@ -96,7 +98,9 @@ const Dashboard = () => {
 								},
 							}}>
 							<Stack>
+								<img style={{height:'100px', objectFit: 'contain'}} src="/images/minting-website.png" />
 								<Typography
+									mt={1}
 									sx={{ fontWeight: 'semibold' }}
 									variant="h5">
 									I want to build a minting website
