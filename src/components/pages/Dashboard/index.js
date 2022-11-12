@@ -20,7 +20,6 @@ const Dashboard = () => {
 	const { logUserClickedOnCollection, logUserClickedOnWebsite } = useAnalytics()
 
 
-
 	return (
 		<Fade in>
 			<Container sx={{ pt: 4 }}>
@@ -45,7 +44,7 @@ const Dashboard = () => {
 								},
 							}}>
 							<Stack>
-								<img style={{height:'100px', objectFit: 'contain'}} src="/images/cards-01.svg" />
+								<img style={{height:'100px', objectFit: 'contain'}} src="/assets/images/cards-01.svg" />
 								<Typography
 									mt={1}
 									sx={{ fontWeight: 'semibold' }}
@@ -89,7 +88,7 @@ const Dashboard = () => {
 								},
 							}}>
 							<Stack>
-								<img style={{height:'100px', objectFit: 'contain'}} src="/images/minting-website.png" />
+								<img style={{height:'100px', objectFit: 'contain'}} src="/assets/images/minting-website.png" />
 								<Typography
 									mt={1}
 									sx={{ fontWeight: 'semibold' }}
