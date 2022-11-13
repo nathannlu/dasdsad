@@ -5,6 +5,7 @@ import {
     useRemovePageFromPublish,
 } from 'services/website/gql/hooks/website.hook';
 import { useToast } from 'ds/hooks/useToast';
+import { useAnalytics } from 'libs/analytics';
 
 const useBuilderNavbar = () => {
     const { addToast } = useToast();
@@ -26,6 +27,7 @@ const useBuilderNavbar = () => {
                 message: err.message,
             }),
     });
+	const { trackUserPublishWebsite } = useAnalytics();
 
     const onPublish = (e) => {
 			/*
@@ -93,6 +95,8 @@ const useBuilderNavbar = () => {
                     message: 'This page has been published',
                 });
                 setIsPublishing(false);
+
+							trackUserPublishWebsite();
             }
         } catch (err) {
             setIsPublishing(false);

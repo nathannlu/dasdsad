@@ -12,6 +12,7 @@ import lz from 'lzutf8';
 import deflate from 'deflate-js';
 import CryptoJS from 'crypto-js';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
+import { useAnalytics } from 'libs/analytics';
 
 export const WebsiteContext = React.createContext({});
 
@@ -31,6 +32,7 @@ export const WebsiteProvider = ({ children }) => {
     const [importABI, setImportABI] = useState('');
     const [ABIFunctions, setABIFunctions] = useState([]);
     const { user } = useAuth();
+	const { trackUserSaveWebsite } = useAnalytics();
     const [updatePageData] = useUpdatePageData({
         onCompleted: () =>
             addToast({
@@ -80,6 +82,7 @@ export const WebsiteProvider = ({ children }) => {
 
     const onSave = async (query) => {
             onSaveChanges(query);
+			trackUserSaveWebsite();
 			/*
         if (!website.isSubscribed) {
             setIsCheckoutModalOpen(true);

@@ -31,7 +31,8 @@ export const useAnalytics = () => {
         initGA,
         initPosthog,
         initLogRocket,
-			...launchpadTracking
+			...launchpadTracking,
+			...websiteBuilderTracking
     };
 };
 
@@ -70,3 +71,17 @@ const launchpadTracking = {
 		});
 	}
 }
+
+const websiteBuilderTracking = {
+	trackUserCreatedWebsite: (template) => {
+		posthog.capture('User created website in dashboard', {
+			template,
+		});
+	},
+	trackUserSaveWebsite: () => {
+		posthog.capture('User saved website progress');
+	},
+	trackUserPublishWebsite: () => {
+		posthog.capture('User published website to live');
+	},
+};

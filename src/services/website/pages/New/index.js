@@ -23,6 +23,7 @@ import { useGetContracts } from 'services/blockchain/gql/hooks/contract.hook';
 import { useToast } from 'ds/hooks/useToast';
 import { useHistory } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
+import { useAnalytics } from 'libs/analytics';
 
 const templates = [
 	{ title: 'Blank', value: 'BLANK' },
@@ -30,6 +31,7 @@ const templates = [
 ];
 
 const Website = (props) => {
+	const { trackUserCreatedWebsite } = useAnalytics();
     const [contracts, setContracts] = useState([]);
     const [websiteTitle, setWebsiteTitle] = useState('');
 	const { websites, setWebsites } = useWebsite();
@@ -47,6 +49,8 @@ const Website = (props) => {
                 severity: 'success',
                 message: 'Website created',
             });
+					const template = selectedTemplate == templates[1].value ? 'BAYC' : 'Blank'
+					trackUserCreatedWebsite(template)
 
 						setWebsites([...websites, data?.createWebsite])
             history.push('/websites');

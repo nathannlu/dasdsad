@@ -23,10 +23,13 @@ const Dashboard = () => {
 	return (
 		<Fade in>
 			<Container sx={{ pt: 4 }}>
-				<Typography variant="h2" mb={2}>
-					Welcome!
+				<Typography variant="h3" sx={{fontWeight: 'bold'}}>
+					Welcome
 				</Typography>
-				<Stack direction="horizontal" gap={2}>
+				<Typography variant="body">
+					Let's start working on your NFT project.
+				</Typography>
+				<Stack direction="horizontal" mt={3} gap={2}>
 					<Link onClick={logUserClickedOnCollection} style={{width: '100%'}} to="/smart-contracts/v2/new">
 						<Box
 							sx={{
@@ -48,7 +51,7 @@ const Dashboard = () => {
 									mt={1}
 									sx={{ fontWeight: 'semibold' }}
 									variant="h5">
-									I want to launch an NFT collection
+									Launch an NFT collection
 								</Typography>
 								<Typography
 									variant="body"
@@ -92,16 +95,16 @@ const Dashboard = () => {
 								<img style={{height:'100px', objectFit: 'contain'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/637037684a3e3c57f3990b6c_minting-website.png" />
 								<Typography
 									mt={1}
-									sx={{ fontWeight: 'semibold' }}
+									sx={{ fontWeight: 500 }}
 									variant="h5">
-									I want to build a minting website
+									Build a minting website
 								</Typography>
 								<Typography
 									variant="body"
 									sx={{ opacity: 0.8 }}
 									mb={2}>
 									Our website editor enables creators to create
-									high-end websites for their NFT projects.
+									minting websites for their NFT projects.
 									Specifically designed for
 									launching NFT collections.
 								</Typography>
