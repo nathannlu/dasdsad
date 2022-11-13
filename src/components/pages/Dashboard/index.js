@@ -125,6 +125,9 @@ const Dashboard = () => {
 						</Box>
 					</Link>
 				</Stack>
+				<Link to="/smart-contracts">
+					View existing projects →
+				</Link>
 			</Container>
 		</Fade>
 	);
