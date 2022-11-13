@@ -43,7 +43,7 @@ const Dashboard = () => {
 								},
 							}}>
 							<Stack>
-								<img style={{height:'100px', objectFit: 'contain'}} src="/assets/images/cards-01.svg" />
+								<img style={{height:'100px', objectFit: 'contain'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/63703766a2ecca669adb9faf_cards-01.svg" />
 								<Typography
 									mt={1}
 									sx={{ fontWeight: 'semibold' }}
@@ -58,11 +58,17 @@ const Dashboard = () => {
 									to testnet or mainnet? Deploy our advanced
 									zero code smart contracts today!
 								</Typography>
-								<Box>
-									<Button sx={{width: '100%'}} variant="outlined" size="small">
-										Start today!
-									</Button>
-								</Box>
+								<Stack direction="row">
+									<Box sx={{
+										padding: '8px 12px',
+										background: 'white',
+										borderRadius: '9999px',
+										fontSize: '14px',
+										fontWeight: 500
+									}}>
+										Start today →
+									</Box>
+								</Stack>
 							</Stack>
 						</Box>
 					</Link>
@@ -83,7 +89,7 @@ const Dashboard = () => {
 								},
 							}}>
 							<Stack>
-								<img style={{height:'100px', objectFit: 'contain'}} src="/assets/images/minting-website.png" />
+								<img style={{height:'100px', objectFit: 'contain'}} src="https://uploads-ssl.webflow.com/61a5732dd539a17ad13b60fb/637037684a3e3c57f3990b6c_minting-website.png" />
 								<Typography
 									mt={1}
 									sx={{ fontWeight: 'semibold' }}
@@ -99,14 +105,19 @@ const Dashboard = () => {
 									Specifically designed for
 									launching NFT collections.
 								</Typography>
-								<Box>
-									<Button
-										sx={{width:'100%'}}
-										variant="outlined"
-										size="small">
-										Start today!
-									</Button>
-								</Box>
+								<Stack direction="row">
+									<Box sx={{
+										color: '#000',
+										padding: '8px 12px',
+										background: 'white',
+										borderRadius: '9999px',
+										fontSize: '14px',
+										fontWeight: 500
+									}}>
+										Start today →
+									</Box>
+								</Stack>
+
 							</Stack>
 						</Box>
 					</Link>
