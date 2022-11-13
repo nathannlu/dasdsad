@@ -32,7 +32,8 @@ export const useAnalytics = () => {
         initPosthog,
         initLogRocket,
 			...launchpadTracking,
-			...websiteBuilderTracking
+			...websiteBuilderTracking,
+			...authTracking
     };
 };
 
@@ -84,4 +85,13 @@ const websiteBuilderTracking = {
 	trackUserPublishWebsite: () => {
 		posthog.capture('User published website to live');
 	},
+};
+
+const authTracking = {
+	// @param type - metamask | phantom | email
+	trackUserLoggedIn: (type) => {
+		posthog.capture('User logged into web app', {
+			type,
+		})
+	}
 };

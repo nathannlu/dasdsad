@@ -7,6 +7,7 @@ import { WalletController } from '@ambition-blockchain/controllers';
 import NFTCollectible from 'services/blockchain/blockchains/ethereum/abis/ambitionNFTPresale.json';
 
 import { useToast } from 'ds/hooks/useToast';
+import { useAnalytics } from 'libs/analytics';
 
 import {
     useGetNonceByAddress,
@@ -29,6 +30,7 @@ export const Web3Provider = ({ children }) => {
 		walletType: null,
 		walletAddress: null,
 	});
+	const { trackUserLoggedIn } = useAnalytics();
 
     const [contractVarsState, setContractVarsState] = useState(false);
 
@@ -40,7 +42,9 @@ export const Web3Provider = ({ children }) => {
     const [verifySignature] = useVerifySignature({
         onCompleted: async (data) => {
             const walletAddress = walletController?.state.address;
-            posthog.capture('User logged in with metamask', { $set: { publicAddress: walletAddress } });
+//            posthog.capture('User logged in with metamask', { $set: { publicAddress: walletAddress } });
+						trackUserLoggedIn('metamask')
+
             window.localStorage.setItem('ambition-wallet', 'metamask');
             await handleLoginSuccess();
         },
@@ -49,7 +53,9 @@ export const Web3Provider = ({ children }) => {
     const [verifySignaturePhantom] = useVerifySignaturePhantom({
         onCompleted: async (data) => {
             const walletAddress = walletController?.state.address;
-            posthog.capture('User logged in with phantom', { $set: { publicAddress: walletAddress } });
+//            posthog.capture('User logged in with phantom', { $set: { publicAddress: walletAddress } });
+						trackUserLoggedIn('phantom')
+
             window.localStorage.setItem('ambition-wallet', 'phantom');
             await handleLoginSuccess();
         },

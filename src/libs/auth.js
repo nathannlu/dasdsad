@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useAnalytics } from 'libs/analytics';
 //import { useWebsite } from 'libs/website';
 //import { setAuthToken } from './api';
 
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+	const { trackUserLoggedIn } = useAnalytics();
 
     const setAuthTokenInLocalStorage = (authToken) => {
         //setAuthToken(authToken)
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     const onLoginSuccess = ({ user, token }) => {
         setAuthTokenInLocalStorage(token);
+				trackUserLoggedIn('email')
         setUser(user);
     };
 
