@@ -120,7 +120,6 @@ const Dashboard = () => {
 										Start today →
 									</Box>
 								</Stack>
-
 							</Stack>
 						</Box>
 					</Link>

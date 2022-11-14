@@ -104,11 +104,13 @@ const Dashboard = () => {
                                 </Typography>
                             </Box>
                             <Stack gap={1} direction="row" sx={{ ml: 'auto' }}>
+															{/*
                                 <a href="/generator">
                                     <Button size="small">
                                         Generate your collection
                                     </Button>
                                 </a>
+																*/}
                                 <Link to="/smart-contracts/v2/new">
                                     <Button
                                         size="small"

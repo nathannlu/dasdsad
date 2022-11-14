@@ -39,6 +39,7 @@ const GlobalRoutes = () => {
             path: '/dashboard',
             component: Dashboard,
             exact: true,
+					private: true,
         },
         {
             path: '/generator/download',
