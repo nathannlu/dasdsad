@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Box,
 	Divider,
@@ -42,7 +42,7 @@ const contractTypes = [
 
 const NewV2 = () => {
 	const history = useHistory();
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(true);
 	const {
 		newContractForm: { name, symbol, maxSupply, price },
 		isSaving,
@@ -53,6 +53,14 @@ const NewV2 = () => {
 		saveContract,
 	} = useNewContractForm();
     const { walletState } = useWeb3();
+
+	useEffect(() => {
+		if (walletState?.walletType === 'phantom') {
+                                                history.push("/smart-contracts/new")
+		} else {
+			setActiveBlockchain('goreli')
+		}
+	},[]);
 
 	return (
 		<Box sx={{ background: '#f5f5f5', minHeight: '100vh' }}>
