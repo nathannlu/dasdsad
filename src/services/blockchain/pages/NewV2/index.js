@@ -58,7 +58,7 @@ const NewV2 = () => {
 		if (walletState?.walletType === 'phantom') {
                                                 history.push("/smart-contracts/new")
 		} else {
-			setActiveBlockchain('goreli')
+			setActiveBlockchain('goerli')
 		}
 	},[]);
 
