@@ -14,6 +14,7 @@ import {
 import { useHistory } from 'react-router-dom';
 import { useNewContractForm } from './hooks/useNewContractForm';
 import { useWeb3 } from 'libs/web3'
+import posthog from 'posthog-js';
 
 import solanaLogo from 'assets/images/solana.png';
 import etherLogo from 'assets/images/ether.png';
@@ -42,7 +43,7 @@ const contractTypes = [
 
 const NewV2 = () => {
 	const history = useHistory();
-	const [isModalOpen, setIsModalOpen] = useState(true);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {
 		newContractForm: { name, symbol, maxSupply, price },
 		isSaving,
@@ -55,11 +56,14 @@ const NewV2 = () => {
     const { walletState } = useWeb3();
 
 	useEffect(() => {
-		if (walletState?.walletType === 'phantom') {
-                                                history.push("/smart-contracts/new")
-		} else {
-			setActiveBlockchain('goerli')
-		}
+		if (posthog.isFeatureEnabled('ab_test_1')) {
+			if (walletState?.walletType === 'phantom') {
+        history.push("/smart-contracts/new")
+			} else {
+				setActiveBlockchain('goerli')
+			}
+			setIsModalOpen(true)
+		} 
 	},[]);
 
 	return (

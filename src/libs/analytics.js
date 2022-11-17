@@ -60,9 +60,20 @@ const launchpadTracking = {
 	},
 	// Used to track contract creation on our server-side
 	trackContractCreation: () => {
-		posthog.capture('User created contract in dashboard', {
-			blockchain: 'ethereum',
-		});
+		if (posthog.isFeatureEnabled('ab_test_1')) {
+				// run your activation code here
+			posthog.capture('User created contract in dashboard', {
+				blockchain: 'ethereum',
+				group: 'a',
+			});
+		} else {
+			posthog.capture('User created contract in dashboard', {
+				blockchain: 'ethereum',
+				group: 'b',
+			});
+
+		}
+
 	},
 	// Used to track mainnet/testnet eth, sol devnet/mainnet deployments
 	trackContractDeployment: (blockchain) => {
