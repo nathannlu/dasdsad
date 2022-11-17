@@ -71,9 +71,7 @@ const launchpadTracking = {
 				blockchain: 'ethereum',
 				group: 'b',
 			});
-
 		}
-
 	},
 	// Used to track mainnet/testnet eth, sol devnet/mainnet deployments
 	trackContractDeployment: (blockchain) => {
@@ -100,9 +98,11 @@ const websiteBuilderTracking = {
 
 const authTracking = {
 	// @param type - metamask | phantom | email
+	// @TODO set address or email, and mongo user ID
 	trackUserLoggedIn: (type) => {
 		posthog.capture('User logged into web app', {
 			type,
+			$set: { webAppUser: true }
 		})
 	}
 };
