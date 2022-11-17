@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
                         position: 'fixed',
                         background: 'white',
                         zIndex: 10,
-                        top: '70px',
+                        top: '65px',
                         paddingTop: '2px',
                         paddingBottom: '2px',
                         width: '100%',
