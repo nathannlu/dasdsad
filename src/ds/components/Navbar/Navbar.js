@@ -10,18 +10,22 @@ import {
 	ListItemText,
 	ListItemIcon,
 	Typography,
+	TextField
 } from 'ds/components';
 import { useAuth } from 'libs/auth';
 import { useWeb3 } from 'libs/web3';
-import { AppBar, Chip } from '@mui/material';
+import { AppBar, Chip, InputBase, IconButton } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js'
 import * as anchor from '@project-serum/anchor'
+import posthog from 'posthog-js';
 
 const Navbar = ({ pageName }) => {
 	const { logout } = useAuth();
+	const [inquiry, setInquiry] = useState('');
 	const { walletController, wallet, walletState, setWalletState } = useWeb3();
 	const [anchorEl, setAnchorEl] = useState(null);
 	// const [state, setState] = useState({
@@ -51,6 +55,22 @@ const Navbar = ({ pageName }) => {
 		*/
 	}, []);
 
+	const onSubmit = e => {
+		e.preventDefault()
+
+		// Track on posthog
+
+		let path ='';
+		posthog.capture('User searched for resource', {
+			content: inquiry,
+			path: window.location.href,
+		})
+
+		// Redirect to help center
+		window.open('https://ambition.so/help-center','_blank')
+		setInquiry('');
+	}
+
 	return (
 		<AppBar
 			position="fixed"
@@ -75,26 +95,32 @@ const Navbar = ({ pageName }) => {
 						/>
 					</Link>
 					<Stack direction="row" alignItems="center" gap='2em' className="ml-auto">
+						<form onSubmit={onSubmit}>
+							<Stack sx={{background: 'white', borderRadius: '9999px', width: '500px', pl: 2, border: '1px solid rgba(0,0,0,.25)'}} direction="row">
+								<InputBase
+									sx={{ ml: 1, flex: 1 }}
+									placeholder="Need help? Search for resources here"
+									onChange={e => setInquiry(e.target.value)}
+									value={inquiry}
+								/>
+								<IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+									<SearchIcon />
+								</IconButton>
+							</Stack>
+						</form>
 						<Box>
 							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="/gas">
 								Gas Estimate
 							</a>
 						</Box>
-						<Box>
-							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://www.youtube.com/channel/UCJbdL1g7FnfwBIYuhzDoyGA">
-								Tutorials
-							</a>
-						</Box>
+						{/*
 						<Box>
 							<a target="_blank" style={{ color: 'black', fontSize: '16px' }} href="https://ambition.so/help-center">
 								Docs
 							</a>
 						</Box>
-						<Box style={{color: 'black'}}>
-							<Link to="/dashboard">
-								Billing
-							</Link>
-						</Box>
+						*/}
+
 						{walletState.walletAddress ? (
 
 							<Box
