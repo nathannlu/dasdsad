@@ -160,7 +160,7 @@ export const useNewContractForm = () => {
 				nftCollection: {
 					price: parseFloat(price.value),
 					size: parseInt(maxSupply.value),
-					currency: getBlockchainCurrency(state.activeBlockchain)
+					currency: 'ETH'
 				}
 			};
 			const response = await createContract({ variables: { contract: contractInput } });
