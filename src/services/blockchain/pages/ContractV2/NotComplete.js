@@ -1,14 +1,19 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
 import { Button, Box, Grid, Typography, CircularProgress, Stack } from 'ds/components';
-
+import { Stepper, Step, StepLabel, Divider } from '@mui/material';
 import { useDeployContractToTestnet } from './hooks/useDeployContractToTestnet';
 
 import { IPFSModalContent } from '../Contract/IPFSModal';
 import DeploymentStepModal from './widgets/modal/DeploymentStep.modal';
 
 import { getWalletType } from '@ambition-blockchain/controllers';
+
+const steps = [
+  'Configure NFT details',
+  'Connect NFT images & metadata',
+  'Deploy onto the blockchain',
+];
 
 const NotComplete = ({ contract }) => {
 	useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
@@ -22,14 +27,31 @@ const NotComplete = ({ contract }) => {
 
 	const hasMetadaUploaded = !!(contract?.nftCollection?.baseUri && contract?.nftCollection?.unRevealedBaseUri);
 
+
+	const activeStep = !hasMetadaUploaded ? 1 : 2
+	const isCompleted = (i) => {
+		if(hasMetadaUploaded) {
+			if(i == 0 || i == 1) return true
+		} else {
+			if (i == 0) return true;
+		}
+	}
+
 	return (
 		<Grid item xs={12} sx={{ py: 4 }}>
+			<Box>
+			  <Stepper activeStep={activeStep} alternativeLabel mb={2}>
+					{steps.map((label, i) => (
+						<Step completed={isCompleted(i)} key={label}>
+							<StepLabel>{label}</StepLabel>
+						</Step>
+					))}
+				</Stepper>
+				<Divider sx={{marginTop: '24px'}} />
+			</Box>
 
 			<Box>
 				{!hasMetadaUploaded && <Stack sx={{ py: 2, px: 2 }}>
-					<Typography variant="body">
-						Link your metadata and images to the smart contract.
-					</Typography>
 					<Box marginTop='1em'>
 						<IPFSModalContent
 							id={id}
