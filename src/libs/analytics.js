@@ -43,21 +43,7 @@ const launchpadTracking = {
 			service: 'NFT launchpad',
 		});
 	},
-	logUserClickedOnWebsite: () => {
-		posthog.capture('User selected service', {
-			service: 'Website builder',
-		});
-	},
-	trackUploadToIPFS: () => {
-		posthog.capture('User connected NFT images + metadata', {
-			service: 'Paid',
-		});
-	},
-	trackPersonalIPFS: () => {
-		posthog.capture('User connected NFT images + metadata', {
-			service: 'Personal',
-		});
-	},
+
 	// Used to track contract creation on our server-side
 	trackContractCreation: () => {
 		if (posthog.isFeatureEnabled('ab_test_1')) {
@@ -73,6 +59,26 @@ const launchpadTracking = {
 			});
 		}
 	},
+
+	// Track user subscribed to IPFS
+
+	// Track user uploaded images to IPFS count
+
+	// Track user uploaded metadata to IPFS count
+
+
+	trackUploadToIPFS: () => {
+		posthog.capture('User connected NFT images + metadata', {
+			service: 'Paid',
+		});
+	},
+
+	trackPersonalIPFS: () => {
+		posthog.capture('User connected NFT images + metadata', {
+			service: 'Personal',
+		});
+	},
+
 	// Used to track mainnet/testnet eth, sol devnet/mainnet deployments
 	trackContractDeployment: (blockchain) => {
 		posthog.capture('User successfully deployed contract to blockchain', {
@@ -83,6 +89,12 @@ const launchpadTracking = {
 }
 
 const websiteBuilderTracking = {
+	logUserClickedOnWebsite: () => {
+		posthog.capture('User selected service', {
+			service: 'Website builder',
+		});
+	},
+
 	trackUserCreatedWebsite: (template) => {
 		posthog.capture('User created website in dashboard', {
 			template,

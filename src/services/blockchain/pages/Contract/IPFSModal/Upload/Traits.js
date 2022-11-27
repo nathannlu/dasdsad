@@ -166,6 +166,8 @@ const Traits = (props) => {
 							alignItems: 'center',
 							marginTop: '.5em',
 						}}>
+
+					{/*
 						<Box sx={{ width: '100%', mr: 1 }}>
 							<LinearProgress
 								variant="determinate"
@@ -177,6 +179,8 @@ const Traits = (props) => {
 								{uploadPercentage.toFixed(2)}%
 							</Typography>
 						</Box>
+
+					*/}
 					</Box>
 				</Stack>
 			)}

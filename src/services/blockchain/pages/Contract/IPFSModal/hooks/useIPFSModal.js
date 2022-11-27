@@ -56,44 +56,24 @@ export const useIPFSModal = (contract, step, setActiveStep, nftStorageType) => {
 		try {
 			setUploadLoading(true);
 
-			switch (nftStorageType) {
-				case 's3': {
-					const { traitsUrl, fileExtension } = await uploadTraitsToS3(uploadedUnRevealedImageFile, 'unrevealed', onError);
-					console.log(traitsUrl);
-
-					if (!traitsUrl) {
-						throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
-					}
-
-					const metadataUrl = await uploadMetadataToS3([], 'unrevealed', contract, traitsUrl, fileExtension, onError);
-					if (!metadataUrl) {
-						throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
-					}
-
-					// Save url to database
-					setUnRevealedBaseUri(metadataUrl);
-					break;
+				// if the nftStorageType === 'ipfs'
+				const imageUrls = await pinUnrevealedImage(uploadedUnRevealedImageFile);
+				if (!imageUrls || !imageUrls[resolvedUrl]) {
+					throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
 				}
-				default: {
-					// if the nftStorageType === 'ipfs'
-					const imageUrls = await pinUnrevealedImage(uploadedUnRevealedImageFile);
-					if (!imageUrls || !imageUrls[resolvedUrl]) {
-						throw new Error('Error uploading images: Something went wrong. Please contact support for help.');
-					}
 
-					const metadataUrls = await generateUnrevealedImageMetadata(
-						contract,
-						imageUrls[resolvedUrl]
-					)
-					if (!metadataUrls || !metadataUrls[resolvedUrl]) {
-						throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
-					}
+			console.log('image urls', imageUrls);
 
-					// Save url to database
-					setUnRevealedBaseUri(metadataUrls[resolvedUrl]);
-					break;
+				const metadataUrls = await generateUnrevealedImageMetadata(
+					contract,
+					imageUrls[resolvedUrl]
+				)
+				if (!metadataUrls || !metadataUrls[resolvedUrl]) {
+					throw new Error('Error uploading metadata: Something went wrong. Please contact support for help.');
 				}
-			}
+
+				// Save url to database
+				setUnRevealedBaseUri(metadataUrls[resolvedUrl]);
 
 			addToast({
 				severity: 'success',

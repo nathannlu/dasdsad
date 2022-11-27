@@ -157,6 +157,8 @@ const Metadata = (props) => {
 							alignItems: 'center',
 							marginTop: '.5em',
 						}}>
+
+							{/*
 						<Box sx={{ width: '100%', mr: 1 }}>
 							<LinearProgress
 								variant="determinate"
@@ -168,6 +170,8 @@ const Metadata = (props) => {
 								{uploadPercentage.toFixed(2)}%
 							</Typography>
 						</Box>
+
+							*/}
 					</Box>
 				</Stack>
 			)}

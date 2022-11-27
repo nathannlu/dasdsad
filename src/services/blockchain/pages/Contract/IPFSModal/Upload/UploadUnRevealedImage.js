@@ -142,6 +142,8 @@ const UploadUnRevealedImage = (props) => {
 							alignItems: 'center',
 							marginTop: '.5em',
 						}}>
+
+						{/*
 						<Box sx={{ width: '100%', mr: 1 }}>
 							<LinearProgress
 								variant="determinate"
@@ -153,6 +155,8 @@ const UploadUnRevealedImage = (props) => {
 								{uploadPercentage.toFixed(2)}%
 							</Typography>
 						</Box>
+
+							*/}
 					</Box>
 				</Stack>
 			)}

@@ -102,9 +102,9 @@ const Confirmation = (props) => {
 
     const nftStorageType = getNftStorageTypeLabel(props.nftStorageType);
 
-    const imagesUrlLink = props.nftStorageType === 's3' ? `${imagesUrl}/0.png` : `https://gateway.pinata.cloud/ipfs/${imagesUrl?.substring(7, imagesUrl?.length - 1)}/0.png`;
-    const unRevealedBaseUriLink = props.nftStorageType === 's3' ? `${unRevealedBaseUri}/0.json` : `https://gateway.pinata.cloud/ipfs/${unRevealedBaseUri?.substring(7, unRevealedBaseUri?.length - 1)}/0.json`;
-    const baseUriLink = props.nftStorageType === 's3' ? `${baseUri}/0.json` : `https://gateway.pinata.cloud/ipfs/${baseUri?.substring(7, baseUri.length - 1)}/0.json`;
+    const imagesUrlLink = props.nftStorageType === 's3' ? `${imagesUrl}/0.png` : `https://${imagesUrl?.substring(7, imagesUrl?.length - 1)}.ipfs.nftstorage.link/0.png`;
+    const unRevealedBaseUriLink = props.nftStorageType === 's3' ? `${unRevealedBaseUri}/0.json` : `https://${unRevealedBaseUri?.substring(7, unRevealedBaseUri?.length - 1)}.ipfs.nftstorage.link/0.json`;
+    const baseUriLink = props.nftStorageType === 's3' ? `${baseUri}/0.json` : `https://${baseUri?.substring(7, baseUri.length - 1)}.ipfs.nftstorage.link/0.json`;
 
     return (
         <Stack gap={2} marginTop='2em'>

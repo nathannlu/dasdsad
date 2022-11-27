@@ -3,6 +3,10 @@ import axios from 'axios';
 import { useState } from 'react';
 import { MAX_UPLOAD_LIMIT, resolveFileExtension } from 'ambition-constants';
 
+const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDU0NmY2ODBFQ0RhOTcxYzU5NzI3YzE2Mjk3NTBmN2I4MjVkQjBlRjIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2Mjg1MTQ2NTgxOSwibmFtZSI6ImFtYml0aW9uIn0.IKGxAha5zYXnFBZTrx_21LXCeFpk9Y4u9XENcKyvMPE'
+
+import { NFTStorage, File as NFTFile } from 'nft.storage'
+
 const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`; // Pinata API url
 
 export const useIPFS = () => {
@@ -24,17 +28,17 @@ export const useIPFS = () => {
 				'Error! Max upload limit reached. Your files are larger than 25GB'
 			);
 
-		// Formatting image support
-		const file = images[0];
-		// Pin the placeholder image to Pinata
-		let imageData = new FormData();
-		imageData.append('file', file);
-		const metadata = JSON.stringify({ name: 'assets' });
-		imageData.append('pinataMetadata', metadata);
+		console.log(images[0])
+//		images[0].name = 'unrevealed.png'
 
-		// Send API request to Pinata
-		const res = await axios.post(url, imageData, opt(imageData));
-		return withIpfsUrls(res.data.IpfsHash);
+		// Formatting image support
+		const file = new File([images[0]], 'unrevealed.png', { type: 'image/png'});
+
+		console.log(file)
+		
+		const cid = await uploadToNftStorage([file])
+		console.log('cid', cid)
+		return withIpfsUrls(cid);
 	};
 
 	/**
@@ -54,36 +58,27 @@ export const useIPFS = () => {
 		// Generate metadata files for unrevealed image with data
 		// from contract obj (saved in db)
 		let metadataData = new FormData();
-		console.log(contract)
+		let collectionMetadata = [];
+
+		console.log('jeep', collectionMetadata)
 		for (let i = 1; i < contract.nftCollection.size + 1; i++) {
 			const jsonMetadata = {
 				name: contract.name,
 				description: `Unrevealed ${contract.name} NFT`,
-				image: unrevealedImageUrl
+				image: unrevealedImageUrl + 'unrevealed.png'
 			};
 
-			console.log(jsonMetadata)
+			const metadataFile = new File([
+				JSON.stringify(jsonMetadata),
+			], `${i}.json`, {type: 'application/json'});
 
-			// Attach JSON to formdata for Pinata upload
-			const metadataFile = new Blob([JSON.stringify(jsonMetadata)]);
-			metadataData.append('file', metadataFile, `/metadata/${i}.json`);
+			collectionMetadata.push(metadataFile);
 		}
-		// Pinata folder name
-		const metadata = JSON.stringify({ name: 'metadata' });
-		metadataData.append('pinataMetadata', metadata);
-		console.log(metadataData)
 
+		console.log('asd', collectionMetadata)
 
-		// @TODO Check formdata is under 25GB to upload
-		/*
-		if (metadataData.length > MAX_UPLOAD_LIMIT)
-			throw new Error('Error! File too large, exceeding 25GB upload limit.');
-			*/
-
-		// Send API request to Pinata
-		const res = await axios.post(url, metadataData, opt(metadataData));
-		console.log(res)
-		return withIpfsUrls(res.data.IpfsHash);
+		const cid = await uploadToNftStorage(collectionMetadata)
+		return withIpfsUrls(cid);
 	};
 
     /**
@@ -102,33 +97,20 @@ export const useIPFS = () => {
 	 * @param folder - An array of File objects
 	 */
 	const pinImages = async (folder) => {
-		// Construct formdata for uploading to Pinata API
-		let data = new FormData();
-		for (let i = 0; i < folder.length; i++) {
-            const fileName = folder[i].name;
-            const ext = fileName.slice(fileName.lastIndexOf('.'));
-			data.append('file', folder[i], `/assets/${[i]}${ext}`);
-		}
-
+		const cid = await uploadToNftStorage(folder)
 		// Check formdata is not larger than 25gb
+		/*
         const GB_25_IN_BYTES = 26843545599.999958;
         if (getFormDataSize(data) > GB_25_IN_BYTES) throw new Error('Form data must not be larger than 25 gb');
+				*/
 
-		// Name Pinata folder
-		const metadata = JSON.stringify({
-			name: 'assets',
-		});
-		data.append('pinataMetadata', metadata);
-
-		// Send API req
-		const res = await axios.post(url, data, opt(data));
 
 		// On success
-		if (res) {
-			return withIpfsUrls(res.data.IpfsHash);
-		}
+		return withIpfsUrls(cid);
 
+		/*
 		throw new Error('Oops! something went wrong. Please try again!')
+		*/
 	};
 
 	/**
@@ -142,24 +124,18 @@ export const useIPFS = () => {
 	 */
 	const pinMetadata = async (folder, imageUrl) => {
 		// Update metadata and append to formdata
-		let data = new FormData();
+		let collectionMetadata = [];
 		for (let i = 0; i < folder.length; i++) {
-			await appendUpdatedJson(folder[i], data, imageUrl);
-		}
-		const metadata = JSON.stringify({
-			name: 'metadata',
-		});
-		data.append('pinataMetadata', metadata);
-
-		// Send API request
-		const res = await axios.post(url, data, opt(data));
-
-
-		if (res) {
-			return withIpfsUrls(res.data.IpfsHash)
+			await appendUpdatedJson(folder[i], collectionMetadata, imageUrl);
 		}
 
+		console.log(collectionMetadata)
+		const cid = await uploadToNftStorage(collectionMetadata)
+		return withIpfsUrls(cid)
+
+		/*
 		throw new Error('Oops! something went wrong. Please try again!')
+		*/
 	};
 
 	/**
@@ -185,7 +161,8 @@ export const useIPFS = () => {
 	 */
 	const withIpfsUrls = (hash) => ({
 		url: `ipfs://${hash}/`,
-		gateway: `https://gateway.pinata.cloud/ipfs/${hash}/`,
+//		gateway: `https://gateway.pinata.cloud/ipfs/${hash}/`,
+		gateway: `https://${hash}.ipfs.nftstorage.link/`,
 		hash,
 	});
 
@@ -205,29 +182,25 @@ export const useIPFS = () => {
 
 					jsonMetadata.image = ipfsUrl + `${tokenId}.${fileExtension}`;
 
-					// Attach JSON to formdata
-					const metadataFile = new Blob([
+					const metadataFile = new File([
 						JSON.stringify(jsonMetadata),
-					]);
-					data.append(
-						'file',
-						metadataFile,
-						`/metadata/${tokenId}.json`
-					);
+					], `${tokenId}.json`, {type: 'application/json'});
+
+					data.push(metadataFile);
 
 					resolve(data);
 				};
 				fileReader.readAsText(file);
 			} else {
-				data.append('file', file, '/metadata/metadata.json');
+				data.push(file);
 				resolve(data);
 			}
 		});
 	};
 
 	const getIpfsGatewayUrl = (uri) => {
-		const ipfsGatewayUrl = 'https://gateway.pinata.cloud/ipfs/';
-		return uri?.indexOf('ipfs://') !== -1 ? `${ipfsGatewayUrl}${uri?.split('ipfs://')[1]}` : uri;
+//		const ipfsGatewayUrl = 'https://gateway.pinata.cloud/ipfs/';
+		return uri?.indexOf('ipfs://') !== -1 ? `http://${uri?.split('ipfs://')[1]}.ipfs.nftstorage.link/` : uri;
 	}
 
 	const getResolvedImageUrlFromIpfsUri = async (metadataUrl) => {
@@ -255,6 +228,26 @@ export const useIPFS = () => {
 			return null;
 		}
 	}
+
+	/**
+	 * Uploads an array of files to NFT storage
+	 */
+	const uploadToNftStorage = async (
+		files
+	) => {
+		const storage = new NFTStorage({ token: NFT_STORAGE_API_KEY })
+
+		console.log(`storing file(s)`)
+		const cid = await storage.storeDirectory(files)
+		console.log({ cid })
+
+		const status = await storage.status(cid)
+		console.log(status)
+
+		return cid;
+	}
+
+
 	/**
 	 * Mime type to file extension
 	 */
