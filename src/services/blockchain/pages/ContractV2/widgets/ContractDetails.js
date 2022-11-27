@@ -67,6 +67,8 @@ const ContractDetails = (props) => {
     } = useContractSettings();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+	console.log(unRevealedtNftImage)
+
     const isLoading = !contractState;
     const isTestnet = isTestnetBlockchain(contract?.blockchain);
 

@@ -199,13 +199,20 @@ export const useIPFS = () => {
 	};
 
 	const getIpfsGatewayUrl = (uri) => {
-//		const ipfsGatewayUrl = 'https://gateway.pinata.cloud/ipfs/';
+
+
+
+//		return uri?.indexOf('ipfs://') !== -1 ? `http://${(uri?.split('ipfs://')[1]).split('/')[0]}.ipfs.nftstorage.link/${img}` : uri;
+
+//		console.log(`http://${(uri?.split('ipfs://')[1]).split('/')[0]}.ipfs.nftstorage.link/${img}`)
+
 		return uri?.indexOf('ipfs://') !== -1 ? `http://${uri?.split('ipfs://')[1]}.ipfs.nftstorage.link/` : uri;
 	}
 
 	const getResolvedImageUrlFromIpfsUri = async (metadataUrl) => {
 		try {
-			let metadataUrlHash = `${getIpfsGatewayUrl(metadataUrl)}/1.json`;
+			let metadataUrlHash = `${getIpfsGatewayUrl(metadataUrl.slice(0,-1))}/1.json`;
+			console.log('metadata hash', metadataUrlHash)
 
 			if (!metadataUrlHash) {
 				throw new Error('Invalid metadataurl');
@@ -222,7 +229,17 @@ export const useIPFS = () => {
 				throw new Error('image field missing!');
 			}
 
-			return getIpfsGatewayUrl(json?.image);
+			let img;
+			if (json?.image.indexOf('unrevealed.png') !== -1) {
+				img = 'unrevealed.png';
+			} else {
+				img = '0.png';
+			}
+			let imageHash = json?.image.substr(0, json?.image.lastIndexOf("/"));
+			console.log('image hash', imageHash)
+			let imageUrl = getIpfsGatewayUrl(imageHash);
+			console.log('image url', imageUrl)
+			return imageUrl + img;
 		} catch (e) {
 			console.log('Error fetchImageSrc:', e);
 			return null;
