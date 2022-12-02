@@ -14,18 +14,36 @@ export const IPFSModalContent = (props) => {
     const [nftStorageType, setNftStorageType] = useState(); // 'ipfs' | 's3'
 
     // If contract is subscribed or if nftStorageType is 's3' skip to next step
-    const initialStep = contract?.isSubscribed ? 4 : 1;
+    const [initialStep, setInitialStep] = useState(contract?.isSubscribed ? 4 : 1);
+		const [isImportLink, setIsImportLink] = useState(false)
 
     return (
-        <StepWizard initialStep={initialStep} transitions={{}}>
-            <Preview setNftStorageType={setNftStorageType} contract={contract} />
-            {/* user imports their own link */}
-            <ImportLink id={id} contract={contract} renderUploadUnRevealedImage={renderUploadUnRevealedImage}  setIsModalOpen={setIsModalOpen} />
+			<>
+				{isImportLink ? (
+					<>
+								<ImportLink id={id} contract={contract} renderUploadUnRevealedImage={renderUploadUnRevealedImage}  setIsModalOpen={setIsModalOpen} />
+						<Box sx={{color: 'blue', cursor: 'pointer', mt: 2}} onClick={() => setIsImportLink(false)}>
+							Don't have metadata URLs? Click here to upload your images to IPFS now.
+						</Box>
+					</>
+				) : (
+					<>
+						<StepWizard initialStep={initialStep} transitions={{}}>
+								<Preview setNftStorageType={setNftStorageType} contract={contract} />
+								{/* user imports their own link */}
+								<ImportLink id={id} contract={contract} renderUploadUnRevealedImage={renderUploadUnRevealedImage}  setIsModalOpen={setIsModalOpen} />
 
-            {/* uploads to ipfs with us */}
-            < Payment contractId={id} contract={contract} nftStorageType={nftStorageType} />
-            <UploadSteps id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} nftStorageType={contract.nftStorageType || nftStorageType} />
-        </StepWizard>
+								{/* uploads to ipfs with us */}
+								<Payment contractId={id} contract={contract} nftStorageType={nftStorageType} />
+								<UploadSteps id={id} contract={contract} setIsModalOpen={setIsModalOpen} renderUploadUnRevealedImage={renderUploadUnRevealedImage} nftStorageType={contract.nftStorageType || nftStorageType} />
+						</StepWizard>
+
+						<Box sx={{color: 'blue', cursor: 'pointer', mt: 2}} onClick={() => setIsImportLink(true)}>
+							Already have your images & metadata uploaded? Import CID here
+						</Box>
+					</>
+				)}
+			</>
     );
 }
 

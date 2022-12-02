@@ -72,9 +72,11 @@ const ImportLink = (props) => {
     return (
         <Stack gap={2}>
             <Box>
+							{/*
                 <Button size="small" onClick={() => props.goToStep(1)}>
                     Go back
                 </Button>
+								*/}
             </Box>
 
 
