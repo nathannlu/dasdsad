@@ -80,6 +80,7 @@ const Preview = (props) => {
 						<Typography variant="body">/mo</Typography>
 					</Stack>
 				</Box>
+				{/*
 				<Box
 					onClick={onClickConnect}
 					sx={{
@@ -104,6 +105,7 @@ const Preview = (props) => {
 						images.
 					</Typography>
 				</Box>
+				*/}
 			</Stack>
 
 			{/*
