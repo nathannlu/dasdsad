@@ -3,6 +3,8 @@ import { usePaymentForm } from './hooks/usePaymentForm';
 import { useGetPlanSettings } from './hooks/useGetPlanSettings';
 import { useAuth } from 'libs/auth';
 import { useSubscribePlan } from 'gql/hooks/billing.hook';
+import Checkbox from '@mui/material/Checkbox';
+
 
 import {
     Stack,
@@ -190,6 +192,14 @@ const CheckoutForm = ({ contractId, planId, callback, nftStorageType }) => {
                                     {selectedPlan?.unit_amount / 100} USD
                                 </Typography>
                                 <Divider />
+
+															<Stack direction="row">
+																<Checkbox />
+                                <Typography variant="body1">
+																	I agree to the <a style={{ textDecoration: 'underline'}} href="https://ambition.so/terms" target="_blank">terms and conditions</a>
+                                </Typography>
+
+															</Stack>
 
                                 <LoadingButton
                                     startIcon={<LockIcon />}
